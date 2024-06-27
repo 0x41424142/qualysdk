@@ -319,7 +319,6 @@ print(schema_query(module='gav', pretty=True))
 }
 ```
 # TODO:
-- Explore removing custom list classes, as regular lists containing the custom objects seems more than sufficient.
 
 - Implement host list detections API, perhaps using the custom ```VMDRHost/VMDRIDSet``` classes. the detection object is already written.
 

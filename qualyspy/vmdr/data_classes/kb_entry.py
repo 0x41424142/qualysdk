@@ -298,12 +298,18 @@ class KBEntry:
             if getattr(self, field) is not None and not isinstance(
                 getattr(self, field), datetime
             ):
-                #special case for LAST_CUSTOMIZATION:
+                # special case for LAST_CUSTOMIZATION:
                 if field == "LAST_CUSTOMIZATION":
                     if isinstance(getattr(self, field), dict):
-                        setattr(self, field, datetime.fromisoformat(getattr(self, field)["DATETIME"]))
+                        setattr(
+                            self,
+                            field,
+                            datetime.fromisoformat(getattr(self, field)["DATETIME"]),
+                        )
                     else:
-                        setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+                        setattr(
+                            self, field, datetime.fromisoformat(getattr(self, field))
+                        )
                 else:
                     setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
@@ -313,10 +319,13 @@ class KBEntry:
             ):
                 setattr(self, field, bool(getattr(self, field)))
 
-        
         for field in HTML_FIELDS:
             if getattr(self, field) is not None:
-                setattr(self, field, BeautifulSoup(getattr(self, field), "html.parser").get_text())
+                setattr(
+                    self,
+                    field,
+                    BeautifulSoup(getattr(self, field), "html.parser").get_text(),
+                )
 
     def __str__(self):
         return f"{self.QID}"
@@ -383,7 +392,7 @@ class KBEntry:
                 data[key] = datetime.fromisoformat(data[key])
 
         # call the make_lists function to create the appropriate list objects:
-        #data = make_lists(data)
+        # data = make_lists(data)
 
         # and finally, create the KBEntry object:
         return cls(**data)

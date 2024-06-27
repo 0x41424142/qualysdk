@@ -12,6 +12,7 @@ from .lists import BaseList
 from .tag import Tag, CloudTag
 from .detection import Detection
 
+
 @dataclass(order=True)
 class VMDRHost:
     """
@@ -249,18 +250,25 @@ class VMDRHost:
                 setattr(self, INT_FIELD, int(getattr(self, INT_FIELD)))
 
         if self.TAGS:
-            #if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
-            if isinstance(self.TAGS['TAG'], list):
-                self.TAGS = BaseList([Tag.from_dict(tag) for tag in self.TAGS['TAG']])
-            else: #if it is a single tag dict:
-                self.TAGS = BaseList([Tag.from_dict(self.TAGS['TAG'])])
+            # if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
+            if isinstance(self.TAGS["TAG"], list):
+                self.TAGS = BaseList([Tag.from_dict(tag) for tag in self.TAGS["TAG"]])
+            else:  # if it is a single tag dict:
+                self.TAGS = BaseList([Tag.from_dict(self.TAGS["TAG"])])
 
         if self.CLOUD_PROVIDER_TAGS:
-            #if 'CLOUD_TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
-            if isinstance(self.CLOUD_PROVIDER_TAGS['CLOUD_TAG'], list):
-                self.CLOUD_PROVIDER_TAGS = BaseList([CloudTag.from_dict(tag) for tag in self.CLOUD_PROVIDER_TAGS['CLOUD_TAG']])
-            else: #if it is a single tag dict:
-                self.CLOUD_PROVIDER_TAGS = BaseList([CloudTag.from_dict(self.CLOUD_PROVIDER_TAGS['CLOUD_TAG'])])
+            # if 'CLOUD_TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
+            if isinstance(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"], list):
+                self.CLOUD_PROVIDER_TAGS = BaseList(
+                    [
+                        CloudTag.from_dict(tag)
+                        for tag in self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"]
+                    ]
+                )
+            else:  # if it is a single tag dict:
+                self.CLOUD_PROVIDER_TAGS = BaseList(
+                    [CloudTag.from_dict(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"])]
+                )
 
         # CLOUD SPECIFIC FIELDS:
         if self.METADATA:

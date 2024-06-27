@@ -29,9 +29,7 @@ class Detection:
     )
     SEVERITY: int = field(metadata={"description": "The severity of the detection."})
     SSL: int = field(metadata={"description": "The SSL status of the detection."})
-    RESULTS: str = field(
-        metadata={"description": "The results of the detection."}
-    )
+    RESULTS: str = field(metadata={"description": "The results of the detection."})
     STATUS: Literal["New", "Active", "Fixed", "Re-Opened"] = field(
         metadata={"description": "The status of the detection."}
     )
@@ -78,11 +76,14 @@ class Detection:
 
         # clean up fields that have html tags
         for field in HTML_FIELDS:
-            setattr(self, field, BeautifulSoup(getattr(self, field), "html.parser").get_text())
-
+            setattr(
+                self,
+                field,
+                BeautifulSoup(getattr(self, field), "html.parser").get_text(),
+            )
 
     def __str__(self):
-        #return str(self.UNIQUE_VULN_ID)
+        # return str(self.UNIQUE_VULN_ID)
         return str(self.QID)
 
     def copy(self):
@@ -103,7 +104,7 @@ class Detection:
             IS_DISABLED=self.IS_DISABLED,
             LAST_PROCESSED_DATETIME=self.LAST_PROCESSED_DATETIME,
         )
-    
+
     def to_dict(self):
         """
         to_dict - convert the Detection object to a dictionary.

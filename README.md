@@ -323,4 +323,6 @@ print(schema_query(module='gav', pretty=True))
 
 - Implement host list detections API, perhaps using the custom ```VMDRHost/VMDRIDSet``` classes. the detection object is already written.
 
-- Write testing files
+- Write testing files.
+
+- Break up README.md: Move module-specific sections to their respective folders, cleaning up the main README.md.

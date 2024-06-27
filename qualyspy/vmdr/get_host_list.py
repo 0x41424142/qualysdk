@@ -13,7 +13,21 @@ from ..exceptions.Exceptions import *
 from .data_classes.hosts import VMDRHost, VMDRID
 
 def remove_problem_characters(xml_content): #sigh...
-    return ''.join(char for char in xml_content if char.isprintable() or char.isspace())
+    """
+    Remove unprintable characters from XML content.
+    Args:
+        xml_content (str): The XML content.
+    Returns:
+        str: The XML content with unprintable characters removed.
+    """
+    # Create a translation table that maps non-printable and non-whitespace characters to None
+    # Get all characters in Unicode
+    all_chars = (chr(i) for i in range(65536))  # Unicode range is from 0 to 65535
+    # Filter out printable characters and whitespace
+    non_printable = ''.join(c for c in all_chars if not c.isprintable() and not c.isspace())
+    # Create the translation table
+    translation_table = str.maketrans('', '', non_printable)
+    return xml_content.translate(translation_table)
 
 def get_host_list(
     auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs

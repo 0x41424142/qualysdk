@@ -1,0 +1,16 @@
+"""
+Qualys API - Qualys API SDK for Python
+
+This package aims to make it easier to interact with the Qualys API across all of the different modules that Qualys provides.
+"""
+
+from .help import schema_query
+from .auth import BasicAuth, TokenAuth
+
+from .gav.uber import GAVUber
+
+from .vmdr import query_kb, get_host_list
+
+
+# surprise!
+__surprise__ = b"\xe2\x9c\xa8\xe2\x9c\xa8\xe2\x9c\xa8 Have a great day!".decode("utf-8")

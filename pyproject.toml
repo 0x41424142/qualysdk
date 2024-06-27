@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "qualyspy"
+version = "0.1.0"
+description = "SDK for interacting with Qualys APIs, across most of modules the platform offers."
+authors = ["0x41424142 <j.n.lindsay@email.msmary.edu>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
+readme = "README.md"
+license = "MIT License"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.32.3"
+xmltodict = "^0.13.0"
+frozendict = "^2.4.4"
+bs4 = "^0.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

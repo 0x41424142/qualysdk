@@ -21,8 +21,9 @@ from .threat_intel import ThreatIntel
 from .compliance import Compliance
 from .tag import Tag, CloudTag
 
-#disable the warning for the bs4 module
+# disable the warning for the bs4 module
 filterwarnings("ignore", category=MarkupResemblesLocatorWarning, module="bs4")
+
 
 def make_lists(data: dict) -> dict:
     """
@@ -73,9 +74,11 @@ def make_lists(data: dict) -> dict:
             "item_class": Compliance,
         },
         "TAG": {"class": TagList, "key": "TAG", "item_class": Tag},
-
-        "CLOUD_TAG_LIST": {"class": CloudTagList, "key": "CLOUD_TAG", "item_class": CloudTag},
-
+        "CLOUD_TAG_LIST": {
+            "class": CloudTagList,
+            "key": "CLOUD_TAG",
+            "item_class": CloudTag,
+        },
     }
 
     for LIST_TYPE in LIST_TYPE_MAPPING.keys():  # iterate through the valid list types
@@ -134,6 +137,7 @@ def make_lists(data: dict) -> dict:
                 data[LIST_TYPE] = list_info["class"]()
 
     return data
+
 
 filterwarnings(
     "ignore", category=MarkupResemblesLocatorWarning, module="bs4"

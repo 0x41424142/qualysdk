@@ -85,20 +85,28 @@ def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
         if "VULN_LIST" not in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]:
             break
 
-        for e in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["VULN_LIST"]["VULN"]:
-            responses.append(KBEntry.from_dict(e)) #append entry
+        for e in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["VULN_LIST"][
+            "VULN"
+        ]:
+            responses.append(KBEntry.from_dict(e))  # append entry
 
         pulled += 1
         print(f"Page {pulled} complete.")
-        #KB API normally does not paginate, but if it does
+        # KB API normally does not paginate, but if it does
         if "WARNING" in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]:
             if "URL" in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["WARNING"]:
                 print(
                     f"Pagination detected. Pulling next page from url: {xml['KNOWLEDGE_BASE_VULN_LIST_OUTPUT']['RESPONSE']['WARNING']['URL']}"
                 )
-                #parse the url to get the query params
-                ps = parse_qs(urlparse(xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]).query)
-                #update the kwargs with the new params
+                # parse the url to get the query params
+                ps = parse_qs(
+                    urlparse(
+                        xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["WARNING"][
+                            "URL"
+                        ]
+                    ).query
+                )
+                # update the kwargs with the new params
                 kwargs.update(ps)
 
             else:

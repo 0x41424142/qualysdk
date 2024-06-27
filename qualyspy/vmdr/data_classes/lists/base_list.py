@@ -27,13 +27,12 @@ class BaseList:
 
     def __getitem__(self, index):
         return self._list[index]
-    
+
     def __items__(self) -> List:
         return self._list
-    
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self._list})"
-
 
     def __setitem__(self, index, value) -> None:
         # do not allow duplicates:
@@ -108,8 +107,6 @@ class BaseList:
 
     def index(self, item) -> int:
         return self._list.index(item)
-    
+
     def count(self, item) -> int:
         return self._list.count(item)
-    
-    

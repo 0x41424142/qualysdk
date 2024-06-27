@@ -41,7 +41,13 @@ class GAVUber:
     def __exit__(self, exc_type, exc_value, traceback):
         pass
 
-    def get(self, endpoint: Literal["count_assets", "get_all_assets", "get_asset", "query_assets"], **kwargs):
+    def get(
+        self,
+        endpoint: Literal[
+            "count_assets", "get_all_assets", "get_asset", "query_assets"
+        ],
+        **kwargs,
+    ):
         """
         Call the appropriate endpoint based on passed endpoint.
 

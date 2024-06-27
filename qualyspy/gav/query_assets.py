@@ -37,7 +37,7 @@ def query_assets(auth: TokenAuth, page_count: Union["all", int] = "all", **kwarg
         response = call_api(
             auth=auth, module="gav", endpoint="query_assets", params=kwargs
         )
-        #if there is no response, break the loop
+        # if there is no response, break the loop
         if response.text == "":
             print("No Results returned.")
             break

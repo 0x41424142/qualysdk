@@ -28,10 +28,10 @@ class TagList(BaseList):
                 raise TypeError(
                     f"TagList can only contain Tag objects, not {type(tag)}"
                 )
-            
+
     def __iter__(self) -> Iterator:
         return super().__iter__()
-    
+
     def __len__(self) -> int:
         return super().__len__()
 
@@ -62,7 +62,8 @@ class TagList(BaseList):
         This function is used to create a TagList object from a list of dictionaries.
         """
         return cls([Tag.from_dict(tag) for tag in data])
-    
+
+
 @dataclass
 class CloudTagList(BaseList):
     """
@@ -80,10 +81,10 @@ class CloudTagList(BaseList):
                 raise TypeError(
                     f"CloudTagList can only contain CloudTag objects, not {type(tag)}"
                 )
-            
+
     def __iter__(self) -> Iterator:
         return super().__iter__()
-    
+
     def __len__(self) -> int:
         return super().__len__()
 

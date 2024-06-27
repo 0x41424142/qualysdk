@@ -12,7 +12,8 @@ from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.hosts import VMDRHost, VMDRID
 
-def remove_problem_characters(xml_content): #sigh...
+
+def remove_problem_characters(xml_content):  # sigh...
     """
     Remove unprintable characters from XML content.
     Args:
@@ -24,10 +25,13 @@ def remove_problem_characters(xml_content): #sigh...
     # Get all characters in Unicode
     all_chars = (chr(i) for i in range(65536))  # Unicode range is from 0 to 65535
     # Filter out printable characters and whitespace
-    non_printable = ''.join(c for c in all_chars if not c.isprintable() and not c.isspace())
+    non_printable = "".join(
+        c for c in all_chars if not c.isprintable() and not c.isspace()
+    )
     # Create the translation table
-    translation_table = str.maketrans('', '', non_printable)
+    translation_table = str.maketrans("", "", non_printable)
     return xml_content.translate(translation_table)
+
 
 def get_host_list(
     auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
@@ -108,66 +112,82 @@ def get_host_list(
     # add the action to the kwargs:
     kwargs["action"] = "list"
 
-    if kwargs['truncation_limit'] == 0 and page_count == "all":
-        print("[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it will almost certainly strain your compute resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue.")
+    if kwargs["truncation_limit"] == 0 and page_count == "all":
+        print(
+            "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it will almost certainly strain your compute resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
+        )
 
     # qualys expects all boolean values to be represented as a 0 or 1:
     for key, value in kwargs.items():
         if isinstance(value, bool):
             kwargs[key] = 1 if value else 0
-        #if options is specified and set to NoneType, convert to "None":
+        # if options is specified and set to NoneType, convert to "None":
         if isinstance(value, type(None)):
             kwargs[key] = "None"
-        #if host_metadata is specified and set to a non-"all" or non-NoneType, lower() it:
+        # if host_metadata is specified and set to a non-"all" or non-NoneType, lower() it:
         if key == "host_metadata" and value not in ["all", None]:
             kwargs[key] = value.lower()
 
     while True:
         # make the request:
         response = call_api(
-            auth=auth, module="vmdr", endpoint="get_host_list", params=kwargs, headers={"X-Requested-With": "qualyspy SDK"}
+            auth=auth,
+            module="vmdr",
+            endpoint="get_host_list",
+            params=kwargs,
+            headers={"X-Requested-With": "qualyspy SDK"},
         )
         if response.text == "":
             print("No data returned.")
             return responses
-        
-        xml = parse(remove_problem_characters(response.text), encoding='utf-8')
+
+        xml = parse(remove_problem_characters(response.text), encoding="utf-8")
 
         if "html" in xml.keys():
             raise Exception(
                 f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"
             )
-        
-        #If details is none, ID_SET will be returned instead of HOST_LIST
+
+        # If details is none, ID_SET will be returned instead of HOST_LIST
         if "ID_SET" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:
-            #check if ID_SET is a list of dicts or a single dict:
+            # check if ID_SET is a list of dicts or a single dict:
             if isinstance(xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"], dict):
-                #if it's a single dict, convert it to a list of dicts:
-                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"] = [xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"]]
+                # if it's a single dict, convert it to a list of dicts:
+                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"] = [
+                    xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"]
+                ]
 
             for ID in xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"]:
-                #create a VMDRID object and append to responses
-                #This code will only run if details=None, so now we just need to check if show_asset_id is set to 1:
-                if kwargs.get('show_asset_id'):
+                # create a VMDRID object and append to responses
+                # This code will only run if details=None, so now we just need to check if show_asset_id is set to 1:
+                if kwargs.get("show_asset_id"):
                     responses.append(VMDRID(ID=ID, TYPE="asset"))
-                else: #elif not kwargs.get("show_asset_id"):
+                else:  # elif not kwargs.get("show_asset_id"):
                     responses.append(VMDRID(ID=ID, TYPE="host"))
         else:
-            #HOST_LIST will be returned
-            #first, check if xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
-            #is a list of dicts or a single dict:
-            if isinstance(xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], dict):
-                #if it's a single dict, convert it to a list of dicts:
-                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]]
+            # HOST_LIST will be returned
+            # first, check if xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
+            # is a list of dicts or a single dict:
+            if isinstance(
+                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], dict
+            ):
+                # if it's a single dict, convert it to a list of dicts:
+                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
+                    xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
+                ]
 
             for host in xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]:
-                #return a list of VMDRHost objects
+                # return a list of VMDRHost objects
                 responses.append(VMDRHost.from_dict(host))
 
-        print(f"Page {pulled+1} of {page_count} complete.") if page_count != "all" else print(f"Page {pulled+1} complete.")
+        (
+            print(f"Page {pulled+1} of {page_count} complete.")
+            if page_count != "all"
+            else print(f"Page {pulled+1} complete.")
+        )
         pulled += 1
 
-        if  page_count != "all" and pulled >= page_count:
+        if page_count != "all" and pulled >= page_count:
             print("Page count reached.")
             break
 
@@ -176,8 +196,12 @@ def get_host_list(
                 print(
                     f"Pagination detected. Pulling next page from url: {xml['HOST_LIST_OUTPUT']['RESPONSE']['WARNING']['URL']}"
                 )
-                #get the id_min parameter from the URL to pass into kwargs:
-                params = parse_qs(urlparse(xml["HOST_LIST_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]).query)
+                # get the id_min parameter from the URL to pass into kwargs:
+                params = parse_qs(
+                    urlparse(
+                        xml["HOST_LIST_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
+                    ).query
+                )
                 kwargs["id_min"] = params["id_min"][0]
 
             else:

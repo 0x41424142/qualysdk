@@ -25,34 +25,34 @@ class Tag:
         # check that id is a string or int:
         if not isinstance(self.TAG_ID, (str, int)):
             raise TypeError(f"Tag ID must be a string or int, not {type(self.TAG_ID)}")
-        
-        #cast ID to an int if it is a string
+
+        # cast ID to an int if it is a string
         if isinstance(self.TAG_ID, str):
             self.TAG_ID = int(self.TAG_ID)
 
     def __str__(self) -> str:
         return self.NAME
-    
+
     def __contains__(self, item):
         # see if it was found in the name or id:
         return item in self.TAG_ID or item in self.NAME
-    
+
     def copy(self):
         return Tag(TAG_ID=self.TAG_ID, NAME=self.NAME)
-    
+
     def is_id(self, id: int):
         return self.TAG_ID == id
-    
+
     def is_name(self, name: str):
         return self.NAME == name
-    
+
     def __iter__(self):
         yield self.TAG_ID
         yield self.NAME
 
     def __dict__(self):
         return {"TAG_ID": self.TAG_ID, "NAME": self.NAME}
-    
+
     @classmethod
     def from_dict(cls, data: dict):
         """
@@ -63,14 +63,17 @@ class Tag:
         # make sure that the dictionary has the required keys and nothing else:
         required_keys = {"TAG_ID", "NAME"}
         if not required_keys.issubset(data.keys()):
-            raise ValueError(f"Dictionary must contain the following keys: {required_keys}")
-        
-        #cast ID to an int if it is a string
+            raise ValueError(
+                f"Dictionary must contain the following keys: {required_keys}"
+            )
+
+        # cast ID to an int if it is a string
         if isinstance(data["TAG_ID"], str):
             data["TAG_ID"] = int(data["TAG_ID"])
 
         return cls(**data)
-    
+
+
 @dataclass()
 class CloudTag:
     """
@@ -91,32 +94,40 @@ class CloudTag:
 
     def __post_init__(self):
         # check that the last success date is a string or datetime:
-        if self.LAST_SUCCESS_DATE is not None and not isinstance(self.LAST_SUCCESS_DATE, (str, datetime)):
-            raise TypeError(f"Last success date must be a string or datetime, not {type(self.LAST_SUCCESS_DATE)}")
-        
-        #cast last success date to a datetime if it is a string
+        if self.LAST_SUCCESS_DATE is not None and not isinstance(
+            self.LAST_SUCCESS_DATE, (str, datetime)
+        ):
+            raise TypeError(
+                f"Last success date must be a string or datetime, not {type(self.LAST_SUCCESS_DATE)}"
+            )
+
+        # cast last success date to a datetime if it is a string
         if isinstance(self.LAST_SUCCESS_DATE, str):
             self.LAST_SUCCESS_DATE = datetime.fromisoformat(self.LAST_SUCCESS_DATE)
 
     def __str__(self) -> str:
         return f"{self.NAME}:{self.VALUE}"
-    
+
     def __dict__(self):
-        return {"NAME": self.NAME, "VALUE": self.VALUE, "LAST_SUCCESS_DATE": self.LAST_SUCCESS_DATE}
-    
+        return {
+            "NAME": self.NAME,
+            "VALUE": self.VALUE,
+            "LAST_SUCCESS_DATE": self.LAST_SUCCESS_DATE,
+        }
+
     def __contains__(self, item):
         # see if it was found in the name or value:
         return item in self.NAME or item in self.VALUE
-    
+
     def copy(self):
         return CloudTag(NAME=self.NAME, VALUE=self.VALUE)
-    
+
     def is_name(self, name: str):
         return self.NAME == name
-    
+
     def is_value(self, value: str):
         return self.VALUE == value
-    
+
     @classmethod
     def from_dict(cls, data: dict, FULL: dict):
         """
@@ -127,6 +138,8 @@ class CloudTag:
         # make sure that the dictionary has the required keys and nothing else:
         required_keys = {"NAME", "VALUE"}
         if not required_keys.issubset(data.keys()):
-            raise ValueError(f"Dictionary must contain the following keys: {required_keys}")
+            raise ValueError(
+                f"Dictionary must contain the following keys: {required_keys}"
+            )
 
         return cls(**data)

@@ -19,6 +19,6 @@ from .lists import (
     BugtraqList,
     ThreatIntelList,
     ComplianceList,
-    TagList, 
+    TagList,
     CloudTagList,
 )

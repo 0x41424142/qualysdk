@@ -80,43 +80,43 @@ class Host:
         Returns True if the host is a cloud host, False otherwise.
         """
         return self.cloudProvider is not None
-    
+
     def is_container_host(self) -> bool:
         """
         Returns True if the host is a container host, False otherwise.
         """
         return self.container is not None
-    
+
     def has_agent(self) -> bool:
         """
         Returns True if the host has an agent, False otherwise.
         """
         return self.agentId is not None
-    
+
     def to_dict(self) -> dict:
         """
         Returns a dictionary representation of the host object.
         """
         return self.__dict__
-    
+
     def keys(self) -> list:
         """
         Returns a list of keys for the host object.
         """
         return [key for key in self.__dict__.keys()]
-    
+
     def values(self) -> list:
         """
         Returns a list of values for the host object.
         """
         return [value for value in self.__dict__.values()]
-    
+
     def valid_values(self) -> list:
         """
         Return a list of keys that have values.
         """
         return [key for key, value in self.__dict__.items() if value is not None]
-    
+
     def __iter__(self):
         """
         Allows for iteration over the host object.
@@ -136,4 +136,3 @@ class Host:
         that can create the object for terminal space's sake.
         """
         return f"AssetID({self.assetId})"
-    

@@ -11,7 +11,7 @@ from warnings import filterwarnings
 
 from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 
-from .lists import *
+from .lists import BaseList
 
 from .bugtraq import Bugtraq
 from .software import Software
@@ -25,7 +25,7 @@ from .tag import Tag, CloudTag
 filterwarnings("ignore", category=MarkupResemblesLocatorWarning, module="bs4")
 
 
-def make_lists(data: dict) -> dict:
+'''def make_lists(data: dict) -> dict:
     """
     make_lists - identify what data is stored so we can create the
     appropriate <>List object.
@@ -45,13 +45,13 @@ def make_lists(data: dict) -> dict:
     """
     LIST_TYPE_MAPPING = {
         "SOFTWARE_LIST": {
-            "class": SoftwareList,
+            "class": BaseList,
             "key": "SOFTWARE",
             "item_class": Software,
         },
-        "CVE_LIST": {"class": CVEList, "key": "CVE", "item_class": CVEID},
+        "CVE_LIST": {"class": BaseList, "key": "CVE", "item_class": CVEID},
         "VENDOR_REFERENCE_LIST": {
-            "class": ReferenceList,
+            "class": BaseList,
             "key": "VENDOR_REFERENCE",
             "item_class": VendorReference,
         },
@@ -62,14 +62,14 @@ def make_lists(data: dict) -> dict:
             "needs_casted": ("ID", int),
         },
         "THREAT_INTELLIGENCE": {
-            "class": ThreatIntelList,
+            "class": BaseList,
             "key": "THREAT_INTEL",
             "item_class": ThreatIntel,
             "needs_casted": ("@id", int),
             "rename_keys": {"@id": "ID", "#text": "TEXT"},
         },
         "COMPLIANCE_LIST": {
-            "class": ComplianceList,
+            "class": BaseList,
             "key": "COMPLIANCE",
             "item_class": Compliance,
         },
@@ -137,7 +137,7 @@ def make_lists(data: dict) -> dict:
                 data[LIST_TYPE] = list_info["class"]()
 
     return data
-
+'''
 
 filterwarnings(
     "ignore", category=MarkupResemblesLocatorWarning, module="bs4"
@@ -180,29 +180,29 @@ class KBEntry:
         metadata={"description": "The date the vulnerability code was last modified."},
         default=None,
     )
-    BUGTRAQ_LIST: Optional[BugtraqList] = field(
+    BUGTRAQ_LIST: Optional[BaseList] = field(
         metadata={
             "description": "A list of Bugtraq IDs affected by the vulnerability."
         },
-        default_factory=BugtraqList,
+        default_factory=BaseList,
     )
     PATCHABLE: Optional[bool] = field(
         metadata={"description": "Whether the vulnerability is patchable."},
         default=False,
     )
-    SOFTWARE_LIST: Optional[SoftwareList] = field(
+    SOFTWARE_LIST: Optional[BaseList] = field(
         metadata={"description": "A list of software affected by the vulnerability."},
-        default_factory=SoftwareList,
+        default_factory=BaseList,
     )
-    VENDOR_REFERENCE_LIST: Optional[ReferenceList] = field(
+    VENDOR_REFERENCE_LIST: Optional[BaseList] = field(
         metadata={
             "description": "A list of vendor bulletin references for the vulnerability."
         },
-        default_factory=ReferenceList,
+        default_factory=BaseList,
     )
-    CVE_LIST: Optional[CVEList] = field(
+    CVE_LIST: Optional[BaseList] = field(
         metadata={"description": "A list of CVEIDs affected by the vulnerability."},
-        default_factory=CVEList,
+        default_factory=BaseList,
     )
     DIAGNOSIS: Optional[str] = field(
         metadata={"description": "The diagnosis of the vulnerability."}, default=""
@@ -234,11 +234,11 @@ class KBEntry:
         },
         default=None,
     )
-    THREAT_INTELLIGENCE: Optional[ThreatIntelList] = field(
+    THREAT_INTELLIGENCE: Optional[BaseList] = field(
         metadata={
             "description": "The threat intelligence details of the vulnerability."
         },
-        default_factory=ThreatIntelList,
+        default_factory=BaseList,
     )
     SUPPORTED_MODULES: Optional[str] = field(
         metadata={"description": "The supported modules for the vulnerability."},
@@ -259,11 +259,11 @@ class KBEntry:
         metadata={"description": "The technology of the vulnerability."},
         default=None,
     )
-    COMPLIANCE_LIST: Optional[ComplianceList] = field(
+    COMPLIANCE_LIST: Optional[BaseList] = field(
         metadata={
             "description": "The list of compliance frameworks for the vulnerability."
         },
-        default_factory=ComplianceList,
+        default_factory=BaseList,
     )
     LAST_CUSTOMIZATION: Optional[datetime] = field(
         metadata={"description": "The date the vulnerability was last customized."},
@@ -319,7 +319,7 @@ class KBEntry:
                 setattr(self, field, BeautifulSoup(getattr(self, field), "html.parser").get_text())
 
     def __str__(self):
-        return f"{self.QID}: {self.TITLE}"
+        return f"{self.QID}"
 
     def __eq__(self, other):
         return self.QID == other.QID
@@ -383,7 +383,7 @@ class KBEntry:
                 data[key] = datetime.fromisoformat(data[key])
 
         # call the make_lists function to create the appropriate list objects:
-        data = make_lists(data)
+        #data = make_lists(data)
 
         # and finally, create the KBEntry object:
         return cls(**data)

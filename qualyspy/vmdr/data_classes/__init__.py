@@ -12,13 +12,4 @@ from .compliance import Compliance
 from .tag import Tag, CloudTag
 from .detection import Detection
 
-from .lists import (
-    ReferenceList,
-    SoftwareList,
-    CVEList,
-    BugtraqList,
-    ThreatIntelList,
-    ComplianceList,
-    TagList,
-    CloudTagList,
-)
+from .lists import BaseList

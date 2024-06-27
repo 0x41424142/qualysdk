@@ -112,9 +112,9 @@ def get_host_list(
     # add the action to the kwargs:
     kwargs["action"] = "list"
 
-    if kwargs["truncation_limit"] == 0 and page_count == "all":
+    if kwargs["truncation_limit"] == 0:
         print(
-            "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it will almost certainly strain your compute resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
+            "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it uses lots of resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
         )
 
     # qualys expects all boolean values to be represented as a 0 or 1:

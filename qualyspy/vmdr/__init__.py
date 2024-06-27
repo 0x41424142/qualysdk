@@ -18,16 +18,7 @@ from .data_classes import (
     CloudTag,
     Detection,
 )
-from .data_classes.lists import (
-    SoftwareList,
-    ReferenceList,
-    CVEList,
-    BugtraqList,
-    ThreatIntelList,
-    ComplianceList,
-    TagList,
-    CloudTagList,
-)
+from .data_classes.lists import BaseList
 
 from .query_kb import query_kb
 from .get_host_list import get_host_list

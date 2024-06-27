@@ -8,50 +8,9 @@ from datetime import datetime
 
 from ipaddress import IPv4Address, IPv6Address
 
-from .lists.tag_list import TagList, CloudTagList
+from .lists import BaseList
 from .tag import Tag, CloudTag
 from .detection import Detection
-
-
-def make_lists(
-    data: dict, _type: Literal["tag", "cloud_tag"]
-) -> Union[TagList, CloudTagList]:
-    """
-    Takes TAGS or CLOUD_PROVIDER_TAGS dict and converts it to a TagList or CloudTagList.
-    List of tag dicts are undrneath data['TAG'] (cloud provider tags are under data['CLOUD_PROVIDER_TAGS']).
-    If there is just one thing, there is no ['TAG']/['CLOUD_PROVIDER_TAGS'] key, just the immediate keys.
-    """
-    if _type == "tag":
-        if "TAG" in data:
-            # if data['TAG'] is a single tag dict, put it into a list of one tag.
-            if "NAME" in data["TAG"]:
-                return TagList([Tag(**data["TAG"])])  # TODO!!!! CHECK THIS!
-            # otherwise, it is a list of tags:
-            return TagList([Tag.from_dict(tag) for tag in data["TAG"]])
-        else:
-            return TagList([Tag.from_dict(data)])
-    elif _type == "cloud_tag":
-        if "CLOUD_TAG" in data:
-            if "NAME" in data["CLOUD_TAG"]:  # this is a single tag
-                return CloudTagList([CloudTag(**data["CLOUD_TAG"])])
-            # otherwise, it is a list of tags:
-            container = []
-            for tag in data["CLOUD_TAG"]:
-                t = CloudTag.from_dict(
-                    tag, FULL=tag
-                )  # FULL is a debug var to see the full data
-                container.append(t)
-            return CloudTagList(container)
-
-            # else: #underneath the CLOUD_TAG key is just a single dictionary containing the NAME, VALUE, etc. keys.
-            # return CloudTagList([CloudTag(**data["CLOUD_TAG"])])
-        else:
-            t = CloudTag.from_dict(data, FULL=data)
-            return CloudTagList([t])
-
-    else:
-        raise ValueError(f"Type must be 'tag' or 'cloud_tag', not {_type}")
-
 
 @dataclass(order=True)
 class VMDRHost:
@@ -147,9 +106,9 @@ class VMDRHost:
         metadata={"description": "The cloud agent running on of the host."},
         compare=False,
     )
-    TAGS: Union[dict, TagList] = field(
+    TAGS: Union[dict, BaseList] = field(
         default=None, metadata={"description": "The tags of the host."}, compare=False
-    )  # add to post init to convert to TagList (look at GAV lists for how to do this), as well as make a Tag class
+    )  # add to post init to convert to BaseList (look at GAV lists for how to do this), as well as make a Tag class
     LAST_VULN_SCAN_DATETIME: Union[str, datetime] = field(
         default=None,
         metadata={"description": "The last vulnerability scan date of the host."},
@@ -220,7 +179,7 @@ class VMDRHost:
         metadata={"description": "The EC2 instance ID of the host."},
         compare=False,
     )
-    CLOUD_PROVIDER_TAGS: Union[dict, CloudTagList] = field(
+    CLOUD_PROVIDER_TAGS: Union[dict, BaseList] = field(
         default=None,
         metadata={"description": "The cloud provider tags of the host."},
         compare=False,
@@ -244,7 +203,7 @@ class VMDRHost:
     def __post_init__(self):
         """
         Pull up nested dict values as attributes, convert IPs,
-        put tags in a TagList and convert strings to datetime objects.
+        put tags in a BaseList and convert strings to datetime objects.
         """
         DNS_DATA_FIELDS = ["HOSTNAME", "DOMAIN", "FQDN"]
         DATETIME_FIELDS = [
@@ -290,10 +249,18 @@ class VMDRHost:
                 setattr(self, INT_FIELD, int(getattr(self, INT_FIELD)))
 
         if self.TAGS:
-            self.TAGS = make_lists(self.TAGS, "tag")
+            #if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
+            if isinstance(self.TAGS['TAG'], list):
+                self.TAGS = BaseList([Tag.from_dict(tag) for tag in self.TAGS['TAG']])
+            else: #if it is a single tag dict:
+                self.TAGS = BaseList([Tag.from_dict(self.TAGS['TAG'])])
 
         if self.CLOUD_PROVIDER_TAGS:
-            self.CLOUD_PROVIDER_TAGS = make_lists(self.CLOUD_PROVIDER_TAGS, "cloud_tag")
+            #if 'CLOUD_TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
+            if isinstance(self.CLOUD_PROVIDER_TAGS['CLOUD_TAG'], list):
+                self.CLOUD_PROVIDER_TAGS = BaseList([CloudTag.from_dict(tag) for tag in self.CLOUD_PROVIDER_TAGS['CLOUD_TAG']])
+            else: #if it is a single tag dict:
+                self.CLOUD_PROVIDER_TAGS = BaseList([CloudTag.from_dict(self.CLOUD_PROVIDER_TAGS['CLOUD_TAG'])])
 
         # CLOUD SPECIFIC FIELDS:
         if self.METADATA:

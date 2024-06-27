@@ -82,7 +82,8 @@ class Detection:
 
 
     def __str__(self):
-        return str(self.UNIQUE_VULN_ID)
+        #return str(self.UNIQUE_VULN_ID)
+        return str(self.QID)
 
     def copy(self):
         return Detection(

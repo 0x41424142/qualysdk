@@ -31,7 +31,7 @@ class Detection:
     SSL: int = field(metadata={"description": "The SSL status of the detection."})
     RESULTS: str = field(
         metadata={"description": "The results of the detection."}
-    )  # will have to use bs4 to parse this
+    )
     STATUS: Literal["New", "Active", "Fixed", "Re-Opened"] = field(
         metadata={"description": "The status of the detection."}
     )
@@ -69,9 +69,17 @@ class Detection:
             "LAST_UPDATE_DATETIME",
             "LAST_PROCESSED_DATETIME",
         ]
+
+        HTML_FIELDS = ["RESULTS"]
+
         for field in DATETIME_FIELDS:
             if isinstance(getattr(self, field), str):
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+
+        # clean up fields that have html tags
+        for field in HTML_FIELDS:
+            setattr(self, field, BeautifulSoup(getattr(self, field), "html.parser").get_text())
+
 
     def __str__(self):
         return str(self.UNIQUE_VULN_ID)
@@ -94,6 +102,30 @@ class Detection:
             IS_DISABLED=self.IS_DISABLED,
             LAST_PROCESSED_DATETIME=self.LAST_PROCESSED_DATETIME,
         )
+    
+    def to_dict(self):
+        """
+        to_dict - convert the Detection object to a dictionary.
+
+        This function is used to convert the Detection object to a dictionary.
+        """
+        return {
+            "UNIQUE_VULN_ID": self.UNIQUE_VULN_ID,
+            "QID": self.QID,
+            "TYPE": self.TYPE,
+            "SEVERITY": self.SEVERITY,
+            "SSL": self.SSL,
+            "RESULTS": self.RESULTS,
+            "STATUS": self.STATUS,
+            "FIRST_FOUND_DATETIME": self.FIRST_FOUND_DATETIME,
+            "LAST_FOUND_DATETIME": self.LAST_FOUND_DATETIME,
+            "TIMES_FOUND": self.TIMES_FOUND,
+            "LAST_TEST_DATETIME": self.LAST_TEST_DATETIME,
+            "LAST_UPDATE_DATETIME": self.LAST_UPDATE_DATETIME,
+            "IS_IGNORED": self.IS_IGNORED,
+            "IS_DISABLED": self.IS_DISABLED,
+            "LAST_PROCESSED_DATETIME": self.LAST_PROCESSED_DATETIME,
+        }
 
     @classmethod
     def from_dict(cls, data: Union[dict, list]):

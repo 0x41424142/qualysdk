@@ -283,55 +283,40 @@ class KBEntry:
         if self.SEVERITY_LEVEL is not None and not isinstance(self.SEVERITY_LEVEL, int):
             self.SEVERITY_LEVEL = int(self.SEVERITY_LEVEL)
 
-        if self.LAST_SERVICE_MODIFICATION_DATETIME is not None and not isinstance(
-            self.LAST_SERVICE_MODIFICATION_DATETIME, datetime
-        ):
-            self.LAST_SERVICE_MODIFICATION_DATETIME = datetime.fromisoformat(
-                self.LAST_SERVICE_MODIFICATION_DATETIME
-            )
+        DATE_FIELDS = [
+            "LAST_SERVICE_MODIFICATION_DATETIME",
+            "PUBLISHED_DATETIME",
+            "CODE_MODIFIED_DATETIME",
+            "LAST_CUSTOMIZATION",
+        ]
 
-        if self.PUBLISHED_DATETIME is not None and not isinstance(
-            self.PUBLISHED_DATETIME, datetime
-        ):
-            self.PUBLISHED_DATETIME = datetime.fromisoformat(self.PUBLISHED_DATETIME)
+        BOOL_FIELDS = ["PATCHABLE", "PCI_FLAG", "IS_DISABLED"]
 
-        if self.CODE_MODIFIED_DATETIME is not None and not isinstance(
-            self.CODE_MODIFIED_DATETIME, datetime
-        ):
-            self.CODE_MODIFIED_DATETIME = datetime.fromisoformat(
-                self.CODE_MODIFIED_DATETIME
-            )
+        HTML_FIELDS = ["DIAGNOSIS", "CONSEQUENCE", "SOLUTION"]
 
-        if self.LAST_CUSTOMIZATION is not None and not isinstance(
-            self.LAST_CUSTOMIZATION, datetime
-        ):
-            if isinstance(self.LAST_CUSTOMIZATION, dict):
-                self.LAST_CUSTOMIZATION = datetime.fromisoformat(
-                    self.LAST_CUSTOMIZATION["DATETIME"]
-                )
-            else:
-                self.LAST_CUSTOMIZATION = datetime.fromisoformat(
-                    self.LAST_CUSTOMIZATION
-                )
+        for field in DATE_FIELDS:
+            if getattr(self, field) is not None and not isinstance(
+                getattr(self, field), datetime
+            ):
+                #special case for LAST_CUSTOMIZATION:
+                if field == "LAST_CUSTOMIZATION":
+                    if isinstance(getattr(self, field), dict):
+                        setattr(self, field, datetime.fromisoformat(getattr(self, field)["DATETIME"]))
+                    else:
+                        setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+                else:
+                    setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
-        if self.PATCHABLE is not None and not isinstance(self.PATCHABLE, bool):
-            self.PATCHABLE = bool(self.PATCHABLE)
+        for field in BOOL_FIELDS:
+            if getattr(self, field) is not None and not isinstance(
+                getattr(self, field), bool
+            ):
+                setattr(self, field, bool(getattr(self, field)))
 
-        if self.PCI_FLAG is not None and not isinstance(self.PCI_FLAG, bool):
-            self.PCI_FLAG = bool(self.PCI_FLAG)
-
-        if self.IS_DISABLED is not None and not isinstance(self.IS_DISABLED, bool):
-            self.IS_DISABLED = bool(self.IS_DISABLED)
-
-        # parse certain fields that are returned as HTML:
-        if self.DIAGNOSIS is not None:
-            self.DIAGNOSIS = BeautifulSoup(self.DIAGNOSIS, "html.parser").get_text()
-
-        if self.CONSEQUENCE is not None:
-            self.CONSEQUENCE = BeautifulSoup(self.CONSEQUENCE, "html.parser").get_text()
-
-        if self.SOLUTION is not None:
-            self.SOLUTION = BeautifulSoup(self.SOLUTION, "html.parser").get_text()
+        
+        for field in HTML_FIELDS:
+            if getattr(self, field) is not None:
+                setattr(self, field, BeautifulSoup(getattr(self, field), "html.parser").get_text())
 
     def __str__(self):
         return f"{self.QID}: {self.TITLE}"

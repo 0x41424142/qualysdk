@@ -45,7 +45,6 @@ def get_host_list(
     API params (kwargs):
         ```
         action (Optional[str]) #The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
-        linux_hostname (Optional[bool]) #Whether to show the Linux hostname. Default is 'False'. ends up being passed to API as 0 or 1.
         echo_request (Optional[bool]) #Whether to show the request. Default is 'False'. ends up being passed to API as 0 or 1.
         show_asset_id (Optional[bool]) #Whether to show the asset IDs. Default is 'False'. ends up being passed to API as 0 or 1.
         details (Optional[Union[Literal["Basic", "Basic/AGs", "All", "All/AGs", "None"], None]]): #The level of detail to return. Default is 'Basic'. Basic includes host ID, IP, tracking method, DNS, netBIOS, and OS. Basic/AGs includes basic host information plus asset group information. Asset group information includes the asset group ID and title. All shows all basic host information plus last vulnerability and compliance scan dates. All/AGs includes all information plus asset group information: group ID and title. None shows only the host ID (or asset ID if show_asset_id is set to 1 (True)).

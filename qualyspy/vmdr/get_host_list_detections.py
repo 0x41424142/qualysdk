@@ -5,6 +5,7 @@ This endpoint is used to get a list of hosts and their QID detections.
 """
 
 from typing import List, Union
+from queue import Queue
 
 from xmltodict import parse
 
@@ -15,13 +16,33 @@ from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 
-def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs)->List:
+def remove_problem_characters(xml_content):  # sigh...
+    """
+    Remove unprintable characters from XML content.
+    Args:
+        xml_content (str): The XML content.
+    Returns:
+        str: The XML content with unprintable characters removed.
+    """
+    # Create a translation table that maps non-printable and non-whitespace characters to None
+    # Get all characters in Unicode
+    all_chars = (chr(i) for i in range(65536))  # Unicode range is from 0 to 65535
+    # Filter out printable characters and whitespace
+    non_printable = "".join(
+        c for c in all_chars if not c.isprintable() and not c.isspace()
+    )
+    # Create the translation table
+    translation_table = str.maketrans("", "", non_printable)
+    return xml_content.translate(translation_table)
+
+def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", threaded: bool = False, **kwargs)->List:
     """
     get_hld - get a list of hosts and their QID detections.
 
     Args:
         auth (BasicAuth): The BasicAuth object containing the username and password.
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
+        threaded (bool): Whether to use threading. Defaults to False.
         **kwargs: Additional keyword arguments to pass to the API. See below.
 
     Keyword Args:
@@ -32,8 +53,7 @@ def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs)->L
         include_vuln_type (Optional[Literal["confirmed", "potential"]]) #The type of vulnerability to include. If not specified, both types are included.
         
         DETECTION FILTERS:
-        show_results (Optional[bool]) #Whether to show the results. Default is True. Ends up being passed to the API as 0 or 1.
-        show_reopened_info (Optional[bool]) #Whether to show why reopened vulns were reopened. Default is False. Ends up being passed to the API as 0 or 1.
+        show_results (Optional[bool]) #Whether to show the results. Default is True. Ends up being passed to the API as 0 or 1. WARNING: this SDK overwrites any value you pass with '1'. It is just recognized as valid for the sake of completeness.
         arf_kernel_filter (Optional[Literal[0,1,2,3,4]]) #Specify vulns for Linux kernels. 0 = don't filter, 1 = exclude kernel vulns that are not exploitable, 2 = only include kernel related vulns that are not exploitable, 3 = only include exploitable kernel vulns, 4 = only include kernel vulns. If specified, results are in a host's <AFFECT_RUNNING_KERNEL> tag.
         arf_service_filter (Optional[Literal[0,1,2,3,4]]) #Specify vulns found on running or nonrunning ports/services. 0 = don't filter, 1 = exclude service related vulns that are exploitable, 2 = only include service vulns that are exploitable, 3 = only include service vulns that are not exploitable, 4 = only include service vulns. If specified, results are in a host's <AFFECT_RUNNING_SERVICE> tag.
         arf_config_filter (Optional[Literal[0,1,2,3,4]]) #Specify vulns that can be vulnerable based on host config. 0 = don't filter, 1 = exclude vulns that are exploitable due to host config, 2 = only include config related vulns that are exploitable, 3 = only include config related vulns that are not exploitable, 4 = only include config related vulns. If specified, results are in a host's <AFFECT_EXPLOITABLE_CONFIG> tag.
@@ -61,11 +81,99 @@ def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs)->L
         ipv6 (Optional[str]) #The IPv6 address of the host to include. Can be a comma-separated string. Does not support ranges.
         ag_ids (Optional[str]) #Show only hosts belonging to the specified asset group IDs. Can be a comma-separated string, and also supports ranges with a hyphen: 1-5.
         ag_titles (Optional[str]) #Show only hosts belonging to the specified asset group titles. Can be a comma-separated string.
-        TODO: add more filters.
+        network_ids (Optional[str]) #Show only hosts belonging to the specified network IDs. Can be a comma-separated string.
+        network_names (Optional[str]) #displays the name of the network corresponding to the network ID.
+        vm_scan_since (Optional[str]) #The date and time since the last VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        no_vm_scan_since (Optional[str]) #The date and time since the last VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        max_days_since_last_vm_scan (Optional[int]) #The maximum number of days since the last VM scan. 
+        vm_processed_before (Optional[str]) #The date and time before the VM scan was processed. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_processed_after (Optional[str]) #The date and time after the VM scan was processed. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_scan_date_before (Optional[str]) #The date and time before the VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_scan_date_after (Optional[str]) #The date and time after the VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_auth_scan_date_before (Optional[str]) #The date and time before the VM authenticated scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_auth_scan_date_after (Optional[str]) #The date and time after the VM authenticated scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        status (Optional[Literal["New", "Active", "Fixed", "Re-Opened"]]) #The status of the detection.
+        compliance_enabled (Optional[bool]) #Whether compliance is enabled. Default is False. Ends up being passed to the API as 0 or 1.
+        os_pattern (Optional[str]) #PCRE Regex to match operating systems.
 
+        QID FILTERS:
+        qids (Optional[str]) #A comma-separated string of QIDs to include.
+        severities (Optional[str]) #A comma-separated string of severities to include. Can also be a hyphenated range, i.e. '2-4'.
+        filter_superseded_qids (Optional[bool]) #Whether to filter superseded QIDs. Default is False. Ends up being passed to the API as 0 or 1.
+        include_search_list_titles (Optional[str]) #A comma-separated string of search list titles to include.
+        exclude_search_list_titles (Optional[str]) #A comma-separated string of search list titles to exclude.
+        include_search_list_ids (Optional[str]) #A comma-separated string of search list IDs to include.
+        exclude_search_list_ids (Optional[str]) #A comma-separated string of search list IDs to exclude.
+
+        ASSET TAG FILTERS:
+        use_tags (Optional[bool]) #Whether to use tags. Default is False. Ends up being passed to the API as 0 or 1.
+        tag_set_by (Optional[Literal['id','name']]) #When filtering on tags, whether to filter by tag ID or tag name.
+        tag_include_selector (Optional[Literal['any','all']]) #When filtering on tags, choose if asset has to match any or all tags specified.
+        tag_exclude_selector (Optional[Literal['any','all']]) #When filtering on tags, choose if asset has to match any or all tags specified.
+        tag_set_include (Optional[str]) #A comma-separated string of tag IDs or names to include.
+        tag_set_exclude (Optional[str]) #A comma-separated string of tag IDs or names to exclude.
+        show_tags (Optional[bool]) #Whether to show tags. Default is False. Ends up being passed to the API as 0 or 1.
+
+        QDS FILTERS:
+        show_qds (Optional[bool]) #Whether to show QDS. Default is False. Ends up being passed to the API as 0 or 1.
+        qds_min (Optional[int]) #The minimum QDS to include.
+        qds_max (Optional[int]) #The maximum QDS to include.
+        show_qds_factors (Optional[bool]) #Whether to show QDS factors. Default is False. Ends up being passed to the API as 0 or 1.
+
+        EC2/AZURE METADATA FILTERS:
+        host_metadata (Optional[Literal['all,'ec2', 'azure']]) #The type of metadata to include. Default is 'all'.
+        host_metadata_fields (Optional[str]) #A comma-separated string of metadata fields to include. Use carefully.
+        show_cloud_tags (Optional[bool]) #Whether to show cloud tags. Default is False. Ends up being passed to the API as 0 or 1.
+        cloud_tag_fields (Optional[str]) #A comma-separated string of cloud tag fields to include. Use carefully.
         ```
 
 
     Returns:
         List: A list of VMDRHost objects, with their DETECTIONS attribute populated.
     """
+    # Set the kwargs
+
+    kwargs["action"] = "list"
+    kwargs["echo_request"] = 0
+    kwargs['show_results'] = 1
+    kwargs['output_format'] = "XML"
+
+    #If any kwarg is a bool, convert it to 1 or 0
+    for key in kwargs:
+        if isinstance(kwargs[key], bool):
+            kwargs[key] = 1 if kwargs[key] else 0
+
+    #If any kwarg is None, set it to 'None'
+    for key in kwargs:
+        if kwargs[key] is None:
+            kwargs[key] = "None"
+
+    #If threaded == True, use threading
+    if threaded:
+        raise NotImplementedError("Threading is not yet implemented.")
+
+    responses = []
+    pulled = 0
+
+    while True:
+
+        # make the request:
+        response = call_api(
+            auth=auth,
+            module="vmdr",
+            endpoint="get_hld",
+            params=kwargs,
+            headers={"X-Requested-With": "qualyspy SDK"},
+        )
+        if response.text == "":
+            print("No data returned.")
+            return responses
+
+        xml = parse(remove_problem_characters(response.text), encoding="utf-8")
+        pulled += 1
+        # Check for errors
+        pass
+        if pulled == page_count:
+            print("Pulled all pages.")
+            break
+    

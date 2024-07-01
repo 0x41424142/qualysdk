@@ -102,10 +102,10 @@ class BasicAuth(BaseAuthentication):
             )
 
         rl = {
-            "X-RateLimit-Remaining": int(r.headers["X-RateLimit-Remaining"]),
+            #"X-RateLimit-Remaining": int(r.headers["X-RateLimit-Remaining"]),
             "X-RateLimit-Limit": int(r.headers["X-RateLimit-Limit"]),
             "X-Concurrency-Limit-Limit": int(r.headers["X-Concurrency-Limit-Limit"]),
-            "X-RateLimit-ToWait-Sec": int(r.headers["X-RateLimit-ToWait-Sec"]),
+            #"X-RateLimit-ToWait-Sec": int(r.headers["X-RateLimit-ToWait-Sec"]),
         }
         print(f"Success. Rate limit details: {rl}") if not return_ratelimit else None
         return rl if return_ratelimit else None

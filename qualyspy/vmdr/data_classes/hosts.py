@@ -353,6 +353,14 @@ class VMDRHost:
         else:
             # fall back to QG_HostID:
             return f"Host({self.QG_HOSTID})"
+        
+    def __int__(self) -> int:
+        if self.ASSET_ID:
+            return self.ASSET_ID
+        elif self.ID:
+            return self.ID
+        else:
+            raise ValueError("Host object does not have an asset ID or host ID.")
 
     def __repr__(self) -> str:
         """
@@ -454,6 +462,9 @@ class VMDRID:
 
     def __str__(self) -> str:
         return str(self.ID)
+    
+    def __int__(self) -> int:
+        return self.ID
 
     def __repr__(self) -> str:
         if self.TYPE == "asset":

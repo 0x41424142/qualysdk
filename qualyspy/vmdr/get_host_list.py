@@ -111,11 +111,6 @@ def get_host_list(
     # add the action to the kwargs:
     kwargs["action"] = "list"
 
-    if kwargs["truncation_limit"] == 0:
-        print(
-            "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it uses lots of resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
-        )
-
     # qualys expects all boolean values to be represented as a 0 or 1:
     for key, value in kwargs.items():
         if isinstance(value, bool):
@@ -126,6 +121,11 @@ def get_host_list(
         # if host_metadata is specified and set to a non-"all" or non-NoneType, lower() it:
         if key == "host_metadata" and value not in ["all", None]:
             kwargs[key] = value.lower()
+
+    if kwargs["truncation_limit"] == 0 and kwargs["details"] != "None":
+        print(
+            "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it uses lots of resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
+        )
 
     while True:
         # make the request:

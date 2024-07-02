@@ -74,6 +74,13 @@ class VMDRHost:
         metadata={"description": "The last boot time of the host."},
         compare=False,
     )  # add to post init to cast to datetime
+
+    LAST_SCAN_DATETIME: Union[str, datetime] = field(
+        default=None,
+        metadata={"description": "The last scan date of the host."},
+        compare=False,
+    )  # add to post init to cast to datetime
+
     SERIAL_NUMBER: str = field(
         default=None,
         metadata={"description": "The serial number of the host."},
@@ -145,6 +152,13 @@ class VMDRHost:
         metadata={"description": "The last compliance scan date of the host."},
         compare=False,
     )  # add to post init to cast to datetime
+
+    LAST_PC_SCANNED_DATE: Union[str, datetime] = field(
+        default=None,
+        metadata={"description": "The last PC scanned date of the host."},
+        compare=False,
+    )  # add to post init to cast to datetime
+
     ASSET_GROUP_IDS: List[str] = field(
         default=None,
         metadata={"description": "The asset group IDs of the host."},
@@ -196,10 +210,10 @@ class VMDRHost:
 
     # DETECTION LIST FIELDS:
     DETECTION_LIST: Optional[Union[list[Detection], BaseList[Detection]]] = field(
-        default=None,
+        default=BaseList([]),
         metadata={"description": "The detection list of the host."},
         compare=False,
-    ) 
+    )
 
     def __post_init__(self):
         """
@@ -211,6 +225,7 @@ class VMDRHost:
             "LAST_BOOT",
             "FIRST_FOUND_DATE",
             "LAST_ACTIVITY_DATE",
+            "LAST_SCAN_DATETIME",
             "LAST_VULN_SCAN_DATETIME",
             "LAST_VM_SCANNED_DATE",
             "LAST_VM_AUTH_SCANNED_DATE",
@@ -218,6 +233,7 @@ class VMDRHost:
             "LAST_COMPLIANCE_SCAN_DATETIME",
             "LAST_VULN_SCAN_DATE",
             "LAST_ACTIVITY",
+            "LAST_PC_SCANNED_DATE",
         ]
         INT_FIELDS = [
             "ID",
@@ -331,11 +347,14 @@ class VMDRHost:
                             self.METADATA[key_selector]["ATTRIBUTE"]["VALUE"],
                         )
 
-            #check for a detections list and convert it to a BaseList of Detection objects (used in hld):
+            # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
             if self.DETECTION_LIST:
                 if isinstance(self.DETECTION_LIST["DETECTION"], list):
                     self.DETECTION_LIST = BaseList(
-                        [Detection.from_dict(detection) for detection in self.DETECTION_LIST["DETECTION"]]
+                        [
+                            Detection.from_dict(detection)
+                            for detection in self.DETECTION_LIST["DETECTION"]
+                        ]
                     )
                 else:
                     self.DETECTION_LIST = BaseList(
@@ -353,7 +372,7 @@ class VMDRHost:
         else:
             # fall back to QG_HostID:
             return f"Host({self.QG_HOSTID})"
-        
+
     def __int__(self) -> int:
         if self.ASSET_ID:
             return self.ASSET_ID
@@ -462,7 +481,7 @@ class VMDRID:
 
     def __str__(self) -> str:
         return str(self.ID)
-    
+
     def __int__(self) -> int:
         return self.ID
 

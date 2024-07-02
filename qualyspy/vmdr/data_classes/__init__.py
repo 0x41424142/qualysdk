@@ -11,5 +11,7 @@ from .threat_intel import ThreatIntel
 from .compliance import Compliance
 from .tag import Tag, CloudTag
 from .detection import Detection
+from .qds_factor import QDSFactor
+from .qds import QDS
 
 from .lists import BaseList

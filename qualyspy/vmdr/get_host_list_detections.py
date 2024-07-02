@@ -16,6 +16,7 @@ from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 
+
 def remove_problem_characters(xml_content):  # sigh...
     """
     Remove unprintable characters from XML content.
@@ -35,7 +36,13 @@ def remove_problem_characters(xml_content):  # sigh...
     translation_table = str.maketrans("", "", non_printable)
     return xml_content.translate(translation_table)
 
-def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", threaded: bool = False, **kwargs)->List:
+
+def get_hld(
+    auth: BasicAuth,
+    page_count: Union[int, "all"] = "all",
+    threaded: bool = False,
+    **kwargs,
+) -> List:
     """
     get_hld - get a list of hosts and their QID detections.
 
@@ -51,7 +58,7 @@ def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", threaded: bo
         echo_request (Optional[bool]) #Whether to echo the request. Default is False. Ends up being passed to the API as 0 or 1. WARNING: this SDK does not include this field in the data.
         show_asset_id (Optional[bool]) #Whether to show the asset IDs. Default is 'False'. ends up being passed to API as 0 or 1.
         include_vuln_type (Optional[Literal["confirmed", "potential"]]) #The type of vulnerability to include. If not specified, both types are included.
-        
+
         DETECTION FILTERS:
         show_results (Optional[bool]) #Whether to show the results. Default is True. Ends up being passed to the API as 0 or 1. WARNING: this SDK overwrites any value you pass with '1'. It is just recognized as valid for the sake of completeness.
         arf_kernel_filter (Optional[Literal[0,1,2,3,4]]) #Specify vulns for Linux kernels. 0 = don't filter, 1 = exclude kernel vulns that are not exploitable, 2 = only include kernel related vulns that are not exploitable, 3 = only include exploitable kernel vulns, 4 = only include kernel vulns. If specified, results are in a host's <AFFECT_RUNNING_KERNEL> tag.
@@ -85,7 +92,7 @@ def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", threaded: bo
         network_names (Optional[str]) #displays the name of the network corresponding to the network ID.
         vm_scan_since (Optional[str]) #The date and time since the last VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
         no_vm_scan_since (Optional[str]) #The date and time since the last VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
-        max_days_since_last_vm_scan (Optional[int]) #The maximum number of days since the last VM scan. 
+        max_days_since_last_vm_scan (Optional[int]) #The maximum number of days since the last VM scan.
         vm_processed_before (Optional[str]) #The date and time before the VM scan was processed. Format is 'YYYY-MM-DD[THH:MM:SS]'.
         vm_processed_after (Optional[str]) #The date and time after the VM scan was processed. Format is 'YYYY-MM-DD[THH:MM:SS]'.
         vm_scan_date_before (Optional[str]) #The date and time before the VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
@@ -135,20 +142,20 @@ def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", threaded: bo
 
     kwargs["action"] = "list"
     kwargs["echo_request"] = 0
-    kwargs['show_results'] = 1
-    kwargs['output_format'] = "XML"
+    kwargs["show_results"] = 1
+    kwargs["output_format"] = "XML"
 
-    #If any kwarg is a bool, convert it to 1 or 0
+    # If any kwarg is a bool, convert it to 1 or 0
     for key in kwargs:
         if isinstance(kwargs[key], bool):
             kwargs[key] = 1 if kwargs[key] else 0
 
-    #If any kwarg is None, set it to 'None'
+    # If any kwarg is None, set it to 'None'
     for key in kwargs:
         if kwargs[key] is None:
             kwargs[key] = "None"
 
-    #If threaded == True, use threading
+    # If threaded == True, use threading
     if threaded:
         raise NotImplementedError("Threading is not yet implemented.")
 
@@ -170,10 +177,40 @@ def get_hld(auth: BasicAuth, page_count: Union[int, "all"] = "all", threaded: bo
             return responses
 
         xml = parse(remove_problem_characters(response.text), encoding="utf-8")
+
+        # check for errors:
+        if "html" in xml.keys():
+            raise Exception(
+                f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"
+            )
+
+        # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
+        # or just a dictionary. if it is just one, put it inside a list
+        if not isinstance(
+            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], list
+        ):
+            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
+                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
+            ]
+
+        for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+            "HOST"
+        ]:
+            host_obj = VMDRHost.from_dict(host)
+            host_obj.DETECTIONS = []
+            if host["DETECTION_LIST"]:
+                if isinstance(host["DETECTION_LIST"]["DETECTION"], list):
+                    for detection in host["DETECTION_LIST"]["DETECTION"]:
+                        det_obj = Detection.from_dict(detection)
+                        host_obj.DETECTION_LIST.append(det_obj)
+                else:
+                    det_obj = Detection.from_dict(host["DETECTION_LIST"]["DETECTION"])
+                    host_obj.DETECTION_LIST.append(det_obj)
+            responses.append(host_obj)
+
         pulled += 1
-        # Check for errors
         pass
         if pulled == page_count:
             print("Pulled all pages.")
             break
-    
+    return responses

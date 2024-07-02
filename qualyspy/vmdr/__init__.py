@@ -17,6 +17,8 @@ from .data_classes import (
     Tag,
     CloudTag,
     Detection,
+    QDSFactor,
+    QDS,
 )
 from .data_classes.lists import BaseList
 

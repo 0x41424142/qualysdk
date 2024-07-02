@@ -129,7 +129,7 @@ class Host:
         String representation of the host object.
         """
         return f"AssetID({self.assetId}))"
-    
+
     def __int__(self) -> int:
         """
         Integer representation of the host object.

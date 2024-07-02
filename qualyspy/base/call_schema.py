@@ -160,7 +160,6 @@ CALL_SCHEMA = frozendict(
                 "pagination": True,
                 "auth_type": "basic",
             },
-
             "get_hld": {
                 "endpoint": "/api/2.0/fo/asset/host/vm/detection/",
                 "method": ["GET", "POST"],

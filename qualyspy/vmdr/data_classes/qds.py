@@ -33,6 +33,9 @@ class QDS:
 
     def __str__(self):
         return str(self.SCORE)
+    
+    def __int__(self):
+        return self.SCORE
 
     def __contains__(self, item):
         return item in self.SEVERITY or item in self.SCORE

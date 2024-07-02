@@ -320,13 +320,7 @@ print(schema_query(module='gav', pretty=True))
 ```
 # TODO:
 
-- Implement host list detections API, perhaps using the custom ```VMDRHost/VMDRIDSet``` classes. The base detection object is written, but needs to have extra fields added to it:
-    
-    ```py
-    QDS #{'@severity': 'LOW', '#text': '20'}
-    QDS_FACTORS #{'QDS_FACTOR': [{'@name': 'CVSS', '#text': '2.1'}, {'@name': 'CVSS_version', '#text': 'v2'}, {'@name': 'epss', '#text': '0.00042'}, {'@name': 'trending', '#text': '06122024'}, {'@name': 'CVSS_vector', '#text': 'AV:L/AC:L/Au:N/C:P/I:N/A:N'}]} #WILL NEED TO DO THE LIST VS SINGLE DICT CHECK!
-    ```
-    - Also make sure to account for when there is only 1 detection using list of dicts vs a single dict check!
+- Improve HLD endpoint to support multithreading via calling host list API first to get IDs, then splitting up in a queue.
 
 - Write testing files.
 

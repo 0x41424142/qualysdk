@@ -210,7 +210,7 @@ class VMDRHost:
 
     # DETECTION LIST FIELDS:
     DETECTION_LIST: Optional[Union[list[Detection], BaseList[Detection]]] = field(
-        default=BaseList([]),
+        default_factory=BaseList,
         metadata={"description": "The detection list of the host."},
         compare=False,
     )
@@ -347,19 +347,19 @@ class VMDRHost:
                             self.METADATA[key_selector]["ATTRIBUTE"]["VALUE"],
                         )
 
-            # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
-            if self.DETECTION_LIST:
-                if isinstance(self.DETECTION_LIST["DETECTION"], list):
-                    self.DETECTION_LIST = BaseList(
-                        [
-                            Detection.from_dict(detection)
-                            for detection in self.DETECTION_LIST["DETECTION"]
-                        ]
-                    )
-                else:
-                    self.DETECTION_LIST = BaseList(
-                        [Detection.from_dict(self.DETECTION_LIST["DETECTION"])]
-                    )
+        # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
+        if self.DETECTION_LIST:
+            if isinstance(self.DETECTION_LIST["DETECTION"], list):
+                self.DETECTION_LIST = BaseList(
+                    [
+                        Detection.from_dict(detection)
+                        for detection in self.DETECTION_LIST["DETECTION"]
+                    ]
+                )
+            else:
+                self.DETECTION_LIST = BaseList(
+                    [Detection.from_dict(self.DETECTION_LIST["DETECTION"])]
+                )
 
     def __str__(self) -> str:
         """

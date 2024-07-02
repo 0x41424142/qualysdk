@@ -5,19 +5,17 @@ This endpoint is used to get a list of hosts and their QID detections.
 """
 
 from typing import List, Union
-from queue import Queue
+from urllib.parse import parse_qs, urlparse
 
 from xmltodict import parse
 
-from .data_classes.detection import Detection
-from .data_classes.lists import BaseList
 from .data_classes.hosts import VMDRHost
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 
 
-def remove_problem_characters(xml_content):  # sigh...
+def remove_problem_characters(xml_content: str) -> str:
     """
     Remove unprintable characters from XML content.
     Args:
@@ -26,12 +24,9 @@ def remove_problem_characters(xml_content):  # sigh...
         str: The XML content with unprintable characters removed.
     """
     # Create a translation table that maps non-printable and non-whitespace characters to None
-    # Get all characters in Unicode
-    all_chars = (chr(i) for i in range(65536))  # Unicode range is from 0 to 65535
-    # Filter out printable characters and whitespace
-    non_printable = "".join(
-        c for c in all_chars if not c.isprintable() and not c.isspace()
-    )
+    #non_printable = "".join(chr(i) for i in range(65536) if not chr(i).isprintable() and not chr(i).isspace())
+    non_printable = "".join(chr(i) for i in range(128, 65536) if not chr(i).isprintable() and not chr(i).isspace())
+
     # Create the translation table
     translation_table = str.maketrans("", "", non_printable)
     return xml_content.translate(translation_table)
@@ -186,31 +181,35 @@ def get_hld(
 
         # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
         # or just a dictionary. if it is just one, put it inside a list
-        if not isinstance(
-            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], list
-        ):
-            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
-                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
-            ]
+        if not isinstance(xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], list):
+            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]]
 
-        for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-            "HOST"
-        ]:
+        for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]:
             host_obj = VMDRHost.from_dict(host)
-            host_obj.DETECTIONS = []
-            if host["DETECTION_LIST"]:
-                if isinstance(host["DETECTION_LIST"]["DETECTION"], list):
-                    for detection in host["DETECTION_LIST"]["DETECTION"]:
-                        det_obj = Detection.from_dict(detection)
-                        host_obj.DETECTION_LIST.append(det_obj)
-                else:
-                    det_obj = Detection.from_dict(host["DETECTION_LIST"]["DETECTION"])
-                    host_obj.DETECTION_LIST.append(det_obj)
             responses.append(host_obj)
 
         pulled += 1
-        pass
         if pulled == page_count:
             print("Pulled all pages.")
             break
+
+        if "WARNING" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
+            if "URL" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]:
+                print(
+                    f"Pagination detected. Pulling next page from url: {xml['HOST_LIST_VM_DETECTION_OUTPUT']['RESPONSE']['WARNING']['URL']}"
+                )
+                # get the id_min parameter from the URL to pass into kwargs:
+                params = parse_qs(
+                    urlparse(
+                        xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
+                    ).query
+                )
+                kwargs["id_min"] = params["id_min"][0]
+
+            else:
+                break
+        else:
+            break
+
+
     return responses

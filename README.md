@@ -260,15 +260,15 @@ with BasicAuth(<username>, <password>, platform='qg1') as auth:
 
 ## Special Dataclasses for VMDR
 
-There are quite a few special dataclasses that are used in the VMDR module, as well as special list classes that are used to store these dataclasses.
+There are quite a few special dataclasses that are used in the VMDR module, as well as a ```BaseList``` class that is used to store these dataclasses and add some easier string functionality.
 
-For example, for KB entries, there is the ```KBEntry``` class which holds the various fields that the Qualys KB API returns. Inside a ```KBEntry``` object there are custom classes for things like ```ThreatIntel``` and ```Software```, which themselves are stored in ```ThreatIntelList``` and ```SoftwareList``` classes, respectively.
+For example, for KB entries, there is the ```KBEntry``` class which holds the various fields that the Qualys KB API returns. Inside a ```KBEntry``` object there are custom classes for things like ```ThreatIntel``` and ```Software```.
 ```py
 ... #Prior KB pull
 
 #Get the ThreatIntel attribute of the a KBEntry object, which is a custom dataclass:
 kb_entry.THREAT_INTELLIGENCE
->>>ThreatIntelList([ThreatIntel(ID=4, TEXT='High_Lateral_Movement')])
+>>>BaseList([ThreatIntel(ID=4, TEXT='High_Lateral_Movement')])
 
 #Or perhaps you want all the CVEs in a CVEList as a comma-separated string:
 str(kb_entry.CVEList)

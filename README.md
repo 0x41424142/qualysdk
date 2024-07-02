@@ -1,4 +1,4 @@
-# qualyspy - A Python Package for Interacting With Qualys APIs
+﻿# qualyspy - A Python Package for Interacting With Qualys APIs
 ```
 ··············································
 :   ____             _                       :
@@ -173,9 +173,42 @@ You can use any of the VMDR endpoints currently supported:
 |--|--|
 | ```query_kb``` | Query the Qualys KnowledgeBase (KB) for vulnerabilities.|
 | ```get_host_list``` | Query your VMDR host inventory based on kwargs. |
+|```get_hld``` | Query your VMDR host inventory with QID detections under the ```VMDRHost.DETECTION_LIST``` attribute.
 
+## Host List Detection
+```vmdr.get_hld()``` is the main API for extracting vulnerabilities out of the Qualys platform. It is one of the slowest APIs to return data due to Qualys taking a while to gather all the necessary data, but is arguably the most important. Pagination is controlled via the ```page_count``` kwarg. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination, as well as ```truncation_limit``` to specify how many hosts should be returned per page.
+>**Heads Up!:** Work is being done to speed up this API call as much as possible. Using Python's ```threading``` library, we can call the host list API with ```details=None``` to get a list of ```VMDRID```s, chunk them, and put them in a thread-safe ```queue```. Stay tuned!
+
+Some important kwargs this API accepts:
+|Kwarg| Possible Values |Description|
+|--|--|--|
+|```show_tags```| ```False/True```|Boolean on if API output should include Qualys host tags. Accessible under ```<VMDRHost>.TAGS```. Defaults to False.|
+|```host_metadata```| ```'all','ec2','azure'```|Controls if cloud host details should be returned. It is **highly recommended** to use ```all``` if specified.|
+|```show_cloud_tags```| ```False/True```|Boolean on if API output should include cloud provider tags. Accessible under ```<VMDRHost>.CLOUD_TAGS```. Defaults to False.|
+|```filter_superseded_qids```|```False/True```|Boolean on if API output should only include non-superseded QIDs. Defaults to False.|
+|```show_qds```|```False/True```|Boolean on if API output should include the Qualys Detection Score. Accessible under ```<VMDRHost>.QDS```. Defaults to False.|
+|```show_qds_factors```|```False/True```|Boolean on if API output should include the Qualys Detection Score factors, such as EPSS score, CVSS score, malware hashes, and real-time threat indicators (RTIs). Accessible under ```<VMDRHost>.QDS_FACTORS```. Defaults to False.|
+|```qids```|```None/QID_numbers```|Filter API output to a specific set of QIDs. Can be a comma-separated string: ```1357,2468,8901```, a range: ```12345-54321```, or a single QID: ```12345```.|
+|```ids```|```None/hostIDs```|Filter API output to a specific set of host IDs. Can be a comma-separated string: ```1357,2468,8901```, a range: ```12345-54321```, or a single host ID: ```12345```.|
+
+>**Heads Up!**: For a full breakdown of acceptable kwargs, see Qualys' documentation [here](https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf).
+```py
+from qualyspy import BasicAuth
+from qualyspy.vmdr import get_hld
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+# Pull 2 pages containing 50 assets each that meet the following criteria:
+# non-superseded QIDs, on-prem and EC2 assets, all tags included
+hosts_with_detections = get_hld(
+	auth, show_tags=True, show_cloud_tags=True, 
+	filter_superseded_qids=True, cloud_metadata='ec2', 
+	page_count=2, truncation_limit=50
+)
+>>>BaseList[VMDRHost(12345), ...]
+```
 ## VMDR Host List
-The ```get_host_list()``` API returns (at the moment) a list of dictionary/int responses for assets in VMDR (in a later commit, it will return a list of VMDRHost or VMDRID dataclasses). Pagination is controlled via the ```page_count``` arg. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination.
+The ```get_host_list()``` API returns (at the moment) a list of dictionary/int responses for assets in VMDR (in a later commit, it will return a list of VMDRHost or VMDRID dataclasses). Pagination is controlled via the ```page_count``` kwarg. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination.
 
 Using the ```details``` kwarg, the shape of the output can be controlled:
 

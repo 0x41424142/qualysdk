@@ -24,8 +24,12 @@ def remove_problem_characters(xml_content: str) -> str:
         str: The XML content with unprintable characters removed.
     """
     # Create a translation table that maps non-printable and non-whitespace characters to None
-    #non_printable = "".join(chr(i) for i in range(65536) if not chr(i).isprintable() and not chr(i).isspace())
-    non_printable = "".join(chr(i) for i in range(128, 65536) if not chr(i).isprintable() and not chr(i).isspace())
+    # non_printable = "".join(chr(i) for i in range(65536) if not chr(i).isprintable() and not chr(i).isspace())
+    non_printable = "".join(
+        chr(i)
+        for i in range(128, 65536)
+        if not chr(i).isprintable() and not chr(i).isspace()
+    )
 
     # Create the translation table
     translation_table = str.maketrans("", "", non_printable)
@@ -181,10 +185,16 @@ def get_hld(
 
         # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
         # or just a dictionary. if it is just one, put it inside a list
-        if not isinstance(xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], list):
-            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]]
+        if not isinstance(
+            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], list
+        ):
+            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
+                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
+            ]
 
-        for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]:
+        for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+            "HOST"
+        ]:
             host_obj = VMDRHost.from_dict(host)
             responses.append(host_obj)
 
@@ -201,7 +211,9 @@ def get_hld(
                 # get the id_min parameter from the URL to pass into kwargs:
                 params = parse_qs(
                     urlparse(
-                        xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
+                        xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"][
+                            "URL"
+                        ]
                     ).query
                 )
                 kwargs["id_min"] = params["id_min"][0]
@@ -210,6 +222,5 @@ def get_hld(
                 break
         else:
             break
-
 
     return responses

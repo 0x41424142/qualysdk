@@ -17,9 +17,7 @@ filterwarnings(
     "ignore", category=MarkupResemblesLocatorWarning, module="bs4"
 )  # supress bs4 warnings
 
-filterwarnings(
-    "ignore", category=UserWarning, module="bs4"
-)
+filterwarnings("ignore", category=UserWarning, module="bs4")
 
 
 @dataclass
@@ -39,8 +37,12 @@ class Detection:
     STATUS: Literal["New", "Active", "Fixed", "Re-Opened"] = field(
         metadata={"description": "The status of the detection."}
     )
-    SSL: Optional[bool] = field(metadata={"description": "The SSL status of the detection."}, default=False)
-    RESULTS: Optional[str] = field(metadata={"description": "The results of the detection."}, default="")
+    SSL: Optional[bool] = field(
+        metadata={"description": "The SSL status of the detection."}, default=False
+    )
+    RESULTS: Optional[str] = field(
+        metadata={"description": "The results of the detection."}, default=""
+    )
 
     FIRST_FOUND_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the detection was first found."},
@@ -118,7 +120,10 @@ class Detection:
         INT_FIELDS = ["UNIQUE_VULN_ID", "QID", "SEVERITY", "TIMES_FOUND", "PORT"]
 
         for field in DATETIME_FIELDS:
-            if isinstance(getattr(self, field), str) and getattr(self, field) is not None:
+            if (
+                isinstance(getattr(self, field), str)
+                and getattr(self, field) is not None
+            ):
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
         # clean up fields that have html tags
@@ -131,12 +136,18 @@ class Detection:
 
         # convert the BOOL_FIELDS to bool
         for field in BOOL_FIELDS:
-            if not isinstance(getattr(self, field), bool) and getattr(self, field) is not None:
+            if (
+                not isinstance(getattr(self, field), bool)
+                and getattr(self, field) is not None
+            ):
                 setattr(self, field, bool(getattr(self, field)))
 
         # convert the INT_FIELDS to int
         for field in INT_FIELDS:
-            if not isinstance(getattr(self, field), int) and getattr(self, field) is not None:
+            if (
+                not isinstance(getattr(self, field), int)
+                and getattr(self, field) is not None
+            ):
                 setattr(self, field, int(getattr(self, field)))
 
         # convert the QDS to a QDS object
@@ -163,7 +174,7 @@ class Detection:
     def __str__(self):
         # return str(self.UNIQUE_VULN_ID)
         return str(self.QID)
-    
+
     def __int__(self):
         return self.QID
 
@@ -221,7 +232,7 @@ class Detection:
             "QDS": self.QDS,
             "QDS_FACTORS": self.QDS_FACTORS,
             "PORT": self.PORT,
-            "PROTOCOL": self.PROTOCOL
+            "PROTOCOL": self.PROTOCOL,
         }
 
     @classmethod

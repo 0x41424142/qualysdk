@@ -33,7 +33,7 @@ class QDS:
 
     def __str__(self):
         return str(self.SCORE)
-    
+
     def __int__(self):
         return self.SCORE
 

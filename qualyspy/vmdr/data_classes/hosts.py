@@ -8,49 +8,9 @@ from datetime import datetime
 
 from ipaddress import IPv4Address, IPv6Address
 
-from .lists.tag_list import TagList, CloudTagList
+from .lists import BaseList
 from .tag import Tag, CloudTag
 from .detection import Detection
-
-
-def make_lists(
-    data: dict, _type: Literal["tag", "cloud_tag"]
-) -> Union[TagList, CloudTagList]:
-    """
-    Takes TAGS or CLOUD_PROVIDER_TAGS dict and converts it to a TagList or CloudTagList.
-    List of tag dicts are undrneath data['TAG'] (cloud provider tags are under data['CLOUD_PROVIDER_TAGS']).
-    If there is just one thing, there is no ['TAG']/['CLOUD_PROVIDER_TAGS'] key, just the immediate keys.
-    """
-    if _type == "tag":
-        if "TAG" in data:
-            # if data['TAG'] is a single tag dict, put it into a list of one tag.
-            if "NAME" in data["TAG"]:
-                return TagList([Tag(**data["TAG"])])  # TODO!!!! CHECK THIS!
-            # otherwise, it is a list of tags:
-            return TagList([Tag.from_dict(tag) for tag in data["TAG"]])
-        else:
-            return TagList([Tag.from_dict(data)])
-    elif _type == "cloud_tag":
-        if "CLOUD_TAG" in data:
-            if "NAME" in data["CLOUD_TAG"]:  # this is a single tag
-                return CloudTagList([CloudTag(**data["CLOUD_TAG"])])
-            # otherwise, it is a list of tags:
-            container = []
-            for tag in data["CLOUD_TAG"]:
-                t = CloudTag.from_dict(
-                    tag, FULL=tag
-                )  # FULL is a debug var to see the full data
-                container.append(t)
-            return CloudTagList(container)
-
-            # else: #underneath the CLOUD_TAG key is just a single dictionary containing the NAME, VALUE, etc. keys.
-            # return CloudTagList([CloudTag(**data["CLOUD_TAG"])])
-        else:
-            t = CloudTag.from_dict(data, FULL=data)
-            return CloudTagList([t])
-
-    else:
-        raise ValueError(f"Type must be 'tag' or 'cloud_tag', not {_type}")
 
 
 @dataclass(order=True)
@@ -114,6 +74,13 @@ class VMDRHost:
         metadata={"description": "The last boot time of the host."},
         compare=False,
     )  # add to post init to cast to datetime
+
+    LAST_SCAN_DATETIME: Union[str, datetime] = field(
+        default=None,
+        metadata={"description": "The last scan date of the host."},
+        compare=False,
+    )  # add to post init to cast to datetime
+
     SERIAL_NUMBER: str = field(
         default=None,
         metadata={"description": "The serial number of the host."},
@@ -147,9 +114,9 @@ class VMDRHost:
         metadata={"description": "The cloud agent running on of the host."},
         compare=False,
     )
-    TAGS: Union[dict, TagList] = field(
+    TAGS: Union[dict, BaseList] = field(
         default=None, metadata={"description": "The tags of the host."}, compare=False
-    )  # add to post init to convert to TagList (look at GAV lists for how to do this), as well as make a Tag class
+    )  # add to post init to convert to BaseList (look at GAV lists for how to do this), as well as make a Tag class
     LAST_VULN_SCAN_DATETIME: Union[str, datetime] = field(
         default=None,
         metadata={"description": "The last vulnerability scan date of the host."},
@@ -185,6 +152,13 @@ class VMDRHost:
         metadata={"description": "The last compliance scan date of the host."},
         compare=False,
     )  # add to post init to cast to datetime
+
+    LAST_PC_SCANNED_DATE: Union[str, datetime] = field(
+        default=None,
+        metadata={"description": "The last PC scanned date of the host."},
+        compare=False,
+    )  # add to post init to cast to datetime
+
     ASSET_GROUP_IDS: List[str] = field(
         default=None,
         metadata={"description": "The asset group IDs of the host."},
@@ -220,7 +194,7 @@ class VMDRHost:
         metadata={"description": "The EC2 instance ID of the host."},
         compare=False,
     )
-    CLOUD_PROVIDER_TAGS: Union[dict, CloudTagList] = field(
+    CLOUD_PROVIDER_TAGS: Union[dict, BaseList] = field(
         default=None,
         metadata={"description": "The cloud provider tags of the host."},
         compare=False,
@@ -234,23 +208,24 @@ class VMDRHost:
         compare=False,
     )
 
-    # DETECTION LIST FIELDS: TODO, a DETECTION will be its own data class, as it contains a lot of nested data. detection list will remain a list of these objects.
-    DETECTION_LIST: Optional[List[Detection]] = field(
-        default=None,
+    # DETECTION LIST FIELDS:
+    DETECTION_LIST: Optional[Union[list[Detection], BaseList[Detection]]] = field(
+        default_factory=BaseList,
         metadata={"description": "The detection list of the host."},
         compare=False,
-    )  # see above comment - this will be a list of Detection objects
+    )
 
     def __post_init__(self):
         """
         Pull up nested dict values as attributes, convert IPs,
-        put tags in a TagList and convert strings to datetime objects.
+        put tags in a BaseList and convert strings to datetime objects.
         """
         DNS_DATA_FIELDS = ["HOSTNAME", "DOMAIN", "FQDN"]
         DATETIME_FIELDS = [
             "LAST_BOOT",
             "FIRST_FOUND_DATE",
             "LAST_ACTIVITY_DATE",
+            "LAST_SCAN_DATETIME",
             "LAST_VULN_SCAN_DATETIME",
             "LAST_VM_SCANNED_DATE",
             "LAST_VM_AUTH_SCANNED_DATE",
@@ -258,6 +233,7 @@ class VMDRHost:
             "LAST_COMPLIANCE_SCAN_DATETIME",
             "LAST_VULN_SCAN_DATE",
             "LAST_ACTIVITY",
+            "LAST_PC_SCANNED_DATE",
         ]
         INT_FIELDS = [
             "ID",
@@ -290,10 +266,25 @@ class VMDRHost:
                 setattr(self, INT_FIELD, int(getattr(self, INT_FIELD)))
 
         if self.TAGS:
-            self.TAGS = make_lists(self.TAGS, "tag")
+            # if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
+            if isinstance(self.TAGS["TAG"], list):
+                self.TAGS = BaseList([Tag.from_dict(tag) for tag in self.TAGS["TAG"]])
+            else:  # if it is a single tag dict:
+                self.TAGS = BaseList([Tag.from_dict(self.TAGS["TAG"])])
 
         if self.CLOUD_PROVIDER_TAGS:
-            self.CLOUD_PROVIDER_TAGS = make_lists(self.CLOUD_PROVIDER_TAGS, "cloud_tag")
+            # if 'CLOUD_TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
+            if isinstance(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"], list):
+                self.CLOUD_PROVIDER_TAGS = BaseList(
+                    [
+                        CloudTag.from_dict(tag)
+                        for tag in self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"]
+                    ]
+                )
+            else:  # if it is a single tag dict:
+                self.CLOUD_PROVIDER_TAGS = BaseList(
+                    [CloudTag.from_dict(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"])]
+                )
 
         # CLOUD SPECIFIC FIELDS:
         if self.METADATA:
@@ -356,6 +347,20 @@ class VMDRHost:
                             self.METADATA[key_selector]["ATTRIBUTE"]["VALUE"],
                         )
 
+        # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
+        if self.DETECTION_LIST:
+            if isinstance(self.DETECTION_LIST["DETECTION"], list):
+                self.DETECTION_LIST = BaseList(
+                    [
+                        Detection.from_dict(detection)
+                        for detection in self.DETECTION_LIST["DETECTION"]
+                    ]
+                )
+            else:
+                self.DETECTION_LIST = BaseList(
+                    [Detection.from_dict(self.DETECTION_LIST["DETECTION"])]
+                )
+
     def __str__(self) -> str:
         """
         String representation of the host object.
@@ -367,6 +372,14 @@ class VMDRHost:
         else:
             # fall back to QG_HostID:
             return f"Host({self.QG_HOSTID})"
+
+    def __int__(self) -> int:
+        if self.ASSET_ID:
+            return self.ASSET_ID
+        elif self.ID:
+            return self.ID
+        else:
+            raise ValueError("Host object does not have an asset ID or host ID.")
 
     def __repr__(self) -> str:
         """
@@ -468,6 +481,9 @@ class VMDRID:
 
     def __str__(self) -> str:
         return str(self.ID)
+
+    def __int__(self) -> int:
+        return self.ID
 
     def __repr__(self) -> str:
         if self.TYPE == "asset":

@@ -129,7 +129,7 @@ class CloudTag:
         return self.VALUE == value
 
     @classmethod
-    def from_dict(cls, data: dict, FULL: dict):
+    def from_dict(cls, data: dict):
         """
         from_dict - create a CloudTag object from a dictionary.
 

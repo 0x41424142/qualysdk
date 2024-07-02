@@ -17,17 +17,11 @@ from .data_classes import (
     Tag,
     CloudTag,
     Detection,
+    QDSFactor,
+    QDS,
 )
-from .data_classes.lists import (
-    SoftwareList,
-    ReferenceList,
-    CVEList,
-    BugtraqList,
-    ThreatIntelList,
-    ComplianceList,
-    TagList,
-    CloudTagList,
-)
+from .data_classes.lists import BaseList
 
 from .query_kb import query_kb
 from .get_host_list import get_host_list
+from .get_host_list_detections import get_hld

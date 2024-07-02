@@ -319,9 +319,8 @@ print(schema_query(module='gav', pretty=True))
 }
 ```
 # TODO:
-- Explore removing custom list classes, as regular lists containing the custom objects seems more than sufficient.
 
-- Implement host list detections API, perhaps using the custom ```VMDRHost/VMDRIDSet``` classes. the detection object is already written.
+- Improve HLD endpoint to support multithreading via calling host list API first to get IDs, then splitting up in a queue.
 
 - Write testing files.
 

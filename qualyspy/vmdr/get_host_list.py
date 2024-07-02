@@ -45,7 +45,6 @@ def get_host_list(
     API params (kwargs):
         ```
         action (Optional[str]) #The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
-        linux_hostname (Optional[bool]) #Whether to show the Linux hostname. Default is 'False'. ends up being passed to API as 0 or 1.
         echo_request (Optional[bool]) #Whether to show the request. Default is 'False'. ends up being passed to API as 0 or 1.
         show_asset_id (Optional[bool]) #Whether to show the asset IDs. Default is 'False'. ends up being passed to API as 0 or 1.
         details (Optional[Union[Literal["Basic", "Basic/AGs", "All", "All/AGs", "None"], None]]): #The level of detail to return. Default is 'Basic'. Basic includes host ID, IP, tracking method, DNS, netBIOS, and OS. Basic/AGs includes basic host information plus asset group information. Asset group information includes the asset group ID and title. All shows all basic host information plus last vulnerability and compliance scan dates. All/AGs includes all information plus asset group information: group ID and title. None shows only the host ID (or asset ID if show_asset_id is set to 1 (True)).
@@ -112,11 +111,6 @@ def get_host_list(
     # add the action to the kwargs:
     kwargs["action"] = "list"
 
-    if kwargs["truncation_limit"] == 0 and page_count == "all":
-        print(
-            "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it will almost certainly strain your compute resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
-        )
-
     # qualys expects all boolean values to be represented as a 0 or 1:
     for key, value in kwargs.items():
         if isinstance(value, bool):
@@ -127,6 +121,11 @@ def get_host_list(
         # if host_metadata is specified and set to a non-"all" or non-NoneType, lower() it:
         if key == "host_metadata" and value not in ["all", None]:
             kwargs[key] = value.lower()
+
+    if kwargs["truncation_limit"] == 0 and kwargs["details"] != "None":
+        print(
+            "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it uses lots of resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
+        )
 
     while True:
         # make the request:

@@ -5,7 +5,7 @@ This function handles all API calls to the Qualys API. It takes in a URL, header
 Qualys uses many tricks in their API, such as using both url params and post data.
 """
 
-import requests
+from requests import request, Response
 from typing import Literal, Union
 from datetime import datetime
 
@@ -25,7 +25,7 @@ def call_api(
     payload: dict = None,
     jsonbody: dict = None,
     override_method: Literal["GET", "POST", "PUT", "PATCH", "DELETE"] = None,
-) -> requests.Response:
+) -> Response:
     """
     Base call function for the Qualys API.
 
@@ -116,7 +116,7 @@ def call_api(
         auth_tuple = (auth.username, auth.password)
 
     # and finally, make the request:
-    response = requests.request(
+    response = request(
         method=SCHEMA["method"][0] if not override_method else override_method.upper(),
         url=url,
         headers=headers,

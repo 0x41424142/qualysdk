@@ -11,7 +11,6 @@ from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 
 from .qds_factor import QDSFactor
 from .qds import QDS as qds
-from .lists import BaseList
 
 filterwarnings(
     "ignore", category=MarkupResemblesLocatorWarning, module="bs4"
@@ -99,6 +98,10 @@ class Detection:
     )
     PROTOCOL: Optional[str] = field(
         metadata={"description": "The protocol of the detection."},
+        default=None,
+    )
+    FQDN: Optional[str] = field(
+        metadata={"description": "The fully qualified domain name of the detection."},
         default=None,
     )
 
@@ -233,6 +236,7 @@ class Detection:
             "QDS_FACTORS": self.QDS_FACTORS,
             "PORT": self.PORT,
             "PROTOCOL": self.PROTOCOL,
+            "FQDN": self.FQDN,
         }
 
     @classmethod

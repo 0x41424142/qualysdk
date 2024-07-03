@@ -172,11 +172,13 @@ def get_hld(
             params=kwargs,
             headers={"X-Requested-With": "qualyspy SDK"},
         )
-        if response.text == "":
+        
+        if response.headers.get("Content-Length") != "0":
             print("No data returned.")
             return responses
 
-        xml = parse(remove_problem_characters(response.text), encoding="utf-8")
+        cleaned = remove_problem_characters(response.text)
+        xml = parse(cleaned, encoding="utf-8")
 
         # check for errors:
         if "html" in xml.keys():

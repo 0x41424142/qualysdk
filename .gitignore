@@ -3,9 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-#testing file...
+#testing/profiling files...
 t.py
 hldTest.py
+demo.html
+profile.html
+profile.json
 
 # VSCode:
 .vscode/

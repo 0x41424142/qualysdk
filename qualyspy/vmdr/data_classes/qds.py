@@ -10,6 +10,8 @@ from typing import *
 class QDS:
     """
     QDS - represents a single QDS score.
+
+    made with order=True to allow for sorting of QDS scores.
     """
 
     SEVERITY: str = field(

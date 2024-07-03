@@ -13,9 +13,6 @@ class Tag:
     Tag - represents a single tag in a TagList.
 
     This class is used to represent a single tag in a TagList, aka a tag on an asset.
-
-    This class is frozen, meaning that once an object is created, it cannot be modified.
-    It can be used as a key in a dictionary or as an element in a set.
     """
 
     TAG_ID: Union[str, int] = field(metadata={"description": "The ID of the tag."})
@@ -74,15 +71,12 @@ class Tag:
         return cls(**data)
 
 
-@dataclass()
+@dataclass
 class CloudTag:
     """
     CloudTag - represents a single tag in a CloudTagList.
 
     This class is used to represent a single tag in a CloudTagList, aka a tag on a cloud asset.
-
-    This class is frozen, meaning that once an object is created, it cannot be modified.
-    It can be used as a key in a dictionary or as an element in a set.
     """
 
     NAME: str = field(metadata={"description": "The name of the tag."})

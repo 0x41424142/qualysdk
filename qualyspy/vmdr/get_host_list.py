@@ -137,7 +137,7 @@ def get_host_list(
             params=kwargs,
             headers={"X-Requested-With": "qualyspy SDK"},
         )
-        if response.text == "":
+        if response.headers.get("Content-Length") == "0":
             print("No data returned.")
             return responses
 

@@ -6,16 +6,13 @@ from dataclasses import dataclass, field
 from typing import *
 
 
-@dataclass(frozen=True)
+@dataclass
 class Software:
     """
     Software - represents a single software entry in a SoftwareList.
 
     This class is used to represent a single software entry in a SoftwareList,
     which is used to represent the software that is affected by a vulnerability.
-
-    This class is frozen, meaning that once an object is created, it cannot be modified.
-    It can be used as a key in a dictionary or as an element in a set.
     """
 
     PRODUCT: str = field(metadata={"description": "The name of the software."})

@@ -205,12 +205,36 @@ class VMDRHost:
         compare=False,
     )
 
-    # DETECTION LIST FIELDS:
     DETECTION_LIST: Optional[Union[list[Detection], BaseList[Detection]]] = field(
         default_factory=BaseList,
         metadata={"description": "The detection list of the host."},
         compare=False,
     )
+
+    ASSET_RISK_SCORE: Optional[Union[str, int]] = field(
+        default=None,
+        metadata={"description": "The asset risk score of the host."},
+        compare=False,
+    )
+
+    TRURISK_SCORE: Optional[Union[str, int]] = field(
+        default=None,
+        metadata={"description": "The TruRisk score of the host."},
+        compare=False,
+    )
+
+    TRURISK_SCORE_FACTORS: Optional[dict] = field(
+        default=None,
+        metadata={"description": "The TruRisk score factors of the host."},
+        compare=False,
+    )
+
+    ASSET_CRITICALITY_SCORE: Optional[Union[str, int]] = field(
+        default=None,
+        metadata={"description": "The asset criticality score of the host."},
+        compare=False,
+    )
+
 
     def __post_init__(self):
         """
@@ -236,6 +260,9 @@ class VMDRHost:
             "ID",
             "ASSET_ID",
             "LAST_VM_SCANNED_DURATION",
+            "ASSET_RISK_SCORE",
+            "TRURISK_SCORE",
+            "ASSET_CRITICALITY_SCORE",
         ]  # (cloud) ACCOUNT_ID cannot go here as it is not initialized yet
 
         if self.DNS_DATA:

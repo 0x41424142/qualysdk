@@ -123,7 +123,7 @@ def get_host_list(
         if key == "host_metadata" and value not in ["all", None]:
             kwargs[key] = value.lower()
 
-    if kwargs["truncation_limit"] == 0 and kwargs["details"] != "None":
+    if kwargs.get("truncation_limit") and (kwargs["truncation_limit"] in [0, "0"] and kwargs["details"] not in ["None", None]):
         print(
             "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it uses lots of resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
         )

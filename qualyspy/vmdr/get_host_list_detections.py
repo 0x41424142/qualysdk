@@ -173,9 +173,9 @@ def get_hld(
             headers={"X-Requested-With": "qualyspy SDK"},
         )
         
-        if response.headers.get("Content-Length") != "0":
+        if response.status_code != 200:
             print("No data returned.")
-            return responses
+            return 
 
         cleaned = remove_problem_characters(response.text)
         xml = parse(cleaned, encoding="utf-8")

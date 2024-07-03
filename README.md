@@ -47,7 +47,7 @@ linux_servers_with_1cpu = query_assets(
 |Module| Status |
 |--|--|
 | GAV (Global AssetView) |✅|
-| VMDR | In Progress (```query_kb```, ```get_host_list``` implemented) |
+| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld``` implemented) |
 | PM (Patch Management) | In Progress |
 | WAS | Not Started |
 | TC (TotalCloud) | Not Started |

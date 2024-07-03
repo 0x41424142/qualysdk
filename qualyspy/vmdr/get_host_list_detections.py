@@ -10,6 +10,7 @@ from urllib.parse import parse_qs, urlparse
 from xmltodict import parse
 
 from .data_classes.hosts import VMDRHost
+from .data_classes.lists.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
@@ -158,7 +159,7 @@ def get_hld(
     if threaded:
         raise NotImplementedError("Threading is not yet implemented.")
 
-    responses = []
+    responses = BaseList()
     pulled = 0
 
     while True:

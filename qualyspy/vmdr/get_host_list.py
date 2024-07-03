@@ -11,6 +11,7 @@ from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.hosts import VMDRHost, VMDRID
+from .data_classes.lists.base_list import BaseList
 
 
 def remove_problem_characters(xml_content):  # sigh...
@@ -105,7 +106,7 @@ def get_host_list(
         list[Union[VMDRHost, VMDRID]]: A list of VMDRHost or VMDRID objects.
     """
 
-    responses = []  # list to hold all the responses
+    responses = BaseList()
     pulled = 0
 
     # add the action to the kwargs:

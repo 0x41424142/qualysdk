@@ -6,13 +6,10 @@ from dataclasses import dataclass, field
 from typing import *
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(order=True)
 class QDS:
     """
     QDS - represents a single QDS score.
-
-    This class is frozen, meaning that once an object is created, it cannot be modified.
-    It can be used as a key in a dictionary or as an element in a set.
     """
 
     SEVERITY: str = field(

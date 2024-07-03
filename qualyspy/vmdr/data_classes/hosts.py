@@ -16,10 +16,7 @@ from .detection import Detection
 @dataclass(order=True)
 class VMDRHost:
     """
-    Host - represents a Qualys GAV host record.
-
-    due to the fact that some APIs have excludeFields and IncludeFields parameters,
-    virtually all fields are optional other than assetId.
+    Host - represents a Qualys VMDR host record.
     """
 
     ID: Union[str, int] = field(

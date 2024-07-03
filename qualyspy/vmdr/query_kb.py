@@ -10,6 +10,7 @@ from urllib.parse import parse_qs, urlparse
 from xmltodict import parse
 
 from .data_classes.kb_entry import KBEntry
+from .data_classes.lists.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 
@@ -55,7 +56,7 @@ def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
     # add the action to the kwargs:
     kwargs["action"] = "list"
 
-    responses = []  # list to hold all the responses
+    responses = BaseList()
     pulled = 0
 
     # qualys expects all boolean values to be represented as a 0 or 1:

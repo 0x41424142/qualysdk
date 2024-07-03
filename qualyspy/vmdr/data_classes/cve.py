@@ -7,16 +7,10 @@ from typing import *
 from re import match
 
 
-@dataclass(frozen=True)
+@dataclass
 class CVEID:
     """
     CVEID - represents a single CVE ID in a CVEList.
-
-    This class is used to represent a single CVE ID in a CVEList,
-    which is used to represent the CVE IDs for a vulnerability.
-
-    This class is frozen, meaning that once an object is created, it cannot be modified.
-    It can be used as a key in a dictionary or as an element in a set.
     """
 
     ID: str = field(metadata={"description": "The ID of the CVE."}, compare=True)

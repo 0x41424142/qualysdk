@@ -10,9 +10,6 @@ from typing import *
 class QDSFactor:
     """
     QDSFactor - represents a single Qualys Detection Score (QDS) factor.
-
-    This class is frozen, meaning that once an object is created, it cannot be modified.
-    It can be used as a key in a dictionary or as an element in a set.
     """
 
     NAME: int = field(metadata={"description": "The name of the factor."})

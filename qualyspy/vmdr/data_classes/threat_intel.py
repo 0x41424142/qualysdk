@@ -6,13 +6,10 @@ from dataclasses import dataclass, field
 from typing import *
 
 
-@dataclass(frozen=True)
+@dataclass
 class ThreatIntel:
     """
     ThreatIntel - represents a single threat intel entry in a ThreatIntelList.
-
-    This class is frozen, meaning that once an object is created, it cannot be modified.
-    It can be used as a key in a dictionary or as an element in a set.
     """
 
     ID: int = field(metadata={"description": "The ID of the threat intel."})

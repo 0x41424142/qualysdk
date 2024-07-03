@@ -6,16 +6,13 @@ from dataclasses import dataclass, field
 from typing import *
 
 
-@dataclass(frozen=True)
+@dataclass
 class VendorReference:
     """
     VendorReference - represents a single vendor bulletin reference in a ReferenceList.
 
     This class is used to represent a single vendor bulletin reference in a ReferenceList,
     which is used to represent the vendor bulletin references for a vulnerability.
-
-    This class is frozen, meaning that once an object is created, it cannot be modified.
-    It can be used as a key in a dictionary or as an element in a set.
     """
 
     ID: str = field(metadata={"description": "The ID of the vendor reference."})

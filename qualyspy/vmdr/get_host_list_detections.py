@@ -185,6 +185,11 @@ def get_hld(
             raise Exception(
                 f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"
             )
+        
+        # check if there is no host list
+        if "HOST_LIST" not in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
+            print("No host list returned.")
+            return
 
         # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
         # or just a dictionary. if it is just one, put it inside a list

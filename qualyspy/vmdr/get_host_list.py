@@ -147,6 +147,10 @@ def get_host_list(
             raise Exception(
                 f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"
             )
+        
+        if "HOST_LIST" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"] and "ID_SET" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:
+            print("No host list returned.")
+            return
 
         # If details is none, ID_SET will be returned instead of HOST_LIST
         if "ID_SET" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:

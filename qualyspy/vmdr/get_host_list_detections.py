@@ -7,9 +7,6 @@ FOR MULTITHREADED PULLS, USE threaded.py INSTEAD
 
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse
-from queue import Queue
-import threading
-import concurrent.futures
 
 
 from .data_classes.hosts import VMDRHost, VMDRID
@@ -72,7 +69,6 @@ def pull_id_set(auth: BasicAuth) -> BaseList[VMDRID]:
 def get_hld(
     auth: BasicAuth,
     page_count: Union[int, "all"] = "all",
-    pull_ids: bool = False,
     **kwargs,
 ) -> List:
     """
@@ -197,13 +193,13 @@ def get_hld(
         kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
 
     elif kwargs.get("id_min") and kwargs.get("id_max"):
-        pass  # just needed so a full run does not occur (below)
+        print("using id min/max...")  # just needed so a full run does not occur (below)
 
-    elif pull_ids:
-        print("Pulling full ID set via API...")
-        id_list = pull_id_set(auth)
-        print(f"Total IDs: {len(id_list)}")
-        kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
+    #else:
+    #    print("Pulling full ID set via API...")
+    #    id_list = pull_id_set(auth)
+    #    print(f"Total IDs: {len(id_list)}")
+    #    kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
 
     while True:
 

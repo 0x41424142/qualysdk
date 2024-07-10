@@ -1,46 +1,72 @@
 """
 get_host_list_detections.py - contains the get_host_list_detections function for the Qualyspy package.
 
-This endpoint is used to get a list of hosts and their QID detections.
+This endpoint is used to get a list of hosts and their QID detections using a single thread.
+FOR MULTITHREADED PULLS, USE threaded.py INSTEAD
 """
 
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse
+from queue import Queue
+import threading
 
-from xmltodict import parse
 
-from .data_classes.hosts import VMDRHost
+from .data_classes.hosts import VMDRHost, VMDRID
 from .data_classes.lists.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
+from .get_host_list import get_host_list #Used to grab list of IDs for multithreaded detection list pulls
 from ..exceptions.Exceptions import *
+from ..base.xml_parser import xml_parser
 
 
-def remove_problem_characters(xml_content: str) -> str:
+"""
+BAD_CHARS = "".join(
+    chr(i)
+    for i in range(128, 65536)
+    if not chr(i).isprintable() and not chr(i).isspace()
+)
+
+TRANSLATION_TABLE = {ord(c): None for c in BAD_CHARS}
+
+remove_problem_characters = lambda xml_content: xml_content.translate(TRANSLATION_TABLE)
+"""
+
+def normalize_id_list(id_list):
     """
-    Remove unprintable characters from XML content.
+    normalize_id_list - formats the kwarg ids, if it is passed.
+
+    Since the API accepts multiple values, either as comma-separated or as a range, this function
+    normalizes the input to a list of integers that satisfy the API requirements.
+    """
+    id_list = id_list.split(",")
+    new_list = []
+    for i in id_list:
+        if "-" in i:
+            #if there is a hyphen, split by hyphen and create a range
+            new_list.extend(range(int(i.split("-")[0]), int(i.split("-")[1]) + 1))
+        else:
+            #if there is no hyphen, just append the integer
+            new_list.append(int(i))
+    return new_list
+
+def pull_id_set(auth: BasicAuth) -> BaseList[VMDRID]:
+    """
+    pull_id_set - pull a set of host IDs from the VMDR API.
+
     Args:
-        xml_content (str): The XML content.
-    Returns:
-        str: The XML content with unprintable characters removed.
-    """
-    # Create a translation table that maps non-printable and non-whitespace characters to None
-    # non_printable = "".join(chr(i) for i in range(65536) if not chr(i).isprintable() and not chr(i).isspace())
-    non_printable = "".join(
-        chr(i)
-        for i in range(128, 65536)
-        if not chr(i).isprintable() and not chr(i).isspace()
-    )
+        auth (BasicAuth): The BasicAuth object containing the username and password.
+        ids (list[int]): A list of host IDs to pull. If None, pulls all host IDs.
 
-    # Create the translation table
-    translation_table = str.maketrans("", "", non_printable)
-    return xml_content.translate(translation_table)
+    Returns:
+        List[int]: A BaseList of host IDs as VMDRIDs.
+    """
+    return get_host_list(auth, details=None, truncation_limit=0)
 
 
 def get_hld(
     auth: BasicAuth,
     page_count: Union[int, "all"] = "all",
-    threaded: bool = False,
     **kwargs,
 ) -> List:
     """
@@ -49,7 +75,7 @@ def get_hld(
     Args:
         auth (BasicAuth): The BasicAuth object containing the username and password.
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
-        threaded (bool): Whether to use threading. Defaults to False.
+        threaded (bool): Whether to use threading. Defaults to True, which downloads a get_host_list() call with details=None to pull just IDs.
         **kwargs: Additional keyword arguments to pass to the API. See below.
 
     Keyword Args:
@@ -155,12 +181,21 @@ def get_hld(
         if kwargs[key] is None:
             kwargs[key] = "None"
 
-    # If threaded == True, use threading
-    if threaded:
-        raise NotImplementedError("Threading is not yet implemented.")
 
     responses = BaseList()
     pulled = 0
+
+    if kwargs.get("ids"): #if the user specified ids, it takes precedence over a min-max range or a full pull below
+        id_list = normalize_id_list(kwargs.get("ids"))
+        kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
+
+    elif kwargs.get("id_min") and kwargs.get("id_max"):
+        pass #just needed so a full run does not occur (below)
+    
+    else: 
+        print("Pulling full ID set via API...")
+        id_list = pull_id_set(auth) ; print(f"Total IDs: {len(id_list)}")
+        kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
 
     while True:
 
@@ -174,11 +209,16 @@ def get_hld(
         )
         
         if response.status_code != 200:
-            print("No data returned.")
-            return 
+            print(f"No data returned on page {pulled}")
+            pulled += 1
+            if pulled == page_count:
+                print("Pulled all pages.")
+                break
+            else:
+                continue
 
-        cleaned = remove_problem_characters(response.text)
-        xml = parse(cleaned, encoding="utf-8")
+        #cleaned = remove_problem_characters(response.text)
+        xml = xml_parser(response.content)
 
         # check for errors:
         if "html" in xml.keys():
@@ -189,22 +229,22 @@ def get_hld(
         # check if there is no host list
         if "HOST_LIST" not in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
             print("No host list returned.")
-            return
+        else:
 
-        # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
-        # or just a dictionary. if it is just one, put it inside a list
-        if not isinstance(
-            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], list
-        ):
-            xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
-                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
-            ]
+            # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
+            # or just a dictionary. if it is just one, put it inside a list
+            if not isinstance(
+                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], list
+            ):
+                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
+                    xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
+                ]
 
-        for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-            "HOST"
-        ]:
-            host_obj = VMDRHost.from_dict(host)
-            responses.append(host_obj)
+            for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+                "HOST"
+            ]:
+                host_obj = VMDRHost.from_dict(host)
+                responses.append(host_obj)
 
         pulled += 1
         if pulled == page_count:

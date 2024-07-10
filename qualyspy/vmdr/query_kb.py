@@ -13,6 +13,7 @@ from .data_classes.kb_entry import KBEntry
 from .data_classes.lists.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
+from ..base.xml_parser import xml_parser
 
 
 def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
@@ -76,7 +77,7 @@ def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
         if response.status_code != 200:
             raise Exception(f"Error: {response.status_code} - {response.text}")
 
-        xml = parse(response.text)
+        xml = xml_parser(response.text)
         if "html" in xml.keys():  # error. something was not processed right
             raise Exception(
                 f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"

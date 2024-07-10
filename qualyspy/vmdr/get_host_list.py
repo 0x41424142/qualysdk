@@ -4,7 +4,7 @@ get_host_list.py - call the VMDR host list API.
 
 from typing import Union
 
-from xmltodict import parse
+#from xmltodict import parse
 from urllib.parse import urlparse, parse_qs
 
 from ..base.call_api import call_api
@@ -12,6 +12,7 @@ from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.hosts import VMDRHost, VMDRID
 from .data_classes.lists.base_list import BaseList
+from ..base import xml_parser
 
 
 def remove_problem_characters(xml_content):  # sigh...
@@ -141,7 +142,7 @@ def get_host_list(
             print("No data returned.")
             return responses
 
-        xml = parse(remove_problem_characters(response.text), encoding="utf-8")
+        xml = xml_parser(response.content)
 
         if "html" in xml.keys():
             raise Exception(
@@ -184,11 +185,11 @@ def get_host_list(
                 # return a list of VMDRHost objects
                 responses.append(VMDRHost.from_dict(host))
 
-        (
+        '''(
             print(f"Page {pulled+1} of {page_count} complete.")
             if page_count != "all"
             else print(f"Page {pulled+1} complete.")
-        )
+        )'''
         pulled += 1
 
         if page_count != "all" and pulled >= page_count:

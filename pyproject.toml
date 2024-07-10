@@ -12,6 +12,7 @@ requests = "^2.32.3"
 xmltodict = "^0.13.0"
 frozendict = "^2.4.4"
 bs4 = "^0.0.2"
+lxml = "^5.2.2"
 
 
 [build-system]

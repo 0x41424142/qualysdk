@@ -57,6 +57,12 @@ def call_api(
 
     SCHEMA = CALL_SCHEMA[module][endpoint]
 
+    # check the auth type:
+    if SCHEMA["auth_type"] != auth.auth_type:
+        raise AuthTypeMismatchError(
+            f"Auth type mismatch. Expected {SCHEMA['auth_type']} but got {auth.auth_type}."
+        )
+
     # check override:
     if override_method:
         if override_method.upper() not in SCHEMA["method"]:
@@ -74,12 +80,6 @@ def call_api(
             )
         case _:
             raise ValueError(f"Invalid url_type {SCHEMA['url_type']}.")
-
-    # check the auth type:
-    if SCHEMA["auth_type"] != auth.auth_type:
-        raise AuthTypeMismatchError(
-            f"Auth type mismatch. Expected {SCHEMA['auth_type']} but got {auth.auth_type}."
-        )
 
     # if token auth, check if token is not 4+ hours old:
     if isinstance(auth, TokenAuth):

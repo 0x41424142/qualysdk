@@ -19,14 +19,15 @@ filterwarnings(
 filterwarnings("ignore", category=UserWarning, module="bs4")
 
 
-@dataclass
+@dataclass(order=True)
 class Detection:
     """
     Detection - represents a single QID detection on a host.
     """
 
     UNIQUE_VULN_ID: int = field(
-        metadata={"description": "The unique ID of the detection."}
+        metadata={"description": "The unique ID of the detection."},
+        compare=False
     )
     QID: int = field(metadata={"description": "The QID of the detection."})
     TYPE: Literal["Confirmed", "Potential"] = field(
@@ -34,27 +35,31 @@ class Detection:
     )
     SEVERITY: int = field(metadata={"description": "The severity of the detection."})
     STATUS: Literal["New", "Active", "Fixed", "Re-Opened"] = field(
-        metadata={"description": "The status of the detection."}
+        metadata={"description": "The status of the detection."}, 
+        compare=False
     )
     SSL: Optional[bool] = field(
-        metadata={"description": "The SSL status of the detection."}, default=False
+        metadata={"description": "The SSL status of the detection."}, default=False, compare=False
     )
     RESULTS: Optional[str] = field(
-        metadata={"description": "The results of the detection."}, default=""
+        metadata={"description": "The results of the detection."}, default="", compare=False
     )
 
     FIRST_FOUND_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the detection was first found."},
         default=None,
+        compare=False
     )
     LAST_FOUND_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the detection was last found."},
         default=None,
+        compare=False
     )
 
     QDS: Optional[qds] = field(
         metadata={"description": "The Qualys Detection Score (QDS) of the detection."},
         default=None,
+        compare=False
     )
 
     QDS_FACTORS: Optional[List[QDSFactor]] = field(
@@ -62,47 +67,58 @@ class Detection:
             "description": "The Qualys Detection Score (QDS) factors of the detection."
         },
         default=None,
+        compare=False
     )
 
     TIMES_FOUND: int = field(
         metadata={"description": "The number of times the detection was found."},
         default=0,
+        compare=False
     )
     LAST_TEST_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the detection was last tested."},
         default=None,
+        compare=False
     )
     LAST_UPDATE_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the detection was last updated."},
         default=None,
+        compare=False
     )
     IS_IGNORED: bool = field(
         metadata={"description": "The ignored status of the detection."},
         default=False,
+        compare=False
     )
     IS_DISABLED: bool = field(
         metadata={"description": "The disabled status of the detection."},
         default=False,
+        compare=False
     )
     LAST_PROCESSED_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the detection was last processed."},
         default=None,
+        compare=False
     )
     LAST_FIXED_DATETIME: Optional[Union[str, datetime]] = field(
         metadata={"description": "The date and time the detection was last fixed."},
         default=None,
+        compare=False
     )
     PORT: Optional[int] = field(
         metadata={"description": "The port of the detection."},
         default=None,
+        compare=False
     )
     PROTOCOL: Optional[str] = field(
         metadata={"description": "The protocol of the detection."},
         default=None,
+        compare=False
     )
     FQDN: Optional[str] = field(
         metadata={"description": "The fully qualified domain name of the detection."},
         default=None,
+        compare=False
     )
 
     def __post_init__(self):
@@ -180,7 +196,7 @@ class Detection:
 
     def __int__(self):
         return self.QID
-
+    
     def copy(self):
         return Detection(
             UNIQUE_VULN_ID=self.UNIQUE_VULN_ID,

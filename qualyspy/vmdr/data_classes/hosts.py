@@ -235,7 +235,6 @@ class VMDRHost:
         compare=False,
     )
 
-
     def __post_init__(self):
         """
         Pull up nested dict values as attributes, convert IPs,

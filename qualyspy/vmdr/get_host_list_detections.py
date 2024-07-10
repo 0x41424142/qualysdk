@@ -15,7 +15,9 @@ from .data_classes.hosts import VMDRHost, VMDRID
 from .data_classes.lists.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
-from .get_host_list import get_host_list #Used to grab list of IDs for multithreaded detection list pulls
+from .get_host_list import (
+    get_host_list,
+)  # Used to grab list of IDs for multithreaded detection list pulls
 from ..exceptions.Exceptions import *
 from ..base.xml_parser import xml_parser
 
@@ -32,6 +34,7 @@ TRANSLATION_TABLE = {ord(c): None for c in BAD_CHARS}
 remove_problem_characters = lambda xml_content: xml_content.translate(TRANSLATION_TABLE)
 """
 
+
 def normalize_id_list(id_list):
     """
     normalize_id_list - formats the kwarg ids, if it is passed.
@@ -43,12 +46,13 @@ def normalize_id_list(id_list):
     new_list = []
     for i in id_list:
         if "-" in i:
-            #if there is a hyphen, split by hyphen and create a range
+            # if there is a hyphen, split by hyphen and create a range
             new_list.extend(range(int(i.split("-")[0]), int(i.split("-")[1]) + 1))
         else:
-            #if there is no hyphen, just append the integer
+            # if there is no hyphen, just append the integer
             new_list.append(int(i))
     return new_list
+
 
 def pull_id_set(auth: BasicAuth) -> BaseList[VMDRID]:
     """
@@ -181,20 +185,22 @@ def get_hld(
         if kwargs[key] is None:
             kwargs[key] = "None"
 
-
     responses = BaseList()
     pulled = 0
 
-    if kwargs.get("ids"): #if the user specified ids, it takes precedence over a min-max range or a full pull below
+    if kwargs.get(
+        "ids"
+    ):  # if the user specified ids, it takes precedence over a min-max range or a full pull below
         id_list = normalize_id_list(kwargs.get("ids"))
         kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
 
     elif kwargs.get("id_min") and kwargs.get("id_max"):
-        pass #just needed so a full run does not occur (below)
-    
-    else: 
+        pass  # just needed so a full run does not occur (below)
+
+    else:
         print("Pulling full ID set via API...")
-        id_list = pull_id_set(auth) ; print(f"Total IDs: {len(id_list)}")
+        id_list = pull_id_set(auth)
+        print(f"Total IDs: {len(id_list)}")
         kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
 
     while True:
@@ -207,7 +213,7 @@ def get_hld(
             params=kwargs,
             headers={"X-Requested-With": "qualyspy SDK"},
         )
-        
+
         if response.status_code != 200:
             print(f"No data returned on page {pulled}")
             pulled += 1
@@ -217,7 +223,7 @@ def get_hld(
             else:
                 continue
 
-        #cleaned = remove_problem_characters(response.text)
+        # cleaned = remove_problem_characters(response.text)
         xml = xml_parser(response.content)
 
         # check for errors:
@@ -225,7 +231,7 @@ def get_hld(
             raise Exception(
                 f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"
             )
-        
+
         # check if there is no host list
         if "HOST_LIST" not in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
             print("No host list returned.")
@@ -234,10 +240,15 @@ def get_hld(
             # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
             # or just a dictionary. if it is just one, put it inside a list
             if not isinstance(
-                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], list
+                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"],
+                list,
             ):
-                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
-                    xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
+                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+                    "HOST"
+                ] = [
+                    xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+                        "HOST"
+                    ]
                 ]
 
             for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][

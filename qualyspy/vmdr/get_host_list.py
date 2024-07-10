@@ -4,7 +4,7 @@ get_host_list.py - call the VMDR host list API.
 
 from typing import Union
 
-#from xmltodict import parse
+# from xmltodict import parse
 from urllib.parse import urlparse, parse_qs
 
 from ..base.call_api import call_api
@@ -124,7 +124,10 @@ def get_host_list(
         if key == "host_metadata" and value not in ["all", None]:
             kwargs[key] = value.lower()
 
-    if kwargs.get("truncation_limit") and (kwargs["truncation_limit"] in [0, "0"] and kwargs["details"] not in ["None", None]):
+    if kwargs.get("truncation_limit") and (
+        kwargs["truncation_limit"] in [0, "0"]
+        and kwargs["details"] not in ["None", None]
+    ):
         print(
             "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it uses lots of resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
         )
@@ -148,8 +151,11 @@ def get_host_list(
             raise Exception(
                 f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"
             )
-        
-        if "HOST_LIST" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"] and "ID_SET" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:
+
+        if (
+            "HOST_LIST" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]
+            and "ID_SET" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]
+        ):
             print("No host list returned.")
             return
 
@@ -185,11 +191,11 @@ def get_host_list(
                 # return a list of VMDRHost objects
                 responses.append(VMDRHost.from_dict(host))
 
-        '''(
+        """(
             print(f"Page {pulled+1} of {page_count} complete.")
             if page_count != "all"
             else print(f"Page {pulled+1} complete.")
-        )'''
+        )"""
         pulled += 1
 
         if page_count != "all" and pulled >= page_count:

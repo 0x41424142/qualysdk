@@ -9,6 +9,7 @@ from typing import List, Union
 from urllib.parse import parse_qs, urlparse
 from queue import Queue
 import threading
+import concurrent.futures
 
 
 from .data_classes.hosts import VMDRHost, VMDRID
@@ -65,12 +66,13 @@ def pull_id_set(auth: BasicAuth) -> BaseList[VMDRID]:
     Returns:
         List[int]: A BaseList of host IDs as VMDRIDs.
     """
-    return get_host_list(auth, details=None, truncation_limit=0)
+    return [str(i) for i in get_host_list(auth, details=None, truncation_limit=0)]
 
 
 def get_hld(
     auth: BasicAuth,
     page_count: Union[int, "all"] = "all",
+    pull_ids: bool = False,
     **kwargs,
 ) -> List:
     """
@@ -197,7 +199,7 @@ def get_hld(
     elif kwargs.get("id_min") and kwargs.get("id_max"):
         pass  # just needed so a full run does not occur (below)
 
-    else:
+    elif pull_ids:
         print("Pulling full ID set via API...")
         id_list = pull_id_set(auth)
         print(f"Total IDs: {len(id_list)}")
@@ -264,9 +266,6 @@ def get_hld(
 
         if "WARNING" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
             if "URL" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]:
-                print(
-                    f"Pagination detected. Pulling next page from url: {xml['HOST_LIST_VM_DETECTION_OUTPUT']['RESPONSE']['WARNING']['URL']}"
-                )
                 # get the id_min parameter from the URL to pass into kwargs:
                 params = parse_qs(
                     urlparse(
@@ -274,6 +273,10 @@ def get_hld(
                             "URL"
                         ]
                     ).query
+                )
+
+                print(
+                    f"Pagination detected. Pulling next page with id_min: {params['id_min'][0]}"
                 )
                 kwargs["id_min"] = params["id_min"][0]
 

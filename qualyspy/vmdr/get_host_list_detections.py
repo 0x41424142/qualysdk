@@ -219,11 +219,12 @@ def get_hld(
         if response.status_code != 200:
             print(f"No data returned on page {pulled}")
             pulled += 1
-            if pulled == page_count:
-                print("Pulled all pages.")
-                break
-            else:
-                continue
+            if pulled != 'all':
+                if pulled == page_count:
+                    print("Pulled all pages.")
+                    break
+                else:
+                    continue
 
         # cleaned = remove_problem_characters(response.text)
         xml = xml_parser(response.content)
@@ -260,9 +261,10 @@ def get_hld(
                 responses.append(host_obj)
 
         pulled += 1
-        if pulled == page_count:
-            print("Pulled all pages.")
-            break
+        if page_count != "all":
+            if pulled == page_count:
+                print("Pulled all pages.")
+                break
 
         if "WARNING" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
             if "URL" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]:

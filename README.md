@@ -176,8 +176,9 @@ You can use any of the VMDR endpoints currently supported:
 |```get_hld``` | Query your VMDR host inventory with QID detections under the ```VMDRHost.DETECTION_LIST``` attribute.
 
 ## Host List Detection
-```vmdr.get_hld()``` is the main API for extracting vulnerabilities out of the Qualys platform. It is one of the slowest APIs to return data due to Qualys taking a while to gather all the necessary data, but is arguably the most important. Pagination is controlled via the ```page_count``` kwarg. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination, as well as ```truncation_limit``` to specify how many hosts should be returned per page.
->**Heads Up!:** Work is being done to speed up this API call as much as possible. Using Python's ```threading``` library, we can call the host list API with ```details=None``` to get a list of ```VMDRID```s, chunk them, and put them in a thread-safe ```queue```. Stay tuned!
+```vmdr.get_hld()``` is the main API for extracting vulnerabilities out of the Qualys platform. It is one of the slowest APIs to return data due to Qualys taking a while to gather all the necessary data, but is arguably the most important. Pagination is controlled via the ```page_count``` parameter. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination, as well as ```truncation_limit``` to specify how many hosts should be returned per page.
+
+This function implements threading to significantly speed up data pulls. The number of threads is controlled by the ```threads``` parameter, which defaults to 5. A ```Queue``` object is created, containing chunks of hostIDs (pulled via ```get_host_list``` with ```details=None```) that the threads pop from. The threads then call the ```hld_backend``` function with the hostIDs they popped from the queue. The user can control how many IDs are in a chunk via the ```chunk_size``` parameter, which defaults to 3000. You should create a combination of ```threads``` and ```chunk_size``` that keeps all threads busy, while respecting your Qualys concurrency limit.
 
 Some important kwargs this API accepts:
 |Kwarg| Possible Values |Description|
@@ -202,13 +203,13 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 # non-superseded QIDs, on-prem and EC2 assets, all tags included
 hosts_with_detections = get_hld(
 	auth, show_tags=True, show_cloud_tags=True, 
-	filter_superseded_qids=True, cloud_metadata='ec2', 
+	filter_superseded_qids=True, host_metadata='ec2', 
 	page_count=2, truncation_limit=50
 )
 >>>BaseList[VMDRHost(12345), ...]
 ```
 ## VMDR Host List
-The ```get_host_list()``` API returns (at the moment) a list of dictionary/int responses for assets in VMDR (in a later commit, it will return a list of VMDRHost or VMDRID dataclasses). Pagination is controlled via the ```page_count``` kwarg. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination.
+The ```get_host_list()``` API returns a ```BaseList``` of VMDRHost or VMDRID dataclasses. Pagination is controlled via the ```page_count``` kwarg. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination.
 
 Using the ```details``` kwarg, the shape of the output can be controlled:
 

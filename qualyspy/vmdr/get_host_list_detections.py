@@ -7,7 +7,9 @@ FOR MULTITHREADED PULLS, USE threaded.py INSTEAD
 
 from typing import List, Union
 from urllib.parse import parse_qs, urlparse
-
+from threading import current_thread, Thread, Lock
+from queue import Queue, Empty
+from os import cpu_count
 
 from .data_classes.hosts import VMDRHost, VMDRID
 from .data_classes.lists.base_list import BaseList
@@ -19,18 +21,7 @@ from .get_host_list import (
 from ..exceptions.Exceptions import *
 from ..base.xml_parser import xml_parser
 
-
-"""
-BAD_CHARS = "".join(
-    chr(i)
-    for i in range(128, 65536)
-    if not chr(i).isprintable() and not chr(i).isspace()
-)
-
-TRANSLATION_TABLE = {ord(c): None for c in BAD_CHARS}
-
-remove_problem_characters = lambda xml_content: xml_content.translate(TRANSLATION_TABLE)
-"""
+LOCK = Lock()
 
 
 def normalize_id_list(id_list):
@@ -49,30 +40,38 @@ def normalize_id_list(id_list):
         else:
             # if there is no hyphen, just append the integer
             new_list.append(int(i))
+    # Sort the list to ensure the range is correct
+    new_list.sort()
     return new_list
 
 
-def pull_id_set(auth: BasicAuth) -> BaseList[VMDRID]:
+def pull_id_set(auth: BasicAuth, ids: str = None) -> BaseList[VMDRID]:
     """
     pull_id_set - pull a set of host IDs from the VMDR API.
 
     Args:
         auth (BasicAuth): The BasicAuth object containing the username and password.
-        ids (list[int]): A list of host IDs to pull. If None, pulls all host IDs.
+        ids (str): A comma-separated string of host IDs to use. If specified, this will be used instead of pulling the full set.
 
     Returns:
         List[int]: A BaseList of host IDs as VMDRIDs.
     """
-    return [str(i) for i in get_host_list(auth, details=None, truncation_limit=0)]
+    if ids:
+        return [
+            str(i)
+            for i in get_host_list(auth, details=None, truncation_limit=0, ids=ids)
+        ]
+    else:
+        return [str(i) for i in get_host_list(auth, details=None, truncation_limit=0)]
 
 
-def get_hld(
+def hld_backend(
     auth: BasicAuth,
     page_count: Union[int, "all"] = "all",
     **kwargs,
 ) -> List:
     """
-    get_hld - get a list of hosts and their QID detections.
+    hld_backend - get a list of hosts and their QID detections.
 
     Args:
         auth (BasicAuth): The BasicAuth object containing the username and password.
@@ -186,22 +185,11 @@ def get_hld(
     responses = BaseList()
     pulled = 0
 
-    if kwargs.get(
-        "ids"
-    ):  # if the user specified ids, it takes precedence over a min-max range or a full pull below
-        id_list = normalize_id_list(kwargs.get("ids"))
-        kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
-
-    elif kwargs.get("id_min") and kwargs.get("id_max"):
-        print("using id min/max...")  # just needed so a full run does not occur (below)
-
-    #else:
-    #    print("Pulling full ID set via API...")
-    #    id_list = pull_id_set(auth)
-    #    print(f"Total IDs: {len(id_list)}")
-    #    kwargs["ids"] = f"{id_list[0]}-{id_list[-1]}"
-
     while True:
+        with LOCK:
+            print(
+                f"{current_thread().name} - Pulling page for ids {kwargs.get('ids')}. KWARGS: {kwargs}"
+            )
 
         # make the request:
         response = call_api(
@@ -213,11 +201,12 @@ def get_hld(
         )
 
         if response.status_code != 200:
-            print(f"No data returned on page {pulled}")
+            with LOCK:
+                print(f"{current_thread().name} - No data returned on page {pulled}")
             pulled += 1
-            if pulled != 'all':
+            if pulled != "all":
                 if pulled == page_count:
-                    print("Pulled all pages.")
+                    print(f"{current_thread().name} - Pulled all pages.")
                     break
                 else:
                     continue
@@ -233,7 +222,8 @@ def get_hld(
 
         # check if there is no host list
         if "HOST_LIST" not in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
-            print("No host list returned.")
+            with LOCK:
+                print(f"{current_thread().name} - No host list returned.")
         else:
 
             # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
@@ -259,7 +249,6 @@ def get_hld(
         pulled += 1
         if page_count != "all":
             if pulled == page_count:
-                print("Pulled all pages.")
                 break
 
         if "WARNING" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
@@ -272,10 +261,10 @@ def get_hld(
                         ]
                     ).query
                 )
-
-                print(
-                    f"Pagination detected. Pulling next page with id_min: {params['id_min'][0]}"
-                )
+                with LOCK:
+                    print(
+                        f"{current_thread().name} - Pagination detected. Pulling next page with id_min: {params['id_min'][0]}"
+                    )
                 kwargs["id_min"] = params["id_min"][0]
 
             else:
@@ -284,3 +273,137 @@ def get_hld(
             break
 
     return responses
+
+
+def create_id_queue(
+    auth: BasicAuth, chunk_size: int = 100, ids: str = None
+) -> BaseList:
+    """
+    create_id_queue - create a queue of host IDs to pull. the queue contains chunks (lists) of chunk_size
+    length with host IDs.
+
+    Args:
+        auth (BasicAuth): The BasicAuth object containing the username and password.
+        chunk_size (int): The size of each chunk. Defaults to 100.
+        ids (str): A comma-separated string of host IDs to use. If specified, this will be used instead of pulling the full set.
+
+    Returns:
+        Queue: A queue of host IDs to pull.
+    """
+
+    if ids:
+        id_list = pull_id_set(auth, ids=ids)
+    else:
+        id_list = pull_id_set(auth)
+
+    print(f"ID set pulled. Total IDs: {len(id_list)}")
+
+    id_queue = Queue()
+
+    for i in range(0, len(id_list), chunk_size):
+        id_queue.put(id_list[i : i + chunk_size])
+
+    print(f"Queue created with {id_queue.qsize()} chunks of {chunk_size} IDs each.")
+
+    return id_queue
+
+
+def get_hld(
+    auth: BasicAuth,
+    chunk_size: int = 3000,
+    threads: int = 5,
+    page_count: Union[int, "all"] = "all",
+    **kwargs,
+) -> List:
+    """
+    get_hld - get a list of hosts and their QID detections using multiple threads. Read
+    hld_backend for more information on the kwargs.
+
+    Args:
+        auth (BasicAuth): The BasicAuth object containing the username and password.
+        chunk_size (int): The size of each chunk. Defaults to 3000.
+        threads (int): The number of threads to use. Defaults to 5.
+        page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
+        **kwargs: Additional keyword arguments to pass to the API. See hld_backend() for details.
+
+    Returns:
+        BaseList: A list of VMDRHost objects, with their DETECTIONS attribute populated.
+    """
+
+    # First, make sure the user hasnt set threads to more than the cpu count
+    if threads > cpu_count():
+        print(
+            f"Warning: The number of threads ({threads}) is greater than the number of CPUs ({cpu_count()}). This may cause performance issues."
+        )
+
+    # Second, get concurrency rate limit from auth object. NOTE: eventually, auth class should have an attribute for this.
+    rl = auth.get_ratelimit()
+    if threads > rl["X-Concurrency-Limit-Limit"]:
+        print(
+            f"Warning: The number of threads ({threads}) is greater than the concurrency rate limit ({rl['X-Concurrency-Limit-Limit']}). Setting threads to {rl['X-Concurrency-Limit-Limit']}."
+        )
+        threads = rl["X-Concurrency-Limit-Limit"]
+
+    print(f"Starting get_hld with {threads} threads. Pulling ID set...")
+    id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids"))
+
+    threads_list = []
+
+    responses = BaseList()
+
+    for i in range(threads):
+        thread = Thread(
+            target=threaded_hld_worker,
+            args=(auth, id_queue, responses, page_count, kwargs),
+        )
+        threads_list.append(thread)
+        thread.start()
+
+    for thread in threads_list:
+        thread.join()
+
+    print("All threads have completed. Returning responses.")
+    return responses
+
+
+def threaded_hld_worker(
+    auth: BasicAuth,
+    id_queue: Queue,
+    responses: BaseList,
+    page_count: Union[int, "all"],
+    kwargs,
+):
+    """
+    threaded_hld_worker - the worker function for get_hld/hld_backend functions.
+
+    Args:
+        auth (BasicAuth): The BasicAuth object containing the username and password.
+        id_queue (Queue): The queue of host IDs to pull.
+        responses (BaseList): The list of responses to append to.
+        page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
+        **kwargs: Additional keyword arguments to pass to the API. See get_hld() for details.
+    """
+    while True:
+        pulled = 0
+        try:
+            ids = id_queue.get()
+        except Empty:
+            with LOCK:
+                print(f"{current_thread().name} - Queue is empty. Terminating thread.")
+            break
+
+        kwargs["ids"] = f"{ids[0]}-{ids[-1]}"
+        responses.extend(hld_backend(auth, page_count=page_count, **kwargs))
+        id_queue.task_done()
+        with LOCK:
+            print(f"{current_thread().name} - Chunk complete.")
+        pulled += 1
+        # check if the queue is empty, or if the threads are done (via pulled var)
+        if id_queue.empty():
+            with LOCK:
+                print(f"{current_thread().name} - Queue is empty. Terminating thread.")
+            break
+        if pulled == page_count:
+            with LOCK:
+                print(f"{current_thread().name} - Pulled all pages. Returning.")
+            break

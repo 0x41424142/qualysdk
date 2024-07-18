@@ -61,13 +61,14 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
         ]  # at this point, data has IP and IP_RANGE keys
 
         # Convert the IP addresses into IP objects:
-        single_ips = [ip for ip in data["IP"]]  # Single IPs
+        if 'IP' in data:
+            single_ips = [ip for ip in data["IP"]]  # Single IPs
+            ip_list.extend(convert_ips(single_ips))
 
         # Convert the IP ranges into IPNetwork objects:
-        range_ips = [ip for ip in data["IP_RANGE"]]
-
-        ip_list.extend(convert_ips(single_ips))
-        ip_list.extend(convert_ranges(range_ips))
+        if 'IP_RANGE' in data:
+            range_ips = [ip for ip in data["IP_RANGE"]]  # IP Ranges
+            ip_list.extend(convert_ranges(range_ips))
 
     else:
         raise Exception(f"Failed to pull IP list. Status code: {response.status_code}")

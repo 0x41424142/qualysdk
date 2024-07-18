@@ -48,7 +48,7 @@ linux_servers_with_1cpu = query_assets(
 |--|--|
 | GAV (Global AssetView) |✅|
 | VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld``` implemented) |
-| PM (Patch Management) | In Progress |
+| PM (Patch Management) | In Planning |
 | WAS | Not Started |
 | TC (TotalCloud) | Not Started |
 |Connectors | Not Started |
@@ -354,7 +354,9 @@ print(schema_query(module='gav', pretty=True))
 ```
 # TODO:
 
-- Improve HLD endpoint to support multithreading via calling host list API first to get IDs, then splitting up in a queue.
+- Continue adding VMDR APIs.
+
+- Start work on PM module.
 
 - Write testing files.
 

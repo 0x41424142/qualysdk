@@ -9,7 +9,7 @@ from .auth import BasicAuth, TokenAuth
 
 from .gav.uber import GAVUber
 
-from .vmdr import query_kb, get_host_list, get_hld
+from .vmdr import query_kb, get_host_list, get_hld, get_ip_list, add_ips, update_ips
 
 
 # surprise!

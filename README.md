@@ -43,6 +43,38 @@ linux_servers_with_1cpu = query_assets(
 >>> linux_servers_with_1core
 [AssetID(<0123>), AssetID(<4567>), ...]
 ```
+
+## Table of Contents
+- [qualyspy - A Python Package for Interacting With Qualys APIs](#qualyspy---a-python-package-for-interacting-with-qualys-apis)
+  - [Uber Class Example](#uber-class-example)
+  - [Non-Uber Class Example](#non-uber-class-example)
+  - [Table of Contents](#table-of-contents)
+  - [Current Supported Modules](#current-supported-modules)
+- [Getting Started](#getting-started)
+- [Auth Classes](#auth-classes)
+  - [Auth Class Hierarchy](#auth-class-hierarchy)
+- [Global AssetView APIs](#global-assetview-apis)
+  - [GAV Endpoints](#gav-endpoints)
+  - [The GAV Host Dataclass](#the-gav-host-dataclass)
+- [VMDR APIs](#vmdr-apis)
+  - [Host List Detection](#host-list-detection)
+  - [VMDR Host List](#vmdr-host-list)
+  - [IP List Management](#ip-list-management)
+  - [|```update_ips```| Change details of IP addresses or ranges from VMDR.|](#update_ips-change-details-of-ip-addresses-or-ranges-from-vmdr)
+    - [Get IP List API](#get-ip-list-api)
+    - [Add IPs API](#add-ips-api)
+    - [Update IPs API](#update-ips-api)
+  - [Querying the KB](#querying-the-kb)
+  - [Special Dataclasses for VMDR](#special-dataclasses-for-vmdr)
+    - [KB Dataclasses](#kb-dataclasses)
+  - [| ```Bugtraq``` | ID, URL |](#-bugtraq--id-url-)
+- [The CALL\_SCHEMA Dictionary](#the-call_schema-dictionary)
+  - [Querying the CALL\_SCHEMA](#querying-the-call_schema)
+- [TODO:](#todo)
+
+
+
+
 ## Current Supported Modules 
 |Module| Status |
 |--|--|
@@ -136,6 +168,8 @@ After running:
 from qualyspy.gav import *
 ```
 You can any of the 4 GAV endpoints:
+
+## GAV Endpoints
 |API Call| Description |
 |--|--|
 | ```count_assets``` | Count assets based on the ```filter``` kwarg, which is written in Qualys QQL.|
@@ -238,6 +272,100 @@ yesterdays_scanned_assets = get_host_list(
 ) 
 ```
 
+## IP List Management
+
+This collection of APIs allows for the management of IP addresses/ranges in VMDR, located under ```qualyspy.vmdr.ips```. The APIs are as follows:
+
+|API Call| Description|
+|--|--|
+|```get_ip_list```| Get a list of IP addresses or ranges in VMDR.|
+|```add_ips```| Add IP addresses or ranges to VMDR.|
+|```update_ips```| Change details of IP addresses or ranges from VMDR.|
+---
+### Get IP List API
+The ```get_ip_list()``` API returns a list of all IP addresses or ranges in VMDR, matching the given kwargs. Acceptable args/kwargs are:
+|Arg/Kwarg| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to search for.|❌|
+|```network_id```|```str```|The network ID to search for.|❌ (usually not even enabled in a Qualys subscription)|
+|```tracking_method```|```Literal['IP', 'DNS', 'NETBIOS']```| Return IPs/ranges based on the tracking method.|❌|
+|```compliance_enabled```|```bool```|Return IPs/ranges based on if compliance tracking is enabled on it.|❌|
+|```certview_enabled```|```bool```|Return IPs/ranges based on if CertView tracking is enabled on it.|❌|
+
+```py
+from qualyspy import BasicAuth
+from qualyspy.vmdr.ips import get_ip_list
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Get all IP addresses/ranges in VMDR that have CertView tracking enabled:
+certview_ips = get_ip_list(auth, certview_enabled=True)
+
+#Get specific IP addresses/ranges:
+specific_ips = get_ip_list(auth, ips='1.2.3.4,5.6.7.8,9.10.11.12/24')
+
+#Slice the list of IP addresses/ranges to those that are external:
+external_ips = [i for i in get_ip_list(auth) if not i.is_private]
+```
+---
+### Add IPs API
+The ```add_ips()``` API allows for the addition of IP addresses or ranges to VMDR. Acceptable args/kwargs are:
+|Arg/Kwarg| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to add.|✅|
+|```tracking_method```|```Literal['IP', 'DNS', 'NETBIOS']```| The tracking method to use for the IP address/range.|❌|
+|```enable_pc```|```bool```|Enable Policy Compliance tracking on the IP address/range.|See **Heads Up!** below.|
+|```enable_vm```|```bool```|Enable Vulnerability Management tracking on the IP address/range.|See **Heads Up!** below.|
+|```enable_sca```|```bool```|Enable Security Configuration Assessment tracking on the IP address/range.|See **Heads Up!** below.|
+|```enable_certview```|```bool```|Enable CertView tracking on the IP address/range.|See **Heads Up!** below.|
+|```tracking_method```|```Literal['IP', 'DNS', 'NETBIOS']```|The tracking method to use for the IP address/range. Defaults to IP.|❌|
+|```owner```|```str```|The owner of the IP address/range.|❌|
+|```ud1```|```str```|The user-defined field 1 (comment).|❌|
+|```ud2```|```str```|The user-defined field 2 (comment).|❌|
+|```ud3```|```str```|The user-defined field 3 (comment).|❌|
+|```comment```|```str```|A comment to add to the IP address/range.|❌|
+|```ag_title```|```str```|The title of the asset group to add the IP address/range to.|❌|
+
+>**Heads Up!**: At least one of the following must be enabled: ```enable_pc```, ```enable_vm```, ```enable_sca```, or ```enable_certview```, or the API will return an error.
+
+```py
+from qualyspy import BasicAuth
+from qualyspy.vmdr.ips import add_ips
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Add an IP address/range to VMDR with VM tracking enabled:
+add_ips(auth, ips='1.2.3.4', enable_vm=True)
+```
+---
+### Update IPs API
+The ```update_ips()``` API allows for the modification of IP addresses or ranges in VMDR. Acceptable args/kwargs are:
+|Arg/Kwarg| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to update.|✅|
+|```tracking_method```|```Literal['IP', 'DNS', 'NETBIOS']```| The tracking method to use for the IP address/range.|❌|
+|```host_dns```|```str```|The DNS name of the IP address/range.|❌|
+|```host_netbios```|```str```|The NetBIOS name of the IP address/range.|❌|
+|```owner```|```str```|The owner of the IP address/range.|❌|
+|```ud1```|```str```|The user-defined field 1 (comment).|❌|
+|```ud2```|```str```|The user-defined field 2 (comment).|❌|
+|```ud3```|```str```|The user-defined field 3 (comment).|❌|
+|```comment```|```str```|A comment to add to the IP address/range.|❌|
+
+```py
+from qualyspy import BasicAuth
+from qualyspy.vmdr.ips import update_ips
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Update an IP address/range in VMDR with a new DNS name:
+update_ips(auth, ips='1.2.3.4', host_dns='new_dns_name')
+```
+---
+
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:
 >**Heads Up!**: When calling ```query_kb()```, the function returns a regular list of ```KBEntry``` objects.
@@ -263,7 +391,7 @@ with BasicAuth(<username>, <password>, platform='qg1') as auth:
 
 There are quite a few special dataclasses that are used in the VMDR module, as well as a ```BaseList``` class that is used to store these dataclasses and add some easier string functionality.
 
-For example, for KB entries, there is the ```KBEntry``` class which holds the various fields that the Qualys KB API returns. Inside a ```KBEntry``` object there are custom classes for things like ```ThreatIntel``` and ```Software```.
+For example, for KB entries, there is the ```KBEntry``` class which holds the various fields that the Qualys KB API returns. Inside a ```KBEntry``` object there are custom classes for things like ```ThreatIntel``` and ```Software```. Other examples include the ```VMDRHost``` class, which holds the various fields that the VMDR Host List API returns, and the ```Detection``` class, which holds the various fields that the VMDR Host List Detection API returns under a ```VMDRHost```.
 ```py
 ... #Prior KB pull
 
@@ -285,24 +413,7 @@ str(kb_entry.CVEList)
 |```CVEID```| ID, URL |
 |```Compliance``` | _TYPE, SECTION, DESCRIPTION |
 | ```Bugtraq``` | ID, URL |
------
-### KB List Dataclasses
-These objects simply store multiples of the dataclasses described above, in a ```_list``` attribute.
-
- - ```ThreatIntelList```
- - ```SoftwareList```
- - ```ReferenceList``` (vendor reference)
- - ```CVEList```
- - ```ComplianceList```
- - ```BaseList``` (parent class for above lists)
- ----
- ### KB List Dataclasses Hierarchy
- ```mermaid
-graph
-A[qualyspy.vmdr.data_classes.lists.base_list.BaseList]-->B(qualyspy.vmdr.data_classes.lists.*)
-B -- STORE A LIST OF --> C(qualyspy.vmdr.data_classes*)
-```
- 
+----- 
 
 # The CALL_SCHEMA Dictionary
 >**TL;DR**: The ```CALL_SCHEMA``` is ***VERY*** important! 

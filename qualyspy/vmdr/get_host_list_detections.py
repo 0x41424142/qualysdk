@@ -1,8 +1,7 @@
 """
 get_host_list_detections.py - contains the get_host_list_detections function for the Qualyspy package.
 
-This endpoint is used to get a list of hosts and their QID detections using a single thread.
-FOR MULTITHREADED PULLS, USE threaded.py INSTEAD
+This endpoint is used to get a list of hosts and their QID detections. The function is multithreaded and uses the hld_backend function to pull the data.
 """
 
 from typing import List, Union
@@ -20,6 +19,7 @@ from .get_host_list import (
 )  # Used to grab list of IDs for multithreaded detection list pulls
 from ..exceptions.Exceptions import *
 from ..base.xml_parser import xml_parser
+from ..base import convert_bools_and_nones
 
 LOCK = Lock()
 
@@ -173,14 +173,7 @@ def hld_backend(
     kwargs["output_format"] = "XML"
 
     # If any kwarg is a bool, convert it to 1 or 0
-    for key in kwargs:
-        if isinstance(kwargs[key], bool):
-            kwargs[key] = 1 if kwargs[key] else 0
-
-    # If any kwarg is None, set it to 'None'
-    for key in kwargs:
-        if kwargs[key] is None:
-            kwargs[key] = "None"
+    kwargs = convert_bools_and_nones(kwargs)
 
     responses = BaseList()
     pulled = 0
@@ -303,7 +296,7 @@ def create_id_queue(
     for i in range(0, len(id_list), chunk_size):
         id_queue.put(id_list[i : i + chunk_size])
 
-    print(f"Queue created with {id_queue.qsize()} chunks of {chunk_size} IDs each.")
+    print(f"Queue created with {id_queue.qsize()} chunks of ~{chunk_size} IDs each.")
 
     return id_queue
 

@@ -13,26 +13,7 @@ from ..exceptions.Exceptions import *
 from .data_classes.hosts import VMDRHost, VMDRID
 from .data_classes.lists.base_list import BaseList
 from ..base import xml_parser
-
-
-def remove_problem_characters(xml_content):  # sigh...
-    """
-    Remove unprintable characters from XML content.
-    Args:
-        xml_content (str): The XML content.
-    Returns:
-        str: The XML content with unprintable characters removed.
-    """
-    # Create a translation table that maps non-printable and non-whitespace characters to None
-    # Get all characters in Unicode
-    all_chars = (chr(i) for i in range(65536))  # Unicode range is from 0 to 65535
-    # Filter out printable characters and whitespace
-    non_printable = "".join(
-        c for c in all_chars if not c.isprintable() and not c.isspace()
-    )
-    # Create the translation table
-    translation_table = str.maketrans("", "", non_printable)
-    return xml_content.translate(translation_table)
+from ..base import convert_bools_and_nones
 
 
 def get_host_list(
@@ -113,16 +94,7 @@ def get_host_list(
     # add the action to the kwargs:
     kwargs["action"] = "list"
 
-    # qualys expects all boolean values to be represented as a 0 or 1:
-    for key, value in kwargs.items():
-        if isinstance(value, bool):
-            kwargs[key] = 1 if value else 0
-        # if options is specified and set to NoneType, convert to "None":
-        if isinstance(value, type(None)):
-            kwargs[key] = "None"
-        # if host_metadata is specified and set to a non-"all" or non-NoneType, lower() it:
-        if key == "host_metadata" and value not in ["all", None]:
-            kwargs[key] = value.lower()
+    kwargs = convert_bools_and_nones(kwargs)
 
     if kwargs.get("truncation_limit") and (
         kwargs["truncation_limit"] in [0, "0"]

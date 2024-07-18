@@ -128,6 +128,7 @@ def call_api(
 
     # check for errors:
     if response.status_code in range(400, 599):
+        print(f"Error: {response.text}")
         response.raise_for_status()
 
     return response

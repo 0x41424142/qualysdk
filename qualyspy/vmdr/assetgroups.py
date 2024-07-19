@@ -10,7 +10,9 @@ from .data_classes import AssetGroup, BaseList
 from ..base import *
 
 
-def get_ag_list(auth: BasicAuth, page_count: Union["all", int] = "all", **kwargs) -> list[AssetGroup]:
+def get_ag_list(
+    auth: BasicAuth, page_count: Union["all", int] = "all", **kwargs
+) -> list[AssetGroup]:
     """
     Gets a list of asset groups from the Qualys subscription.
 

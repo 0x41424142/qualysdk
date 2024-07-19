@@ -1,4 +1,21 @@
- steps:
- - uses: actions/checkout@v4
- - name: Python Linter
-   uses: sunnysid3up/python-linter@master
+name: Static analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  check:
+    name: Run Linter
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: CodeQuality
+        uses: JacobDomagala/StaticAnalysis@master
+        with:
+          language: "Python"
+          pylint_args: "--rcfile=.pylintrc --recursive=true"
+          python_dirs: "qualyspy"

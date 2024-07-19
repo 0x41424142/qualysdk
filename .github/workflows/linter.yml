@@ -1,0 +1,7 @@
+name: Python Linter
+on: [push, pull_request]
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - name: Lint code
+   uses: sunnysid3up/python-linter@master

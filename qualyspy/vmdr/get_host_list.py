@@ -13,8 +13,6 @@ from ..exceptions.Exceptions import *
 from .data_classes.hosts import VMDRHost, VMDRID
 from .data_classes.lists.base_list import BaseList
 from ..base import xml_parser
-from ..base import convert_bools_and_nones
-
 
 def get_host_list(
     auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
@@ -93,8 +91,6 @@ def get_host_list(
 
     # add the action to the kwargs:
     kwargs["action"] = "list"
-
-    kwargs = convert_bools_and_nones(kwargs)
 
     if kwargs.get("truncation_limit") and (
         kwargs["truncation_limit"] in [0, "0"]

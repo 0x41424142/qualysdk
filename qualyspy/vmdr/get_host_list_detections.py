@@ -19,7 +19,6 @@ from .get_host_list import (
 )  # Used to grab list of IDs for multithreaded detection list pulls
 from ..exceptions.Exceptions import *
 from ..base.xml_parser import xml_parser
-from ..base import convert_bools_and_nones
 
 LOCK = Lock()
 
@@ -76,7 +75,6 @@ def hld_backend(
     Args:
         auth (BasicAuth): The BasicAuth object containing the username and password.
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
-        threaded (bool): Whether to use threading. Defaults to True, which downloads a get_host_list() call with details=None to pull just IDs.
         **kwargs: Additional keyword arguments to pass to the API. See below.
 
     Keyword Args:
@@ -171,9 +169,6 @@ def hld_backend(
     kwargs["echo_request"] = 0
     kwargs["show_results"] = 1
     kwargs["output_format"] = "XML"
-
-    # If any kwarg is a bool, convert it to 1 or 0
-    kwargs = convert_bools_and_nones(kwargs)
 
     responses = BaseList()
     pulled = 0
@@ -317,7 +312,7 @@ def get_hld(
         chunk_size (int): The size of each chunk. Defaults to 3000.
         threads (int): The number of threads to use. Defaults to 5.
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
-        **kwargs: Additional keyword arguments to pass to the API. See hld_backend() for details.
+        **kwargs: Additional keyword arguments to pass to the API. See qualyspy.vmdr.get_host_list_detections.hld_backend() for details.
 
     Returns:
         BaseList: A list of VMDRHost objects, with their DETECTIONS attribute populated.
@@ -337,8 +332,9 @@ def get_hld(
         )
         threads = rl["X-Concurrency-Limit-Limit"]
 
-    print(f"Starting get_hld with {threads} threads. Pulling ID set...")
+    print("Pulling ID set...")
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids"))
+    print(f"Starting get_hld with {threads} threads.")
 
     threads_list = []
 

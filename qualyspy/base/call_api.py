@@ -12,8 +12,8 @@ from datetime import datetime
 from ..auth.token import TokenAuth
 from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import *
-
 from .call_schema import CALL_SCHEMA
+from .convert_bools_and_nones import convert_bools_and_nones
 
 
 def call_api(
@@ -114,6 +114,12 @@ def call_api(
     # or set up the tuple for basic auth:
     elif auth.auth_type == "basic":
         auth_tuple = (auth.username, auth.password)
+
+    # Make certain payloads/params requests-friendly:
+    if payload:
+        payload = convert_bools_and_nones(payload)
+    if params:
+        params = convert_bools_and_nones(params)
 
     # and finally, make the request:
     response = request(

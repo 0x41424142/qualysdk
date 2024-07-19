@@ -44,40 +44,11 @@ linux_servers_with_1cpu = query_assets(
 [AssetID(<0123>), AssetID(<4567>), ...]
 ```
 
-## Table of Contents
-- [qualyspy - A Python Package for Interacting With Qualys APIs](#qualyspy---a-python-package-for-interacting-with-qualys-apis)
-  - [Uber Class Example](#uber-class-example)
-  - [Non-Uber Class Example](#non-uber-class-example)
-  - [Table of Contents](#table-of-contents)
-  - [Current Supported Modules](#current-supported-modules)
-- [Getting Started](#getting-started)
-- [Auth Classes](#auth-classes)
-  - [Auth Class Hierarchy](#auth-class-hierarchy)
-- [Global AssetView APIs](#global-assetview-apis)
-  - [GAV Endpoints](#gav-endpoints)
-  - [The GAV Host Dataclass](#the-gav-host-dataclass)
-- [VMDR APIs](#vmdr-apis)
-  - [Host List Detection](#host-list-detection)
-  - [VMDR Host List](#vmdr-host-list)
-  - [IP List Management](#ip-list-management)
-    - [Get IP List API](#get-ip-list-api)
-    - [Add IPs API](#add-ips-api)
-    - [Update IPs API](#update-ips-api)
-  - [Querying the KB](#querying-the-kb)
-  - [Special Dataclasses for VMDR](#special-dataclasses-for-vmdr)
-    - [KB Dataclasses](#kb-dataclasses)
-- [The CALL\_SCHEMA Dictionary](#the-call_schema-dictionary)
-  - [Querying the CALL\_SCHEMA](#querying-the-call_schema)
-- [TODO:](#todo)
-
-
-
-
 ## Current Supported Modules 
 |Module| Status |
 |--|--|
 | GAV (Global AssetView) |✅|
-| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld``` implemented) |
+| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld```, ```get_ag_list``` implemented) |
 | PM (Patch Management) | In Planning |
 | WAS | Not Started |
 | TC (TotalCloud) | Not Started |
@@ -88,6 +59,7 @@ linux_servers_with_1cpu = query_assets(
 |Tagging| Not Started
 
 # Getting Started
+
 To install using poetry, run the following commands:
 ```bash
 git clone https://0x41424142/qualyspy.git
@@ -100,7 +72,9 @@ You can also install using pip, preferably in a virtual environment:
 git clone https://0x41424142/qualyspy.git
 pip install qualyspy
 ```
+
 # Auth Classes
+
 ```qualyspy``` supports both HTTP Basic Authentication (used mainly for VMDR-based calls) as well as JWT Authentication. 
 
 >**Pro Tip**: Both ```BasicAuth``` and ```TokenAuth``` can be used as **context managers**!
@@ -157,6 +131,8 @@ graph
 A[qualyspy.auth.base.BaseAuthentication]-->B(qualyspy.auth.basic.BasicAuth)
 B --> C(qualyspy.auth.token.TokenAuth)
 ```
+---
+
 # Global AssetView APIs
 Global AssetView APIs return data on hosts within your Qualys subscription. 
 >**Pro Tip**: To see all available GAV QQL filters, look [here!](https://docs.qualys.com/en/gav/2.18.0.0/search/how_to_search.htm)
@@ -194,13 +170,15 @@ When results are received from a GAV API, each host record is stored in a ```Hos
 Chances are, there will be a good chunk of attributes returned from Qualys that will be null. To deal with this, almost all attributes are defined as ```typing.Optional[]```, with the main exception being ```assetId```. It is also somewhat likely that I have mistyped certain attributes, as both the Qualys documentation and the data I am working with to build this package return a decent amount of null values. Should you come across something, submit a PR.
 
 # VMDR APIs
-VMDR APIs return data on vulnerabilities in your environment as well as from the Qualys KB.
+VMDR APIs return data on vulnerabilities in your environment as well as from the Qualys KB. It also returns data on assets, IPs/subnets, asset groups, and more.
 
 After running:
 ```py
 from qualyspy.vmdr import *
 ```
 You can use any of the VMDR endpoints currently supported:
+
+## VMDR Endpoints
 |API Call| Description |
 |--|--|
 | ```query_kb``` | Query the Qualys KnowledgeBase (KB) for vulnerabilities.|
@@ -281,6 +259,7 @@ This collection of APIs allows for the management of IP addresses/ranges in VMDR
 |```update_ips```| Change details of IP addresses or ranges from VMDR.|
 ---
 ### Get IP List API
+
 The ```get_ip_list()``` API returns a list of all IP addresses or ranges in VMDR, matching the given kwargs. Acceptable args/kwargs are:
 |Arg/Kwarg| Possible Values |Description|Required|
 |--|--|--|--|
@@ -363,7 +342,40 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 update_ips(auth, ips='1.2.3.4', host_dns='new_dns_name')
 ```
 ---
+## Asset Group List Management
+This collection of APIs allows for the management of asset groups (AGs) in VMDR, located under ```qualyspy.vmdr.assetgroups```. The APIs are as follows:
 
+|API Call| Description|
+|--|--|
+|```get_ag_list```| Get a ```BaseList``` of ```AssetGroup``` objects.|
+---
+
+### Get Asset Group List API
+
+The ```get_ag_list()``` API returns a list of all AGs in VMDR, matching the given kwargs. Acceptable args/kwargs are:
+|Arg/Kwarg| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```page_count```|```Literal['all']``` (default), ```int >= 0```| How many pages to pull. Note that ```page_count``` does not apply if ```truncation_limit``` is set to 0, or not specified.|❌|
+|```ids```|```str```: '12345', '12345,6789'| Filter to specific AG IDs.|❌|
+|```id_min```|```int```| Only return AGs with an ID >= ```id_min```.| ❌|
+```id_max```|```int```| Only return AGs with an ID <= ```id_max```.|❌|
+|```truncation_limit```| ```int```| Specify how many AGs per page. If set to 0 or not specified, returns all AGs in one pull.| ❌|
+|```network_ids```|```str```: '12345', '12345,6789'| Only return AGs with specific network IDs.|❌|
+|```unit_id```|```str```: 01234| Only return AGs with a specific unit ID. Only one ID is accepted.|❌|
+|```user_id```|```str```| Only return AGs with a specific user assigned. Only one ID is accepted.|❌|
+|```title```|```str```: "My Asset Group"| Only return AGs with a specific title. Must be an exact string match.|❌|
+|```show_attributes```|```str```: 'ALL', 'ID', 'TITLE', 'ID,TITLE', ```...``` (For full list, check [Qualys documentation](https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf), under "Asset Group List" Section.| Only return specific attributes of an AG record. If not specified, basic details are returned (ID, TITLE, ```...```)|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import get_ag_list
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+ag_list = get_ag_list(auth)
+```
+---
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:
 >**Heads Up!**: When calling ```query_kb()```, the function returns a regular list of ```KBEntry``` objects.

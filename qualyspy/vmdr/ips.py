@@ -10,7 +10,6 @@ from ..exceptions.Exceptions import *
 from .data_classes.ip_converters import convert_ips, convert_ranges
 from .data_classes.lists.base_list import BaseList
 from ..base import xml_parser
-from ..base import convert_bools_and_nones
 
 
 def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
@@ -38,9 +37,6 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
     kwargs["action"] = "list"
     kwargs["echo_request"] = False
 
-    # Convert certain kwargs to requests-friendly format:
-    kwargs = convert_bools_and_nones(kwargs)
-
     response = call_api(
         auth=auth,
         module="vmdr",
@@ -62,11 +58,17 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
 
         # Convert the IP addresses into IP objects:
         if 'IP' in data:
+            # Normalize, account for a str:
+            if isinstance(data["IP"], str):
+                data["IP"] = [data["IP"]]
             single_ips = [ip for ip in data["IP"]]  # Single IPs
             ip_list.extend(convert_ips(single_ips))
 
         # Convert the IP ranges into IPNetwork objects:
         if 'IP_RANGE' in data:
+            # Normalize, account for a str:
+            if isinstance(data["IP_RANGE"], str):
+                data["IP_RANGE"] = [data["IP_RANGE"]]
             range_ips = [ip for ip in data["IP_RANGE"]]  # IP Ranges
             ip_list.extend(convert_ranges(range_ips))
 
@@ -140,9 +142,6 @@ def add_ips(
     kwargs["enable_vm"] = enable_vm
     kwargs["enable_sca"] = enable_sca
 
-    # Convert certain kwargs to requests-friendly format:
-    kwargs = convert_bools_and_nones(kwargs)
-
     response = call_api(
         auth=auth,
         module="vmdr",
@@ -191,9 +190,6 @@ def update_ips(auth: BasicAuth, ips: Union[str, BaseList], **kwargs) -> None:
         ips = ",".join(ips)
 
     kwargs["ips"] = ips
-
-    # Convert certain kwargs to requests-friendly format:
-    kwargs = convert_bools_and_nones(kwargs)
 
     response = call_api(
         auth=auth,

@@ -13,5 +13,6 @@ from .tag import Tag, CloudTag
 from .detection import Detection
 from .qds_factor import QDSFactor
 from .qds import QDS
+from .asset_group import AssetGroup
 
 from .lists import BaseList

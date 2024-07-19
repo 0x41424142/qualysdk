@@ -7,8 +7,6 @@ This function is used to query the Qualys KnowledgeBase (KB), which is a databas
 from typing import *
 from urllib.parse import parse_qs, urlparse
 
-from xmltodict import parse
-
 from .data_classes.kb_entry import KBEntry
 from .data_classes.lists.base_list import BaseList
 from ..base.call_api import call_api

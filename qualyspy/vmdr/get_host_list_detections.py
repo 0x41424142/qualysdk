@@ -213,7 +213,6 @@ def hld_backend(
             with LOCK:
                 print(f"{current_thread().name} - No host list returned.")
         else:
-
             # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
             # or just a dictionary. if it is just one, put it inside a list
             if not isinstance(

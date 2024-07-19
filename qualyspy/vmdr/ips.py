@@ -57,7 +57,7 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
         ]  # at this point, data has IP and IP_RANGE keys
 
         # Convert the IP addresses into IP objects:
-        if 'IP' in data:
+        if "IP" in data:
             # Normalize, account for a str:
             if isinstance(data["IP"], str):
                 data["IP"] = [data["IP"]]
@@ -65,7 +65,7 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
             ip_list.extend(convert_ips(single_ips))
 
         # Convert the IP ranges into IPNetwork objects:
-        if 'IP_RANGE' in data:
+        if "IP_RANGE" in data:
             # Normalize, account for a str:
             if isinstance(data["IP_RANGE"], str):
                 data["IP_RANGE"] = [data["IP_RANGE"]]

@@ -1,4 +1,4 @@
-﻿# qualyspy - A Python Package for Interacting With Qualys APIs
+# qualyspy - A Python Package for Interacting With Qualys APIs
 ```
 ··············································
 :   ____             _                       :
@@ -12,7 +12,7 @@
 
 This package attempts to make it much easier to interact with Qualys's various API endpoints, across most modules.
 
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![enter image description here](https://img.shields.io/badge/in%20development-8A2BE2)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![development status](https://img.shields.io/badge/in%20development-8A2BE2) ![black formatter status](https://github.com/0x41424142/qualyspy/actions/workflows/black.yml/badge.svg?event=push)
 
 ## Uber Class Example
 ```py

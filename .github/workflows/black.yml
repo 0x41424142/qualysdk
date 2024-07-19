@@ -3,7 +3,7 @@ on: [push, pull_request]
 jobs:
   linter_name:
     name: runner / black
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Check files using the black formatter

@@ -14,6 +14,7 @@ from .data_classes.hosts import VMDRHost, VMDRID
 from .data_classes.lists.base_list import BaseList
 from ..base import xml_parser
 
+
 def get_host_list(
     auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
 ) -> list:

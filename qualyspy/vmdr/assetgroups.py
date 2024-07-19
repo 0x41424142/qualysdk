@@ -10,7 +10,9 @@ from .data_classes import AssetGroup, BaseList
 from ..base import *
 
 
-def get_ag_list(auth: BasicAuth, page_count: Union["all", int] = "all", **kwargs) -> list[AssetGroup]:
+def get_ag_list(
+    auth: BasicAuth, page_count: Union["all", int] = "all", **kwargs
+) -> list[AssetGroup]:
     """
     Gets a list of asset groups from the Qualys subscription.
 
@@ -39,7 +41,7 @@ def get_ag_list(auth: BasicAuth, page_count: Union["all", int] = "all", **kwargs
 
     if type(page_count) in [int, float] and page_count <= 0:
         raise ValueError("page_count must be 'all' or an integer greater than 0.")
-    
+
     results = BaseList()
     pulled = 0
 
@@ -63,18 +65,20 @@ def get_ag_list(auth: BasicAuth, page_count: Union["all", int] = "all", **kwargs
         if response.status_code == 200:
             data = xml_parser(response.text)["ASSET_GROUP_LIST_OUTPUT"]
 
-            if "ASSET_GROUP" not in data["RESPONSE"]['ASSET_GROUP_LIST']:
+            if "ASSET_GROUP" not in data["RESPONSE"]["ASSET_GROUP_LIST"]:
                 print("No asset groups found. Returning empty BaseList.")
                 break
 
             # Check if type(data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]) is dict.
             # If so, put it inside a list to normalize the class instantiation.
             if isinstance(data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"], dict):
-                data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"] = [data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]]
+                data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"] = [
+                    data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]
+                ]
 
             for ag in data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]:
                 results.append(AssetGroup(**ag))
-            
+
             pulled += 1
             # Check page count:
             if page_count != "all" and pulled >= page_count:
@@ -82,12 +86,12 @@ def get_ag_list(auth: BasicAuth, page_count: Union["all", int] = "all", **kwargs
                 break
 
             # Check for pagination:
-            if data['RESPONSE'].get("WARNING"):
+            if data["RESPONSE"].get("WARNING"):
                 # Get the id_min param:
-                url = data['RESPONSE']['WARNING']['URL']
+                url = data["RESPONSE"]["WARNING"]["URL"]
                 parsed_url = urlparse(url)
-                id_min = parse_qs(parsed_url.query)['id_min'][0]
-                kwargs['id_min'] = id_min
+                id_min = parse_qs(parsed_url.query)["id_min"][0]
+                kwargs["id_min"] = id_min
                 print(f"Pagination detected. new id_min param: {id_min}")
             else:
                 break

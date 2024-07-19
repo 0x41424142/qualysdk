@@ -158,7 +158,6 @@ class KBEntry:
     )
 
     def __post_init__(self):
-
         # convert certain fields out of string format:
         if self.QID is not None and not isinstance(self.QID, int):
             self.QID = int(self.QID)

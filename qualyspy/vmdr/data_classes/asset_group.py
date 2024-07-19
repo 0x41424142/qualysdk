@@ -17,6 +17,7 @@ from .ip_converters import *
 from .hosts import VMDRID
 from .lists.base_list import BaseList
 
+
 @dataclass(order=True)
 class AssetGroup:
     """
@@ -24,34 +25,109 @@ class AssetGroup:
     """
 
     ID: int = field(metadata={"description": "The ID of the asset group."})
-    TITLE: Optional[str] = field(metadata={"description": "The title of the asset group."}, default="")
-    #NOTE: OWNER_ID contains either the raw XML's OWNER_ID or OWNER_USER_ID depending on value passed to get_ag_list(attributes=<>).
-    OWNER_ID: Optional[int] = field(metadata={"description": "The ID of the owner of the asset group."}, default=None)
-    OWNER_USER_ID: Optional[int] = field(metadata={"description": "The ID of the owner user of the asset group."}, default=None)
-    UNIT_ID: Optional[int] = field(metadata={"description": "The ID of the unit of the asset group."}, default=None)
-    LAST_UPDATE: Optional[Union[str, datetime]] = field(metadata={"description": "The datetime the asset group was last updated."}, default=None)
-    NETWORK_ID: Optional[int] = field(metadata={"description": "The ID of the network of the asset group, if enabled in Qualys."}, default=None)
-    IP_SET: Optional[BaseList[Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]]] = field(metadata={"description": "The IP set of the asset group."}, default_factory=BaseList)
-    BUSINESS_IMPACT: Optional[str] = field(metadata={"description": "The business impact of the asset group."}, default=None)
-    DEFAULT_APPLIANCE_ID: Optional[int] = field(metadata={"description": "The default appliance ID of the asset group."}, default=None)
-    APPLIANCE_IDS: Optional[BaseList[int]] = field(metadata={"description": "The appliance IDs of the asset group."}, default_factory=BaseList)
-    DNS_LIST: Optional[BaseList[str]] = field(metadata={"description": "The DNS list of the asset group."}, default_factory=BaseList)
-    NETBIOS_LIST: Optional[BaseList[str]] = field(metadata={"description": "The NetBIOS list of the asset group."}, default_factory=BaseList)
-    HOST_IDS: Optional[BaseList[VMDRID]] = field(metadata={"description": "The host IDs of the asset group. BaseList of VMDRID objects."}, default_factory=BaseList)
-    ASSIGNED_USER_IDS: Optional[BaseList[int]] = field(metadata={"description": "The assigned user IDs of the asset group."}, default_factory=BaseList)
-    ASSIGNED_UNIT_IDS: Optional[BaseList[int]] = field(metadata={"description": "The assigned unit IDs of the asset group."}, default_factory=BaseList)
-    OWNER_USER_NAME: Optional[str] = field(metadata={"description": "The owner user name of the asset group."}, default=None)
-    CVSS_ENVIRO_CDP: Optional[str] = field(metadata={"description": "The CVSS environmental CDP of the asset group."}, default=None)
-    CVSS_ENVIRO_TD: Optional[str] = field(metadata={"description": "The CVSS environmental TD of the asset group."}, default=None)
-    CVSS_ENVIRO_CR: Optional[str] = field(metadata={"description": "The CVSS environmental CR of the asset group."}, default=None)
-    CVSS_ENVIRO_IR: Optional[str] = field(metadata={"description": "The CVSS environmental IR of the asset group."}, default=None)
-    CVSS_ENVIRO_AR: Optional[str] = field(metadata={"description": "The CVSS environmental AR of the asset group."}, default=None)
-    EC2_IDS: Optional[BaseList[str]] = field(metadata={"description": "The EC2 IDs of the asset group."}, default_factory=BaseList)
-    COMMENTS: Optional[BaseList[str]] = field(metadata={"description": "The comments of the asset group."}, default_factory=BaseList)
-    DOMAIN_LIST: Optional[BaseList[str]] = field(metadata={"description": "The domain list of the asset group."}, default_factory=BaseList)
+    TITLE: Optional[str] = field(
+        metadata={"description": "The title of the asset group."}, default=""
+    )
+    # NOTE: OWNER_ID contains either the raw XML's OWNER_ID or OWNER_USER_ID depending on value passed to get_ag_list(attributes=<>).
+    OWNER_ID: Optional[int] = field(
+        metadata={"description": "The ID of the owner of the asset group."},
+        default=None,
+    )
+    OWNER_USER_ID: Optional[int] = field(
+        metadata={"description": "The ID of the owner user of the asset group."},
+        default=None,
+    )
+    UNIT_ID: Optional[int] = field(
+        metadata={"description": "The ID of the unit of the asset group."}, default=None
+    )
+    LAST_UPDATE: Optional[Union[str, datetime]] = field(
+        metadata={"description": "The datetime the asset group was last updated."},
+        default=None,
+    )
+    NETWORK_ID: Optional[int] = field(
+        metadata={
+            "description": "The ID of the network of the asset group, if enabled in Qualys."
+        },
+        default=None,
+    )
+    IP_SET: Optional[
+        BaseList[Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]]
+    ] = field(
+        metadata={"description": "The IP set of the asset group."},
+        default_factory=BaseList,
+    )
+    BUSINESS_IMPACT: Optional[str] = field(
+        metadata={"description": "The business impact of the asset group."},
+        default=None,
+    )
+    DEFAULT_APPLIANCE_ID: Optional[int] = field(
+        metadata={"description": "The default appliance ID of the asset group."},
+        default=None,
+    )
+    APPLIANCE_IDS: Optional[BaseList[int]] = field(
+        metadata={"description": "The appliance IDs of the asset group."},
+        default_factory=BaseList,
+    )
+    DNS_LIST: Optional[BaseList[str]] = field(
+        metadata={"description": "The DNS list of the asset group."},
+        default_factory=BaseList,
+    )
+    NETBIOS_LIST: Optional[BaseList[str]] = field(
+        metadata={"description": "The NetBIOS list of the asset group."},
+        default_factory=BaseList,
+    )
+    HOST_IDS: Optional[BaseList[VMDRID]] = field(
+        metadata={
+            "description": "The host IDs of the asset group. BaseList of VMDRID objects."
+        },
+        default_factory=BaseList,
+    )
+    ASSIGNED_USER_IDS: Optional[BaseList[int]] = field(
+        metadata={"description": "The assigned user IDs of the asset group."},
+        default_factory=BaseList,
+    )
+    ASSIGNED_UNIT_IDS: Optional[BaseList[int]] = field(
+        metadata={"description": "The assigned unit IDs of the asset group."},
+        default_factory=BaseList,
+    )
+    OWNER_USER_NAME: Optional[str] = field(
+        metadata={"description": "The owner user name of the asset group."},
+        default=None,
+    )
+    CVSS_ENVIRO_CDP: Optional[str] = field(
+        metadata={"description": "The CVSS environmental CDP of the asset group."},
+        default=None,
+    )
+    CVSS_ENVIRO_TD: Optional[str] = field(
+        metadata={"description": "The CVSS environmental TD of the asset group."},
+        default=None,
+    )
+    CVSS_ENVIRO_CR: Optional[str] = field(
+        metadata={"description": "The CVSS environmental CR of the asset group."},
+        default=None,
+    )
+    CVSS_ENVIRO_IR: Optional[str] = field(
+        metadata={"description": "The CVSS environmental IR of the asset group."},
+        default=None,
+    )
+    CVSS_ENVIRO_AR: Optional[str] = field(
+        metadata={"description": "The CVSS environmental AR of the asset group."},
+        default=None,
+    )
+    EC2_IDS: Optional[BaseList[str]] = field(
+        metadata={"description": "The EC2 IDs of the asset group."},
+        default_factory=BaseList,
+    )
+    COMMENTS: Optional[BaseList[str]] = field(
+        metadata={"description": "The comments of the asset group."},
+        default_factory=BaseList,
+    )
+    DOMAIN_LIST: Optional[BaseList[str]] = field(
+        metadata={"description": "The domain list of the asset group."},
+        default_factory=BaseList,
+    )
 
     def __post_init__(self):
-
         # Thanks Qualys for the inconsistency in naming conventions:
         if self.OWNER_USER_ID:
             self.OWNER_ID = self.OWNER_USER_ID
@@ -70,9 +146,15 @@ class AssetGroup:
         for field in INT_LISTS:
             if getattr(self, field):
                 if isinstance(getattr(self, field), str):
-                    setattr(self, field, BaseList([int(x) for x in getattr(self, field).split(",")]))
+                    setattr(
+                        self,
+                        field,
+                        BaseList([int(x) for x in getattr(self, field).split(",")]),
+                    )
                 else:
-                    setattr(self, field, BaseList([int(x) for x in getattr(self, field)]))
+                    setattr(
+                        self, field, BaseList([int(x) for x in getattr(self, field)])
+                    )
 
         for field in DT_FIELDS:
             if getattr(self, field) is not None:
@@ -81,7 +163,7 @@ class AssetGroup:
         for field in INT_FIELDS:
             if getattr(self, field) is not None:
                 setattr(self, field, int(getattr(self, field)))
-        
+
         # Convert IP_SET to BaseList of ipaddress.* objs.:
         final_ip_set = BaseList()
         if self.IP_SET:
@@ -107,45 +189,68 @@ class AssetGroup:
         final_host_ids = BaseList()
         if self.HOST_IDS:
             if isinstance(self.HOST_IDS, str):
-                final_host_ids.extend([VMDRID(ID=host_id, TYPE="host") for host_id in self.HOST_IDS.split(",")])
+                final_host_ids.extend(
+                    [
+                        VMDRID(ID=host_id, TYPE="host")
+                        for host_id in self.HOST_IDS.split(",")
+                    ]
+                )
             else:
-                final_host_ids.extend([VMDRID(ID=host_id, TYPE="host") for host_id in self.HOST_IDS])
+                final_host_ids.extend(
+                    [VMDRID(ID=host_id, TYPE="host") for host_id in self.HOST_IDS]
+                )
 
         self.HOST_IDS = final_host_ids
 
     def __str__(self):
         return str(self.ID)
-    
+
     def __contains__(self, item):
-        return item in self.ID or item in self.TITLE or item in self.OWNER_ID or item in self.UNIT_ID or item in self.NETWORK_ID or item in self.IP_SET
-    
+        return (
+            item in self.ID
+            or item in self.TITLE
+            or item in self.OWNER_ID
+            or item in self.UNIT_ID
+            or item in self.NETWORK_ID
+            or item in self.IP_SET
+        )
+
     def __enter__(self):
         return self
-    
+
     def __exit__(self, exc_type, exc_value, traceback):
         pass
 
     def copy(self):
-        return AssetGroup(ID=self.ID, TITLE=self.TITLE, OWNER_ID=self.OWNER_ID, UNIT_ID=self.UNIT_ID, NETWORK_ID=self.NETWORK_ID, IP_SET=self.IP_SET)
-    
+        return AssetGroup(
+            ID=self.ID,
+            TITLE=self.TITLE,
+            OWNER_ID=self.OWNER_ID,
+            UNIT_ID=self.UNIT_ID,
+            NETWORK_ID=self.NETWORK_ID,
+            IP_SET=self.IP_SET,
+        )
+
     def is_id(self, id: int):
         return self.ID == id
-    
+
     def is_title(self, title: str):
         return self.TITLE == title
-    
+
     def is_owner_id(self, owner_id: int):
         return self.OWNER_ID == owner_id
-    
+
     def is_unit_id(self, unit_id: int):
         return self.UNIT_ID == unit_id
-    
+
     def is_network_id(self, network_id: int):
         return self.NETWORK_ID == network_id
-    
-    def contains_ip(self, ip: Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]):
+
+    def contains_ip(
+        self, ip: Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]
+    ):
         return ip in self.IP_SET
-    
+
     def add_ip(self, ip: Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]):
         self.IP_SET.append(ip)
 
@@ -156,17 +261,19 @@ class AssetGroup:
         """
         Return a dictionary of non-None attributes.
         """
-        return {key: value for key, value in self.to_dict().items() if value is not None}
-    
+        return {
+            key: value for key, value in self.to_dict().items() if value is not None
+        }
+
     def keys(self):
         return self.to_dict().keys()
-    
+
     def values(self):
         return self.to_dict().values()
-    
+
     def items(self):
         return self.to_dict().items()
-    
+
     def to_dict(self):
         """
         to_dict - convert the AssetGroup object to a dictionary.
@@ -206,4 +313,3 @@ class AssetGroup:
             )
 
         return cls(**data)
-

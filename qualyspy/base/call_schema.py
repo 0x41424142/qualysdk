@@ -326,7 +326,7 @@ CALL_SCHEMA = frozendict(
                 "pagination": True,
                 "auth_type": "basic",
             },
-            "manage_ag": { #called by add_ag, update_ag, delete_ag
+            "manage_ag": {  # called by add_ag, update_ag, delete_ag
                 "endpoint": "/api/2.0/fo/asset/group/",
                 "method": ["POST"],
                 "valid_params": [],

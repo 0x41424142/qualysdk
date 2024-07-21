@@ -48,7 +48,7 @@ linux_servers_with_1cpu = query_assets(
 |Module| Status |
 |--|--|
 | GAV (Global AssetView) |✅|
-| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld```, ```get_ag_list``` implemented) |
+| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld```, ```get_ag_list```, ```add/edit/remove_ag```, ```get_ip_list```, ```add/update_ips``` implemented) |
 | PM (Patch Management) | In Planning |
 | WAS | Not Started |
 | TC (TotalCloud) | Not Started |
@@ -375,7 +375,107 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 
 ag_list = get_ag_list(auth)
 ```
+
+### Add Asset Group API
+The ```add_ag()``` API allows for the addition of asset groups to VMDR. Acceptable args/kwargs are:
+|Arg/Kwarg| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```title```|```str```|The title of the asset group.|✅|
+|```comments```|```str```|Comments to add to the asset group.|❌|
+|```division```|```str```|The division the asset group belongs to.|❌|
+|```function```|```str```|The function of the asset group.|❌|
+|```business_impact```|```Literal["critical", "high", "medium", "low", "none"]```|The business impact of the asset group.|❌|
+|```ips```|```Union[str, BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]]```|The IP addresses or ranges to add to the asset group.|❌|
+|```appliance_ids```|```Union[str, BaseList[int]]```|The appliance IDs to add to the asset group.|❌|
+|```default_appliance_id```|```int```|The default appliance ID for the asset group.|❌|
+|```domains```|```Union[str, BaseList[str]]```|The domains to add to the asset group.|❌|
+|```dns_names```|```Union[str, BaseList[str]]```|The DNS names to add to the asset group.|❌|
+|```netbios_names```|```Union[str, BaseList[str]]```|The NetBIOS names to add to the asset group.|❌|
+|```cvss_enviro_cdp```|```Literal["high", "medium-high", "low-medium", "low", "none"]```|The CVSS environmental CDP of the asset group.|❌|
+|```cvss_enviro_td```|```Literal["high", "medium", "low", "none"]```|The CVSS environmental TD of the asset group.|❌|
+|```cvss_enviro_cr```|```Literal["high", "medium", "low"]```|The CVSS environmental CR of the asset group.|❌|
+|```cvss_enviro_ir```|```Literal["high", "medium", "low"]```|The CVSS environmental IR of the asset group.|❌|
+|```cvss_enviro_ar```|```Literal["high", "medium", "low"]```|The CVSS environmental AR of the asset group.|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import add_ag
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Add an asset group to VMDR with a specific title:
+add_ag(auth, title='My New Asset Group')
+>>>Asset Group Added Successfully.
+```
+
+### Edit Asset Group API
+The ```edit_ag()``` API allows for the modification of asset groups in VMDR. Acceptable args/kwargs are:
+
+|Arg/Kwarg| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```id```|```Union[AssetGroup, BaseList[AssetGroup, int, str], str]```|The ID of the asset group to edit.|✅|
+|```set_comments```|```str```|The comments to set for the asset group.|❌|
+|```set_division```|```str```|The division to set for the asset group.|❌|
+|```set_function```|```str```|The function to set for the asset group.|❌|
+|```set_location```|```str```|The location to set for the asset group.|❌|
+|```set_business_impact```|```Literal["critical", "high", "medium", "low", "none"]```|The business impact to set for the asset group.|❌|
+|```add_ips```|```Union[str, BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]]```|The IP addresses or ranges to add to the asset group.|❌|
+|```remove_ips```|```Union[str, BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]]```|The IP addresses or ranges to remove from the asset group.|❌|
+|```set_ips```|```Union[str, BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]]```|The IP addresses or ranges to set for the asset group.|❌|
+|```add_appliance_ids```|```Union[str, BaseList[int]]```|The appliance IDs to add to the asset group.|❌|
+|```remove_appliance_ids```|```Union[str, BaseList[int]]```|The appliance IDs to remove from the asset group.|❌|
+|```set_appliance_ids```|```Union[str, BaseList[int]]```|The appliance IDs to set for the asset group.|❌|
+|```set_default_appliance_id```|```int```|The default appliance ID to set for the asset group.|❌|
+|```add_domains```|```Union[str, BaseList[str]]```|The domains to add to the asset group.|❌|
+|```remove_domains```|```Union[str, BaseList[str]]```|The domains to remove from the asset group.|❌|
+|```set_domains```|```Union[str, BaseList[str]]```|The domains to set for the asset group.|❌|
+|```add_dns_names```|```Union[str, BaseList[str]]```|The DNS names to add to the asset group.|❌|
+|```remove_dns_names```|```Union[str, BaseList[str]]```|The DNS names to remove from the asset group.|❌|
+|```set_dns_names```|```Union[str, BaseList[str]]```|The DNS names to set for the asset group.|❌|
+|```add_netbios_names```|```Union[str, BaseList[str]]```|The NetBIOS names to add to the asset group.|❌|
+|```remove_netbios_names```|```Union[str, BaseList[str]]```|The NetBIOS names to remove from the asset group.|❌|
+|```set_netbios_names```|```Union[str, BaseList[str]]```|The NetBIOS names to set for the asset group.|❌|
+|```set_title```|```str```|The title to set for the asset group.|❌|
+|```set_cvss_enviro_cdp```|```Literal["high", "medium-high", "low-medium", "low", "none"]```|The CVSS environmental CDP to set for the asset group.|❌|
+|```set_cvss_enviro_td```|```Literal["high", "medium", "low", "none"]```|The CVSS environmental TD to set for the asset group.|❌|
+|```set_cvss_enviro_cr```|```Literal["high", "medium", "low"]```|The CVSS environmental CR to set for the asset group.|❌|
+|```set_cvss_enviro_ir```|```Literal["high", "medium", "low"]```|The CVSS environmental IR to set for the asset group.|❌|
+|```set_cvss_enviro_ar```|```Literal["high", "medium", "low"]```|The CVSS environmental AR to set for the asset group.|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import edit_ag
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Edit an asset group in VMDR with a new title:
+edit_ag(auth, id=12345, set_title='My New Asset Group Title')
+>>>Asset Group Updated Successfully.
+```
 ---
+
+### Delete Asset Group API
+The ```delete_ag()``` API allows for the deletion of asset groups in VMDR. Acceptable args/kwargs are:
+
+|Arg/Kwarg| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```id```|```Union[AssetGroup, BaseList[AssetGroup, int, str], str]```|The ID of the asset group to delete.|✅|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import delete_ag
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Delete an asset group in VMDR:
+delete_ag(auth, id=12345)
+>>>Asset Group Deleted Successfully.
+```
+---
+
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:
 >**Heads Up!**: When calling ```query_kb()```, the function returns a regular list of ```KBEntry``` objects.

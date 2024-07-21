@@ -4,6 +4,7 @@ assetgroups.py - AG manipulation functions for the Qualys VMDR module.
 
 from typing import *
 from urllib.parse import parse_qs, urlparse
+from ipaddress import IPv4Address, IPv6Address
 
 from ..auth import BasicAuth
 from .data_classes import AssetGroup, BaseList
@@ -97,3 +98,215 @@ def get_ag_list(
                 break
 
     return results
+
+def manage_ag(
+    auth: BasicAuth,
+    action: Literal["add", "edit", "delete"],
+    id: Union[AssetGroup, BaseList, str] = None,
+    **kwargs,
+) -> str:
+    """
+    Main function to perform an action on an asset group.
+
+    Gets called by the add_ag, edit_ag, and delete_ag functions.
+
+    Args:
+        auth (BasicAuth): Qualys BasicAuth object.
+        action (Literal["add", "edit", "delete"]): The action to perform on the asset group.
+        id (Union[AssetGroup, BaseList, str]): The ID of the asset group to edit or delete. Defaults to None. If a single AssetGroup, or a BaseList of AssetGroups is passed, the function will iterate over them.
+
+    Keyword Args:
+        ```
+        echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value to 0. It is just included for completeness.
+        
+        (WHEN action=="add"):
+            title (str): Title of the asset group. Required.
+            comments (str): Comments for the asset group.
+            division (str): Division of the asset group.
+            function (str): Function of the asset group.
+            location (str): Location of the asset group.
+            business_impact (Literal["critical", "high", "medium", "low", "none"]): Business impact of the asset group.
+            ips (Union[str, ipaddress.IPVxAddress, BaseList[ipaddress.IPVxAddress]]): IP addresses to add to the asset group. Comma-separated string, a single ipaddress.IPvxAddress, or a BaseList of ipaddress.IPvxAddress.
+            appliance_ids (Union[BaseList[int], str]): Appliance IDs to add to the asset group. Comma-separated string, or a BaseList of integers.
+            default_appliance_id (int): Default appliance ID for the asset group.
+            domains (Union[BaseList[str], str]): Domains to add to the asset group. Comma-separated string, or a BaseList of strings.
+            dns_names (Union[BaseList[str], str]): DNS names to add to the asset group. Comma-separated string, or a BaseList of strings.
+            netbios_names (Union[BaseList[str], str]): NetBIOS names to add to the asset group. Comma-separated string, or a BaseList of strings.
+            cvss_enviro_cdp (Literal["high", "medium-high", "low-medium", "low", "none"]): CVSS environmental CDP for the asset group.
+            cvss_enviro_td (Literal["high", "medium", "low", "none"]): CVSS environmental TD for the asset group.
+            cvss_enviro_cr (Literal["high", "medium", "low"]): CVSS environmental CR for the asset group.
+            cvss_enviro_ir (Literal["high", "medium", "low"]): CVSS environmental IR for the asset group.
+            cvss_enviro_ar (Literal["high", "medium", "low"]): CVSS environmental AR for the asset group.
+        
+        (WHEN action=="edit"):
+            set_comments (str): New comments for the asset group.
+            set_division (str): New division for the asset group.
+            set_function (str): New function for the asset group.
+            set_location (str): New location for the asset group.
+            set_business_impact (Literal["critical", "high", "medium", "low", "none"]): New business impact for the asset group.
+            add_ips (Union[str, ipaddress.IPVxAddress, BaseList[ipaddress.IPVxAddress]]): IP addresses to add to the asset group. Comma-separated string, a single ipaddress.IPvxAddress, or a BaseList of ipaddress.IPvxAddress.
+            remove_ips (Union[str, ipaddress.IPVxAddress, BaseList[ipaddress.IPVxAddress]]): IP addresses to remove from the asset group. Comma-separated string, a single ipaddress.IPvxAddress, or a BaseList of ipaddress.IPvxAddress.
+            set_ips (Union[str, ipaddress.IPVxAddress, BaseList[ipaddress.IPVxAddress]]): IP addresses to set for the asset group. Comma-separated string, a single ipaddress.IPvxAddress, or a BaseList of ipaddress.IPvxAddress.
+            add_appliance_ids (Union[BaseList[int], str]): Appliance IDs to add to the asset group. Comma-separated string, or a BaseList of integers.
+            remove_appliance_ids (Union[BaseList[int], str]): Appliance IDs to remove from the asset group. Comma-separated string, or a BaseList of integers.
+            set_appliance_ids (Union[BaseList[int], str]): Appliance IDs to set for the asset group. Comma-separated string, or a BaseList of integers.
+            set_default_appliance_id (int): New default appliance ID for the asset group.
+            add_domains (Union[BaseList[str], str]): Domains to add to the asset group. Comma-separated string, or a BaseList of strings.
+            remove_domains (Union[BaseList[str], str]): Domains to remove from the asset group. Comma-separated string, or a BaseList of strings.
+            set_domains (Union[BaseList[str], str]): Domains to set for the asset group. Comma-separated string, or a BaseList of strings.
+            add_dns_names (Union[BaseList[str], str]): DNS names to add to the asset group. Comma-separated string, or a BaseList of strings.
+            remove_dns_names (Union[BaseList[str], str]): DNS names to remove from the asset group. Comma-separated string, or a BaseList of strings.
+            set_dns_names (Union[BaseList[str], str]): DNS names to set for the asset group. Comma-separated string, or a BaseList of strings.
+            add_netbios_names (Union[BaseList[str], str]): NetBIOS names to add to the asset group. Comma-separated string, or a BaseList of strings.
+            remove_netbios_names (Union[BaseList[str], str]): NetBIOS names to remove from the asset group. Comma-separated string, or a BaseList of strings.
+            set_netbios_names (Union[BaseList[str], str]): NetBIOS names to set for the asset group. Comma-separated string, or a BaseList of strings.
+            set_title (str): New title for the asset group.
+            set_cvss_enviro_cdp (Literal["high", "medium-high", "low-medium", "low", "none"]): New CVSS environmental CDP for the asset group.
+            set_cvss_enviro_td (Literal["high", "medium", "low", "none"]): New CVSS environmental TD for the asset group.
+            set_cvss_enviro_cr (Literal["high", "medium", "low"]): New CVSS environmental CR for the asset group.
+            set_cvss_enviro_ir (Literal["high", "medium", "low"]): New CVSS environmental IR for the asset group.
+            set_cvss_enviro_ar (Literal["high", "medium", "low"]): New CVSS environmental AR for the asset group.
+
+        (WHEN action=="delete"):
+            A single value in the id parameter.
+        ```
+    """
+    
+    # First, check the action:
+    if action not in ["add", "edit", "delete"]:
+        raise ValueError("action must be 'add', 'edit', or 'delete'.")
+    
+    kwargs['action'] = action
+
+    POSSIBLE_LIST_ARGS = ["id", "ids", "ips", "appliance_ids", "domains", "dns_names", "netbios_names", "add_ips", "remove_ips", "set_ips", "add_appliance_ids", "remove_appliance_ids", "set_appliance_ids", "add_domains", "remove_domains", "set_domains", "add_dns_names", "remove_dns_names", "set_dns_names", "add_netbios_names", "remove_netbios_names", "set_netbios_names"]
+    POSSIBLE_IP_OBJ_ARGS = ["ips", "add_ips", "remove_ips", "set_ips"]
+
+    # Look for single IP objects and convert them to strings:
+    for arg in POSSIBLE_IP_OBJ_ARGS:
+        if arg in kwargs and any(isinstance(kwargs[arg], obj) for obj in [IPv4Address, IPv6Address]):
+            kwargs[arg] = str(kwargs[arg])
+
+    # Check if any list args are passed.
+    # If so, convert them to comma-separated strings:
+    for arg in POSSIBLE_LIST_ARGS:
+        if arg in kwargs:
+            if isinstance(kwargs[arg], BaseList):
+                kwargs[arg] = [str(item) for item in kwargs[arg]]
+                kwargs[arg] = ",".join(kwargs[arg])
+
+    
+    # Check if id is a single AssetGroup object:
+    if isinstance(id, AssetGroup):
+        id = id.id
+
+    # Check if id is a BaseList object:
+    if isinstance(id, BaseList):
+        id = [str(ag.id) for ag in id]
+        id = ",".join(id)
+
+    if id:
+        kwargs["id"] = id
+
+    response = call_api(
+        auth=auth,
+        module="vmdr",
+        endpoint="manage_ag",
+        payload=kwargs,
+        headers={"X-Requested-With": "qualyspy SDK"},
+    )
+
+    result = xml_parser(response.text)["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
+
+    return result
+
+def add_ag(auth: BasicAuth, title: str, **kwargs) -> str:
+    """
+    Adds an asset group to the Qualys subscription.
+    
+    Args:
+        auth (BasicAuth): Qualys BasicAuth object.
+        title (str): Title of the asset group.
+
+    Keyword Args:
+        ```
+        comments (str): Comments for the asset group.
+        division (str): Division of the asset group.
+        function (str): Function of the asset group.
+        location (str): Location of the asset group.
+        business_impact (Literal["critical", "high", "medium", "low", "none"]): Business impact of the asset group.
+        ips (Union[str, ipaddress.IPVxAddress, BaseList[ipaddress.IPVxAddress]]): IP addresses to add to the asset group. Comma-separated string, a single ipaddress.IPvxAddress, or a BaseList of ipaddress.IPvxAddress.
+        appliance_ids (Union[BaseList[int], str]): Appliance IDs to add to the asset group. Comma-separated string, or a BaseList of integers.
+        default_appliance_id (int): Default appliance ID for the asset group.
+        domains (Union[BaseList[str], str]): Domains to add to the asset group. Comma-separated string, or a BaseList of strings.
+        dns_names (Union[BaseList[str], str]): DNS names to add to the asset group. Comma-separated string, or a BaseList of strings.
+        netbios_names (Union[BaseList[str], str]): NetBIOS names to add to the asset group. Comma-separated string, or a BaseList of strings.
+        cvss_enviro_cdp (Literal["high", "medium-high", "low-medium", "low", "none"]): CVSS environmental CDP for the asset group.
+        cvss_enviro_td (Literal["high", "medium", "low", "none"]): CVSS environmental TD for the asset group.
+        cvss_enviro_cr (Literal["high", "medium", "low"]): CVSS environmental CR for the asset group.
+        cvss_enviro_ir (Literal["high", "medium", "low"]): CVSS environmental IR for the asset group.
+        cvss_enviro_ar (Literal["high", "medium", "low"]): CVSS environmental AR for the asset group.
+        ```
+    Returns:
+        str: Response text from the Qualys API.
+    """
+        
+    return manage_ag(auth, action="add", title=title, **kwargs)
+
+def edit_ag(auth: BasicAuth, id: Union[AssetGroup, BaseList, str], **kwargs) -> str:
+    """
+    Edits an asset group in the Qualys subscription.
+
+    Args:
+        auth (BasicAuth): Qualys BasicAuth object.
+        id (Union[AssetGroup, BaseList, str]): The ID of the asset group to edit. If a single AssetGroup, or a BaseList of AssetGroups is passed, the function will iterate over them.
+
+    Keyword Args:
+        ```
+        echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value to 0. It is just included for completeness.
+        set_comments (str): New comments for the asset group.
+        set_division (str): New division for the asset group.
+        set_function (str): New function for the asset group.
+        set_location (str): New location for the asset group.
+        set_business_impact (Literal["critical", "high", "medium", "low", "none"]): New business impact for the asset group.
+        add_ips (Union[str, ipaddress.IPVxAddress, BaseList[ipaddress.IPVxAddress]]): IP addresses to add to the asset group. Comma-separated string, a single ipaddress.IPvxAddress, or a BaseList of ipaddress.IPvxAddress.
+        remove_ips (Union[str, ipaddress.IPVxAddress, BaseList[ipaddress.IPVxAddress]]): IP addresses to remove from the asset group. Comma-separated string, a single ipaddress.IPvxAddress, or a BaseList of ipaddress.IPvxAddress.
+        set_ips (Union[str, ipaddress.IPVxAddress, BaseList[ipaddress.IPVxAddress]]): IP addresses to set for the asset group. Comma-separated string, a single ipaddress.IPvxAddress, or a BaseList of ipaddress.IPvxAddress.
+        add_appliance_ids (Union[BaseList[int], str]): Appliance IDs to add to the asset group. Comma-separated string, or a BaseList of integers.
+        remove_appliance_ids (Union[BaseList[int], str]): Appliance IDs to remove from the asset group. Comma-separated string, or a BaseList of integers.
+        set_appliance_ids (Union[BaseList[int], str]): Appliance IDs to set for the asset group. Comma-separated string, or a BaseList of integers.
+        set_default_appliance_id (int): New default appliance ID for the asset group.
+        add_domains (Union[BaseList[str], str]): Domains to add to the asset group. Comma-separated string, or a BaseList of strings.
+        remove_domains (Union[BaseList[str], str]): Domains to remove from the asset group. Comma-separated string, or a BaseList of strings.
+        set_domains (Union[BaseList[str], str]): Domains to set for the asset group. Comma-separated string, or a BaseList of strings.
+        add_dns_names (Union[BaseList[str], str]): DNS names to add to the asset group. Comma-separated string, or a BaseList of strings.
+        remove_dns_names (Union[BaseList[str], str]): DNS names to remove from the asset group. Comma-separated string, or a BaseList of strings.
+        set_dns_names (Union[BaseList[str], str]): DNS names to set for the asset group. Comma-separated string, or a BaseList of strings.
+        add_netbios_names (Union[BaseList[str], str]): NetBIOS names to add to the asset group. Comma-separated string, or a BaseList of strings.
+        remove_netbios_names (Union[BaseList[str], str]): NetBIOS names to remove from the asset group. Comma-separated string, or a BaseList of strings.
+        set_netbios_names (Union[BaseList[str], str]): NetBIOS names to set for the asset group. Comma-separated string, or a BaseList of strings.
+        set_title (str): New title for the asset group.
+        set_cvss_enviro_cdp (Literal["high", "medium-high", "low-medium", "low", "none"]): New CVSS environmental CDP for the asset group.
+        set_cvss_enviro_td (Literal["high", "medium", "low", "none"]): New CVSS environmental TD for the asset group.
+        set_cvss_enviro_cr (Literal["high", "medium", "low"]): New CVSS environmental CR for the asset group.
+        set_cvss_enviro_ir (Literal["high", "medium", "low"]): New CVSS environmental IR for the asset group.
+        set_cvss_enviro_ar (Literal["high", "medium", "low"]): New CVSS environmental AR for the asset group.
+        ```
+    Returns:
+        str: Response text from the Qualys API.
+    """
+
+    return manage_ag(auth, action="edit", id=id, **kwargs)
+
+def delete_ag(auth: BasicAuth, id: Union[AssetGroup, str]) -> str:
+    """
+    Deletes a single asset group from the Qualys subscription.
+
+    Args:
+        auth (BasicAuth): Qualys BasicAuth object.
+        id (Union[AssetGroup, str]): The ID of the asset group to delete.
+
+    Returns:
+        str: Response text from the Qualys API.
+    """
+
+    return manage_ag(auth, action="delete", id=id)

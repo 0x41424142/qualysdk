@@ -99,6 +99,7 @@ def get_ag_list(
 
     return results
 
+
 def manage_ag(
     auth: BasicAuth,
     action: Literal["add", "edit", "delete"],
@@ -118,7 +119,7 @@ def manage_ag(
     Keyword Args:
         ```
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value to 0. It is just included for completeness.
-        
+
         (WHEN action=="add"):
             title (str): Title of the asset group. Required.
             comments (str): Comments for the asset group.
@@ -137,7 +138,7 @@ def manage_ag(
             cvss_enviro_cr (Literal["high", "medium", "low"]): CVSS environmental CR for the asset group.
             cvss_enviro_ir (Literal["high", "medium", "low"]): CVSS environmental IR for the asset group.
             cvss_enviro_ar (Literal["high", "medium", "low"]): CVSS environmental AR for the asset group.
-        
+
         (WHEN action=="edit"):
             set_comments (str): New comments for the asset group.
             set_division (str): New division for the asset group.
@@ -171,19 +172,44 @@ def manage_ag(
             A single value in the id parameter.
         ```
     """
-    
+
     # First, check the action:
     if action not in ["add", "edit", "delete"]:
         raise ValueError("action must be 'add', 'edit', or 'delete'.")
-    
-    kwargs['action'] = action
 
-    POSSIBLE_LIST_ARGS = ["id", "ids", "ips", "appliance_ids", "domains", "dns_names", "netbios_names", "add_ips", "remove_ips", "set_ips", "add_appliance_ids", "remove_appliance_ids", "set_appliance_ids", "add_domains", "remove_domains", "set_domains", "add_dns_names", "remove_dns_names", "set_dns_names", "add_netbios_names", "remove_netbios_names", "set_netbios_names"]
+    kwargs["action"] = action
+
+    POSSIBLE_LIST_ARGS = [
+        "id",
+        "ids",
+        "ips",
+        "appliance_ids",
+        "domains",
+        "dns_names",
+        "netbios_names",
+        "add_ips",
+        "remove_ips",
+        "set_ips",
+        "add_appliance_ids",
+        "remove_appliance_ids",
+        "set_appliance_ids",
+        "add_domains",
+        "remove_domains",
+        "set_domains",
+        "add_dns_names",
+        "remove_dns_names",
+        "set_dns_names",
+        "add_netbios_names",
+        "remove_netbios_names",
+        "set_netbios_names",
+    ]
     POSSIBLE_IP_OBJ_ARGS = ["ips", "add_ips", "remove_ips", "set_ips"]
 
     # Look for single IP objects and convert them to strings:
     for arg in POSSIBLE_IP_OBJ_ARGS:
-        if arg in kwargs and any(isinstance(kwargs[arg], obj) for obj in [IPv4Address, IPv6Address]):
+        if arg in kwargs and any(
+            isinstance(kwargs[arg], obj) for obj in [IPv4Address, IPv6Address]
+        ):
             kwargs[arg] = str(kwargs[arg])
 
     # Check if any list args are passed.
@@ -194,7 +220,6 @@ def manage_ag(
                 kwargs[arg] = [str(item) for item in kwargs[arg]]
                 kwargs[arg] = ",".join(kwargs[arg])
 
-    
     # Check if id is a single AssetGroup object:
     if isinstance(id, AssetGroup):
         id = id.id
@@ -219,10 +244,11 @@ def manage_ag(
 
     return result
 
+
 def add_ag(auth: BasicAuth, title: str, **kwargs) -> str:
     """
     Adds an asset group to the Qualys subscription.
-    
+
     Args:
         auth (BasicAuth): Qualys BasicAuth object.
         title (str): Title of the asset group.
@@ -249,8 +275,9 @@ def add_ag(auth: BasicAuth, title: str, **kwargs) -> str:
     Returns:
         str: Response text from the Qualys API.
     """
-        
+
     return manage_ag(auth, action="add", title=title, **kwargs)
+
 
 def edit_ag(auth: BasicAuth, id: Union[AssetGroup, BaseList, str], **kwargs) -> str:
     """
@@ -296,6 +323,7 @@ def edit_ag(auth: BasicAuth, id: Union[AssetGroup, BaseList, str], **kwargs) -> 
     """
 
     return manage_ag(auth, action="edit", id=id, **kwargs)
+
 
 def delete_ag(auth: BasicAuth, id: Union[AssetGroup, str]) -> str:
     """

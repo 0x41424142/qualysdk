@@ -202,12 +202,6 @@ def hld_backend(
         # cleaned = remove_problem_characters(response.text)
         xml = xml_parser(response.content)
 
-        # check for errors:
-        if "html" in xml.keys():
-            raise Exception(
-                f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"
-            )
-
         # check if there is no host list
         if "HOST_LIST" not in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
             with LOCK:

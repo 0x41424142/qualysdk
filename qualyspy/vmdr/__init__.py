@@ -27,3 +27,4 @@ from .get_host_list import get_host_list
 from .get_host_list_detections import get_hld
 from .ips import get_ip_list, add_ips, update_ips
 from .assetgroups import *
+from .vmscans import get_scan_list

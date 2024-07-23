@@ -2,7 +2,7 @@
 ips.py - IP address manipulation from Qualys subscription and stores them in a BaseList object.
 """
 
-from typing import Union, Literal
+from typing import Union
 
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth

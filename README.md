@@ -248,7 +248,7 @@ yesterdays_scanned_assets = get_host_list(
 ) 
 ```
 
-## IP List Management
+## IP Management
 
 This collection of APIs allows for the management of IP addresses/ranges in VMDR, located under ```qualyspy.vmdr.ips```. The APIs are as follows:
 
@@ -342,7 +342,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 update_ips(auth, ips='1.2.3.4', host_dns='new_dns_name')
 ```
 ---
-## Asset Group List Management
+## Asset Group Management
 This collection of APIs allows for the management of asset groups (AGs) in VMDR, located under ```qualyspy.vmdr.assetgroups```. The APIs are as follows:
 
 |API Call| Description|
@@ -475,7 +475,65 @@ delete_ag(auth, id=12345)
 >>>Asset Group Deleted Successfully.
 ```
 ---
+## VM Scan Management
+This collection of APIs allows for the management of VM scans in VMDR, located under ```qualyspy.vmdr.vmscans```. The APIs are as follows:
 
+|API Call| Description|
+|--|--|
+|```get_scan_list```| Get a ```BaseList``` of ```VMScan``` objects.|
+
+### VMScan Dataclass
+The ```VMScan``` dataclass is used to store the various fields that the VMDR VM Scan APIs return. Attributes are as follows:
+|Attribute|Type|Description|
+|--|--|--|
+|```REF```|```str```|Reference string for the scan. Formatted as module/ID.|
+|```TYPE```|```Literal["On-Demand","API","Scheduled]```|How the scan is ran.|
+|```TITLE```|```str```|The scan name.|
+|```USER_LOGIN```|```str```|The Qualys account that created/owns the scan.|
+|```LAUNCH_DATETIME```|```datetime.datetime```|The date and time the scan was launched.|
+|```DURATION```|```datetime.timedelta```|The duration of the scan.|
+|```PROCESSING_PRIORTIY```|```str```|The processing priority of the scan. Includes an int followed by a description of the priority level, such as: ```0 - No Priority```.|
+|```PROCESSED```|```bool```|If the scan results have been processed.|
+|```STATUS```|```dict```|Status metadata points of the scan. Includes ```state```, which is saved into the ```STATE``` attribute.|
+|```STATE```|```str```|The state of the scan.|
+|```TARGET```|```Union[str, BaseList[str], BaseList[ipaddress.IPv4Address, ipaddress.IPv4Network]]```|The target IPs for the scan.|
+|```OPTION_PROFILE```|```dict```|The option profile metadata for the scan.|
+|```ASSET_GROUP_TITLE_LIST```|```BaseList[str]```|The asset group titles covered by the scan.|
+---
+### Get Scan List API
+
+The ```get_scan_list()``` API returns a list of all VM scans in VMDR, matching the given kwargs. Acceptable args/kwargs are:
+
+|Arg/Kwarg| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```scan_ref```|```str```|The reference string of the scan to search for. Formatted like: ```scan/123455677```|❌|
+|```state```|```Literal["Running", "Paused", "Cancelled", "Finished", "Error", "Queued", "Loading"]```|Filter by the state of the scan.|❌|
+|```processed```|```bool```|Filter by if the scan results have been processed.|❌|
+|```type```|```Literal["On-Demand","API","Scheduled]```|Filter by how the scan is set up.|❌|
+|```user_login```|```str```|Filter by the Qualys account that created/owns the scan.|❌|
+|```launched_after_datetime```|```str```|Filter by scans launched after a specific datetime. Formatted as: ```2007-07-01``` or ```2007-01-25T23:12:00Z```|❌|
+|```launched_before_datetime```|```str```|Filter by scans launched before a specific datetime. Formatted as: ```2007-07-01``` or ```2007-01-25T23:12:00Z```|❌|
+|```scan_type```|```Literal["certview", "ec2certview"]```|Only return certview scans, or EC2 certview scans.|❌|
+|```client_id```|```Union[str,int]```|Filter by the client ID of the scan. This must be enabled in the Qualys subscription.|❌|
+|```client_name```|```str```|Filter by the client name of the scan. This must be enabled in the Qualys subscription.|❌|
+|```show_ags```|```bool```|Include asset group titles in the scan list.|❌|
+|```show_op```|```bool```|Include option profile metadata in the scan list.|❌|
+|```show_status```|```bool```|Include status metadata in the scan list. Defaults to ```True```.|❌|
+|```show_last```|```bool```|Only show the last run of each scan. Defaults to ```False```.|❌|
+|```ignore_target```|```bool```|Ignore the target IPs of the scan. Defaults to ```False```.|❌|
+
+```py
+from qualyspy import BasicAuth
+from qualyspy.vmdr import get_scan_list
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Get all VM scans in VMDR, with all details, that have a type of Scheduled:
+scheduled_scans = get_scan_list(auth, type='Scheduled', show_ags=True, show_op=True)
+>>>BaseList[VMScan(REF='scan/123456789', TYPE='Scheduled', TITLE='My Scheduled Scan', ...), ...]
+```
+---
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:
 >**Heads Up!**: When calling ```query_kb()```, the function returns a regular list of ```KBEntry``` objects.

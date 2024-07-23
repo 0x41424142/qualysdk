@@ -458,7 +458,14 @@ class VMDRHost:
         """
         Return a list of keys that have values.
         """
-        return [key for key, value in self.__dict__.items() if value is not None]
+        return {
+            k: v
+            for k, v in self.__dict__.items()
+            if v is not None
+            and v != ""
+            and v != []
+            and (isinstance(v, BaseList) and v != BaseList())
+        }
 
     @classmethod
     def from_dict(cls, data: dict) -> "VMDRHost":

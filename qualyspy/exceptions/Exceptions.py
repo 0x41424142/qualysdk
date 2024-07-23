@@ -61,3 +61,13 @@ class InvalidEndpointError(Exception):
     def __init__(self, message: str):
         self.message = message
         super().__init__(message)
+
+
+class QualysAPIError(Exception):
+    """
+    Basic exception class for QualysAPI.
+    """
+
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(message)

@@ -14,6 +14,7 @@ from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import *
 from .call_schema import CALL_SCHEMA
 from .convert_bools_and_nones import convert_bools_and_nones
+from .xml_parser import xml_parser
 
 
 def call_api(
@@ -134,7 +135,19 @@ def call_api(
 
     # check for errors:
     if response.status_code in range(400, 599):
-        print(f"Error: {response.text}")
-        response.raise_for_status()
+        # print(f"Error: {response.text}")
+        # response.raise_for_status()
+        parsed = xml_parser(response.text)
+        # Common path is [SIMPLE_RETURN][RESPONSE][TEXT]
+        if "SIMPLE_RETURN" in parsed:
+            raise QualysAPIError(parsed["SIMPLE_RETURN"]["RESPONSE"]["TEXT"])
+        elif "html" in parsed:
+            raise Exception(
+                f"Error: {parsed['html']['body']['h1']}: {parsed['html']['body']['p'][1]['#text']}"
+            )
+        else:
+            raise Exception(
+                f"Error: {parsed['{http://www.w3.org/1999/xhtml}html']['{http://www.w3.org/1999/xhtml}body']['{http://www.w3.org/1999/xhtml}h1']}"
+            )
 
     return response

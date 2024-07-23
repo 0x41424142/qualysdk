@@ -14,5 +14,6 @@ from .detection import Detection
 from .qds_factor import QDSFactor
 from .qds import QDS
 from .asset_group import AssetGroup
+from qualyspy.vmdr.data_classes.vmscan import VMScan
 
 from .lists import BaseList

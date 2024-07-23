@@ -116,11 +116,6 @@ def get_host_list(
 
         xml = xml_parser(response.content)
 
-        if "html" in xml.keys():
-            raise Exception(
-                f"Error: {xml['html']['body']['h1']}: {xml['html']['body']['p'][1]['#text']}"
-            )
-
         if (
             "HOST_LIST" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]
             and "ID_SET" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]

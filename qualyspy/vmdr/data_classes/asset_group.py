@@ -262,7 +262,9 @@ class AssetGroup:
         Return a dictionary of non-None attributes.
         """
         return {
-            key: value for key, value in self.to_dict().items() if value is not None
+            key: value
+            for key, value in self.to_dict().items()
+            if value is not None and value != [] and value != ""
         }
 
     def keys(self):

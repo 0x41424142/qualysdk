@@ -225,7 +225,11 @@ class Detection:
 
     def valid_values(self):
         # return a list of attribute names that have non-None values
-        return [key for key, value in self.to_dict().items() if value is not None]
+        return {
+            k: v
+            for k, v in self.__dict__.items()
+            if v is not None and v != "" and v != []
+        }
 
     def to_dict(self):
         """

@@ -43,7 +43,7 @@ class VMScan:
         },
         default=None,
     )
-    TYPE: Literal['On-Demand', "API", "Scheduled"] = field(
+    TYPE: Literal["On-Demand", "API", "Scheduled"] = field(
         metadata={"description": "Type of scan. On-Demand, API, Scheduled."},
         default=None,
     )

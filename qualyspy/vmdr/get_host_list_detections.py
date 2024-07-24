@@ -22,7 +22,6 @@ from ..base.xml_parser import xml_parser
 
 LOCK = Lock()
 
-
 def normalize_id_list(id_list):
     """
     normalize_id_list - formats the kwarg ids, if it is passed.
@@ -163,8 +162,8 @@ def hld_backend(
     Returns:
         List: A list of VMDRHost objects, with their DETECTIONS attribute populated.
     """
-    # Set the kwargs
 
+    # Set the kwargs
     kwargs["action"] = "list"
     kwargs["echo_request"] = 0
     kwargs["show_results"] = 1
@@ -176,7 +175,7 @@ def hld_backend(
     while True:
         with LOCK:
             print(
-                f"{current_thread().name} - Pulling page for ids {kwargs.get('ids')}. KWARGS: {kwargs}"
+                f"{current_thread().name} - Pulling page {pulled+1} for ids {kwargs.get('ids')}. KWARGS: {kwargs}"
             )
 
         # make the request:
@@ -277,6 +276,9 @@ def create_id_queue(
     else:
         id_list = pull_id_set(auth)
 
+    if not id_list:
+        raise QualysAPIError("No IDs returned from API.")
+
     print(f"ID set pulled. Total IDs: {len(id_list)}")
 
     id_queue = Queue()
@@ -284,7 +286,9 @@ def create_id_queue(
     for i in range(0, len(id_list), chunk_size):
         id_queue.put(id_list[i : i + chunk_size])
 
-    print(f"Queue created with {id_queue.qsize()} chunks of ~{chunk_size} IDs each.")
+    singular_chunk = True if id_queue.qsize() == 1 else False 
+
+    print(f"Queue created with {id_queue.qsize()} {'chunks' if not singular_chunk else 'chunk'} of ~{chunk_size} IDs{' each.' if not singular_chunk else '.'}")
 
     return id_queue
 
@@ -294,6 +298,7 @@ def get_hld(
     chunk_size: int = 3000,
     threads: int = 5,
     page_count: Union[int, "all"] = "all",
+    chunk_count: Union[int, "all"] = "all",
     **kwargs,
 ) -> List:
     """
@@ -305,13 +310,18 @@ def get_hld(
         chunk_size (int): The size of each chunk. Defaults to 3000.
         threads (int): The number of threads to use. Defaults to 5.
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
+        chunk_count (Union[int, "all"]): The number of chunks to retrieve. Defaults to "all".
         **kwargs: Additional keyword arguments to pass to the API. See qualyspy.vmdr.get_host_list_detections.hld_backend() for details.
 
     Returns:
         BaseList: A list of VMDRHost objects, with their DETECTIONS attribute populated.
     """
 
-    # First, make sure the user hasnt set threads to more than the cpu count
+    #Ensure that threads, chunk_size, and page_count (if not 'all') are all integers above 0
+    if any([threads < 1, chunk_size < 1, (page_count != "all" and page_count < 1), (chunk_count != "all" and chunk_count < 1)]):
+        raise ValueError("threads, chunk_size, page_count (if not 'all') and chunk_count (if not 'all') must all be integers above 0.")
+    
+    # Make sure the user hasn't set threads to more than the cpu count
     if threads > cpu_count():
         print(
             f"Warning: The number of threads ({threads}) is greater than the number of CPUs ({cpu_count()}). This may cause performance issues."
@@ -325,9 +335,12 @@ def get_hld(
         )
         threads = rl["X-Concurrency-Limit-Limit"]
 
-    print("Pulling ID set...")
+    print(f"Pulling/creating queue for full ID list...") if not kwargs.get("ids") else print(
+        f"Pulling/creating queue for user-specified IDs: {kwargs.get('ids')}..."
+    )
+
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids"))
-    print(f"Starting get_hld with {threads} threads.")
+    print(f"Starting get_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
 
     threads_list = []
 
@@ -336,7 +349,7 @@ def get_hld(
     for i in range(threads):
         thread = Thread(
             target=threaded_hld_worker,
-            args=(auth, id_queue, responses, page_count, kwargs),
+            args=(auth, id_queue, responses, page_count, chunk_count, kwargs),
         )
         threads_list.append(thread)
         thread.start()
@@ -353,6 +366,7 @@ def threaded_hld_worker(
     id_queue: Queue,
     responses: BaseList,
     page_count: Union[int, "all"],
+    chunk_count: Union[int, "all"],
     kwargs,
 ):
     """
@@ -363,15 +377,22 @@ def threaded_hld_worker(
         id_queue (Queue): The queue of host IDs to pull.
         responses (BaseList): The list of responses to append to.
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
+        chunk_count (Union[int, "all"]): The number of chunks to retrieve. Defaults to "all".
         **kwargs: Additional keyword arguments to pass to the API. See get_hld() for details.
     """
     while True:
-        pulled = 0
+        pages_pulled = 0
+        chunks_pulled = 0
         try:
-            ids = id_queue.get()
+            ids = id_queue.get_nowait() #nowait allows us to check if the queue is empty without blocking
         except Empty:
             with LOCK:
                 print(f"{current_thread().name} - Queue is empty. Terminating thread.")
+            break
+
+        if not ids:
+            with LOCK:
+                print(f"{current_thread().name} - No IDs to pull. Terminating thread.")
             break
 
         kwargs["ids"] = f"{ids[0]}-{ids[-1]}"
@@ -379,13 +400,18 @@ def threaded_hld_worker(
         id_queue.task_done()
         with LOCK:
             print(f"{current_thread().name} - Chunk complete.")
-        pulled += 1
+        pages_pulled += 1
+        chunks_pulled += 1
         # check if the queue is empty, or if the threads are done (via pulled var)
         if id_queue.empty():
             with LOCK:
                 print(f"{current_thread().name} - Queue is empty. Terminating thread.")
             break
-        if pulled == page_count:
+        if pages_pulled == page_count:
             with LOCK:
-                print(f"{current_thread().name} - Pulled all pages. Returning.")
+                print(f"{current_thread().name} - Thread has pulled all pages. Terminating thread.")
+            break
+        if chunks_pulled == chunk_count:
+            with LOCK:
+                print(f"{current_thread().name} - Thread has pulled all chunks. Terminating thread.")
             break

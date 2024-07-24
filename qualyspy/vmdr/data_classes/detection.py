@@ -4,19 +4,13 @@ detection.py - contains the Detection dataclass for the Qualys VMDR module.
 
 from dataclasses import dataclass, field
 from typing import *
-from warnings import filterwarnings
 from datetime import datetime
+from warnings import catch_warnings, simplefilter
 
-from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
+from bs4 import BeautifulSoup
 
 from .qds_factor import QDSFactor
 from .qds import QDS as qds
-
-filterwarnings(
-    "ignore", category=MarkupResemblesLocatorWarning, module="bs4"
-)  # supress bs4 warnings
-
-filterwarnings("ignore", category=UserWarning, module="bs4")
 
 
 @dataclass(order=True)
@@ -148,12 +142,14 @@ class Detection:
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
         # clean up fields that have html tags
-        for field in HTML_FIELDS:
-            setattr(
-                self,
-                field,
-                BeautifulSoup(getattr(self, field), "html.parser").get_text(),
-            )
+        with catch_warnings():
+            simplefilter("ignore") # ignore the warning about the html.parser
+            for field in HTML_FIELDS:
+                setattr(
+                    self,
+                    field,
+                    BeautifulSoup(getattr(self, field), "html.parser").get_text(),
+                )
 
         # convert the BOOL_FIELDS to bool
         for field in BOOL_FIELDS:

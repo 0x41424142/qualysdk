@@ -1,4 +1,4 @@
-# qualyspy - A Python Package for Interacting With Qualys APIs
+﻿# qualyspy - A Python Package for Interacting With Qualys APIs
 ```
 ··············································
 :   ____             _                       :
@@ -188,7 +188,7 @@ You can use any of the VMDR endpoints currently supported:
 ## Host List Detection
 ```vmdr.get_hld()``` is the main API for extracting vulnerabilities out of the Qualys platform. It is one of the slowest APIs to return data due to Qualys taking a while to gather all the necessary data, but is arguably the most important. Pagination is controlled via the ```page_count``` parameter. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination, as well as ```truncation_limit``` to specify how many hosts should be returned per page.
 
-This function implements threading to significantly speed up data pulls. The number of threads is controlled by the ```threads``` parameter, which defaults to 5. A ```Queue``` object is created, containing chunks of hostIDs (pulled via ```get_host_list``` with ```details=None```) that the threads pop from. The threads then call the ```hld_backend``` function with the hostIDs they popped from the queue. The user can control how many IDs are in a chunk via the ```chunk_size``` parameter, which defaults to 3000. You should create a combination of ```threads``` and ```chunk_size``` that keeps all threads busy, while respecting your Qualys concurrency limit.
+This function implements threading to significantly speed up data pulls. The number of threads is controlled by the ```threads``` parameter, which defaults to 5. A ```Queue``` object is created, containing chunks of hostIDs (pulled via ```get_host_list``` with ```details=None```) that the threads pop from. The threads then call the ```hld_backend``` function with the hostIDs they popped from the queue. The user can control how many IDs are in a chunk via the ```chunk_size``` parameter, which defaults to 3000. You should create a combination of ```threads``` and ```chunk_size``` that keeps all threads busy, while respecting your Qualys concurrency limit. There is also the ```chunk_count``` parameter, which controls how many chunks a thread will pull out of the ```Queue``` before it exits.
 
 Some important kwargs this API accepts:
 |Kwarg| Possible Values |Description|
@@ -260,8 +260,8 @@ This collection of APIs allows for the management of IP addresses/ranges in VMDR
 ---
 ### Get IP List API
 
-The ```get_ip_list()``` API returns a list of all IP addresses or ranges in VMDR, matching the given kwargs. Acceptable args/kwargs are:
-|Arg/Kwarg| Possible Values |Description|Required|
+The ```get_ip_list()``` API returns a list of all IP addresses or ranges in VMDR, matching the given kwargs. Acceptable params are:
+|Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
 |```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to search for.|❌|
@@ -287,8 +287,8 @@ external_ips = [i for i in get_ip_list(auth) if not i.is_private]
 ```
 ---
 ### Add IPs API
-The ```add_ips()``` API allows for the addition of IP addresses or ranges to VMDR. Acceptable args/kwargs are:
-|Arg/Kwarg| Possible Values |Description|Required|
+The ```add_ips()``` API allows for the addition of IP addresses or ranges to VMDR. Acceptable params are:
+|Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
 |```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to add.|✅|
@@ -318,8 +318,8 @@ add_ips(auth, ips='1.2.3.4', enable_vm=True)
 ```
 ---
 ### Update IPs API
-The ```update_ips()``` API allows for the modification of IP addresses or ranges in VMDR. Acceptable args/kwargs are:
-|Arg/Kwarg| Possible Values |Description|Required|
+The ```update_ips()``` API allows for the modification of IP addresses or ranges in VMDR. Acceptable params are:
+|Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
 |```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to update.|✅|
@@ -352,8 +352,8 @@ This collection of APIs allows for the management of asset groups (AGs) in VMDR,
 
 ### Get Asset Group List API
 
-The ```get_ag_list()``` API returns a list of all AGs in VMDR, matching the given kwargs. Acceptable args/kwargs are:
-|Arg/Kwarg| Possible Values |Description|Required|
+The ```get_ag_list()``` API returns a list of all AGs in VMDR, matching the given kwargs. Acceptable params are:
+|Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
 |```page_count```|```Literal['all']``` (default), ```int >= 0```| How many pages to pull. Note that ```page_count``` does not apply if ```truncation_limit``` is set to 0, or not specified.|❌|
@@ -377,8 +377,8 @@ ag_list = get_ag_list(auth)
 ```
 
 ### Add Asset Group API
-The ```add_ag()``` API allows for the addition of asset groups to VMDR. Acceptable args/kwargs are:
-|Arg/Kwarg| Possible Values |Description|Required|
+The ```add_ag()``` API allows for the addition of asset groups to VMDR. Acceptable params are:
+|Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
 |```title```|```str```|The title of the asset group.|✅|
@@ -410,9 +410,9 @@ add_ag(auth, title='My New Asset Group')
 ```
 
 ### Edit Asset Group API
-The ```edit_ag()``` API allows for the modification of asset groups in VMDR. Acceptable args/kwargs are:
+The ```edit_ag()``` API allows for the modification of asset groups in VMDR. Acceptable params are:
 
-|Arg/Kwarg| Possible Values |Description|Required|
+|Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[AssetGroup, BaseList[AssetGroup, int, str], str]```|The ID of the asset group to edit.|✅|
@@ -457,9 +457,9 @@ edit_ag(auth, id=12345, set_title='My New Asset Group Title')
 ---
 
 ### Delete Asset Group API
-The ```delete_ag()``` API allows for the deletion of asset groups in VMDR. Acceptable args/kwargs are:
+The ```delete_ag()``` API allows for the deletion of asset groups in VMDR. Acceptable params are:
 
-|Arg/Kwarg| Possible Values |Description|Required|
+|Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[AssetGroup, BaseList[AssetGroup, int, str], str]```|The ID of the asset group to delete.|✅|
@@ -502,9 +502,9 @@ The ```VMScan``` dataclass is used to store the various fields that the VMDR VM 
 ---
 ### Get Scan List API
 
-The ```get_scan_list()``` API returns a list of all VM scans in VMDR, matching the given kwargs. Acceptable args/kwargs are:
+The ```get_scan_list()``` API returns a list of all VM scans in VMDR, matching the given kwargs. Acceptable params are:
 
-|Arg/Kwarg| Possible Values |Description|Required|
+|Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
 |```scan_ref```|```str```|The reference string of the scan to search for. Formatted like: ```scan/123455677```|❌|

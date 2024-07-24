@@ -7,9 +7,9 @@ This class is used to represent a single entry in the Qualys KnowledgeBase (KB).
 from dataclasses import dataclass, field
 from typing import *
 from datetime import datetime
-from warnings import filterwarnings
+from warnings import catch_warnings, simplefilter
 
-from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
+from bs4 import BeautifulSoup
 
 from .lists import BaseList
 
@@ -20,9 +20,6 @@ from .cve import CVEID
 from .threat_intel import ThreatIntel
 from .compliance import Compliance
 from .tag import Tag, CloudTag
-
-# disable the warning for the bs4 module
-filterwarnings("ignore", category=MarkupResemblesLocatorWarning, module="bs4")
 
 
 @dataclass(order=True)
@@ -201,13 +198,15 @@ class KBEntry:
             ):
                 setattr(self, field, bool(getattr(self, field)))
 
-        for field in HTML_FIELDS:
-            if getattr(self, field) is not None:
-                setattr(
-                    self,
-                    field,
-                    BeautifulSoup(getattr(self, field), "html.parser").get_text(),
-                )
+        with catch_warnings():
+            simplefilter("ignore") # ignore the warning about the html.parser
+            for field in HTML_FIELDS:
+                if getattr(self, field) is not None:
+                    setattr(
+                        self,
+                        field,
+                        BeautifulSoup(getattr(self, field), "html.parser").get_text(),
+                    )
 
     def __str__(self):
         return f"{self.QID}"

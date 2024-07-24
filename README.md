@@ -30,18 +30,13 @@ assets = uber.get(
 ```
 ## Non-Uber Class Example
 ```py
-from qualyspy.auth import TokenAuth
-from qualyspy.gav import query_assets
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import get_scan_list
 
-auth = TokenAuth(<username>,'password', platform='qg1')
+auth = BasicAuth(<username>,'password', platform='qg1')
 
-linux_servers_with_1cpu = query_assets(
-	auth, 
-	filter='operatingSystem.category1:`Linux` and operatingSystem.category2:`Server` and processors.numberOfCpu:1', 
-	lastModifiedDate='2024-06-21'
-) 
->>> linux_servers_with_1core
-[AssetID(<0123>), AssetID(<4567>), ...]
+scans = get_scan_list(auth)
+>>>[VMScan(REF='scan/123456789', TITLE='My Scan')]
 ```
 
 ## Current Supported Modules 
@@ -484,6 +479,7 @@ This collection of APIs allows for the management of VM scans in VMDR, located u
 
 ### VMScan Dataclass
 The ```VMScan``` dataclass is used to store the various fields that the VMDR VM Scan APIs return. Attributes are as follows:
+
 |Attribute|Type|Description|
 |--|--|--|
 |```REF```|```str```|Reference string for the scan. Formatted as module/ID.|

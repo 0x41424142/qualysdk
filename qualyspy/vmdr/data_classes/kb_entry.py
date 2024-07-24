@@ -199,7 +199,7 @@ class KBEntry:
                 setattr(self, field, bool(getattr(self, field)))
 
         with catch_warnings():
-            simplefilter("ignore") # ignore the warning about the html.parser
+            simplefilter("ignore")  # ignore the warning about the html.parser
             for field in HTML_FIELDS:
                 if getattr(self, field) is not None:
                     setattr(

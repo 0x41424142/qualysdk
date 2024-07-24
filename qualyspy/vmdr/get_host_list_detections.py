@@ -22,6 +22,7 @@ from ..base.xml_parser import xml_parser
 
 LOCK = Lock()
 
+
 def normalize_id_list(id_list):
     """
     normalize_id_list - formats the kwarg ids, if it is passed.
@@ -286,9 +287,11 @@ def create_id_queue(
     for i in range(0, len(id_list), chunk_size):
         id_queue.put(id_list[i : i + chunk_size])
 
-    singular_chunk = True if id_queue.qsize() == 1 else False 
+    singular_chunk = True if id_queue.qsize() == 1 else False
 
-    print(f"Queue created with {id_queue.qsize()} {'chunks' if not singular_chunk else 'chunk'} of ~{chunk_size} IDs{' each.' if not singular_chunk else '.'}")
+    print(
+        f"Queue created with {id_queue.qsize()} {'chunks' if not singular_chunk else 'chunk'} of ~{chunk_size} IDs{' each.' if not singular_chunk else '.'}"
+    )
 
     return id_queue
 
@@ -317,10 +320,19 @@ def get_hld(
         BaseList: A list of VMDRHost objects, with their DETECTIONS attribute populated.
     """
 
-    #Ensure that threads, chunk_size, and page_count (if not 'all') are all integers above 0
-    if any([threads < 1, chunk_size < 1, (page_count != "all" and page_count < 1), (chunk_count != "all" and chunk_count < 1)]):
-        raise ValueError("threads, chunk_size, page_count (if not 'all') and chunk_count (if not 'all') must all be integers above 0.")
-    
+    # Ensure that threads, chunk_size, and page_count (if not 'all') are all integers above 0
+    if any(
+        [
+            threads < 1,
+            chunk_size < 1,
+            (page_count != "all" and page_count < 1),
+            (chunk_count != "all" and chunk_count < 1),
+        ]
+    ):
+        raise ValueError(
+            "threads, chunk_size, page_count (if not 'all') and chunk_count (if not 'all') must all be integers above 0."
+        )
+
     # Make sure the user hasn't set threads to more than the cpu count
     if threads > cpu_count():
         print(
@@ -335,7 +347,9 @@ def get_hld(
         )
         threads = rl["X-Concurrency-Limit-Limit"]
 
-    print(f"Pulling/creating queue for full ID list...") if not kwargs.get("ids") else print(
+    print(f"Pulling/creating queue for full ID list...") if not kwargs.get(
+        "ids"
+    ) else print(
         f"Pulling/creating queue for user-specified IDs: {kwargs.get('ids')}..."
     )
 
@@ -384,7 +398,9 @@ def threaded_hld_worker(
         pages_pulled = 0
         chunks_pulled = 0
         try:
-            ids = id_queue.get_nowait() #nowait allows us to check if the queue is empty without blocking
+            ids = (
+                id_queue.get_nowait()
+            )  # nowait allows us to check if the queue is empty without blocking
         except Empty:
             with LOCK:
                 print(f"{current_thread().name} - Queue is empty. Terminating thread.")
@@ -409,9 +425,13 @@ def threaded_hld_worker(
             break
         if pages_pulled == page_count:
             with LOCK:
-                print(f"{current_thread().name} - Thread has pulled all pages. Terminating thread.")
+                print(
+                    f"{current_thread().name} - Thread has pulled all pages. Terminating thread."
+                )
             break
         if chunks_pulled == chunk_count:
             with LOCK:
-                print(f"{current_thread().name} - Thread has pulled all chunks. Terminating thread.")
+                print(
+                    f"{current_thread().name} - Thread has pulled all chunks. Terminating thread."
+                )
             break

@@ -15,7 +15,7 @@ def schema_query(
     Using the CALL_SCHEMA dictionary, this function will return the information for
     either a qualys module as a whole or a specific endpoint within a module.
 
-    Args:
+    Params:
         module (str): The module to get help for.
         endpoint (str) [optional]: The endpoint to get help for.
         pretty (bool) [optional]: Whether to return the information as a string or as a dictionary. [False = return dict, True = return indented str]

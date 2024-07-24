@@ -14,7 +14,7 @@ def parse_duration(duration: str) -> timedelta:
     """
     Parse a duration string into a timedelta object.
 
-    Args:
+    Params:
         duration (str): Duration string in the format HH:MM:SS or N days HH:MM:SS.
 
     Returns:

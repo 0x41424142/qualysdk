@@ -12,7 +12,7 @@ def get_asset(auth: TokenAuth, **kwargs):
     """
     Get a specific host from the Global AssetView API.
 
-    Args:
+    Params:
         auth (TokenAuth): The authentication object.
     API params (kwargs):
         assetId (int): The asset ID to get.

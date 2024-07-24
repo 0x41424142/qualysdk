@@ -9,7 +9,7 @@ def xml_parser(xml_string, attr_prefix="@", cdata_key="#text"):
     """
     Turn an xml string into a dictionary.
 
-     Args:
+     Params:
          xml_string (str): The xml string to parse.
          attr_prefix (str): The prefix to add to attributes.
          cdata_key (str): The key to use for cdata.

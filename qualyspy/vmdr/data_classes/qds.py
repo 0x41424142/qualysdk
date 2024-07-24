@@ -56,7 +56,7 @@ class QDS:
         """
         from_dict - create a QDS object from a dictionary.
 
-        Args:
+        Params:
             data (dict): The dictionary containing the data for the QDS object.
 
         Returns:

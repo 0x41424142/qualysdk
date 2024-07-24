@@ -68,7 +68,7 @@ class BasicAuth(BaseAuthentication):
         """
         Get the rate limit for the API.
 
-        Args:
+        Params:
         ```
         return_ratelimit: bool (default is False) - whether to return the rate limit details as a dict or not.
         You should call get_ratelimit() to get the rate limit details.

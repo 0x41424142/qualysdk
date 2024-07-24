@@ -51,7 +51,7 @@ class GAVUber:
         """
         Call the appropriate endpoint based on passed endpoint.
 
-        Args:
+        Params:
             endpoint (str): The endpoint to call. Must be one of the keys in CALL_SCHEMA["gav"].
             **kwargs: The keyword arguments to pass to the endpoint.
         """

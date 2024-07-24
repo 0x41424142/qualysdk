@@ -47,7 +47,7 @@ class ThreatIntel:
         """
         from_dict - create a ThreatIntel object from a dictionary.
 
-        Args:
+        Params:
             data (dict): The dictionary containing the data for the ThreatIntel object.
 
         Returns:

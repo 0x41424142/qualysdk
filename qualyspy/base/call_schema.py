@@ -413,6 +413,46 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "launch_scan": {
+                "endpoint": "/api/2.0/fo/scan/",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": [
+                    "action",
+                    "echo_request",
+                    "runtime_http_header",
+                    "scan_title",
+                    "option_id",
+                    "option_title",
+                    "iscanner_id",
+                    "iscanner_name",
+                    "ec2_instance_ids",
+                    "ip",
+                    "asset_group_ids",
+                    "asset_groups",
+                    "exclude_ip_per_scan",
+                    "default_scanner",
+                    "scanners_in_ag",
+                    "scanners_in_network",  # set to 1 to use all scanners
+                    "target_from"  # must be tags
+                    "use_ip_nt_range_tags_include",
+                    "use_ip_nt_range_tags_exclude",
+                    "use_ip_nt_range_tags",
+                    "tag_include_selector",
+                    "tag_exclude_selector",
+                    "tag_set_by",
+                    "tag_set_exclude",
+                    "tag_set_include",
+                    "ip_network_id",  # must be enabled in subscription
+                    "client_id",  # only for consultant subscriptions
+                    "client_name",  # only for consultant subscriptions
+                    "fqdn",
+                ],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
         },
     }
 )

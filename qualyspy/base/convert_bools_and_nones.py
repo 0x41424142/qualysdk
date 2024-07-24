@@ -9,7 +9,7 @@ def convert_bools_and_nones(kwargs: dict) -> dict:
     """
     Converts bools to 1/0 and Nones to 'None' in a dictionary.
 
-    Args:
+    Params:
         kwargs (dict): Dictionary of keyword arguments.
 
     Returns:

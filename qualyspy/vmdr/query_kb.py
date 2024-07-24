@@ -20,7 +20,7 @@ def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
     Can be used to download the entire KB (no kwargs) or to search for specific vulnerabilities.
     NOTE: this function automatically appends 'action=list' to the kwargs. You do not need to include it. Should you do so, it will be overwritten. It is just recognized as valid for the sake of completeness.
 
-    Args:
+    Params:
         auth (BasicAuth) The authentication object.
     API params (kwargs):
         ```

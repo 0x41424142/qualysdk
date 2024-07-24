@@ -20,7 +20,7 @@ def single_ip(ip: str) -> ip_address:
     """
     Converts a single IP string into an ipaddress.IPv4Address or ipaddress.IPv6Address object.
 
-    Args:
+    Params:
         ip (str): IP address string.
 
     Returns:
@@ -33,7 +33,7 @@ def single_range(ip_range: str) -> ip_network:
     """
     Converts an IP range string into an ipaddress.IPv4Network or ipaddress.IPv6Network object.
 
-    Args:
+    Params:
         ip_range (str): IP range string.
 
     Returns:
@@ -54,7 +54,7 @@ def convert_ips(ips: list[str]) -> list[Union[IPv4Address, IPv6Address]]:
     """
     Converts a list of IP strings into a list of ipaddress.IPv4Address or ipaddress.IPv6Address objects.
 
-    Args:
+    Params:
         ips (list[str]): List of IP address strings.
 
     Returns:
@@ -67,7 +67,7 @@ def convert_ranges(ip_ranges: list[str]) -> list[Union[IPv4Network, IPv6Network]
     """
     Converts a list of IP range strings into a list of ipaddress.IPv4Network or ipaddress.IPv6Network objects.
 
-    Args:
+    Params:
         ip_ranges (list[str]): List of IP range strings.
 
     Returns:

@@ -90,7 +90,7 @@ class BaseAuthentication:
         """
         Convert the authentication object to a JSON string.
 
-        Args:
+        Params:
         ```
         pretty: bool (default is False) - whether to pretty print the JSON string or not.
         ```

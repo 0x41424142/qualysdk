@@ -16,7 +16,7 @@ def query_assets(auth: TokenAuth, page_count: Union["all", int] = "all", **kwarg
     """
     Queries GAV inventory for assets that satisfy a Qualys Query Language (QQL) filter.
 
-    Args:
+    Params:
         auth (TokenAuth): The authentication object.
         page_count (int): The number of pages to get. Defaults to 'all'.
 

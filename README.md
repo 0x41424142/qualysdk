@@ -30,18 +30,14 @@ assets = uber.get(
 ```
 ## Non-Uber Class Example
 ```py
-from qualyspy.auth import TokenAuth
-from qualyspy.gav import query_assets
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import get_host_list
 
-auth = TokenAuth(<username>,'password', platform='qg1')
+auth = BasicAuth(<username>, <password>, platform='qg1')
 
-linux_servers_with_1cpu = query_assets(
-	auth, 
-	filter='operatingSystem.category1:`Linux` and operatingSystem.category2:`Server` and processors.numberOfCpu:1', 
-	lastModifiedDate='2024-06-21'
-) 
->>> linux_servers_with_1core
-[AssetID(<0123>), AssetID(<4567>), ...]
+#Pull 4 pages of hosts, with "All/AGs" details & tags:
+hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
+>>>[VMDRHost(12345), ...]
 ```
 
 ## Current Supported Modules 

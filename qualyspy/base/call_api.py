@@ -146,6 +146,7 @@ def call_api(
                 f"Error: {parsed['html']['body']['h1']}: {parsed['html']['body']['p'][1]['#text']}"
             )
         else:
+            # yeah... turns out a homegrown xml parsers aren't super easy...
             raise Exception(
                 f"Error: {parsed['{http://www.w3.org/1999/xhtml}html']['{http://www.w3.org/1999/xhtml}body']['{http://www.w3.org/1999/xhtml}h1']}"
             )

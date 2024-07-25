@@ -223,7 +223,7 @@ def manage_scan(
     NOTE: ALL KWARGS ARE FOR action="fetch" ONLY
 
         ips (str): The IPs to fetch. Defaults to None.
-        mode (Literal["brief", "extended"]): The fetch mode. Defaults to "brief".
+        mode (Literal["brief", "extended"]): The fetch mode. Defaults to "brief". If you specify nothing, or a non-existent mode, the SDK will default to "brief".
         client_id (int): The client ID. Defaults to None. Only available for consultant subscriptions.
         client_name (str): The client name. Defaults to None. Only available for consultant subscriptions.
 
@@ -285,7 +285,11 @@ def manage_scan(
 
     else:
         # Make sure that the response is JSON:
-        if "json" not in response.headers["Content-Type"].lower():
+        if response.headers["Content-Type"] not in [
+            "application/json",
+            "application/json; charset=UTF-8",
+            "text/html; charset=UTF-8",
+        ]:
             raise QualysAPIError(
                 xml_parser(response.text)["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
             )
@@ -373,7 +377,7 @@ def fetch_scan(auth: BasicAuth, scan_ref: str, **kwargs) -> Tuple[DataFrame, str
 
     :kwargs:
         ips (str): The IPs to fetch. Defaults to None.
-        mode (Literal["brief", "extended"]): The fetch mode. Defaults to "brief".
+        mode (Literal["brief", "extended"]): The fetch mode. Defaults to "brief". If you specify nothing, or a non-existent mode, the SDK will default to "brief".
         client_id (int): The client ID. Defaults to None. Only available for consultant subscriptions.
         client_name (str): The client name. Defaults to None. Only available for consultant subscriptions.
 

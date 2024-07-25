@@ -1,4 +1,4 @@
-﻿# qualyspy - A Python Package for Interacting With Qualys APIs
+# qualyspy - A Python Package for Interacting With Qualys APIs
 ```
 ··············································
 :   ____             _                       :
@@ -10,7 +10,7 @@
 ··············································
  ```
 
-This package attempts to make it much easier to interact with Qualys's various API endpoints, across most modules.
+This package attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![development status](https://img.shields.io/badge/in%20development-8A2BE2) ![black formatter status](https://github.com/0x41424142/qualyspy/actions/workflows/black.yml/badge.svg?event=push)
 
@@ -532,53 +532,6 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 #Get all VM scans in VMDR, with all details, that have a type of Scheduled:
 scheduled_scans = get_scan_list(auth, type='Scheduled', show_ags=True, show_op=True)
 >>>BaseList[VMScan(REF='scan/123456789', TYPE='Scheduled', TITLE='My Scheduled Scan', ...), ...]
-```
----
-### Launch a New Scan API
-
-```launch_scan()``` is used to create and launch a new VM scan in VMDR. A VMScan object is returned containing the details of the scan once it is created via a ```get_scan_list()``` call with the ```scan_ref``` kwarg set to the newly-created scan reference. Acceptable params are:
-
-|Parameter| Possible Values |Description|Required|
-|--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
-|```runtime_http_header```|```str```|The value for the ```Qualys.Scan``` HTTP header to use for the scan.|❌|
-|```scan_title```|```str```|The title of the scan.|❌|
-|```option_id```|```int```|The option profile ID to use for the scan.|⚠️ (Must be specified if ```option_title``` is not specified)|
-|```option_title```|```str```|The option profile title to use for the scan.|⚠️ (Must be specified if ```option_id``` is not specified)|
-|```ip```|```Union[str, BaseList[str]```|The target IPs for the scan.|⚠️ (Must be specified if one of the following are not specified: ```asset_group_ids```, ```asset_groups```, ```fqdn```)|
-|```asset_group_ids```|```Union[str, BaseList[str]```|The asset group IDs to use for the scan.|⚠️ (Must be specified if one of the following are not specified: ```ip```, ```asset_groups```, ```fqdn```)|
-|```asset_groups```|```Union[str, BaseList[str]```|The asset group titles to use for the scan.|⚠️ (Must be specified if one of the following are not specified: ```ip```, ```asset_group_ids```, ```fqdn```)|
-|```fqdn```|```Union[str, BaseList[str]```|The FQDNs to use for the scan.|⚠️ (Must be specified if one of the following are not specified: ```ip```, ```asset_group_ids```, ```asset_groups```, ```asset_groups```)|
-|```iscanner_appliance_id```|```int```|The internal scanner appliance ID to use for the scan.|❌|
-|```iscanner_name```|```str```|The internal scanner appliance name to use for the scan.|❌|
-|```ec2instance_ids```|```Union[str, BaseList[str]```|The EC2 instance IDs of your external scanners.|❌|
-|```exclude_ip_per_scan```|```str, BaseList[str]```|The IPs to exclude from the scan.|❌|
-|```default_scanner```|```bool```|Use the default scanner for the scan.|❌|
-|```scanners_in_ag```|```bool```|Use the scanners in the asset group for the scan.|❌|
-|```target_from```|```Literal["assets", "tags"]```| Choose to target assets based on the assets themselves or based on their tag list.|❌|
-|```use_ip_nt_range_tags_include```|```bool```|Use the IP/NT range tags to include in the scan.|❌|
-|```use_ip_nt_range_tags_exclude```|```bool```|Use the IP/NT range tags to exclude from the scan.|❌|
-|```use_ip_nt_range_tags_include```|```bool```|Use the IP/NT range tags to include in the scan.|❌|
-|```tag_selector_include```|```Literal["any", "all"]```| Choose if all tags must match for an asset or any tag can match.|❌|
-|```tag_selector_exclude```|```Literal["any", "all"]```| Choose if all tags must match for an asset or any tag can match.|❌|
-|```tag_set_by```|```Literal["id", "name"]```| Choose to search for tags by tag ID or tag name.|❌|
-|```tag_set_include```|```Union[str, BaseList[str]```|The tags to include in the scan.|❌|
-|```tag_set_exclude```|```Union[str, BaseList[str]```|The tags to exclude from the scan.|❌|
-|```ip_network_id```|```str```|The IP network ID to use for the scan. Must be enabled in the Qualys subscription.|❌|
-|```client_id```|```int```|The client ID to use for the scan. Only valid for consultant subscriptions.|❌|
-|```client_name```|```str```|The client name to use for the scan. Only valid for consultant subscriptions.|❌|
-
-```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import launch_scan
-
-auth = BasicAuth(<username>, <password>, platform='qg1')
-
-#Launch a new VM scan in VMDR with a specific title and option profile, targeting 2 specific IPs:
-result = launch_scan(auth, scan_title='My New Scan', option_id=12345, ip='10.0.0.1,10.0.0.2', iscanner_name='internal_scanner_name')
->>>"New vm scan launched with REF: scan/123456789.12345"
-result
->>>VMScan(REF='scan/123456789.12345', TYPE='API', TITLE='My New Scan', ...)
 ```
 ---
 ## Querying the KB

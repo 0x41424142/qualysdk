@@ -285,7 +285,11 @@ def manage_scan(
 
     else:
         # Make sure that the response is JSON:
-        if response.headers["Content-Type"] not in ["application/json", "application/json; charset=UTF-8", "text/html; charset=UTF-8"]:
+        if response.headers["Content-Type"] not in [
+            "application/json",
+            "application/json; charset=UTF-8",
+            "text/html; charset=UTF-8",
+        ]:
             raise QualysAPIError(
                 xml_parser(response.text)["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
             )

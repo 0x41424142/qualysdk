@@ -1,4 +1,4 @@
-﻿# qualyspy - A Python Package for Interacting With Qualys APIs
+# qualyspy - A Python Package for Interacting With Qualys APIs
 ```
 ··············································
 :   ____             _                       :

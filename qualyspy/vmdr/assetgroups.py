@@ -17,7 +17,7 @@ def get_ag_list(
     """
     Gets a list of asset groups from the Qualys subscription.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
         page_count (Union["all", int]): The number of pages to retrieve. Defaults to "all". If an integer is passed, that number of pages will be retrieved.
 
@@ -111,7 +111,7 @@ def manage_ag(
 
     Gets called by the add_ag, edit_ag, and delete_ag functions.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
         action (Literal["add", "edit", "delete"]): The action to perform on the asset group.
         id (Union[AssetGroup, BaseList, str]): The ID of the asset group to edit or delete. Defaults to None. If a single AssetGroup, or a BaseList of AssetGroups is passed, the function will iterate over them.
@@ -249,7 +249,7 @@ def add_ag(auth: BasicAuth, title: str, **kwargs) -> str:
     """
     Adds an asset group to the Qualys subscription.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
         title (str): Title of the asset group.
 
@@ -283,7 +283,7 @@ def edit_ag(auth: BasicAuth, id: Union[AssetGroup, BaseList, str], **kwargs) -> 
     """
     Edits an asset group in the Qualys subscription.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
         id (Union[AssetGroup, BaseList, str]): The ID of the asset group to edit. If a single AssetGroup, or a BaseList of AssetGroups is passed, the function will iterate over them.
 
@@ -329,7 +329,7 @@ def delete_ag(auth: BasicAuth, id: Union[AssetGroup, str]) -> str:
     """
     Deletes a single asset group from the Qualys subscription.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
         id (Union[AssetGroup, str]): The ID of the asset group to delete.
 

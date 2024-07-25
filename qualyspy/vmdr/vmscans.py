@@ -4,6 +4,7 @@ with the 'action' parameter controlling what is done with the scan(s).
 """
 
 from datetime import datetime
+from typing import Tuple
 
 from qualyspy.base import call_api, xml_parser
 from .data_classes.lists.base_list import BaseList
@@ -16,7 +17,7 @@ def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
     """
     Pull a list of scans in the Qualys subscription.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
 
     Keyword Args:
@@ -26,7 +27,7 @@ def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
         state (Union[Literal["Running", "Paused", "Canceled", "Finished", "Error", "Queued", "Loading"], BaseList[str]): State of the scan. Multiple states can be specified as a comma-separated string. Can also pass a BaseList of strings.
         processed (bool): Whether the scan has been processed. Defaults to None.
         type (Literal["On-Demand", "API", "Scheduled"]): Type of scan. Defaults to None.
-        target (Union[str, BaseList[str], IPv4Address, IPv4Network, BaseList[IPv4Address], BaseList[IPv4Network]]) Target IP(s) of the scan. Can be a single IP string, an IP network, or a BaseList of IPs/networks. Calls API with the correct format - a comma separated string. If an IP range/network obj is passed, it is formatted as 1.2.3.4-5.6.7.8.
+        target (Union[str, BaseList[str]]) Target IP(s) of the scan. Can be a single IP string, or a BaseList of strings. Calls API with the correct format - a comma separated string. If an IP range/network obj is passed, it is formatted as 1.2.3.4-5.6.7.8.
         user_login (str): Filter on owner of the scan. Defaults to None.
         launched_after_datetime (Union[strm datetime]): Filter on scans launched after a certain datetime. Can be a string or a datetime object. If a datetime object is passed, it is converted to a string.
         launched_before_datetime (Union[str, datetime]): Filter on scans launched before a certain datetime. Can be a string or a datetime object. If a datetime object is passed, it is converted to a string.
@@ -94,3 +95,108 @@ def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
         scans.append(VMScan.from_dict(scan))
 
     return scans
+
+
+def launch_scan(auth: BasicAuth, **kwargs) -> VMScan:
+    """
+    Create a new VMDR scan and launch, or call
+    a pre-existing VMDR scan on supplied target (IP, asset group IDs, etc.).
+
+    Keyword args:
+        ```
+        action (Literal["launch"]): The action to perform. Defaults to "launch". WARNING: the SDK will force-set this to "launch".
+        echo_request (bool): Whether to echo the request. Defaults to False. WARNING: the SDK will force-set this to False.
+        runtime_http_header (str): The value the scanner will put in the Qualys-Scan header. Defaults to None. Used to "drop defenses".
+        scan_title (str): The title of the scan. Defaults to None.
+        option_id (int): The option profile ID. Required if option_title not specified.
+        option_title (str): The option profile title. Required if option_id not specified.
+
+        SCANNER APPLIANCE OPTIONS:
+            iscanner_id (int): The internal scanner ID. Defaults to None.
+            iscanner_name (str): The internal scanner name. Defaults to None.
+            ec2_instance_ids (str): The EC2 instance IDs of external scanners. Defaults to None.
+
+        priority (int, 0-10): The priority of the scan. Defaults to None.
+
+        ASSET IPs/GROUP OPTIONS:
+            ip (Union[str, BaseList[str]]): The IP(s) to scan. Defaults to None.
+            asset_group_ids (Union[str, BaseList[str], int, BaseList[int]]): The asset group IDs to scan. Defaults to None.
+            asset_groups (Union[str, BaseList[str]]): The asset group titles to scan. Defaults to None.
+            exclude_ip_per_scan (Union[str, BaseList[str]]): The IPs to exclude from the scan. Defaults to None. Only valid when target_from=assets.
+            fqdn (Union[str, BaseList[str]]): The FQDN(s) to scan. Defaults to None.
+            default_scanner (bool): Whether to use the default scanner. Defaults to None.
+            scanners_in_ag (bool): Whether to use scanners in the asset group. Defaults to None.
+            target_from (Literal["assets", "tags"]): The target source. Defaults to "assets".
+            use_ip_nt_range_tags_include (bool): Whether to use IP/NT range tags include. Defaults to None.
+            use_ip_nt_range_tags_exclude (bool): Whether to use IP/NT range tags exclude. Defaults to None.
+            use_ip_nt_range_tags (bool): Whether to use IP/NT range tags. Defaults to None.
+            tag_include_selector (Literal["any", "all"]): The tag include selector. Defaults to any.
+            tag_exclude_selector (Literal["any", "all"]): The tag exclude selector. Defaults to any.
+            tag_set_by (Literal["id", "name"]) Whether to search for tags by ID or name. Defaults to id.
+            tag_set_exclude (str): Comma-separated string of tag IDs or names, according to tag_set_by. Defaults to None.
+            tag_set_include (str): Comma-separated string of tag IDs or names, according to tag_set_by. Defaults to None.
+
+        ip_network_id (int): The IP network ID. Defaults to None. Must be enabled in the Qualys subscription.
+        client_id (int): The client ID. Defaults to None. Only available for consultant subscriptions.
+        client_name (str): The client name. Defaults to None. Only available for consultant subscriptions.
+
+        EXAMPLE:
+        # Launch a scan on a single IP:
+        result = launch_scan(auth, ip="1.2.3.4", scan_title="My Scan", priority=5, option_id=123456)
+        >>> "New vm scan launched with REF: scan/1234567890123456"
+        result
+        >>> ("New vm scan launched", "scan/1234567890123456")
+        ```
+
+    Returns:
+        VMSan: VMScan dataclass object containing the scan details.
+    """
+
+    # Set the required kwargs:
+    kwargs["action"] = "launch"
+    kwargs["echo_request"] = False
+
+    # Convert any BaseList objects to comma-separated strings:
+    for key in kwargs:
+        if isinstance(kwargs[key], BaseList):
+            kwargs[key] = ",".join(kwargs[key])
+
+    # Make the request:
+    response = call_api(
+        auth=auth,
+        module="vmdr",
+        endpoint="launch_scan",
+        payload=kwargs,
+        headers={"X-Requested-With": "qualyspy SDK"},
+    )
+
+    # Parse the response:
+    result = xml_parser(response.text)
+
+    # Check for empty results:
+    if not result:
+        print("No scan launched.")
+        return None
+
+    # Check for scan details in simple_return:
+
+    data = result["SIMPLE_RETURN"]["RESPONSE"]
+
+    if "CODE" in data.keys():
+        raise QualysAPIError(data["TEXT"])
+
+    items_list = data["ITEM_LIST"]["ITEM"]
+    # if items_list is a dict, put it into a list:
+    if isinstance(items_list, dict):
+        items_list = [items_list]
+
+    scan_ref = ""
+    for item in items_list:
+        # Check if the KEY key's value is REFERENCE
+        if item["KEY"] == "REFERENCE":
+            scan_ref = item["VALUE"]
+
+    print(f'{data["TEXT"]} with REF: {scan_ref}')
+
+    # Return a VMScan object with the scan details:
+    return get_scan_list(auth, scan_ref=scan_ref)[0]

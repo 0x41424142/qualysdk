@@ -87,7 +87,7 @@ class QDSFactor:
         """
         from_dict - create a QDSFactor object from a dictionary.
 
-        Args:
+        Params:
             data (dict): The dictionary containing the data for the QDSFactor object.
 
         Returns:

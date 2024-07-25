@@ -48,7 +48,7 @@ def pull_id_set(auth: BasicAuth, ids: str = None) -> BaseList[VMDRID]:
     """
     pull_id_set - pull a set of host IDs from the VMDR API.
 
-    Args:
+    Params:
         auth (BasicAuth): The BasicAuth object containing the username and password.
         ids (str): A comma-separated string of host IDs to use. If specified, this will be used instead of pulling the full set.
 
@@ -72,7 +72,7 @@ def hld_backend(
     """
     hld_backend - get a list of hosts and their QID detections.
 
-    Args:
+    Params:
         auth (BasicAuth): The BasicAuth object containing the username and password.
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
         **kwargs: Additional keyword arguments to pass to the API. See below.
@@ -263,7 +263,7 @@ def create_id_queue(
     create_id_queue - create a queue of host IDs to pull. the queue contains chunks (lists) of chunk_size
     length with host IDs.
 
-    Args:
+    Params:
         auth (BasicAuth): The BasicAuth object containing the username and password.
         chunk_size (int): The size of each chunk. Defaults to 100.
         ids (str): A comma-separated string of host IDs to use. If specified, this will be used instead of pulling the full set.
@@ -308,7 +308,7 @@ def get_hld(
     get_hld - get a list of hosts and their QID detections using multiple threads. Read
     hld_backend for more information on the kwargs.
 
-    Args:
+    Params:
         auth (BasicAuth): The BasicAuth object containing the username and password.
         chunk_size (int): The size of each chunk. Defaults to 3000.
         threads (int): The number of threads to use. Defaults to 5.
@@ -388,7 +388,7 @@ def threaded_hld_worker(
     """
     threaded_hld_worker - the worker function for get_hld/hld_backend functions.
 
-    Args:
+    Params:
         auth (BasicAuth): The BasicAuth object containing the username and password.
         id_queue (Queue): The queue of host IDs to pull.
         responses (BaseList): The list of responses to append to.

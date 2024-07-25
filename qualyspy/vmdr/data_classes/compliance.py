@@ -43,7 +43,7 @@ class Compliance:
         """
         from_dict - create a Compliance object from a dictionary.
 
-        Args:
+        Params:
             data (dict): The dictionary containing the data for the Compliance object.
 
         Returns:

@@ -16,7 +16,7 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
     """
     Gets a list of IP addresses from the Qualys subscription.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
 
     Keyword Args:
@@ -89,7 +89,7 @@ def add_ips(
     """
     Adds IP addresses to the Qualys subscription.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
         ips (Union[str, BaseList): List of IP addresses/ranges to add. Can be a string or a BaseList object containing IPs. Multiple entries are comma separated. A host IP range is specified with a hyphen.
         enable_pc (Union[bool, int]): Whether to enable policy compliance tracking on the IP addresses. Defaults to False.
@@ -159,7 +159,7 @@ def update_ips(auth: BasicAuth, ips: Union[str, BaseList], **kwargs) -> None:
     """
     Update specific details of IP addresses in the Qualys subscription.
 
-    Args:
+    Params:
         auth (BasicAuth): Qualys BasicAuth object.
         ips (Union[str, BaseList): List of IP addresses/ranges to update. Can be a string or a BaseList object containing IPs. Multiple entries are comma separated. A host IP range is specified with a hyphen.
 

@@ -16,7 +16,7 @@ def get_all_assets(
     """
     Get all assets in the Global AssetView API.
 
-    Args:
+    Params:
         auth (TokenAuth): The authentication object.
         page_count (Union[int, "all"]): The number of pages to get. If "all", get all pages. Defaults to "all".
     API params (kwargs):

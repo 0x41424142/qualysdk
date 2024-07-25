@@ -33,7 +33,7 @@ def call_api(
     This function is used across all modules and endpoints as the actual
     API call function.
 
-    Args:
+    Params:
     ```
     auth (Union[BasicAuth, TokenAuth]) The authentication object.
     module (str) The module to call using the CALL_SCHEMA.

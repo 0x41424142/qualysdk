@@ -13,7 +13,7 @@ def count_assets(auth: TokenAuth, **kwargs):
     """
     Count assets in the Global AssetView API based on a QQL filter.
 
-    Args:
+    Params:
         auth (TokenAuth): The authentication object.
     API params (kwargs):
         filter (str): The Qualys QQL filter to use.

@@ -27,4 +27,12 @@ from .get_host_list import get_host_list
 from .get_host_list_detections import get_hld
 from .ips import get_ip_list, add_ips, update_ips
 from .assetgroups import *
-from .vmscans import get_scan_list, launch_scan
+from .vmscans import (
+    get_scan_list,
+    launch_scan,
+    pause_scan,
+    resume_scan,
+    cancel_scan,
+    fetch_scan,
+    delete_scan,
+)

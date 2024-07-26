@@ -10,7 +10,7 @@
 ··············································
  ```
 
-This package attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
+This SDK attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
 
 [![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Development Status](https://img.shields.io/badge/in%20development-8A2BE2) ![Black Formatter Status](https://github.com/0x41424142/qualyspy/actions/workflows/black.yml/badge.svg?event=push) ![CodeQL Scan Status](https://github.com/0x41424142/qualyspy/actions/workflows/codeql.yml/badge.svg?branch=main)
 

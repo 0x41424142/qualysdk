@@ -335,6 +335,7 @@ The APIs are as follows:
 ### VMScan Dataclass
 
 The ```VMScan``` dataclass is used to store the various fields that the VMDR VM Scan APIs return. Attributes are as follows:
+
 |Attribute|Type|Description|
 |--|--|--|
 |```REF```|```str```|Reference string for the scan. Formatted as module/ID.|
@@ -573,4 +574,3 @@ str(kb_entry.CVEList)
 |```CVEID```| ID, URL |
 |```Compliance``` | _TYPE, SECTION, DESCRIPTION |
 | ```Bugtraq``` | ID, URL |
--- 

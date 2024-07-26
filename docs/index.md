@@ -1,18 +1,6 @@
 # qualyspy - A Python Package for Interacting With Qualys APIs
-```
-··············································
-:   ____             _                       :
-:  /___ \_   _  __ _| |_   _ ___ _ __  _   _ :
-: //  / | | | |/ _` | | | | / __| '_ \| | | |:
-:/ \_/ /| |_| | (_| | | |_| \__ | |_) | |_| |:
-:\___,_\ \__,_|\__,_|_|\__, |___| .__/ \__, |:
-:                      |___/    |_|    |___/ :
-··············································
- ```
 
 This package attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
-
-[![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Development Status](https://img.shields.io/badge/in%20development-8A2BE2) ![Black Formatter Status](https://github.com/0x41424142/qualyspy/actions/workflows/black.yml/badge.svg?event=push) ![CodeQL Scan Status](https://github.com/0x41424142/qualyspy/actions/workflows/codeql.yml/badge.svg?branch=main)
 
 ## Uber Class Example
 ```py
@@ -55,17 +43,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |Tagging| Not Started
 
 
-# Documentation/Get Started
-
-For more detailed information on the package, including how to get up and running, please see the [documentation](https://0x41424142.github.io/qualyspy/).
 
 
-# TODO:
 
-- Continue adding VMDR APIs.
 
-- Start work on PM module.
-
-- Write testing files.
-
-- Break up README.md: Move module-specific sections to their respective folders, cleaning up the main README.md.

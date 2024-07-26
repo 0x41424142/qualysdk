@@ -1,0 +1,21 @@
+site_name: Qualyspy Documentation
+nav:
+  - Home: index.md
+  - Getting Started: quickstart.md
+  - Authentication: authentication.md
+  - GAV: gav.md
+  - VMDR: vmdr.md
+  - The Call Schema: callschema.md
+theme:
+  name: mkdocs
+  color_mode: dark
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+  highlightjs: true
+  user_color_mode_toggle: true
+repo_url: https://github.com/0x41424142/qualyspy
+repo_name: Github
+edit_uri: blob/main/docs/
+site_author: Jake Lindsay <jake@jakelindsay.uk>
+site_description: Documentation for the qualyspy Python SDK. Make working with Qualys API data easier.

@@ -57,7 +57,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 
 # Documentation/Get Started
 
-For more detailed information on the package, including how to get up and running, please see the [documentation](https://qualyspy.jakelindsay.uk).
+For more detailed information on the package, including how to get up and running, please see the [documentation](https://qualyspy.jakelindsay.uk/qualyspy/).
 
 
 # TODO:

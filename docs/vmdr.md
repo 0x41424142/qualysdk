@@ -8,6 +8,7 @@ from qualyspy.vmdr import *
 You can use any of the VMDR endpoints currently supported:
 
 ## VMDR Endpoints
+
 |API Call| Description |
 |--|--|
 | ```query_kb``` | Query the Qualys KnowledgeBase (KB) for vulnerabilities.|
@@ -15,11 +16,13 @@ You can use any of the VMDR endpoints currently supported:
 |```get_hld``` | Query your VMDR host inventory with QID detections under the ```VMDRHost.DETECTION_LIST``` attribute.
 
 ## Host List Detection
+
 ```vmdr.get_hld()``` is the main API for extracting vulnerabilities out of the Qualys platform. It is one of the slowest APIs to return data due to Qualys taking a while to gather all the necessary data, but is arguably the most important. Pagination is controlled via the ```page_count``` parameter. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination, as well as ```truncation_limit``` to specify how many hosts should be returned per page.
 
 This function implements threading to significantly speed up data pulls. The number of threads is controlled by the ```threads``` parameter, which defaults to 5. A ```Queue``` object is created, containing chunks of hostIDs (pulled via ```get_host_list``` with ```details=None```) that the threads pop from. The threads then call the ```hld_backend``` function with the hostIDs they popped from the queue. The user can control how many IDs are in a chunk via the ```chunk_size``` parameter, which defaults to 3000. You should create a combination of ```threads``` and ```chunk_size``` that keeps all threads busy, while respecting your Qualys concurrency limit. There is also the ```chunk_count``` parameter, which controls how many chunks a thread will pull out of the ```Queue``` before it exits.
 
 Some important kwargs this API accepts:
+
 |Kwarg| Possible Values |Description|
 |--|--|--|
 |```show_tags```| ```False/True```|Boolean on if API output should include Qualys host tags. Accessible under ```<VMDRHost>.TAGS```. Defaults to False.|
@@ -330,6 +333,7 @@ The APIs are as follows:
 |```fetch_scan```| Fetch the results of a VM scan.|
 
 ### VMScan Dataclass
+
 The ```VMScan``` dataclass is used to store the various fields that the VMDR VM Scan APIs return. Attributes are as follows:
 |Attribute|Type|Description|
 |--|--|--|

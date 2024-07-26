@@ -46,4 +46,4 @@ print(schema_query(module='gav', pretty=True))
 	}
 }
 ```
----
+

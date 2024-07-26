@@ -44,7 +44,8 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |ADMIN (Administration) | Not Started
 |Tagging| Not Started
 
-# Disclaimer
+
+## Disclaimer
 
 This SDK tool is an independent project and is not an official product of Qualys. It has been developed and maintained solely by the names listed in the GitHub contributors list. Qualys has neither endorsed nor approved this SDK.
 

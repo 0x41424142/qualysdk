@@ -59,4 +59,3 @@ graph
 A[qualyspy.auth.base.BaseAuthentication]-->B(qualyspy.auth.basic.BasicAuth)
 B --> C(qualyspy.auth.token.TokenAuth)
 ```
----

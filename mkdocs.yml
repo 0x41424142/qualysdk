@@ -4,7 +4,7 @@ nav:
   - Home: index.md
   - Getting Started: quickstart.md
   - Authentication: authentication.md
-  - GAV: gav.md
+  - Global AssetView: gav.md
   - VMDR: vmdr.md
   - The Call Schema: callschema.md
 

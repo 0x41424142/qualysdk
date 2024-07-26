@@ -1,4 +1,4 @@
-# qualyspy - A Python Package for Interacting With Qualys APIs
+# qualyspy - A Python SDK for Interacting With Qualys APIs
 ```
 ··············································
 :   ____             _                       :
@@ -58,7 +58,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 # Documentation/Get Started
 
 
-For more detailed information on the package, including how to get up and running, please see the [documentation](https://0x41424142/github.io/qualyspy).
+For more detailed information on the package, including how to get up and running, please see the [documentation](https://qualyspy.jakelindsay.uk).
 
 
 # TODO:

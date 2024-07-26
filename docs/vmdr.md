@@ -86,10 +86,11 @@ This collection of APIs allows for the management of IP addresses/ranges in VMDR
 |```get_ip_list```| Get a list of IP addresses or ranges in VMDR.|
 |```add_ips```| Add IP addresses or ranges to VMDR.|
 |```update_ips```| Change details of IP addresses or ranges from VMDR.|
----
+
 ### Get IP List API
 
 The ```get_ip_list()``` API returns a list of all IP addresses or ranges in VMDR, matching the given kwargs. Acceptable params are:
+
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
@@ -114,9 +115,10 @@ specific_ips = get_ip_list(auth, ips='1.2.3.4,5.6.7.8,9.10.11.12/24')
 #Slice the list of IP addresses/ranges to those that are external:
 external_ips = [i for i in get_ip_list(auth) if not i.is_private]
 ```
----
+
 ### Add IPs API
 The ```add_ips()``` API allows for the addition of IP addresses or ranges to VMDR. Acceptable params are:
+
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
@@ -145,9 +147,10 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 #Add an IP address/range to VMDR with VM tracking enabled:
 add_ips(auth, ips='1.2.3.4', enable_vm=True)
 ```
----
+
 ### Update IPs API
 The ```update_ips()``` API allows for the modification of IP addresses or ranges in VMDR. Acceptable params are:
+
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
@@ -170,18 +173,22 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 #Update an IP address/range in VMDR with a new DNS name:
 update_ips(auth, ips='1.2.3.4', host_dns='new_dns_name')
 ```
----
+
 ## Asset Group Management
 This collection of APIs allows for the management of asset groups (AGs) in VMDR, located under ```qualyspy.vmdr.assetgroups```. The APIs are as follows:
 
 |API Call| Description|
 |--|--|
 |```get_ag_list```| Get a ```BaseList``` of ```AssetGroup``` objects.|
----
+|```add_ag```| Add an asset group to VMDR.|
+|```edit_ag```| Edit an asset group in VMDR.|
+|```delete_ag```| Remove an asset group from VMDR.|
+
 
 ### Get Asset Group List API
 
 The ```get_ag_list()``` API returns a list of all AGs in VMDR, matching the given kwargs. Acceptable params are:
+
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
@@ -207,6 +214,7 @@ ag_list = get_ag_list(auth)
 
 ### Add Asset Group API
 The ```add_ag()``` API allows for the addition of asset groups to VMDR. Acceptable params are:
+
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
@@ -283,7 +291,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 edit_ag(auth, id=12345, set_title='My New Asset Group Title')
 >>>Asset Group Updated Successfully.
 ```
----
+
 
 ### Delete Asset Group API
 The ```delete_ag()``` API allows for the deletion of asset groups in VMDR. Acceptable params are:
@@ -303,7 +311,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 delete_ag(auth, id=12345)
 >>>Asset Group Deleted Successfully.
 ```
----
+
 ## VM Scan Management
 This collection of APIs allows for the management of VM scans in VMDR, located under ```qualyspy.vmdr.vmscans```. 
 
@@ -314,6 +322,12 @@ The APIs are as follows:
 |API Call| Description|
 |--|--|
 |```get_scan_list```| Get a ```BaseList``` of ```VMScan``` objects.|
+|```pause_scan```| Pause a currently-running VM scan.|
+|```cancel_scan```| Cancel a currently-running VM scan.|
+|```resume_scan```| Resume a paused VM scan.|
+|```delete_scan```| Delete a VM scan.|
+|```launch_scan```| Launch/create a VM scan.|
+|```fetch_scan```| Fetch the results of a VM scan.|
 
 ### VMScan Dataclass
 The ```VMScan``` dataclass is used to store the various fields that the VMDR VM Scan APIs return. Attributes are as follows:
@@ -332,7 +346,7 @@ The ```VMScan``` dataclass is used to store the various fields that the VMDR VM 
 |```TARGET```|```Union[str, BaseList[str], BaseList[ipaddress.IPv4Address, ipaddress.IPv4Network]]```|The target IPs for the scan.|
 |```OPTION_PROFILE```|```dict```|The option profile metadata for the scan.|
 |```ASSET_GROUP_TITLE_LIST```|```BaseList[str]```|The asset group titles covered by the scan.|
----
+
 ### Get Scan List API
 
 The ```get_scan_list()``` API returns a list of all VM scans in VMDR, matching the given kwargs. Acceptable params are:
@@ -366,7 +380,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 scheduled_scans = get_scan_list(auth, type='Scheduled', show_ags=True, show_op=True)
 >>>BaseList[VMScan(REF='scan/123456789', TYPE='Scheduled', TITLE='My Scheduled Scan', ...), ...]
 ```
----
+
 
 ### Pause Scan API
 The ```pause_scan()``` API lets you pause a currently-running VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
@@ -385,7 +399,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 result = pause_scan(auth, scan_ref='scan/123456789')
 >>>("Pausing scan", "scan/123456789")
 ```
----
+
 ### Resume Scan API
 The ```resume_scan()``` API lets you resume a paused VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
 
@@ -403,7 +417,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 result = resume_scan(auth, scan_ref='scan/123456789')
 >>>("Resuming scan", "scan/123456789")
 ```
----
+
 ### Cancel Scan API
 The ```cancel_scan()``` API lets you cancel a VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
 
@@ -421,7 +435,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 result = cancel_scan(auth, scan_ref='scan/123456789')
 >>>("Cancelling scan", "scan/123456789")
 ```
----
+
 ### Delete Scan API
 The ```delete_scan()``` API lets you delete a VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
 
@@ -439,7 +453,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 result = delete_scan(auth, scan_ref='scan/123456789')
 >>>("Deleted scan", "scan/123456789")
 ```
----
+
 ### Fetch Scan Results API
 The ```fetch_scan()``` API lets you download the results of a VM scan. Results are returned as a tuple. tuple[0] is the data as a pandas dataframe and tuple[1] is the scan reference. Acceptable params are:
 
@@ -461,7 +475,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 result = fetch_scan(auth, scan_ref='scan/123456789')
 >>> (pandas.DataFrame, "scan/123456789")
 ```
----
+
 ### Launch Scan API
 ```launch_scan()``` is used to create and launch a new VM scan in VMDR. A ```VMScan``` object is returned containing the details of the scan once it is created via a ```get_scan_list()``` call with the ```scan_ref``` kwarg set to the newly-created scan reference. Acceptable params are:
 
@@ -507,7 +521,7 @@ result = launch_scan(auth, scan_title='My New Scan', option_id=12345, ip='10.0.0
 result
 >>>VMScan(REF='scan/123456789.12345', TYPE='API', TITLE='My New Scan', ...)
 ```
----
+
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:
 >**Heads Up!**: When calling ```query_kb()```, the function returns a regular list of ```KBEntry``` objects.
@@ -555,4 +569,4 @@ str(kb_entry.CVEList)
 |```CVEID```| ID, URL |
 |```Compliance``` | _TYPE, SECTION, DESCRIPTION |
 | ```Bugtraq``` | ID, URL |
------ 
+-- 

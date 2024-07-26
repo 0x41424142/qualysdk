@@ -2,8 +2,6 @@
 
 This SDK attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
 
-![Logo](../imgs/QualysPyLogo.png)
-
 ## Uber Class Example
 ```py
 from qualyspy import TokenAuth, GAVUber

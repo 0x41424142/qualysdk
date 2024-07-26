@@ -6,9 +6,36 @@ nav:
   - GAV: gav.md
   - VMDR: vmdr.md
   - The Call Schema: callschema.md
-theme:
-  name: readthedocs
-  color_mode: dark
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: pymdownx.superfences.fence_code_format
+  - tables
+  
+
+theme: 
+  name: material
+  palette:
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
   features:
     - navigation.instant
     - navigation.instant.prefetch

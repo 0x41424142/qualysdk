@@ -51,6 +51,9 @@ auth.to_json_string(pretty=True)
 ```
 
 ## Auth Class Hierarchy
+
+The ```qualyspy.auth``` module has a class hierarchy that looks like this:
+
 ```mermaid
 graph
 A[qualyspy.auth.base.BaseAuthentication]-->B(qualyspy.auth.basic.BasicAuth)

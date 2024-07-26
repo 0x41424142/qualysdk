@@ -1,14 +1,5 @@
 # qualyspy - A Python SDK for Interacting With Qualys APIs
-```
-··············································
-:   ____             _                       :
-:  /___ \_   _  __ _| |_   _ ___ _ __  _   _ :
-: //  / | | | |/ _` | | | | / __| '_ \| | | |:
-:/ \_/ /| |_| | (_| | | |_| \__ | |_) | |_| |:
-:\___,_\ \__,_|\__,_|_|\__, |___| .__/ \__, |:
-:                      |___/    |_|    |___/ :
-··············································
- ```
+![Logo](./imgs/QualysPyLogo.png)
 
 This SDK attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
 
@@ -60,6 +51,13 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 
 For more detailed information on the package, including how to get up and running, please see the [documentation](https://qualyspy.jakelindsay.uk).
 
+# Disclaimer
+
+This SDK tool is an independent project and is not an official product of Qualys. It has been developed and maintained solely by the names listed in the GitHub contributors list. Qualys has neither endorsed nor approved this SDK.
+
+Users of this SDK are advised to use it at their own risk and discretion.
+
+For official tools and support, please refer to the official Qualys resources and documentation.
 
 # TODO:
 

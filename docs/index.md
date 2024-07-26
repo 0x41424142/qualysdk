@@ -1,6 +1,6 @@
-# qualyspy - A Python Package for Interacting With Qualys APIs
+# qualyspy - A Python SDK for Interacting With Qualys APIs
 
-This package attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
+This SDK attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
 
 ## Uber Class Example
 ```py

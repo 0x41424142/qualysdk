@@ -67,5 +67,3 @@ For more detailed information on the package, including how to get up and runnin
 - Start work on PM module.
 
 - Write testing files.
-
-- Break up README.md: Move module-specific sections to their respective folders, cleaning up the main README.md.

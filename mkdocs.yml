@@ -7,7 +7,7 @@ nav:
   - VMDR: vmdr.md
   - The Call Schema: callschema.md
 theme:
-  name: mkdocs
+  name: readthedocs
   color_mode: dark
   features:
     - navigation.instant

@@ -4,11 +4,404 @@ scanner_appliance.py - Contains the ScannerAppliance data class.
 
 from dataclasses import dataclass, field, asdict
 from uuid import UUID as uuid
+from typing import Literal
 from datetime import datetime
+from ipaddress import IPv4Address
 
 from .lists.base_list import BaseList
 from .asset_group import AssetGroup
 from .tag import Tag
+
+
+def build_dataclass_baselist(
+    data: list[dict], class_type: Literal["ag", "tag"]
+) -> BaseList:
+    """
+    Helps to normalize and build a BaseList of dataclasses from a list of dictionaries
+    for the various fields in the ScannerAppliance dataclass.
+
+    Parameters:
+        data (list[dict]): The list of dictionaries to convert to a BaseList of dataclasses.
+        class_type (Literal["ag", "tag"]): The type of dataclass to build. Either "ag" for AssetGroup or "tag" for Tag.
+
+    Returns:
+        BaseList[Union[AssetGroup, Tag]]: A BaseList of dataclasses.
+    """
+
+    key_mapping = {
+        "ag": "ASSET_GROUP",
+        "tag": "ASSET_TAG",
+    }
+
+    result = BaseList()
+
+    # Qualys can return an immediate dict instead of a list of dicts
+    # if the data is only one item. Convert it to a list of one dict
+    # for normalization.
+
+    if isinstance(data[key_mapping[class_type]], dict):
+        data[key_mapping[class_type]] = [data[key_mapping[class_type]]]
+
+    for item in data[key_mapping[class_type]]:
+        match class_type:
+            case "ag":
+                # Convert the NAME key to TITLE
+                item["TITLE"] = item.pop("NAME")
+                # And build the AssetGroup object
+                item = AssetGroup(**item)
+            case "tag":
+                # Convert the UUID key to ID
+                item["TAG_ID"] = uuid(item.pop("UUID"))
+                # And build the Tag object
+                item = Tag(**item)
+            # Other cases coming soon
+        result.append(item)
+
+    return result
+
+
+@dataclass
+class SecurityGroup:
+    """
+    Dataclass to store a scanner appliance's cloud security group information.
+    """
+
+    SECURITY_GROUP_IDS: str = field(
+        metadata={"description": "The security group ID."},
+        default=None,
+    )
+
+    SECURITY_GROUP_NAMES: str = field(
+        metadata={"description": "The security group name."},
+        default=None,
+    )
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(**data)
+
+
+@dataclass
+class ScannerCloudInfo:
+    """
+    Dataclass to store a scanner appliance's cloud provider
+    and instance information.
+    """
+
+    PLATFORM_PROVIDER: str = field(
+        metadata={"description": "The cloud platform provider."},
+        default=None,
+    )
+
+    EC2_INFO: dict = field(
+        metadata={"description": "EC2 information. Gets deleted out."},
+        default=None,
+    )
+
+    INSTANCE_ID: str = field(
+        metadata={"description": "The cloud instance ID."},
+        default=None,
+    )
+
+    INSTANCE_TYPE: str = field(
+        metadata={"description": "The cloud instance type."},
+        default=None,
+    )
+
+    AMI_ID: str = field(
+        metadata={"description": "The cloud AMI ID."},
+        default=None,
+    )
+
+    ACCOUNT_ID: int = field(
+        metadata={"description": "The cloud account ID."},
+        default=None,
+    )
+
+    INSTANCE_REGION: str = field(
+        metadata={"description": "The cloud instance region."},
+        default=None,
+    )
+
+    INSTANCE_AVAILABILITY_ZONE: str = field(
+        metadata={"description": "The cloud instance availability zone."},
+        default=None,
+    )
+
+    INSTANCE_ZONE_TYPE: str = field(
+        metadata={"description": "The cloud instance zone type."},
+        default=None,
+    )
+
+    INSTANCE_VPC_ID: str = field(
+        metadata={"description": "The cloud instance VPC ID."},
+        default=None,
+    )
+
+    INSTANCE_SUBNET_ID: str = field(
+        metadata={"description": "The cloud instance subnet ID."},
+        default=None,
+    )
+
+    INSTANCE_ADDRESS_PRIVATE: IPv4Address = field(
+        metadata={"description": "The cloud instance private address."},
+        default=None,
+    )
+
+    INSTANCE_ADDRESS_PUBLIC: IPv4Address = field(
+        metadata={"description": "The cloud instance public address."},
+        default=None,
+    )
+
+    HOSTNAME_PRIVATE: str = field(
+        metadata={"description": "The cloud instance private hostname."},
+        default=None,
+    )
+
+    SECURITY_GROUPS: BaseList[SecurityGroup] = field(
+        metadata={"description": "The cloud instance security groups."},
+        default=None,
+    )
+
+    API_PROXY_SETTINGS: Literal["Disabled", "Enabled"] = field(
+        metadata={"description": "The cloud instance API proxy settings."},
+        default=None,
+    )
+
+    def __post_init__(self):
+        """
+        Post init function to convert certain fields to int/float.
+        """
+        INT_FIELDS = ["ACCOUNT_ID"]
+        IPV4_FIELDS = ["INSTANCE_ADDRESS_PRIVATE", "INSTANCE_ADDRESS_PUBLIC"]
+
+        if self.EC2_INFO:
+            # Set the parsed out attributes
+            self.INSTANCE_ID = self.EC2_INFO.get("INSTANCE_ID")
+            self.INSTANCE_TYPE = self.EC2_INFO.get("INSTANCE_TYPE")
+            self.AMI_ID = self.EC2_INFO.get("AMI_ID")
+            self.ACCOUNT_ID = self.EC2_INFO.get("ACCOUNT_ID")
+            self.INSTANCE_REGION = self.EC2_INFO.get("INSTANCE_REGION")
+            self.INSTANVE_AVAILABILITY_ZONE = self.EC2_INFO.get(
+                "INSTANVE_AVAILABILITY_ZONE"
+            )
+            self.INSTANCE_ZONE_TYPE = self.EC2_INFO.get("INSTANCE_ZONE_TYPE")
+            self.INSTANCE_VPC_ID = self.EC2_INFO.get("INSTANCE_VPC_ID")
+            self.INSTANCE_SUBNET_ID = self.EC2_INFO.get("INSTANCE_SUBNET_ID")
+            self.INSTANCE_ADDRESS_PRIVATE = self.EC2_INFO.get(
+                "INSTANCE_ADDRESS_PRIVATE"
+            )
+            self.INSTANCE_ADDRESS_PUBLIC = self.EC2_INFO.get("INSTANCE_ADDRESS_PUBLIC")
+            self.HOSTNAME_PRIVATE = self.EC2_INFO.get("HOSTNAME_PRIVATE")
+            if self.EC2_INFO.get("SECURITY_GROUPS"):
+                self.SECURITY_GROUPS = SecurityGroup.from_dict(
+                    self.EC2_INFO.get("SECURITY_GROUPS")
+                )
+            self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")["SETTING"]
+
+        for field in INT_FIELDS:
+            if getattr(self, field) not in ["", [], {}, None]:
+                setattr(self, field, int(getattr(self, field)))
+
+        for field in IPV4_FIELDS:
+            if getattr(self, field) is not None:
+                setattr(self, field, IPv4Address(getattr(self, field)))
+
+        del self.EC2_INFO
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(**data)
+
+    def to_dict(self):
+        return asdict(self)
+
+    def keys(self):
+        return asdict(self).keys()
+
+    def values(self):
+        return asdict(self).values()
+
+    def items(self):
+        return asdict(self).items()
+
+    def __getitem__(self, key):
+        return asdict(self)[key]
+
+    def __setitem__(self, key, value):
+        asdict(self)[key] = value
+        return asdict(self)
+
+    def __str__(self):
+        return self.INSTANCE_ID
+
+    def __repr__(self) -> str:
+        # Only return non-empty values
+        return (
+            "ScannerCloudInfo("
+            + ", ".join(f"{k}={v}" for k, v in self.valid_values().items())
+            + ")"
+        )
+
+    def valid_values(self):
+        return {
+            k: v
+            for k, v in asdict(self).items()
+            if v is not None and v != "" and v not in [[], {}]
+        }
+
+
+@dataclass
+class ProxySettings:
+    """
+    Proxy settings for a scanner appliance.
+    """
+
+    SETTING: str = field(
+        metadata={"description": "The setting."},
+        default=None,
+    )
+
+    PROXY: dict = field(
+        metadata={"description": "The proxy settings."},
+        default=None,
+    )
+
+    def __str__(self) -> str:
+        return self.SETTING
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(**data)
+
+
+@dataclass
+class InterfaceSettings:
+    """
+    Dataclass to store a scanner appliance's interface settings.
+    """
+
+    INTERFACE: str = field(
+        metadata={"description": "The interface."},
+        default=None,
+    )
+
+    IP_ADDRESS: IPv4Address = field(
+        metadata={"description": "The IP address."},
+        default=None,
+    )
+
+    NETMASK: str = field(
+        metadata={"description": "The netmask."},
+        default=None,
+    )
+
+    GATEWAY: IPv4Address = field(
+        metadata={"description": "The gateway."},
+        default=None,
+    )
+
+    LEASE: str = field(
+        metadata={"description": "The lease."},
+        default=None,
+    )
+
+    SPEED: int = field(
+        metadata={"description": "The speed."},
+        default=None,
+    )
+
+    DUPLEX: str = field(
+        metadata={"description": "The duplex."},
+        default=None,
+    )
+
+    DNS: dict = field(
+        metadata={"description": "The DNS settings."},
+        default=None,
+    )
+
+    DNS_PRIMARY: IPv4Address = field(
+        metadata={"description": "The primary DNS."},
+        default=None,
+    )
+
+    DNS_SECONDARY: IPv4Address = field(
+        metadata={"description": "The secondary DNS."},
+        default=None,
+    )
+
+    SETTING: str = field(
+        metadata={"description": "The setting."},
+        default=None,
+    )
+
+    DOMAIN: str = field(
+        metadata={"description": "The domain."},
+        default=None,
+    )
+
+    def __post_init__(self):
+        """
+        Post init function to convert certain fields to int/float.
+        """
+        INT_FIELDS = ["SPEED"]
+        IPV4_FIELDS = ["IP_ADDRESS", "GATEWAY"]
+
+        for field in INT_FIELDS:
+            if getattr(self, field):
+                setattr(self, field, int(getattr(self, field)))
+
+        for field in IPV4_FIELDS:
+            if getattr(self, field):
+                setattr(self, field, IPv4Address(getattr(self, field)))
+
+        if self.DNS:
+            self.DNS_PRIMARY = self.DNS.get("PRIMARY")
+            self.DNS_SECONDARY = self.DNS.get("SECONDARY")
+            self.DOMAIN = self.DNS.get("DOMAIN")
+            del self.DNS
+
+    def __str__(self):
+        return self.INTERFACE
+
+    def __repr__(self) -> str:
+        # Only return non-empty values
+        return (
+            "InterfaceSettings("
+            + ", ".join(f"{k}={v}" for k, v in self.valid_values().items())
+            + ")"
+        )
+
+    def valid_values(self):
+        return {
+            k: v
+            for k, v in asdict(self).items()
+            if v is not None and v != "" and v not in [[], {}]
+        }
+
+    def keys(self):
+        return asdict(self).keys()
+
+    def values(self):
+        return asdict(self).values()
+
+    def items(self):
+        return asdict(self).items()
+
+    def __getitem__(self, key):
+        return asdict(self)[key]
+
+    def __setitem__(self, key, value):
+        asdict(self)[key] = value
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(**data)
+
+    def __dict__(self):
+        return asdict(self)
 
 
 @dataclass(order=True)
@@ -75,12 +468,12 @@ class ScannerAppliance:
         default=None,
     )
 
-    INTERFACE_SETTINGS: dict = field(
+    INTERFACE_SETTINGS: InterfaceSettings = field(
         metadata={"description": "Interface settings of the scanner appliance."},
         default=None,
     )
 
-    PROXY_SETTINGS: dict = field(
+    PROXY_SETTINGS: ProxySettings = field(
         metadata={"description": "Proxy settings of the scanner appliance."},
         default=None,
     )
@@ -90,7 +483,7 @@ class ScannerAppliance:
         default=False,
     )
 
-    CLOUD_INFO: dict = field(
+    CLOUD_INFO: ScannerCloudInfo = field(
         metadata={"description": "Cloud information of the scanner appliance."},
         default=None,
     )
@@ -228,6 +621,7 @@ class ScannerAppliance:
         ]
         DT_FIELDS = ["LAST_UPDATED_DATE", "SS_LAST_CONNECTED"]
         FLOAT_FIELDS = ["SOFTWARE_VERSION"]
+        CUSTOM_DATACLASSES = [("ASSET_GROUP_LIST", "ag"), ("ASSET_TAGS_LIST", "tag")]
 
         for field in INT_FIELDS:
             if getattr(self, field) not in ["", [], {}, None]:
@@ -238,7 +632,7 @@ class ScannerAppliance:
                     setattr(self, field, int(getattr(self, field)))
 
         for field in FLOAT_FIELDS:
-            if getattr(self, field) is not None:
+            if getattr(self, field):
                 setattr(self, field, float(getattr(self, field)))
 
         for field in DT_FIELDS:
@@ -249,13 +643,57 @@ class ScannerAppliance:
                     datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%S%z"),
                 )
 
+        for field in CUSTOM_DATACLASSES:
+            if getattr(self, field[0]):
+                setattr(
+                    self,
+                    field[0],
+                    build_dataclass_baselist(getattr(self, field[0]), field[1]),
+                )
+
+        if self.CLOUD_INFO:
+            setattr(self, "CLOUD_INFO", ScannerCloudInfo.from_dict(self.CLOUD_INFO))
+
         # convert UUID:
-        if self.UUID is not None:
+        if self.UUID:
             setattr(self, "UUID", uuid(self.UUID))
 
         # Convert IS_CLOUD_DEPLOYED to bool:
-        if self.IS_CLOUD_DEPLOYED is not None:
+        if self.IS_CLOUD_DEPLOYED:
             setattr(self, "IS_CLOUD_DEPLOYED", self.IS_CLOUD_DEPLOYED == "1")
+
+        if self.INTERFACE_SETTINGS:
+            if isinstance(self.INTERFACE_SETTINGS, dict):
+                setattr(
+                    self,
+                    "INTERFACE_SETTINGS",
+                    InterfaceSettings.from_dict(self.INTERFACE_SETTINGS),
+                )
+            else:
+                setattr(
+                    self,
+                    "INTERFACE_SETTINGS",
+                    BaseList(
+                        [
+                            InterfaceSettings.from_dict(item)
+                            for item in self.INTERFACE_SETTINGS
+                        ]
+                    ),
+                )
+
+        if self.PROXY_SETTINGS:
+            if isinstance(self.PROXY_SETTINGS, dict):
+                setattr(
+                    self, "PROXY_SETTINGS", ProxySettings.from_dict(self.PROXY_SETTINGS)
+                )
+            else:
+                setattr(
+                    self,
+                    "PROXY_SETTINGS",
+                    BaseList(
+                        [ProxySettings.from_dict(item) for item in self.PROXY_SETTINGS]
+                    ),
+                )
 
     def __str__(self):
         return self.NAME

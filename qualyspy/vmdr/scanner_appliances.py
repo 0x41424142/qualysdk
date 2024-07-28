@@ -59,10 +59,10 @@ def get_scanner_list(auth: BasicAuth, **kwargs) -> BaseList[ScannerAppliance]:
         return result
 
     # If there is just one dict, convert it to a list of one dict
-    if isinstance(data, dict):
+    if isinstance(data["APPLIANCE_LIST"]["APPLIANCE"], dict):
         data = [data]
 
-    for item in data:
+    for item in data["APPLIANCE_LIST"]["APPLIANCE"]:
         result.append(ScannerAppliance(**item))
 
     return result

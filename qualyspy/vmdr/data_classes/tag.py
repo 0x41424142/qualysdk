@@ -5,6 +5,7 @@ tag.py - contains the CloudTag and Tag dataclasses for the Qualys VMDR module.
 from dataclasses import dataclass, field
 from typing import *
 from datetime import datetime
+from uuid import UUID
 
 
 @dataclass
@@ -15,12 +16,14 @@ class Tag:
     This class is used to represent a single tag in a TagList, aka a tag on an asset.
     """
 
-    TAG_ID: Union[str, int] = field(metadata={"description": "The ID of the tag."})
+    TAG_ID: Union[str, int, UUID] = field(
+        metadata={"description": "The ID of the tag."}
+    )
     NAME: str = field(metadata={"description": "The name of the tag."})
 
     def __post_init__(self):
         # check that id is a string or int:
-        if not isinstance(self.TAG_ID, (str, int)):
+        if not isinstance(self.TAG_ID, (str, int, UUID)):
             raise TypeError(f"Tag ID must be a string or int, not {type(self.TAG_ID)}")
 
         # cast ID to an int if it is a string

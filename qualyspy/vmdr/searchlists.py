@@ -10,7 +10,10 @@ from ..base import call_api, xml_parser
 from .data_classes import BaseList
 from .data_classes import StaticSearchList
 
-def get_static_searchlists(auth: BasicAuth, ids: str = None) -> BaseList[StaticSearchList]:
+
+def get_static_searchlists(
+    auth: BasicAuth, ids: str = None
+) -> BaseList[StaticSearchList]:
     """
     Get a list of Static Searchlists in VMDR.
 
@@ -23,7 +26,7 @@ def get_static_searchlists(auth: BasicAuth, ids: str = None) -> BaseList[StaticS
     """
     responses = BaseList()
     params = {}
-    params['action'] = 'list'
+    params["action"] = "list"
     if ids:
         params["ids"] = ids
 
@@ -37,15 +40,28 @@ def get_static_searchlists(auth: BasicAuth, ids: str = None) -> BaseList[StaticS
 
     searchlists = xml_parser(resp.text)
 
-    if 'STATIC_LISTS' not in searchlists['STATIC_SEARCH_LIST_OUTPUT']['RESPONSE']:
+    if "STATIC_LISTS" not in searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]:
         print("No Static Searchlists found.")
         return responses
-    
+
     # If there is only one searchlist, it will not be in a list.
-    if isinstance(searchlists['STATIC_SEARCH_LIST_OUTPUT']['RESPONSE']['STATIC_LISTS']['STATIC_LIST'], dict):
-        searchlists['STATIC_SEARCH_LIST_OUTPUT']['RESPONSE']['STATIC_LISTS']['STATIC_LIST'] = [searchlists['STATIC_SEARCH_LIST_OUTPUT']['RESPONSE']['STATIC_LISTS']['STATIC_LIST']]
-    
-    for searchlist in searchlists['STATIC_SEARCH_LIST_OUTPUT']['RESPONSE']['STATIC_LISTS']['STATIC_LIST']:
+    if isinstance(
+        searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"][
+            "STATIC_LIST"
+        ],
+        dict,
+    ):
+        searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"][
+            "STATIC_LIST"
+        ] = [
+            searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"][
+                "STATIC_LIST"
+            ]
+        ]
+
+    for searchlist in searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"][
+        "STATIC_LISTS"
+    ]["STATIC_LIST"]:
         responses.append(StaticSearchList(**searchlist))
 
     return responses

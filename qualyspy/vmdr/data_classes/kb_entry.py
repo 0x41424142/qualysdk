@@ -31,13 +31,16 @@ class KBEntry:
     """
 
     QID: Union[str, int] = field(
-        compare=True, metadata={"description": "The Qualys ID of the vulnerability."}, default=None
+        compare=True,
+        metadata={"description": "The Qualys ID of the vulnerability."},
+        default=None,
     )
     VULN_TYPE: str = field(
         metadata={"description": "The type of vulnerability."}, default="Vulnerability"
     )
     SEVERITY_LEVEL: int = field(
-        metadata={"description": "The severity level of the vulnerability."}, default=None
+        metadata={"description": "The severity level of the vulnerability."},
+        default=None,
     )
     TITLE: str = field(
         metadata={"description": "The title of the vulnerability."}, default="No Title"

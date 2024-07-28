@@ -66,6 +66,7 @@ hosts_with_detections = get_hld(
 )
 >>>BaseList[VMDRHost(12345), ...]
 ```
+
 ## VMDR Host List
 The ```get_host_list()``` API returns a ```BaseList``` of VMDRHost or VMDRID dataclasses. Pagination is controlled via the ```page_count``` kwarg. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination.
 
@@ -404,6 +405,7 @@ scheduled_scans = get_scan_list(auth, type='Scheduled', show_ags=True, show_op=T
 
 
 ### Pause Scan API
+
 The ```pause_scan()``` API lets you pause a currently-running VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
 
 |Parameter| Possible Values |Description|Required|
@@ -612,6 +614,7 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 #Get all search lists:
 search_lists = get_static_searchlists(auth)
 >>>[StaticSearchList(ID=12345, TITLE="My search list", QIDS=[KBEntry(12345, ...)], ...)]
+```
 
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:

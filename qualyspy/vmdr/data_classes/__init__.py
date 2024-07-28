@@ -16,5 +16,6 @@ from .qds import QDS
 from .asset_group import AssetGroup
 from .vmscan import VMScan
 from .scanner_appliance import ScannerAppliance
+from .searchlist import StaticSearchList
 
 from .lists import BaseList

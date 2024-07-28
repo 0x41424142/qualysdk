@@ -19,6 +19,8 @@ from .data_classes import (
     Detection,
     QDSFactor,
     QDS,
+    StaticSearchList,
+    ScannerAppliance,
 )
 from .data_classes.lists import BaseList
 
@@ -37,3 +39,4 @@ from .vmscans import (
     delete_scan,
 )
 from .scanner_appliances import get_scanner_list
+from .searchlists import get_static_searchlists

@@ -31,13 +31,16 @@ class KBEntry:
     """
 
     QID: Union[str, int] = field(
-        compare=True, metadata={"description": "The Qualys ID of the vulnerability."}
+        compare=True,
+        metadata={"description": "The Qualys ID of the vulnerability."},
+        default=None,
     )
     VULN_TYPE: str = field(
         metadata={"description": "The type of vulnerability."}, default="Vulnerability"
     )
     SEVERITY_LEVEL: int = field(
-        metadata={"description": "The severity level of the vulnerability."}, default=1
+        metadata={"description": "The severity level of the vulnerability."},
+        default=None,
     )
     TITLE: str = field(
         metadata={"description": "The title of the vulnerability."}, default="No Title"
@@ -159,7 +162,7 @@ class KBEntry:
         if self.QID is not None and not isinstance(self.QID, int):
             self.QID = int(self.QID)
 
-        if self.SEVERITY_LEVEL is not None and not isinstance(self.SEVERITY_LEVEL, int):
+        if self.SEVERITY_LEVEL and not isinstance(self.SEVERITY_LEVEL, int):
             self.SEVERITY_LEVEL = int(self.SEVERITY_LEVEL)
 
         DATE_FIELDS = [

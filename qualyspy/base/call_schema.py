@@ -538,6 +538,16 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_static_searchlists": {
+                "endpoint": "/api/2.0/fo/qid/search_list/static/",
+                "method": ["GET"],
+                "valid_params": ["action", "echo_request", "ids"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
         },
     }
 )

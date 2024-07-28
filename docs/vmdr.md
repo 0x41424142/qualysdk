@@ -29,6 +29,7 @@ You can use any of the VMDR endpoints currently supported:
 |```launch_scan```| Create/launch a new VMDR scan.|
 |```fetch_scan```| Pull the results of a VMDR scan as a tuple. ```tuple[0]``` is a ```pandas.DataFrame``` containing the results and ```tuple[1]``` is the ```scan_ref```.|
 |```get_scanner_list```| Pull a list of VMDR scanner appliances.|
+|```get_static_searchlists```| Pull a list of static search lists, according to the ```ids``` parameter.|
 
 ## Host List Detection
 
@@ -589,6 +590,28 @@ busy_scanners[0]
 >>>ScannerAppliance(ID=12345, NAME="My Scanner", ...)
 ```
 
+## Static Search List Management
+
+Search lists help to filter QIDs in a subscription by specific QIDs, option profiles, etc. There are two types: static, and dynamic. Static search lists are a defined set of QIDs, while dynamic search lists updated on their own based on vulnerability criteria. Currently, static search lists are implemented in their own dataclass, while dynamic search list support is coming soon.
+
+### Get Static Search Lists API
+
+```get_static_searchlists``` Lets you pull a list of static search lists in your subscription. It accepts a single parameter, ```ids``` and returns a ```BaseList``` of ```StaticSearchList``` objects. Inside a ```StaticSearchList```, the QIDs are stored in a ```BaseList``` of ```KBEntry``` objects.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```ids```|```str```| A comma-separated string of static search lists IDs to return.|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import get_static_searchlists
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Get all search lists:
+search_lists = get_static_searchlists(auth)
+>>>[StaticSearchList(ID=12345, TITLE="My search list", QIDS=[KBEntry(12345, ...)], ...)]
 
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:

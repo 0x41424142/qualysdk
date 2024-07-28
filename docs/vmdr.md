@@ -29,6 +29,7 @@ You can use any of the VMDR endpoints currently supported:
 |```launch_scan```| Create/launch a new VMDR scan.|
 |```fetch_scan```| Pull the results of a VMDR scan as a tuple. ```tuple[0]``` is a ```pandas.DataFrame``` containing the results and ```tuple[1]``` is the ```scan_ref```.|
 |```get_scanner_list```| Pull a list of VMDR scanner appliances.|
+
 ## Host List Detection
 
 ```vmdr.get_hld()``` is the main API for extracting vulnerabilities out of the Qualys platform. It is one of the slowest APIs to return data due to Qualys taking a while to gather all the necessary data, but is arguably the most important. Pagination is controlled via the ```page_count``` parameter. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination, as well as ```truncation_limit``` to specify how many hosts should be returned per page.
@@ -564,7 +565,7 @@ Acceptable params are:
 |```include_cloud_info```|```bool```| Show cloud provider information for a scanner appliance/. |⚠️ Requires ```output_mode``` to be ```True``` to be able to be used.|
 |```busy```|```bool```| Filter output to scanners that are currently running scans.|❌|
 |```scan_ref```|```str```| Filter output to scanners that are running a specific scan reference ID.|❌|
-|```name```|```str```| Filter output to scanners with a specific name. Substring searching is supported. For example, if ```name=scanner```, and you have a scanner called |```main_scanner``` and one called ```backup_scanner```, both will be included.|❌|
+|```name```|```str```| Filter output to scanners with a specific name. Substring searching is supported. For example, if ```name=scanner```, and you have a scanner called ```main_scanner``` and one called ```backup_scanner```, both will be included.|❌|
 |```ids```|```Union[str, int]```| Filter output to scanners with specific IDs. Can be a comma-separated string for multiple IDs.|❌|
 |```type```|```Literal["physical", "virtual", "containerized", "offline"]```| Filter output to a specific type of scanner appliance.|❌|
 |```platform_provider```|```Literal["ec2", "ec2_compat", "gce", "azure", "vCenter"]```| Filter output to scanners that are hosted on a specific provider.|❌|

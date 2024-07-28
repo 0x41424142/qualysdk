@@ -32,6 +32,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 ```
 
 ## Current Supported Modules 
+
 |Module| Status |
 |--|--|
 | GAV (Global AssetView) |✅|

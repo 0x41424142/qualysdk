@@ -31,7 +31,7 @@ def get_scanner_list(auth: BasicAuth, **kwargs) -> BaseList[ScannerAppliance]:
         include_license_info (bool): Whether to include license usage info. Output is under ['LICENSE_INFO']. NOTE: the SDK force-sets this to False. It is just included for completeness.
         type (Literal['physical', 'virtual', 'containerized', 'offline']): The type of scanner to filter by. Appears when output_mode='full'.
         platform_provider (Literal['ec2', 'ec2_compat', 'gce', 'azure', 'vCenter']): The cloud platform provider to filter by.
-    
+
     Returns:
         BaseList[ScannerAppliance]: A list of Scanner Appliances.
     """
@@ -49,11 +49,10 @@ def get_scanner_list(auth: BasicAuth, **kwargs) -> BaseList[ScannerAppliance]:
         module="vmdr",
         endpoint="get_scanner_list",
         params=kwargs,
-        headers={'X-Requested-With': 'qualyspy SDK'}
+        headers={"X-Requested-With": "qualyspy SDK"},
     )
 
-
-    data = xml_parser(resp.text)['APPLIANCE_LIST_OUTPUT']['RESPONSE']
+    data = xml_parser(resp.text)["APPLIANCE_LIST_OUTPUT"]["RESPONSE"]
 
     if "APPLIANCE_LIST" not in data.keys():
         print("No data in response")

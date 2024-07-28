@@ -592,7 +592,7 @@ busy_scanners[0]
 >>>ScannerAppliance(ID=12345, NAME="My Scanner", ...)
 ```
 
-## Static Search List Management
+## Search List Management
 
 Search lists help to filter QIDs in a subscription by specific QIDs, option profiles, etc. There are two types: static, and dynamic. Static search lists are a defined set of QIDs, while dynamic search lists updated on their own based on vulnerability criteria. Currently, static search lists are implemented in their own dataclass, while dynamic search list support is coming soon.
 

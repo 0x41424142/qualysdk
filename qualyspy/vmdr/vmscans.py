@@ -142,6 +142,8 @@ def launch_scan(auth: BasicAuth, **kwargs) -> VMScan:
         ip_network_id (int): The IP network ID. Defaults to None. Must be enabled in the Qualys subscription.
         client_id (int): The client ID. Defaults to None. Only available for consultant subscriptions.
         client_name (str): The client name. Defaults to None. Only available for consultant subscriptions.
+        connector_name (str): The connector name for EC2 scans. Defaults to None. Required for EC2 scans.
+        ec2_endpoint (str): The EC2 region code or VPC ID zone. Defaults to None. Required for EC2 scans.
 
         EXAMPLE:
         # Launch a scan on a single IP:

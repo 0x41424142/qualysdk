@@ -13,8 +13,22 @@ You can use any of the VMDR endpoints currently supported:
 |--|--|
 | ```query_kb``` | Query the Qualys KnowledgeBase (KB) for vulnerabilities.|
 | ```get_host_list``` | Query your VMDR host inventory based on kwargs. |
-|```get_hld``` | Query your VMDR host inventory with QID detections under the ```VMDRHost.DETECTION_LIST``` attribute.
-
+|```get_hld``` | Query your VMDR host inventory with QID detections under the ```VMDRHost.DETECTION_LIST``` attribute.|
+|```get_ip_list```| Get a list of all IPs in your subscription, according to kwarg filters.|
+|```add_ips```| Add IP addresses to VMDR.|
+|```update_ips```|Update details of IP addresses already in VMDR such as ```tracking_method```, ```owner```, etc.|
+|```get_ag_list```| Get a list of all asset groups in your subscription, according to kwarg filters.|
+|```add_ag```| Add a new asset group to VMDR.|
+|```edit_ag```| Update details of an asset group.|
+|```delete_ag```|Remove an asset group from VMDR.|
+|```get_scan_list```| Get a list of VMDR scans in your subscription, according to kwarg filters.|
+|```pause_scan```| Pause a running scan.|
+|```resume_scan```| Resume a paused scan.|
+|```cancel_scan```| Cancel a scan.|
+|```delete_scan```| Delete a scan out of VMDR.|
+|```launch_scan```| Create/launch a new VMDR scan.|
+|```fetch_scan```| Pull the results of a VMDR scan as a tuple. ```tuple[0]``` is a ```pandas.DataFrame``` containing the results and ```tuple[1]``` is the ```scan_ref```.|
+|```get_scanner_list```| Pull a list of VMDR scanner appliances.|
 ## Host List Detection
 
 ```vmdr.get_hld()``` is the main API for extracting vulnerabilities out of the Qualys platform. It is one of the slowest APIs to return data due to Qualys taking a while to gather all the necessary data, but is arguably the most important. Pagination is controlled via the ```page_count``` parameter. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination, as well as ```truncation_limit``` to specify how many hosts should be returned per page.
@@ -482,7 +496,7 @@ result = fetch_scan(auth, scan_ref='scan/123456789')
 ```
 
 ### Launch Scan API
-```launch_scan()``` is used to create and launch a new VM scan in VMDR. A ```VMScan``` object is returned containing the details of the scan once it is created via a ```get_scan_list()``` call with the ```scan_ref``` kwarg set to the newly-created scan reference. Acceptable params are:
+```launch_scan()``` is used to create and launch a new VM scan in VMDR. A ```VMScan``` object is returned containing the details of the scan once it is created via a ```get_scan_list()``` call with the ```scan_ref``` kwarg set to the newly-created scan reference. You can launch EC2 scans with the ```ec2_instance_ids```, ```ec2_endpoint```, and ```connector_name``` params. Acceptable params are:
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
@@ -497,7 +511,7 @@ result = fetch_scan(auth, scan_ref='scan/123456789')
 |```fqdn```|```Union[str, BaseList[str]```|The FQDNs to use for the scan.|⚠️ (Must be specified if one of the following are not specified: ```ip```, ```asset_group_ids```, ```asset_groups```, ```asset_groups```)|
 |```iscanner_appliance_id```|```int```|The internal scanner appliance ID to use for the scan.|❌|
 |```iscanner_name```|```str```|The internal scanner appliance name to use for the scan.|❌|
-|```ec2instance_ids```|```Union[str, BaseList[str]```|The EC2 instance IDs of your external scanners.|❌|
+|```ec2_instance_ids```|```Union[str, BaseList[str]```|The EC2 instance IDs of your external scanners.|❌|
 |```exclude_ip_per_scan```|```str, BaseList[str]```|The IPs to exclude from the scan.|❌|
 |```default_scanner```|```bool```|Use the default scanner for the scan.|❌|
 |```scanners_in_ag```|```bool```|Use the scanners in the asset group for the scan.|❌|
@@ -513,6 +527,8 @@ result = fetch_scan(auth, scan_ref='scan/123456789')
 |```ip_network_id```|```str```|The IP network ID to use for the scan. Must be enabled in the Qualys subscription.|❌|
 |```client_id```|```int```|The client ID to use for the scan. Only valid for consultant subscriptions.|❌|
 |```client_name```|```str```|The client name to use for the scan. Only valid for consultant subscriptions.|❌|
+|```connector_name```|```str```|The connector name for EC2 scans.|⚠️ Required for EC2 scans.|
+|```ec2_endpoint```|```str```| The EC2 region code or VPC ID zone.|⚠️ Required for EC2 scans.|
 
 ```py
 from qualyspy import BasicAuth
@@ -527,9 +543,57 @@ result
 >>>VMScan(REF='scan/123456789.12345', TYPE='API', TITLE='My New Scan', ...)
 ```
 
+## VMDR Scanner Appliance Management
+
+This collection of APIs allows for the management of scanner appliances in VMDR, located under ```qualyspy.vmdr.scanner_appliances```. 
+
+### Scanner Appliance List API
+
+The ```get_scanner_list``` API lets you pull a list of scanner appliances currently in VMDR, according to kwargs. 
+
+>**Heads Up!**: While ```get_scanner_list``` currently does work, It is not finalized. Currently, some attributes under a ```ScannerAppliance``` dataclass are raw API output dictionaries/lists of dictionaries. This will be updated to use custom dataclasses soon.
+
+Acceptable params are:
+
+|Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```output_mode```| ```Literal["brief", "full"]```| Show some or all details of scanner appliances. Defaults to brief.|❌|
+|```scan_detail```|```bool```| If ```True```, output includes scan details for scans that are currently running on an appliance.|❌|
+|```show_tags```|```bool```| Show tag information for each scanner appliance in the output.|⚠️ Requires ```output_mode``` to be ```True``` to be able to be used.|
+|```include_cloud_info```|```bool```| Show cloud provider information for a scanner appliance/. |⚠️ Requires ```output_mode``` to be ```True``` to be able to be used.|
+|```busy```|```bool```| Filter output to scanners that are currently running scans.|❌|
+|```scan_ref```|```str```| Filter output to scanners that are running a specific scan reference ID.|❌|
+|```name```|```str```| Filter output to scanners with a specific name. Substring searching is supported. For example, if ```name=scanner```, and you have a scanner called |```main_scanner``` and one called ```backup_scanner```, both will be included.|❌|
+|```ids```|```Union[str, int]```| Filter output to scanners with specific IDs. Can be a comma-separated string for multiple IDs.|❌|
+|```type```|```Literal["physical", "virtual", "containerized", "offline"]```| Filter output to a specific type of scanner appliance.|❌|
+|```platform_provider```|```Literal["ec2", "ec2_compat", "gce", "azure", "vCenter"]```| Filter output to scanners that are hosted on a specific provider.|❌|
+
+```py
+from qualyspy import BasicAuth
+from qualyspy.vmdr import get_scanner_list
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Get all scanners, with all details, that are currently busy:
+busy_scanners = get_scanner_list(
+    auth, 
+    busy=True, 
+    output_mode="full", 
+    scan_detail=True, 
+    show_tags=True,
+    include_cloud_info=True,
+)
+busy_scanners[0]
+>>>ScannerAppliance(ID=12345, NAME="My Scanner", ...)
+```
+
+
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:
+
 >**Heads Up!**: When calling ```query_kb()```, the function returns a regular list of ```KBEntry``` objects.
+
 ```py
 from qualyspy import BasicAuth, vmdr
 

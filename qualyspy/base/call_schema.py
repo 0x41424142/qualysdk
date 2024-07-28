@@ -447,6 +447,8 @@ CALL_SCHEMA = frozendict(
                     "client_id",  # only for consultant subscriptions
                     "client_name",  # only for consultant subscriptions
                     "fqdn",
+                    "connector_name",
+                    "ec2_endpoint",
                 ],
                 "use_requests_json_data": False,
                 "return_type": "xml",
@@ -509,6 +511,30 @@ CALL_SCHEMA = frozendict(
                 ],
                 "use_requests_json_data": False,
                 "return_type": "json",
+                "pagination": False,
+                "auth_type": "basic",
+            },
+            "get_scanner_list": {
+                "endpoint": "/api/2.0/fo/appliance/",
+                "method": ["GET", "POST"],
+                "valid_params": [
+                    "action", # set to "list"
+                    "echo_request", # set to False
+                    "output_mode",
+                    "scan_detail",
+                    "show_tags",
+                    "include_cloud_info",
+                    "busy",
+                    "scan_ref",
+                    "name",
+                    "ids",
+                    "include_license_info", #set to False
+                    "type",
+                    "platform_provider",
+                ],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "xml",
                 "pagination": False,
                 "auth_type": "basic",
             },

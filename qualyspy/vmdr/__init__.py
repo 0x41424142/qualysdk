@@ -36,3 +36,4 @@ from .vmscans import (
     fetch_scan,
     delete_scan,
 )
+from .scanner_appliances import get_scanner_list

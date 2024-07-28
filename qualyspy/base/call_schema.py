@@ -518,8 +518,8 @@ CALL_SCHEMA = frozendict(
                 "endpoint": "/api/2.0/fo/appliance/",
                 "method": ["GET", "POST"],
                 "valid_params": [
-                    "action", # set to "list"
-                    "echo_request", # set to False
+                    "action",  # set to "list"
+                    "echo_request",  # set to False
                     "output_mode",
                     "scan_detail",
                     "show_tags",
@@ -528,7 +528,7 @@ CALL_SCHEMA = frozendict(
                     "scan_ref",
                     "name",
                     "ids",
-                    "include_license_info", #set to False
+                    "include_license_info",  # set to False
                     "type",
                     "platform_provider",
                 ],

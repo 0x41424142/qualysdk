@@ -32,7 +32,9 @@ class ScannerAppliance:
     )
 
     RUNNING_SCAN_COUNT: int = field(
-        metadata={"description": "Number of scans currently running on the scanner appliance."},
+        metadata={
+            "description": "Number of scans currently running on the scanner appliance."
+        },
         default=0,
     )
 
@@ -47,7 +49,9 @@ class ScannerAppliance:
     )
 
     RUNNING_SLICES_COUNT: int = field(
-        metadata={"description": "Number of slices currently running on the scanner appliance."},
+        metadata={
+            "description": "Number of slices currently running on the scanner appliance."
+        },
         default=0,
     )
 
@@ -102,7 +106,9 @@ class ScannerAppliance:
     )
 
     ML_LATEST: str = field(
-        metadata={"description": "Latest machine learning model of the scanner appliance."},
+        metadata={
+            "description": "Latest machine learning model of the scanner appliance."
+        },
         default=None,
     )
 
@@ -112,27 +118,37 @@ class ScannerAppliance:
     )
 
     VULNSIGS_LATEST: str = field(
-        metadata={"description": "Latest vulnerability signature of the scanner appliance."},
+        metadata={
+            "description": "Latest vulnerability signature of the scanner appliance."
+        },
         default=None,
     )
 
     VULNSIGS_VERSION: dict = field(
-        metadata={"description": "Vulnerability signature version of the scanner appliance."},
+        metadata={
+            "description": "Vulnerability signature version of the scanner appliance."
+        },
         default=None,
     )
 
     ASSET_GROUP_COUNT: int = field(
-        metadata={"description": "Number of asset groups associated with the scanner appliance."},
+        metadata={
+            "description": "Number of asset groups associated with the scanner appliance."
+        },
         default=0,
     )
 
     ASSET_GROUP_LIST: BaseList[AssetGroup] = field(
-        metadata={"description": "List of asset groups associated with the scanner appliance."},
+        metadata={
+            "description": "List of asset groups associated with the scanner appliance."
+        },
         default=None,
     )
 
     ASSET_TAGS_LIST: BaseList[Tag] = field(
-        metadata={"description": "List of asset tags associated with the scanner appliance."},
+        metadata={
+            "description": "List of asset tags associated with the scanner appliance."
+        },
         default=None,
     )
 
@@ -152,22 +168,30 @@ class ScannerAppliance:
     )
 
     HEARTBEATS_MISSED: int = field(
-        metadata={"description": "Number of heartbeats missed by the scanner appliance."},
+        metadata={
+            "description": "Number of heartbeats missed by the scanner appliance."
+        },
         default=None,
     )
 
     SS_CONNECTION: str = field(
-        metadata={"description": "Status of the scanner appliance's connection to the Security Server."},
+        metadata={
+            "description": "Status of the scanner appliance's connection to the Security Server."
+        },
         default=None,
     )
 
     SS_LAST_CONNECTED: datetime = field(
-        metadata={"description": "Date the scanner appliance last connected to the Security Server."},
+        metadata={
+            "description": "Date the scanner appliance last connected to the Security Server."
+        },
         default=None,
     )
 
     USER_LIST: dict = field(
-        metadata={"description": "List of users associated with the scanner appliance."},
+        metadata={
+            "description": "List of users associated with the scanner appliance."
+        },
         default=None,
     )
 
@@ -186,16 +210,22 @@ class ScannerAppliance:
         default=None,
     )
 
-    #BELOW ATTRIBUTES ARE PULLED UP A LEVEL FROM AN ABOVE ATTRIBUTE DICITONARY
-
-
-
+    # BELOW ATTRIBUTES ARE PULLED UP A LEVEL FROM AN ABOVE ATTRIBUTE DICITONARY
 
     def __post_init__(self):
         """
         Post init function to convert certain fields to int/float.
         """
-        INT_FIELDS = ["ID", "RUNNING_SCAN_COUNT", "RUNNING_SLICES_COUNT", "ACTIVATION_CODE", "ASSET_GROUP_COUNT", "POLLING_INTERVAL", "HEARTBEATS_MISSED", "MAX_CAPACITY_UNITS"]
+        INT_FIELDS = [
+            "ID",
+            "RUNNING_SCAN_COUNT",
+            "RUNNING_SLICES_COUNT",
+            "ACTIVATION_CODE",
+            "ASSET_GROUP_COUNT",
+            "POLLING_INTERVAL",
+            "HEARTBEATS_MISSED",
+            "MAX_CAPACITY_UNITS",
+        ]
         DT_FIELDS = ["LAST_UPDATED_DATE", "SS_LAST_CONNECTED"]
         FLOAT_FIELDS = ["SOFTWARE_VERSION"]
 
@@ -213,7 +243,11 @@ class ScannerAppliance:
 
         for field in DT_FIELDS:
             if getattr(self, field) is not None:
-                setattr(self, field, datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%S%z"))
+                setattr(
+                    self,
+                    field,
+                    datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%S%z"),
+                )
 
         # convert UUID:
         if self.UUID is not None:
@@ -225,41 +259,39 @@ class ScannerAppliance:
 
     def __str__(self):
         return self.NAME
-    
+
     def __int__(self):
         return self.ID
-    
+
     def __dict__(self):
         return asdict(self)
-    
+
     def keys(self):
         return asdict(self).keys()
-    
+
     def values(self):
         return asdict(self).values()
-    
+
     def items(self):
         return asdict(self).items()
-    
+
     def __getitem__(self, key):
         return asdict(self)[key]
-    
+
     def __setitem__(self, key, value):
         asdict(self)[key] = value
         return asdict(self)
-    
+
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
-    
+
     def to_dict(self):
         return asdict(self)
-    
+
     def valid_values(self):
         return {
             k: v
             for k, v in asdict(self).items()
-            if v is not None
-            and v != ""
-            and v != []
+            if v is not None and v != "" and v != []
         }

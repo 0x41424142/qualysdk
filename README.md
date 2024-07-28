@@ -1,4 +1,4 @@
-# qualyspy - A Python SDK for Interacting With Qualys APIs
+﻿# qualyspy - A Python SDK for Interacting With Qualys APIs
 ![Logo](./imgs/QualysPyLogo.png)
 
 This SDK attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
@@ -32,10 +32,11 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 ```
 
 ## Current Supported Modules 
+
 |Module| Status |
 |--|--|
 | GAV (Global AssetView) |✅|
-| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld```, ```get_ag_list```, ```add/edit/remove_ag```, ```get_ip_list```, ```add/update_ips```, ```get_scan_list```, ```pause_scan```, ```cancel_scan```, ```resume_scan```, ```delete_scan```, ```launch_scan```, ```fetch_scan``` implemented) |
+| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld```, ```get_ag_list```, ```add/edit/remove_ag```, ```get_ip_list```, ```add/update_ips```, ```get_scan_list```, ```pause_scan```, ```cancel_scan```, ```resume_scan```, ```delete_scan```, ```launch_scan```, ```fetch_scan```, ```get_scanner_list``` implemented) |
 | PM (Patch Management) | In Planning |
 | WAS | Not Started |
 | TC (TotalCloud) | Not Started |

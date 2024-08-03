@@ -22,6 +22,7 @@ from .data_classes import (
     StaticSearchList,
     ScannerAppliance,
     VMDRReport,
+    ReportTemplate,
 )
 
 from .data_classes.lists import BaseList
@@ -42,4 +43,4 @@ from .vmscans import (
 )
 from .scanner_appliances import get_scanner_list
 from .searchlists import get_static_searchlists
-from .reports import get_report_list
+from .reports import get_report_list, get_template_list, launch_report

@@ -567,6 +567,72 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "launch_report": {
+                "endpoint": "/api/2.0/fo/report/",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": [
+                    "action", # set to "launch"
+                    "echo_request", # set to False
+                    "template_id",
+                    "report_title",
+                    "output_format",
+                    "hide_header", # Set to True to hide header!!!
+                    "pdf_password",
+                    "recipient_group",
+                    "recipient_group_id",
+                    "recipient_group_id",
+                    "report_type", # Important! map, scan, etc.
+                    
+                    #MAP REPORT:
+                    "domain",
+                    "ip_restriction",
+                    "report_refs",
+
+                    #SCAN REPORT:
+                    "ips",
+                    "asset_group_ids",
+                    "ips_network_id",
+
+                    #PATCH REPORT:
+                    #"ips",
+                    #"asset_group_ids",
+
+                    #REMEDITION REPORT:
+                    #"ips",
+                    #"asset_group_ids",
+                    "assignee_type", #User,All
+
+                    #COMPLIANCE REPORT:
+                    "policy_id",
+                    #asset_group_ids,
+                    #"ips",
+                    "host_id",
+                    "instance_string",
+
+                    #FOR USING ASSET TAGS:
+                    "use_tags",
+                    "tag_include_selector",
+                    "tag_exclude_selector",
+                    "tag_set_by",
+                    "tag_set_include",
+                    "tag_set_exclude",
+                ],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
+            "get_template_list": {
+                "endpoint": "/msp/report_template_list.php",
+                "method": ["GET", "POST"],
+                "valid_params": [],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
         },
     }
 )

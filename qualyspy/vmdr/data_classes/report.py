@@ -6,24 +6,6 @@ from dataclasses import dataclass, field, asdict
 from typing import Union, Dict
 from datetime import datetime
 
-"""
-<REPORT>
-<ID>42703</ID>
-<TITLE><![CDATA[Test now]]></TITLE>
-<TYPE>Scan</TYPE>
-<USER_LOGIN>acme_aa</USER_LOGIN>
-<LAUNCH_DATETIME>2017-10-30T17:59:22Z</LAUNCH_DATETIME>
-<OUTPUT_FORMAT>PDF</OUTPUT_FORMAT>
-<SIZE>129.1 MB</SIZE>
-<STATUS>
-<STATE>Finished</STATE>
-</STATUS>
-<EXPIRATION_DATETIME>2017-11-
-06T17:59:24Z</EXPIRATION_DATETIME>
-</REPORT>
-"""
-
-
 @dataclass(order=True)
 class VMDRReport:
     """
@@ -118,6 +100,12 @@ class VMDRReport:
 
     def __dict__(self):
         return asdict(self)
+    
+    def __int__(self):
+        return self.ID
+    
+    def __str__(self):
+        return f"{self.ID}: {self.TITLE}"
 
     def keys(self):
         return asdict(self).keys()

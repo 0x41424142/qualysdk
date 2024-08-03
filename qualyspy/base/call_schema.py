@@ -572,45 +572,39 @@ CALL_SCHEMA = frozendict(
                 "method": ["POST"],
                 "valid_params": [],
                 "valid_POST_data": [
-                    "action", # set to "launch"
-                    "echo_request", # set to False
+                    "action",  # set to "launch"
+                    "echo_request",  # set to False
                     "template_id",
                     "report_title",
                     "output_format",
-                    "hide_header", # Set to True to hide header!!!
+                    "hide_header",  # Set to True to hide header!!!
                     "pdf_password",
                     "recipient_group",
                     "recipient_group_id",
                     "recipient_group_id",
-                    "report_type", # Important! map, scan, etc.
-                    
-                    #MAP REPORT:
+                    "report_type",  # Important! map, scan, etc.
+                    # MAP REPORT:
                     "domain",
                     "ip_restriction",
                     "report_refs",
-
-                    #SCAN REPORT:
+                    # SCAN REPORT:
                     "ips",
                     "asset_group_ids",
                     "ips_network_id",
-
-                    #PATCH REPORT:
-                    #"ips",
-                    #"asset_group_ids",
-
-                    #REMEDITION REPORT:
-                    #"ips",
-                    #"asset_group_ids",
-                    "assignee_type", #User,All
-
-                    #COMPLIANCE REPORT:
+                    # PATCH REPORT:
+                    # "ips",
+                    # "asset_group_ids",
+                    # REMEDITION REPORT:
+                    # "ips",
+                    # "asset_group_ids",
+                    "assignee_type",  # User,All
+                    # COMPLIANCE REPORT:
                     "policy_id",
-                    #asset_group_ids,
-                    #"ips",
+                    # asset_group_ids,
+                    # "ips",
                     "host_id",
                     "instance_string",
-
-                    #FOR USING ASSET TAGS:
+                    # FOR USING ASSET TAGS:
                     "use_tags",
                     "tag_include_selector",
                     "tag_exclude_selector",

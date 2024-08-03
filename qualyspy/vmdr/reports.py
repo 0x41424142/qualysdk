@@ -47,7 +47,6 @@ def manage_reports(
     headers = {"X-Requested-With": "qualyspy SDK"}
 
     match action:
-        
         case "list":
             return call_api(
                 auth=auth,
@@ -56,7 +55,7 @@ def manage_reports(
                 params=kwargs,
                 headers=headers,
             )
-        
+
         case "launch":
             return call_api(
                 auth=auth,
@@ -65,7 +64,7 @@ def manage_reports(
                 payload=kwargs,
                 headers=headers,
             )
-        
+
         case _:
             raise NotImplementedError(f"Action {action} is not implemented yet.")
 
@@ -106,6 +105,7 @@ def get_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]:
 
     return bl
 
+
 def get_template_list(auth: BasicAuth) -> BaseList[ReportTemplate]:
     """
     Get the list of report templates in your subscription.
@@ -128,7 +128,7 @@ def get_template_list(auth: BasicAuth) -> BaseList[ReportTemplate]:
 
     if "SIMPLE_RETURN" in data:
         raise QualysAPIError(data["SIMPLE_RETURN"]["RESPONSE"]["TEXT"])
-    
+
     bl = BaseList()
 
     templates = data["REPORT_TEMPLATE_LIST"]["REPORT_TEMPLATE"]
@@ -144,13 +144,13 @@ def get_template_list(auth: BasicAuth) -> BaseList[ReportTemplate]:
 
 
 def launch_report(auth: BasicAuth, template_id: str, **kwargs) -> int:
-    '''
+    """
     Generate a new report in VMDR.
-    
+
     Parameters:
         ```auth```: ```Required[BasicAuth]``` - The BasicAuth object.
         ```template_id```: ```Union[int, str]``` - The ID of the template to use for the report.
-        
+
     Kwargs:
 
         Parameter| Possible Values |Description|Required|
@@ -177,8 +177,8 @@ def launch_report(auth: BasicAuth, template_id: str, **kwargs) -> int:
 
     Returns:
         ```int``` - The ID of the report.
-        '''
-    
+    """
+
     # Set specific kwargs
     kwargs["template_id"] = template_id
 

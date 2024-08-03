@@ -6,6 +6,7 @@ from dataclasses import dataclass, field, asdict
 from typing import Union, Dict
 from datetime import datetime
 
+
 @dataclass(order=True)
 class VMDRReport:
     """
@@ -100,10 +101,10 @@ class VMDRReport:
 
     def __dict__(self):
         return asdict(self)
-    
+
     def __int__(self):
         return self.ID
-    
+
     def __str__(self):
         return f"{self.ID}: {self.TITLE}"
 

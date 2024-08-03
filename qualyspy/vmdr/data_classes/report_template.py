@@ -6,6 +6,7 @@ from typing import Union
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 
+
 @dataclass
 class ReportTemplate:
     """
@@ -21,7 +22,8 @@ class ReportTemplate:
     )
 
     TEMPLATE_TYPE: str = field(
-        metadata={"description": "The template type of the report template."}, default=None
+        metadata={"description": "The template type of the report template."},
+        default=None,
     )
 
     TITLE: str = field(
@@ -29,7 +31,8 @@ class ReportTemplate:
     )
 
     USER: dict = field(
-        metadata={"description": "The user that created the report template."}, default=None
+        metadata={"description": "The user that created the report template."},
+        default=None,
     )
 
     LAST_UPDATE: Union[str, datetime] = field(
@@ -54,24 +57,24 @@ class ReportTemplate:
         Create a ReportTemplate object from a dictionary.
         """
         return cls(**data)
-    
+
     def __dict__(self):
         return asdict(self)
-    
+
     def __int__(self):
         return self.ID
-    
+
     def __str__(self):
         return f"{self.ID}: {self.TITLE}"
-    
+
     def keys(self):
         return self.__dict__().keys()
 
     def values(self):
         return self.__dict__().values()
-    
+
     def items(self):
         return self.__dict__().items()
-    
+
     def valid_values(self):
         return {k: v for k, v in self.__dict__().items() if v}

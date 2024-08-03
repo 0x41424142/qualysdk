@@ -66,4 +66,4 @@ For official tools and support, please refer to the official Qualys resources an
 
 - Start work on PM module.
 
-- Write testing files.
+- Begin SQL integration.

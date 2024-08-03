@@ -548,6 +548,25 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_report_list": {
+                "endpoint": "/api/2.0/fo/report/",
+                "method": ["GET", "POST"],
+                "valid_params": [
+                    "action",
+                    "echo_request",
+                    "id",
+                    "state",
+                    "user_login",
+                    "expires_before_datetime",
+                    "client_id",
+                    "client_name",
+                ],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
         },
     }
 )

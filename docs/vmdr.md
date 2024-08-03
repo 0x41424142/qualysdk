@@ -616,6 +616,62 @@ search_lists = get_static_searchlists(auth)
 >>>[StaticSearchList(ID=12345, TITLE="My search list", QIDS=[KBEntry(12345, ...)], ...)]
 ```
 
+## VMDR Report Management
+
+This collection of APIs lets you work with various types of reporting in VMDR.
+
+The APIs are as follows:
+
+|API Call| Description|
+|--|--|
+|```get_report_list```| Get a ```BaseList``` of ```VMDRReport``` objects.|
+|⚠️ ALL OTHER APIs ARE A WIP!|
+
+### VMDRReport Dataclass
+
+>**Head's Up!**: To allow for comparisons, the ```SIZE``` attribute of a ```VMDRReport``` is normalized to a float representation in megabytes. Raw Qualys API data returns this like: ```"5.01 KB"```. Should you ever create a ```VMDRReport``` object manually, specify the size as a string like the API output does.
+
+The ```VMDRReport``` dataclass is used to represent a single report generated in VMDR. Attributes are as follows:
+
+|Attribute|Type|Description|
+|--|--|--|
+|```ID```|```int```|The ID number for the report.|
+|```TITLE```|```str```|The friendly name of the report.|
+|```TYPE```|```str```|What type of data the report is for.|
+|```USER_LOGIN```|```str```|The username that launched the report.|
+|```LAUNCH_DATETIME```|```datetime.datetime```|When the report was kicked off.|
+|```OUTPUT_FORMAT```|```str```|The file format the report is in.|
+|```SIZE```|```float```|The file size of the report, in megabytes.|
+|```STATUS```|```dict```|Raw API output for what ```STATE``` (see below) the report is in.|
+|```STATE```|```str```|The state the report is in.|
+|```EXPIRATION_DATETIME```|```datetime.datetime```|When the report expires.|
+
+### VMDR Report List API
+
+This API lets you pull a list of reports in your subscription, according to kwarg filters. Returns a ```BaseList``` of ```VMDRReport``` objects.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```id```|```Union[int, str]```| A specific report ID to pull.|❌|
+|```state```|```str```|Filter output to reports in a specific state.|❌|
+|```user_login```|```str```|Filter output to reports launched by a specific user.|❌|
+|```expires_before_datetime```|```str```|Filter output to reports that will expire before this datetime.|❌|
+|```client_id```|```Union[int, str]```|Filter output to reports for a specific client ID. ⚠️ ONLY VALID FOR CONSULTANT SUBSCRIPTIONS!|❌|
+|```client_name```|```str```|Filter output to reports for a specific client name. ⚠️ ONLY VALID FOR CONSULTANT SUBSCRIPTIONS!|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import get_static_searchlists
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Get all reports launched by Alice:
+alice_reports = get_report_list(auth, user_login='Alice')
+>>>[VMDRReport(ID=01234567, TITLE="Alice's Scan", USER_LOGIN='alice_123',  OUTPUT_FORMAT='PDF', SIZE=10.42, ...), ...]
+```
+
+
 ## Querying the KB
 The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has identified. You can query the KB using the ```query_kb()``` function:
 

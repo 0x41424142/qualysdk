@@ -10,12 +10,60 @@ from io import StringIO
 from requests.models import Response
 from pandas import DataFrame, read_csv
 
-from .data_classes import VMDRReport, ReportTemplate
+from .data_classes import VMDRReport, ReportTemplate, VMDRScheduledReport
 from ..auth import BasicAuth
 from ..base import call_api
 from ..base import xml_parser
 from .data_classes.lists import BaseList
 from ..exceptions.Exceptions import *
+
+
+def manage_scheduled_reports(
+    auth: BasicAuth,
+    action: Literal["list", "launch_now"],
+    **kwargs,
+) -> Response:
+    """
+    Backend function to manage scheduled reports in Qualys VMDR.
+
+    Parameters:
+        auth: Required[BasicAuth] - The BasicAuth object.
+        action: Literal["list", "launch"] - The action to take.
+
+    Returns:
+        Response - The response from the API.
+
+    Kwargs:
+        Look at the specific functions for the kwargs they accept: get_scheduled_report_list, launch_scheduled_report, etc.
+    """
+
+    # Set specific kwargs
+    kwargs["action"] = action
+    kwargs["echo_request"] = False
+
+    headers = {"X-Requested-With": "qualyspy SDK"}
+
+    match action:
+        case "list":
+            return call_api(
+                auth=auth,
+                module="vmdr",
+                endpoint="get_scheduled_report_list",
+                params=kwargs,
+                headers=headers,
+            )
+
+        case "launch_now":
+            return call_api(
+                auth=auth,
+                module="vmdr",
+                endpoint="launch_scheduled_report",
+                payload=kwargs,
+                headers=headers,
+            )
+
+        case _:
+            raise NotImplementedError(f"Action {action} is not valid.")
 
 
 def manage_reports(
@@ -90,7 +138,7 @@ def manage_reports(
             )
 
         case _:
-            raise NotImplementedError(f"Action {action} is not implemented yet.")
+            raise NotImplementedError(f"Action {action} is not valid.")
 
 
 def get_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]:
@@ -314,6 +362,62 @@ def delete_report(auth: BasicAuth, id: Union[int, str]) -> str:
     """
 
     response = manage_reports(auth, action="delete", id=id)
+
+    data = xml_parser(response.text)
+
+    return data["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
+
+
+def get_scheduled_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]:
+    """
+    Get a list of scheduled reports in VMDR, according to kwargs.
+
+    Parameters:
+        auth: Required[BasicAuth] - The BasicAuth object.
+
+    Kwargs:
+        id: Optional[Union[int,str]] - A specific report ID to get.
+        is_active: Optional[bool] - Filter output to active or inactive reports. True for active, False for inactive.
+
+    Returns:
+        BaseList[VMDRReport] - A list of VMDRReport objects.
+    """
+
+    response = manage_scheduled_reports(auth, action="list", **kwargs)
+
+    data = xml_parser(response.text)
+
+    bl = BaseList()
+
+    try:
+        reports = data["SCHEDULE_REPORT_LIST_OUTPUT"]["RESPONSE"][
+            "SCHEDULE_REPORT_LIST"
+        ]["REPORT"]
+        # Check if there are multiple reports or just one
+        if isinstance(reports, dict):
+            reports = [reports]
+
+        for report in reports:
+            bl.append(VMDRScheduledReport.from_dict(report))
+    except KeyError:
+        print("No reports found.")
+
+    return bl
+
+
+def launch_scheduled_report(auth: BasicAuth, id: str) -> str:
+    """
+    Launch a scheduled report in VMDR.
+
+    Parameters:
+        auth: Required[BasicAuth] - The BasicAuth object.
+        id: str - The ID of the scheduled report to launch.
+
+    Returns:
+        str - The response from the API.
+    """
+
+    response = manage_scheduled_reports(auth, action="launch_now", id=id)
 
     data = xml_parser(response.text)
 

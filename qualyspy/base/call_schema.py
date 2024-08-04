@@ -657,6 +657,26 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_scheduled_report_list": {
+                "endpoint": "/api/2.0/fo/schedule/report/",
+                "method": ["GET", "POST"],
+                "valid_params": ["action", "id", "echo_request", "is_active"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
+            "launch_scheduled_report": {
+                "endpoint": "/api/2.0/fo/schedule/report/",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": ["action", "echo_request", "id"],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
         },
     }
 )

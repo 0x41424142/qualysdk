@@ -23,6 +23,7 @@ from .data_classes import (
     ScannerAppliance,
     VMDRReport,
     ReportTemplate,
+    VMDRScheduledReport,
 )
 
 from .data_classes.lists import BaseList
@@ -50,4 +51,6 @@ from .reports import (
     cancel_report,
     fetch_report,
     delete_report,
+    get_scheduled_report_list,
+    launch_scheduled_report,
 )

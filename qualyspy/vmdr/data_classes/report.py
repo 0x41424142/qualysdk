@@ -123,6 +123,7 @@ class VMDRReport:
         """
         return {k: v for k, v in self.__dict__.items() if v}
 
+
 @dataclass(order=True)
 class VMDRScheduledReport:
     """
@@ -182,7 +183,6 @@ class VMDRScheduledReport:
     )
 
     def __post_init__(self):
-
         self.ID = int(self.ID)
 
         if self.ACTIVE:
@@ -190,7 +190,9 @@ class VMDRScheduledReport:
 
         if self.SCHEDULE:
             # First, do all the conversions.
-            self.START_DATE_UTC = datetime.fromisoformat(self.SCHEDULE["START_DATE_UTC"])
+            self.START_DATE_UTC = datetime.fromisoformat(
+                self.SCHEDULE["START_DATE_UTC"]
+            )
             self.START_HOUR = int(self.SCHEDULE["START_HOUR"])
             self.START_MINUTE = int(self.SCHEDULE["START_MINUTE"])
             self.TIME_ZONE = self.SCHEDULE["TIME_ZONE"]
@@ -199,7 +201,13 @@ class VMDRScheduledReport:
             self.DST_SELECTED = bool(self.SCHEDULE["DST_SELECTED"])
             # Finally, remove all the above keys from the SCHEDULE dict,
             # leaving us only with the frequency data.
-            for key in ["START_DATE_UTC", "START_HOUR", "START_MINUTE", "TIME_ZONE", "DST_SELECTED"]:
+            for key in [
+                "START_DATE_UTC",
+                "START_HOUR",
+                "START_MINUTE",
+                "TIME_ZONE",
+                "DST_SELECTED",
+            ]:
                 self.SCHEDULE.pop(key)
 
     @classmethod
@@ -208,25 +216,25 @@ class VMDRScheduledReport:
         from_dict - creates a VMDRScheduledReport object from a dictionary.
         """
         return cls(**data)
-    
+
     def __dict__(self):
         return asdict(self)
-    
+
     def __int__(self):
         return self.ID
-    
+
     def __str__(self):
         return f"{self.ID}: {self.TITLE}"
-    
+
     def keys(self):
         return asdict(self).keys()
-    
+
     def values(self):
         return asdict(self).values()
-    
+
     def items(self):
         return asdict(self).items()
-    
+
     def valid_values(self):
         """
         valid_values - returns a dictionary of attributes that have non-None values.

@@ -367,6 +367,7 @@ def delete_report(auth: BasicAuth, id: Union[int, str]) -> str:
 
     return data["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
 
+
 def get_scheduled_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]:
     """
     Get a list of scheduled reports in VMDR, according to kwargs.
@@ -389,7 +390,9 @@ def get_scheduled_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]
     bl = BaseList()
 
     try:
-        reports = data["SCHEDULE_REPORT_LIST_OUTPUT"]["RESPONSE"]["SCHEDULE_REPORT_LIST"]["REPORT"]
+        reports = data["SCHEDULE_REPORT_LIST_OUTPUT"]["RESPONSE"][
+            "SCHEDULE_REPORT_LIST"
+        ]["REPORT"]
         # Check if there are multiple reports or just one
         if isinstance(reports, dict):
             reports = [reports]

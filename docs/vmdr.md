@@ -726,6 +726,56 @@ new_report_id = launch_report(auth)
 >>>12345678
 ```
 
+### Cancel Running Report API
+
+This API cancels a report that is currently in progress. It returns a string with the Qualys response.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```id```|```Union[int, str]``` |The ID number of the in-progress report to cancel.|✅|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import cancel_report
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+new_report_id = cancel_report(auth)
+>>>
+```
+
+### Fetch Report Results API
+
+This API lets you download the results of a report. The ```write_out``` parameter controls if the data is written to the ```<qualyspy_dir>/vmdr/output``` directory. By default, ```write_out``` is ```False```. If the report is in XML or CSV format, the data will be returned in a pandas DataFrame. Otherwise, ```write_out``` is set to ```True``` automatically, and results are written to disk. The output directory is created if it does not already exist.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```id```|```Union[int, str]``` |The ID number of the in-progress report to cancel.|✅|
+|```write_out```|```True/False```|Choose if you want the data written to disk in the ```output``` directory. Automatically set to ```True``` if the report format is not XML or CSV.|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import fetch_report
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+# XML report:
+new_report_id = fetch_report(auth, id=12345678)
+>>>Detected XML format. Returning DataFrame.
+                                                  ASSET_DATA_REPORT
+HEADER               {'COMPANY': 'My Company', 'GENER...
+RISK_SCORE_PER_HOST  {'HOSTS': [{'IP_ADDRESS': '10.0.0.1', 'TOT...
+HOST_LIST            {'HOST': [{'IP': '10.0.0.2', 'TRACKING_METH...
+GLOSSARY             {'VULN_DETAILS_LIST': {'VULN_DETAILS': [{'@id'...
+
+#PDF report, automatically gets written to disk:
+new_report_id = fetch_report(auth, id=92345678)
+>>>Detected PDF format. Writing to <qualyspy_dir>/vmdr/output/<report_id>.pdf
+Wrote report to <qualyspy_dir>/vmdr/output/<report_id>.pdf
+```
+
 ### List Report Templates API
 
 This API lets you pull a list of all VMDR report templates in your account. Useful for when using ```launch_report``` and you need a value for ```template_id```. Returns a ```BaseList``` of ```ReportTemplate``` objects.

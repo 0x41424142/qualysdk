@@ -64,7 +64,7 @@ class VMDRReport:
 
         self.STATE = self.STATUS.get("STATE")
 
-        if self.SIZE:
+        if self.SIZE and self.SIZE != "-":
             # Now for the fun part. SIZE can be KB, MB, or maybe even GB. Let's convert it to bytes and then to MB.
             # incoming string will contain the unit, so we can just strip it off and convert to bytes.
 

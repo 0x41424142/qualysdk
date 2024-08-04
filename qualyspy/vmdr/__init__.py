@@ -43,4 +43,4 @@ from .vmscans import (
 )
 from .scanner_appliances import get_scanner_list
 from .searchlists import get_static_searchlists
-from .reports import get_report_list, get_template_list, launch_report
+from .reports import get_report_list, get_template_list, launch_report, cancel_report, fetch_report

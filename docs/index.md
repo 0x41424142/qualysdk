@@ -32,7 +32,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |Module| Status |
 |--|--|
 | GAV (Global AssetView) |✅|
-| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld```, ```get_ag_list```, ```add/edit/remove_ag```, ```get_ip_list```, ```add/update_ips```, ```get_scan_list```, ```pause_scan```, ```cancel_scan```, ```resume_scan```, ```delete_scan```, ```launch_scan```, ```fetch_scan```, ```get_scanner_list```, ```get_static_searchlists```, ```get_report_list```, ```launch_report```, ```get_template_list``` implemented) |
+| VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld```, ```get_ag_list```, ```add/edit/remove_ag```, ```get_ip_list```, ```add/update_ips```, ```get_scan_list```, ```pause_scan```, ```cancel_scan```, ```resume_scan```, ```delete_scan```, ```launch_scan```, ```fetch_scan```, ```get_scanner_list```, ```get_static_searchlists```, ```get_report_list```, ```launch/cancel/fetch_report```, ```get_template_list``` implemented) |
 | PM (Patch Management) | In Planning |
 | WAS | Not Started |
 | TC (TotalCloud) | Not Started |

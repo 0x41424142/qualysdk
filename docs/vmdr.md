@@ -35,6 +35,8 @@ You can use any of the VMDR endpoints currently supported:
 |```cancel_report```|Cancel an in-progress report.|
 |```fetch_report```|Download the results of a report.|
 |```delete_report```|Delete a report out of Qualys.|
+|```get_scheduled_report_list```|Get a list of scheduled reports.|
+|```launch_scheduled_report```|Launch a scheduled report.|
 |```get_template_list```|Get a list of report templates.|
 
 ## Host List Detection
@@ -655,6 +657,26 @@ The ```VMDRReport``` dataclass is used to represent a single report generated in
 |```STATE```|```str```|The state the report is in.|
 |```EXPIRATION_DATETIME```|```datetime.datetime```|When the report expires.|
 
+### VMDRScheduledReport Dataclass
+
+The ```VMDRScheduledReport``` dataclass represents a scheduled report in VMDR. Attributes are as follows:
+
+|Attribute|Type|Description|
+|--|--|--|
+|```ID```|```int```|The ID number for the report.|
+|```TITLE```|```str```|The friendly name of the report.|
+|```OUTPUT_FORMAT```|```str```|The file format the report is in.|
+|```TEMPLATE_TITLE```|```str```|The template the report follows.|
+|```ACTIVE```|```bool```|Whether the report is active or not.|
+|```SCHEDULE```|```dict```|The schedule the report follows.|
+|```START_DATE_UTC```|```datetime.datetime```|When the report started.|
+|```START_HOUR```|```int```|The hour the report starts as an integer.|
+|```START_MINUTE```|```int```|The minute the report starts as an integer.|
+|```TIME_ZONE```|```dict```|Time zone information for the report. Gets parsed out to below fields.|
+|```TIME_ZONE_CODE```|```str```|Time zone code for the report, such as ```"US-CT"```.|
+|```TIME_ZONE_DETAILS```|```str```|Details for the time zone, such as GMT offset.|
+|```DST_SELECTED```|```bool```|Boolean for if daylight savings time is enabled for the report.|
+
 ### VMDR Report List API
 
 This API lets you pull a list of reports in your subscription, according to kwarg filters. Returns a ```BaseList``` of ```VMDRReport``` objects.
@@ -678,6 +700,27 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 #Get all reports launched by Alice:
 alice_reports = get_report_list(auth, user_login='Alice')
 >>>[VMDRReport(ID=01234567, TITLE="Alice's Scan", USER_LOGIN='alice_123',  OUTPUT_FORMAT='PDF', SIZE=10.42, ...), ...]
+```
+
+### Scheduled Reports List API
+
+This API lets you pull a list of scheduled reports in VMDR, according to kwarg filters. Returns a ```BaseList``` of ```VMDRReport``` objects.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```id```|```Union[int, str]```| A specific report ID to pull.|❌|
+|```is_active```|```True/False```|Filter output to just active (```True```) or inactive (```False```) reports.|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import get_scheduled_report_list
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Get all active scheduled reports:
+alice_reports = get_scheduled_report_list(auth, is_active=True)
+>>>[VMDRScheduledReport(ID=17023223, TITLE='My Scheduled Report', ACTIVE=True, SCHEDULE={'WEEKLY': {'@frequency_weeks': '1', '@weekdays': '1'}}, ...), ...]
 ```
 
 ### Launch Report API
@@ -729,6 +772,25 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 
 new_report_id = launch_report(auth)
 >>>12345678
+```
+
+### Launch Scheduled Report API
+
+This API lets you start an otherwise scheduled report. Returns the status message from Qualys as a string.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```id```|```Union[int, str]``` |The ID number of the in-progress report to cancel.|✅|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import launch_scheduled_report
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+result = launch_scheduled_report(auth, id=012345678)
+>>>Report launched
 ```
 
 ### Cancel Running Report API

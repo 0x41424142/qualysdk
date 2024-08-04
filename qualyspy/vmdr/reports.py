@@ -79,7 +79,7 @@ def manage_reports(
                 params=kwargs,
                 headers=headers,
             )
-        
+
         case "delete":
             return call_api(
                 auth=auth,
@@ -299,6 +299,7 @@ def fetch_report(
 
     if return_data:
         return data
+
 
 def delete_report(auth: BasicAuth, id: Union[int, str]) -> str:
     """

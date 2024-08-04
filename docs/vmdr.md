@@ -32,6 +32,9 @@ You can use any of the VMDR endpoints currently supported:
 |```get_static_searchlists```| Pull a list of static search lists, according to the ```ids``` parameter.|
 |```get_report_list```| Pull a list of reports.|
 |```launch_report```|Generate a new report.|
+|```cancel_report```|Cancel an in-progress report.|
+|```fetch_report```|Download the results of a report.|
+|```delete_report```|Delete a report out of Qualys.|
 |```get_template_list```|Get a list of report templates.|
 
 ## Host List Detection

@@ -33,7 +33,7 @@ def manage_reports(
     Returns:
         Response - The response from the API.
 
-    Kwargs: 
+    Kwargs:
         Look at the specific functions for the kwargs they accept: get_report_list, launch_report, etc.
     """
 
@@ -61,7 +61,7 @@ def manage_reports(
                 payload=kwargs,
                 headers=headers,
             )
-        
+
         case "cancel":
             return call_api(
                 auth=auth,
@@ -70,7 +70,7 @@ def manage_reports(
                 payload=kwargs,
                 headers=headers,
             )
-        
+
         case "fetch":
             return call_api(
                 auth=auth,
@@ -226,7 +226,10 @@ def cancel_report(auth: BasicAuth, id: Union[int, str]) -> str:
 
     return data["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
 
-def fetch_report(auth: BasicAuth, id: Union[int, str], write_out: bool = False) -> Union[DataFrame, None]:
+
+def fetch_report(
+    auth: BasicAuth, id: Union[int, str], write_out: bool = False
+) -> Union[DataFrame, None]:
     """
     Fetch a report in VMDR.
 
@@ -242,9 +245,8 @@ def fetch_report(auth: BasicAuth, id: Union[int, str], write_out: bool = False) 
 
     response = manage_reports(auth, action="fetch", id=id)
 
-
     file_format = response.headers["Content-Type"].split("/")[-1]
-    if ';' in file_format:
+    if ";" in file_format:
         file_format = file_format.split(";")[0]
 
     # Special case for octet-stream/word documents
@@ -253,7 +255,7 @@ def fetch_report(auth: BasicAuth, id: Union[int, str], write_out: bool = False) 
 
     # Check that there is a reports directory in the directory __file__ is in
     curr_dir = join(__file__, "..")
-    
+
     # Match the file format and load into the appropriate object
     match file_format:
         case "csv":
@@ -272,14 +274,16 @@ def fetch_report(auth: BasicAuth, id: Union[int, str], write_out: bool = False) 
             return_data = True
 
         case _:
-            print(f"Detected {file_format} format. Writing to {join(curr_dir, 'output', f'{id}.{file_format}')}")
+            print(
+                f"Detected {file_format} format. Writing to {join(curr_dir, 'output', f'{id}.{file_format}')}"
+            )
             write_out = True
-        
+
     if write_out:
         if not exists(join(curr_dir, "output")):
             mkdir(join(curr_dir, "output"))
             print(f"Created output directory at {join(curr_dir, 'output')}")
-        
+
         with open(join(curr_dir, "output", f"{id}.{file_format}"), "wb") as f:
             f.write(response.content)
             print(f"Wrote report to {join(curr_dir, 'output', f'{id}.{file_format}')}")

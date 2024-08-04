@@ -741,7 +741,7 @@ from qualyspy.vmdr import cancel_report
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
-new_report_id = cancel_report(auth)
+result = cancel_report(auth)
 >>>
 ```
 
@@ -762,7 +762,7 @@ from qualyspy.vmdr import fetch_report
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
 # XML report:
-new_report_id = fetch_report(auth, id=12345678)
+report_data = fetch_report(auth, id=12345678)
 >>>Detected XML format. Returning DataFrame.
                                                   ASSET_DATA_REPORT
 HEADER               {'COMPANY': 'My Company', 'GENER...
@@ -771,9 +771,28 @@ HOST_LIST            {'HOST': [{'IP': '10.0.0.2', 'TRACKING_METH...
 GLOSSARY             {'VULN_DETAILS_LIST': {'VULN_DETAILS': [{'@id'...
 
 #PDF report, automatically gets written to disk:
-new_report_id = fetch_report(auth, id=92345678)
+fetch_report(auth, id=92345678)
 >>>Detected PDF format. Writing to <qualyspy_dir>/vmdr/output/<report_id>.pdf
 Wrote report to <qualyspy_dir>/vmdr/output/<report_id>.pdf
+```
+
+### Delete Report API
+
+This API deletes a report out of Qualys. It returns a string with the Qualys response.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```id```|```Union[int, str]``` |The ID number of the report to delete.|✅|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import delete_report
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+result = delete_report(auth)
+>>>Report deleted
 ```
 
 ### List Report Templates API

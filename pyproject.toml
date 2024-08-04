@@ -14,7 +14,6 @@ bs4 = "^0.0.2"
 lxml = "^5.2.2"
 pandas = "^2.2.2"
 mkdocs = "^1.6.0"
-python-docx = "^1.1.2"
 
 
 [build-system]

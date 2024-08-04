@@ -79,6 +79,15 @@ def manage_reports(
                 params=kwargs,
                 headers=headers,
             )
+        
+        case "delete":
+            return call_api(
+                auth=auth,
+                module="vmdr",
+                endpoint="delete_report",
+                payload=kwargs,
+                headers=headers,
+            )
 
         case _:
             raise NotImplementedError(f"Action {action} is not implemented yet.")
@@ -290,3 +299,21 @@ def fetch_report(
 
     if return_data:
         return data
+
+def delete_report(auth: BasicAuth, id: Union[int, str]) -> str:
+    """
+    Delete a report in VMDR.
+
+    Parameters:
+        auth: Required[BasicAuth] - The BasicAuth object.
+        id: Union[int, str] - The ID of the report to delete.
+
+    Returns:
+        str - The response from the API.
+    """
+
+    response = manage_reports(auth, action="delete", id=id)
+
+    data = xml_parser(response.text)
+
+    return data["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]

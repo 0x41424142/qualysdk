@@ -49,4 +49,5 @@ from .reports import (
     launch_report,
     cancel_report,
     fetch_report,
+    delete_report,
 )

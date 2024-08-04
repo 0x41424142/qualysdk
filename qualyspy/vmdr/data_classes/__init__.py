@@ -17,5 +17,7 @@ from .asset_group import AssetGroup
 from .vmscan import VMScan
 from .scanner_appliance import ScannerAppliance
 from .searchlist import StaticSearchList
+from .report import VMDRReport
+from .report_template import ReportTemplate
 
 from .lists import BaseList

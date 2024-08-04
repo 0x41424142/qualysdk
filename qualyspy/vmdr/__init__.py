@@ -21,7 +21,10 @@ from .data_classes import (
     QDS,
     StaticSearchList,
     ScannerAppliance,
+    VMDRReport,
+    ReportTemplate,
 )
+
 from .data_classes.lists import BaseList
 
 from .query_kb import query_kb
@@ -40,3 +43,11 @@ from .vmscans import (
 )
 from .scanner_appliances import get_scanner_list
 from .searchlists import get_static_searchlists
+from .reports import (
+    get_report_list,
+    get_template_list,
+    launch_report,
+    cancel_report,
+    fetch_report,
+    delete_report,
+)

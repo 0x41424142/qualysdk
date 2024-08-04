@@ -632,7 +632,9 @@ The APIs are as follows:
 |--|--|
 |```get_report_list```| Get a ```BaseList``` of ```VMDRReport``` objects.|
 |```launch_report```|Create/Kick off new report generation.|
-|⚠️ ALL OTHER APIs ARE A WIP!|
+|```fetch_report```|Download the results of a report.|
+|```cancel_report```|Cancel an in-progress report.|
+|```delete_report```|Delete a report out of Qualys.|
 
 ### VMDRReport Dataclass
 

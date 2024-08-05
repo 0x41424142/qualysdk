@@ -2,7 +2,7 @@
 cve.py - contains the CVEID dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 from re import match
 
@@ -28,6 +28,9 @@ class CVEID:
 
     def __str__(self) -> str:
         return self.ID
+    
+    def __dict__(self):
+        return asdict(self)
 
     def __contains__(self, item):
         # see if it was found in the name or vendor:
@@ -38,6 +41,18 @@ class CVEID:
 
     def is_id(self, id: str):
         return self.ID == id
+    
+    def to_dict(self):
+        return asdict(self)
+    
+    def keys(self):
+        return self.to_dict().keys()
+    
+    def values(self):
+        return self.to_dict().values()
+    
+    def items(self):
+        return self.to_dict().items()
 
     @classmethod
     def from_str(cls, cve_id: str):

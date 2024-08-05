@@ -2,9 +2,8 @@
 asset_group.py - contains the AssetGroup dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
-from warnings import filterwarnings
 from datetime import datetime
 from ipaddress import (
     IPv4Address,
@@ -282,24 +281,10 @@ class AssetGroup:
 
         This function is used to convert the AssetGroup object to a dictionary.
         """
-        return {
-            "ID": self.ID,
-            "TITLE": self.TITLE,
-            "OWNER_ID": self.OWNER_ID,
-            "UNIT_ID": self.UNIT_ID,
-            "LAST_UPDATE": self.LAST_UPDATE,
-            "NETWORK_ID": self.NETWORK_ID,
-            "IP_SET": self.IP_SET,
-            "BUSINESS_IMPACT": self.BUSINESS_IMPACT,
-            "DEFAULT_APPLIANCE_ID": self.DEFAULT_APPLIANCE_ID,
-            "APPLIANCE_IDS": self.APPLIANCE_IDS,
-            "DNS_LIST": self.DNS_LIST,
-            "NETBIOS_LIST": self.NETBIOS_LIST,
-            "HOST_IDS": self.HOST_IDS,
-            "ASSIGNED_USER_IDS": self.ASSIGNED_USER_IDS,
-            "ASSIGNED_UNIT_IDS": self.ASSIGNED_UNIT_IDS,
-            "OWNER_USER_NAME": self.OWNER_USER_NAME,
-        }
+        return asdict(self)
+    
+    def __dict__(self):
+        return asdict(self)
 
     @classmethod
     def from_dict(cls, data: dict):

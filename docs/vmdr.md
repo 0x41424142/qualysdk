@@ -39,6 +39,9 @@ You can use any of the VMDR endpoints currently supported:
 |```get_scheduled_report_list```|Get a list of scheduled reports.|
 |```launch_scheduled_report```|Launch a scheduled report.|
 |```get_template_list```|Get a list of report templates.|
+|```get_user_list```|Get a list of users in your subscription.|
+|```add_user```|Add a new user to your subscription.|
+|```edit_user```|Edit a user in your subscription.|
 
 ## Host List Detection
 
@@ -877,6 +880,123 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 
 templates = get_template_list(auth)
 >>>[ReportTemplate(ID=12345678, TYPE="Auto", ...)]
+```
+
+## User Management
+
+This collection of APIs lets you work with user accounts in VMDR.
+
+The APIs are as follows:
+
+|API Call| Description|
+|--|--|
+|```get_user_list```| Get a ```BaseList``` of ```User``` objects.|
+|```edit_user```|Edit a user account.|
+|```add_user```|Add a new user account.|
+
+### User Dataclass
+
+The ```User``` dataclass is used to represent a single user account in VMDR. Attributes are as follows:
+
+|Attribute|Type|Description|
+|--|--|--|
+|```USER_LOGIN```|```str```|The username of the user.|
+|```USER_ID```|```int```|The ID number of the user.|
+|```EXTERNAL_ID```|```str```|The external ID of the user.|
+|```CONTACT_INFO```|```dict```|Contact information. Gets parsed out to below 14 fields.|
+|```FIRSTNAME```|```str```|The first name of the user.|
+|```LASTNAME```|```str```|The last name of the user.|
+|```TITLE```|```str```|The title of the user.|
+|```PHONE```|```str```|The phone number of the user.|
+|```COUNTRY```|```str```|The country of the user.|
+|```STATE```|```str```|The state of the user.|
+|```CITY```|```str```|The city of the user.|
+|```ZIP_CODE```|```str```|The ZIP code of the user.|
+|```FAX```|```str```|The fax number of the user.|
+|```EMAIL```|```str```|The email address of the user.|
+|```COMPANY```|```str```|The company of the user.|
+|```ADDRESS1```|```str```|The first line of the user's address.|
+|```ADDRESS2```|```str```|The second line of the user's address.|
+|```TIME_ZONE_CODE```|```str```|The time zone code of the user.|
+|```USER_STATUS```|```str```|The status of the user.|
+|```CREATION_DATE```|```datetime.datetime```|The date the user was created.|
+|```USER_ROLE```|```dict```|The role of the user.|
+|```LAST_LOGIN_DATE```|```datetime.datetime```|The last time the user logged in.|
+|```BUSINESS_UNIT```|```str```|The business unit of the user.|
+|```UNIT_MANAGER_POC```|```str```|The unit manager point of contact.|
+|```MANAGER_POC```|```str```|The manager point of contact.|
+|```UI_INTERFACE_STYLE```|```str```|The UI interface style of the user.|
+|```PERMISSIONS```|```dict```|The permissions of the user. Gets parsed out to below 5 fields.|
+|```CREATE_OPTION_PROFILES```|```bool```|If the user can create option profiles.|
+|```PURGE_INFO```|```bool```|If the user can purge info.|
+|```ADD_ASSETS```|```bool```|If the user can add assets.|
+|```EDIT_REMEDIATION_POLICY```|```bool```|If the user can edit remediation policies.|
+|```EDIT_AUTH_RECORDS```|```bool```|If the user can edit authentication records.|
+|```CREATE_OPTION_PROFILES```|```bool```|If the user can create option profiles.|
+|```NOTIFICATIONS```|```dict```|The notifications of the user. Gets parsed out to below 3 fields.|
+|```LATEST_VULN```|```str```|How often the user gets vulnerability notifications.|
+|```MAP```|```str```|How often the user gets map notifications.|
+|```SCAN```|```str```|How often the user gets scan notifications.|
+|```DAILY_TICKETS```|```int```|If the user gets daily ticket updates.|
+
+### Get User List API
+
+This API lets you pull a list of user accounts in your subscription, according to kwarg filters. Returns a ```BaseList``` of ```User``` objects.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```external_id_contains```|```str```|Filter output to users with a specific external ID pattern.|❌|
+|```external_id_assigned```|```True/False```|Filter output to users with an external ID assigned.|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import get_user_list
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+users = get_user_list(auth)
+>>>[User(USER_ID=12345, USER_LOGIN='alice_123', ...), ...]
+```
+
+### Create User API
+
+This API lets you create a new user account in VMDR. It returns a string with the Qualys response, or if the ```send_email``` kwarg is ```False```, the username and password of the new user.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```user_role```|```Literal["manager", "unit_manager", "scanner", "reader", "contact", "administrator"]```|The role of the user.|✅|
+|```business_unit```|```Union[Literal["Unassigned"], str]```|The business unit of the user.|✅|
+|```first_name```|```str```|The first name of the user.|✅|
+|```last_name```|```str```|The last name of the user.|✅|
+|```title```|```str```|The title of the user.|✅|
+|```phone```|```str```|The phone number of the user.|✅|
+|```email```|```str```|The email address of the user.|✅|
+|```address1```|```str```|The first line of the user's address.|✅|
+|```city```|```str```|The city of the user.|✅|
+|```state```|```str```|The state of the user. Must be the full state name, such as "Maryland" or "Pennsylvania".|✅|
+|```country```|```str```|The country of the user. Must be the full country name, such as "United States of America".|✅|
+|```send_email```|```True/False```|If ```True```, an email will be sent to the user with their login information. If ```False```, the username and password will be returned in the response. Defaults to ```True```.|❌|
+|```asset_groups```|```str```|A comma-separated string of asset groups to assign to the user.|❌|
+|```fax```|```str```|The fax number of the user - because fax is still very widely used nowadays. 😉|❌|
+|```address2```|```str```|The second line of the user's address.|❌|
+|```zip_code```|```str```|The ZIP code of the user.|❌|
+|```external_id```|```str```|The external ID of the user.|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import add_user
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+# Add a new user to VMDR and send them an email:
+result = add_user(auth, user_role='manager', business_unit='Unassigned', first_name='Alice', last_name='Smith', title='Manager', phone='555-555-5555', ...)
+>>>User alice_123 created successfully.
+
+# Add a new user to VMDR and return their username and password:
+result = add_user(auth, user_role='manager', business_unit='Unassigned', first_name='Alice', last_name='Smith', title='Manager', phone='555-555-5555', ..., send_email=False)
+>>>User alice_123 created. User:Pass is: alice_123, Password: 12345
 ```
 
 ## Querying the KB

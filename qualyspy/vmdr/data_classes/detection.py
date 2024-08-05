@@ -2,7 +2,7 @@
 detection.py - contains the Detection dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 from datetime import datetime
 from warnings import catch_warnings, simplefilter
@@ -233,29 +233,19 @@ class Detection:
 
         This function is used to convert the Detection object to a dictionary.
         """
-        return {
-            "UNIQUE_VULN_ID": self.UNIQUE_VULN_ID,
-            "QID": self.QID,
-            "TYPE": self.TYPE,
-            "SEVERITY": self.SEVERITY,
-            "SSL": self.SSL,
-            "RESULTS": self.RESULTS,
-            "STATUS": self.STATUS,
-            "FIRST_FOUND_DATETIME": self.FIRST_FOUND_DATETIME,
-            "LAST_FOUND_DATETIME": self.LAST_FOUND_DATETIME,
-            "TIMES_FOUND": self.TIMES_FOUND,
-            "LAST_TEST_DATETIME": self.LAST_TEST_DATETIME,
-            "LAST_UPDATE_DATETIME": self.LAST_UPDATE_DATETIME,
-            "IS_IGNORED": self.IS_IGNORED,
-            "IS_DISABLED": self.IS_DISABLED,
-            "LAST_PROCESSED_DATETIME": self.LAST_PROCESSED_DATETIME,
-            "LAST_FIXED_DATETIME": self.LAST_FIXED_DATETIME,
-            "QDS": self.QDS,
-            "QDS_FACTORS": self.QDS_FACTORS,
-            "PORT": self.PORT,
-            "PROTOCOL": self.PROTOCOL,
-            "FQDN": self.FQDN,
-        }
+        return asdict(self)
+    
+    def __dict__(self):
+        return asdict(self)
+    
+    def keys(self):
+        return self.__dict__().keys()
+    
+    def values(self):
+        return self.__dict__().values()
+    
+    def items(self):
+        return self.__dict__().items()
 
     @classmethod
     def from_dict(cls, data: Union[dict, list]):

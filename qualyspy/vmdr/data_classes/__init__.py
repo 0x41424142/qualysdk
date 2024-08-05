@@ -19,5 +19,6 @@ from .scanner_appliance import ScannerAppliance
 from .searchlist import StaticSearchList
 from .report import VMDRReport, VMDRScheduledReport
 from .report_template import ReportTemplate
+from .user import User
 
 from .lists import BaseList

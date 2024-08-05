@@ -2,7 +2,7 @@
 compliance.py - contains the Compliance dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 
 
@@ -37,6 +37,21 @@ class Compliance:
 
     def is_description(self, description: str):
         return self.DESCRIPTION == description
+    
+    def __dict__(self):
+        return asdict(self)
+    
+    def to_dict(self):
+        return asdict(self)
+    
+    def keys(self):
+        return self.to_dict().keys()
+    
+    def values(self):
+        return self.to_dict().values()
+    
+    def items(self):
+        return self.to_dict().items()
 
     @classmethod
     def from_dict(cls, data: dict):

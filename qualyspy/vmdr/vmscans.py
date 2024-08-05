@@ -299,7 +299,7 @@ def manage_scan(
 
         # Parse the JSON response:
         result = read_json(StringIO(response.text))
-        
+
         if result.empty:
             print("No scan found.")
             return None

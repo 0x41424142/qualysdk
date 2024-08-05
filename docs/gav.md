@@ -3,6 +3,7 @@ Global AssetView APIs return data on hosts within your Qualys subscription.
 >**Pro Tip**: To see all available GAV QQL filters, look [here!](https://docs.qualys.com/en/gav/2.18.0.0/search/how_to_search.htm)
 
 After running:
+
 ```py
 from qualyspy.gav import *
 ```
@@ -17,6 +18,7 @@ You can any of the 4 GAV endpoints:
 |```query_assets```| Scaled down version of```get_all_assets``` - pulls entire host inventory that matches the given ```filter``` kwarg.
 
 Or use the uber class:
+
 ```py
 from qualyspy import TokenAuth, GAVUber
 

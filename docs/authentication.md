@@ -7,6 +7,7 @@
 >**Heads Up!**: By default, auth classes assume your Qualys subscription is on the ```qg3``` platform. If this is not the case, simply pass ```platform='qg<n>'``` where \<n> is 1-4 when creating the object.
 
 When calling an API endpoint, just pass your ```TokenAuth``` or ```BasicAuth``` object and the tool will handle the rest (or yell at you if you pass the wrong type, shown below):
+
 ```py
 #Example of using the wrong auth type
 from qualyspy.auth import BasicAuth
@@ -18,20 +19,23 @@ with BasicAuth(<username>,<password>, platform='qg1') as auth:
 
 >>>qualyspy.exceptions.Exceptions.AuthTypeMismatchError: Auth type mismatch. Expected token but got basic.
  ```
- <br>
  
 Both ```BasicAuth``` and ```TokenAuth``` also have ```from_dict``` class methods, which allows for the creation of these objects from dictionaries:
+
 ```py
 from qualyspy.auth import BasicAuth
 auth = BasicAuth.from_dict({'username':<username>, 'password':<password>})
 ```
+
 You can also create an object using a JSON string using ```from_json_string```:
+
 ```py
 from qualyspy.auth import BasicAuth
 auth = BasicAuth.from_json_string('{"username":<username>, "password":<password>}')
 ```
 
 You can also export using ```to_json_string```. If ```pretty=True```, the string will be pretty formatted:
+
 ```py
 from qualyspy.auth import BasicAuth
 auth = BasicAuth.from_dict({'username':<username>, 'password':<password>})

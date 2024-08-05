@@ -10,6 +10,7 @@ from .data_classes.lists import BaseList
 from .data_classes.user import User
 from ..exceptions import *
 
+
 def get_user_list(auth: BasicAuth, **kwargs) -> List[User]:
     """
     Get a list of users in the subscription.
@@ -24,42 +25,58 @@ def get_user_list(auth: BasicAuth, **kwargs) -> List[User]:
     Returns:
         List[User]: List of User objects.
     """
-    
+
     response = call_api(
         auth=auth,
         endpoint="get_user_list",
         module="vmdr",
         params=kwargs,
-        headers={'X-Requested-With': 'qualyspy SDK'}
+        headers={"X-Requested-With": "qualyspy SDK"},
     )
 
     bl = BaseList()
 
     if response.status_code != 200:
         raise QualysAPIError(response.text)
-    
+
     user_list = xml_parser(response.text)
 
-    if 'ERROR' in user_list['USER_LIST_OUTPUT'].keys():
-        raise QualysAPIError(user_list['USER_LIST_OUTPUT']['ERROR']['#text'])
+    if "ERROR" in user_list["USER_LIST_OUTPUT"].keys():
+        raise QualysAPIError(user_list["USER_LIST_OUTPUT"]["ERROR"]["#text"])
 
-    if 'USER' not in user_list['USER_LIST_OUTPUT']['USER_LIST'].keys():
+    if "USER" not in user_list["USER_LIST_OUTPUT"]["USER_LIST"].keys():
         print("No users found.")
         return bl
-    
 
     # Check for single user
-    if isinstance(user_list['USER_LIST_OUTPUT']['USER_LIST']['USER'], dict):
-        user_list['USER_LIST_OUTPUT']['USER_LIST']['USER'] = [user_list['USER_LIST_OUTPUT']['USER_LIST']['USER']]
+    if isinstance(user_list["USER_LIST_OUTPUT"]["USER_LIST"]["USER"], dict):
+        user_list["USER_LIST_OUTPUT"]["USER_LIST"]["USER"] = [
+            user_list["USER_LIST_OUTPUT"]["USER_LIST"]["USER"]
+        ]
 
-    for user in user_list['USER_LIST_OUTPUT']['USER_LIST']['USER']:
+    for user in user_list["USER_LIST_OUTPUT"]["USER_LIST"]["USER"]:
         bl.append(User(**user))
 
     return bl
 
-def add_user(auth: BasicAuth, user_role: Literal["manager", "unit_manager", "scanner", "reader", "contact", "administrator"], 
-             business_unit:Union[Literal["Unassigned"], str], first_name: str, last_name: str, title: str, phone: str, email: str, address1: str, city: str,
-             country: str, state: str, **kwargs) -> str:
+
+def add_user(
+    auth: BasicAuth,
+    user_role: Literal[
+        "manager", "unit_manager", "scanner", "reader", "contact", "administrator"
+    ],
+    business_unit: Union[Literal["Unassigned"], str],
+    first_name: str,
+    last_name: str,
+    title: str,
+    phone: str,
+    email: str,
+    address1: str,
+    city: str,
+    country: str,
+    state: str,
+    **kwargs,
+) -> str:
     """
     Adds a user to the subscription.
 
@@ -71,7 +88,7 @@ def add_user(auth: BasicAuth, user_role: Literal["manager", "unit_manager", "sca
         last_name (str): The last name of the user.
         title (str): The title of the user.
         phone (str): The phone number of the user.
-        
+
         email (str): The email of the user.
         address1 (str): The address of the user.
         city (str): The city of the user.
@@ -102,7 +119,7 @@ def add_user(auth: BasicAuth, user_role: Literal["manager", "unit_manager", "sca
         "address1": address1,
         "city": city,
         "country": country,
-        "state": state
+        "state": state,
     }
 
     params.update(kwargs)
@@ -112,19 +129,19 @@ def add_user(auth: BasicAuth, user_role: Literal["manager", "unit_manager", "sca
         module="vmdr",
         endpoint="add_user",
         params=params,
-        headers={'X-Requested-With': 'qualyspy SDK'}
+        headers={"X-Requested-With": "qualyspy SDK"},
     )
 
     if response.status_code != 200:
         raise QualysAPIError(response.text)
-    
+
     result = xml_parser(response.text)
 
-    if result['USER_OUTPUT']['RETURN']['@status'] == 'FAILED':
-        raise QualysAPIError(result['USER_OUTPUT']['RETURN']['MESSAGE'])
+    if result["USER_OUTPUT"]["RETURN"]["@status"] == "FAILED":
+        raise QualysAPIError(result["USER_OUTPUT"]["RETURN"]["MESSAGE"])
 
     if kwargs.get("send_email") == False:
         return f"User created. User:Pass is: {result['USER_OUTPUT']['USER']['USER_LOGIN']}:{result['USER_OUTPUT']['USER']['PASSWORD']}"
-    
+
     else:
-        return result['USER_OUTPUT']['RETURN']['MESSAGE']
+        return result["USER_OUTPUT"]["RETURN"]["MESSAGE"]

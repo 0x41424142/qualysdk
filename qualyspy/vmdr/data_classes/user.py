@@ -6,6 +6,7 @@ from typing import Union
 from datetime import datetime
 from dataclasses import dataclass, field, asdict
 
+
 @dataclass
 class User:
     """
@@ -18,9 +19,11 @@ class User:
 
     EXTERNAL_ID: str = field(metadata={"description": "External ID."}, default=None)
 
-    CONTACT_INFO: dict = field(metadata={"description": "Contact information."}, default=None)
+    CONTACT_INFO: dict = field(
+        metadata={"description": "Contact information."}, default=None
+    )
 
-    #BELOW ARE PARSED OUT OF CONTACT_INFO
+    # BELOW ARE PARSED OUT OF CONTACT_INFO
 
     FIRSTNAME: str = field(metadata={"description": "First name."}, default=None)
 
@@ -48,69 +51,106 @@ class User:
 
     ZIP_CODE: str = field(metadata={"description": "Zip code."}, default=None)
 
-    TIME_ZONE_CODE: str = field(metadata={"description": "Time zone code."}, default=None)
+    TIME_ZONE_CODE: str = field(
+        metadata={"description": "Time zone code."}, default=None
+    )
 
-    #END PARSED OUT OF CONTACT_INFO
+    # END PARSED OUT OF CONTACT_INFO
 
     USER_STATUS: str = field(metadata={"description": "User status."}, default=None)
 
-    CREATION_DATE: Union[str, datetime] = field(metadata={"description": "Creation date."}, default=None)
+    CREATION_DATE: Union[str, datetime] = field(
+        metadata={"description": "Creation date."}, default=None
+    )
 
-    LAST_LOGIN_DATE: Union[str, datetime] = field(metadata={"description": "Last login date."}, default=None)
+    LAST_LOGIN_DATE: Union[str, datetime] = field(
+        metadata={"description": "Last login date."}, default=None
+    )
 
     USER_ROLE: str = field(metadata={"description": "User role."}, default=None)
 
     BUSINESS_UNIT: str = field(metadata={"description": "Business unit."}, default=None)
 
-    UNIT_MANAGER_POC: int = field(metadata={"description": "Unit manager point of contact."}, default=None)
+    UNIT_MANAGER_POC: int = field(
+        metadata={"description": "Unit manager point of contact."}, default=None
+    )
 
-    MANAGER_POC: int = field(metadata={"description": "Manager point of contact."}, default=None)
+    MANAGER_POC: int = field(
+        metadata={"description": "Manager point of contact."}, default=None
+    )
 
-    UI_INTERFACE_STYLE: str = field(metadata={"description": "UI interface style."}, default=None)
+    UI_INTERFACE_STYLE: str = field(
+        metadata={"description": "UI interface style."}, default=None
+    )
 
     PERMISSIONS: dict = field(metadata={"description": "Permissions."}, default=None)
 
-    #BELOW ARE PARSED OUT OF PERMISSIONS
+    # BELOW ARE PARSED OUT OF PERMISSIONS
 
-    CREATE_OPTION_PROFILES: bool = field(metadata={"description": "Create option profiles."}, default=None)
+    CREATE_OPTION_PROFILES: bool = field(
+        metadata={"description": "Create option profiles."}, default=None
+    )
 
-    PURGE_INFO: bool = field(metadata={"description": "Purge information."}, default=None)
+    PURGE_INFO: bool = field(
+        metadata={"description": "Purge information."}, default=None
+    )
 
     ADD_ASSETS: bool = field(metadata={"description": "Add assets."}, default=None)
 
-    EDIT_REMEDIATION_POLICY: bool = field(metadata={"description": "Edit remediation policy."}, default=None)
+    EDIT_REMEDIATION_POLICY: bool = field(
+        metadata={"description": "Edit remediation policy."}, default=None
+    )
 
-    EDIT_AUTH_RECORDS: bool = field(metadata={"description": "Edit authentication records."}, default=None)
+    EDIT_AUTH_RECORDS: bool = field(
+        metadata={"description": "Edit authentication records."}, default=None
+    )
 
-    #END PARSED OUT OF PERMISSIONS
+    # END PARSED OUT OF PERMISSIONS
 
-    NOTIFICATIONS: dict = field(metadata={"description": "Notifications."}, default=None)
+    NOTIFICATIONS: dict = field(
+        metadata={"description": "Notifications."}, default=None
+    )
 
-    #BELOW ARE PARSED OUT OF NOTIFICATIONS
-    LATEST_VULN: str = field(metadata={"description": "Latest vulnerability."}, default=None)
+    # BELOW ARE PARSED OUT OF NOTIFICATIONS
+    LATEST_VULN: str = field(
+        metadata={"description": "Latest vulnerability."}, default=None
+    )
 
     MAP: str = field(metadata={"description": "Map."}, default=None)
 
     SCAN: str = field(metadata={"description": "Scan."}, default=None)
 
-    DAILY_TICKETS: bool = field(metadata={"description": "Daily tickets."}, default=None)
+    DAILY_TICKETS: bool = field(
+        metadata={"description": "Daily tickets."}, default=None
+    )
 
-    #END PARSED OUT OF NOTIFICATIONS
+    # END PARSED OUT OF NOTIFICATIONS
 
-    ASSIGNED_ASSET_GROUPS: dict = field(metadata={"description": "Assigned asset groups."}, default=None)
+    ASSIGNED_ASSET_GROUPS: dict = field(
+        metadata={"description": "Assigned asset groups."}, default=None
+    )
 
-    #BELOW ARE PARSED OUT OF ASSIGNED_ASSET_GROUPS
+    # BELOW ARE PARSED OUT OF ASSIGNED_ASSET_GROUPS
 
-    ASSET_GROUP_TITLE: str = field(metadata={"description": "Asset group title."}, default=None) #May need to be a list in the future?
+    ASSET_GROUP_TITLE: str = field(
+        metadata={"description": "Asset group title."}, default=None
+    )  # May need to be a list in the future?
 
-    #END PARSED OUT OF ASSIGNED_ASSET_GROUPS
+    # END PARSED OUT OF ASSIGNED_ASSET_GROUPS
 
     def __post_init__(self):
         DT_FIELDS = ["CREATION_DATE", "LAST_LOGIN_DATE"]
         INT_FIELDS = ["USER_ID", "UNIT_MANAGER_POC", "MANAGER_POC"]
-        BOOL_FIELDS = ["CREATE_OPTION_PROFILES", "PURGE_INFO", "ADD_ASSETS", "EDIT_REMEDIATION_POLICY", "EDIT_AUTH_RECORDS", "DAILY_TICKETS"]
+        BOOL_FIELDS = [
+            "CREATE_OPTION_PROFILES",
+            "PURGE_INFO",
+            "ADD_ASSETS",
+            "EDIT_REMEDIATION_POLICY",
+            "EDIT_AUTH_RECORDS",
+            "DAILY_TICKETS",
+        ]
 
-        #Parse out the nested fields
+        # Parse out the nested fields
 
         if self.CONTACT_INFO:
             for key, value in self.CONTACT_INFO.items():
@@ -128,14 +168,18 @@ class User:
             for key, value in self.ASSIGNED_ASSET_GROUPS.items():
                 setattr(self, key, value)
 
-        #Convert the fields to the correct types
+        # Convert the fields to the correct types
 
         for field in DT_FIELDS:
             if getattr(self, field):
-                if getattr(self, field) == 'N/A': #Some fields have N/A as a value
+                if getattr(self, field) == "N/A":  # Some fields have N/A as a value
                     setattr(self, field, None)
                 else:
-                    setattr(self, field, datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%S%z"))
+                    setattr(
+                        self,
+                        field,
+                        datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%S%z"),
+                    )
 
         for field in INT_FIELDS:
             if getattr(self, field):
@@ -147,26 +191,25 @@ class User:
 
     def __dict__(self):
         return asdict(self)
-    
+
     def __str__(self):
         return self.USER_LOGIN
-    
+
     def keys(self):
         return self.__dict__().keys()
-    
+
     def values(self):
         return self.__dict__().values()
-    
+
     def items(self):
         return self.__dict__().items()
-    
+
     def valid_values(self):
-        return {k:v for k,v in self.__dict__().items() if v}
-    
+        return {k: v for k, v in self.__dict__().items() if v}
+
     def to_dict(self):
         return self.__dict__()
-    
+
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
-    

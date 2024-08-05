@@ -243,10 +243,10 @@ class KBEntry:
 
     def extend(self, other):
         return self.__dict__.update(other.__dict__)
-    
+
     def __dict__(self):
         return asdict(self)
-    
+
     def to_dict(self):
         return asdict(self)
 

@@ -60,7 +60,7 @@ class ReportTemplate:
 
     def __dict__(self):
         return asdict(self)
-    
+
     def to_dict(self):
         return asdict(self)
 

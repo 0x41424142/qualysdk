@@ -28,7 +28,7 @@ class CVEID:
 
     def __str__(self) -> str:
         return self.ID
-    
+
     def __dict__(self):
         return asdict(self)
 
@@ -41,16 +41,16 @@ class CVEID:
 
     def is_id(self, id: str):
         return self.ID == id
-    
+
     def to_dict(self):
         return asdict(self)
-    
+
     def keys(self):
         return self.to_dict().keys()
-    
+
     def values(self):
         return self.to_dict().values()
-    
+
     def items(self):
         return self.to_dict().items()
 

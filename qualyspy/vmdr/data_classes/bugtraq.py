@@ -27,7 +27,7 @@ class Bugtraq:
 
     def __str__(self):
         return str(self.ID)
-    
+
     def __dict__(self):
         return asdict(self)
 
@@ -42,16 +42,16 @@ class Bugtraq:
 
     def is_url(self, url: str):
         return self.URL == url
-    
+
     def to_dict(self):
         return asdict(self)
-    
+
     def keys(self):
         return self.to_dict().keys()
-    
+
     def values(self):
         return self.to_dict().values()
-    
+
     def items(self):
         return self.to_dict().items()
 

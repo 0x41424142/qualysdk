@@ -4,10 +4,11 @@ with the 'action' parameter controlling what is done with the scan(s).
 """
 
 from datetime import datetime
-from typing import Tuple, Literal
+from typing import Union, Literal
 from io import StringIO
 
 from pandas import read_json, DataFrame
+from numpy import nan
 
 from qualyspy.base import call_api, xml_parser
 from .data_classes.lists.base_list import BaseList
@@ -212,7 +213,7 @@ def manage_scan(
     scan_ref: str,
     action: Literal["pause", "cancel", "resume", "fetch", "delete"],
     **kwargs,
-) -> Tuple[str, str]:
+) -> Union[str, DataFrame]:
     """
     Perform an action on a VMDR scan.
 
@@ -230,7 +231,7 @@ def manage_scan(
         client_name (str): The client name. Defaults to None. Only available for consultant subscriptions.
 
     Returns:
-        Tuple[Union[str, pd.DataFrame], str]: A tuple containing either the text response or a pandas DF and the scan reference ID.
+        Union[str, pd.DataFrame]: Either a text response or a pandas DF.
     """
 
     # Check for valid action:
@@ -283,7 +284,7 @@ def manage_scan(
         if "CODE" in data.keys():
             raise QualysAPIError(data["TEXT"])
 
-        return data["TEXT"], scan_ref
+        return data["TEXT"]
 
     else:
         # Make sure that the response is JSON:
@@ -298,14 +299,15 @@ def manage_scan(
 
         # Parse the JSON response:
         result = read_json(StringIO(response.text))
+        
         if result.empty:
             print("No scan found.")
             return None
 
-        return result, scan_ref
+        return result
 
 
-def pause_scan(auth: BasicAuth, scan_ref: str) -> Tuple[str, str]:
+def pause_scan(auth: BasicAuth, scan_ref: str) -> str:
     """
     Pause a VMDR scan.
 
@@ -314,14 +316,14 @@ def pause_scan(auth: BasicAuth, scan_ref: str) -> Tuple[str, str]:
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 
     Returns:
-        Tuple[str, str]: A tuple containing the text response and the scan reference ID.
+        str: The text response from Qualys
     """
 
     # Call manage_scan with the action set to "pause":
     return manage_scan(auth=auth, scan_ref=scan_ref, action="pause")
 
 
-def resume_scan(auth: BasicAuth, scan_ref: str) -> Tuple[str, str]:
+def resume_scan(auth: BasicAuth, scan_ref: str) -> str:
     """
     Resume a VMDR scan.
 
@@ -330,14 +332,14 @@ def resume_scan(auth: BasicAuth, scan_ref: str) -> Tuple[str, str]:
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 
     Returns:
-        Tuple[str, str]: A tuple containing the text response and the scan reference ID.
+        str: The text response  from Qualys
     """
 
     # Call manage_scan with the action set to "resume":
     return manage_scan(auth=auth, scan_ref=scan_ref, action="resume")
 
 
-def cancel_scan(auth: BasicAuth, scan_ref: str) -> Tuple[str, str]:
+def cancel_scan(auth: BasicAuth, scan_ref: str) -> str:
     """
     Cancel a VMDR scan.
 
@@ -346,14 +348,14 @@ def cancel_scan(auth: BasicAuth, scan_ref: str) -> Tuple[str, str]:
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 
     Returns:
-        Tuple[str, str]: A tuple containing the text response and the scan reference ID.
+        str: The text response from Qualys
     """
 
     # Call manage_scan with the action set to "cancel":
     return manage_scan(auth=auth, scan_ref=scan_ref, action="cancel")
 
 
-def delete_scan(auth: BasicAuth, scan_ref: str) -> Tuple[str, str]:
+def delete_scan(auth: BasicAuth, scan_ref: str) -> str:
     """
     Delete a VMDR scan.
 
@@ -362,14 +364,14 @@ def delete_scan(auth: BasicAuth, scan_ref: str) -> Tuple[str, str]:
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 
     Returns:
-        Tuple[str, str]: A tuple containing the text response and the scan reference ID.
+        str: The text response from Qualys
     """
 
     # Call manage_scan with the action set to "delete":
     return manage_scan(auth=auth, scan_ref=scan_ref, action="delete")
 
 
-def fetch_scan(auth: BasicAuth, scan_ref: str, **kwargs) -> Tuple[DataFrame, str]:
+def fetch_scan(auth: BasicAuth, scan_ref: str, **kwargs) -> DataFrame:
     """
     Fetch VMDR scan results.
 
@@ -384,7 +386,7 @@ def fetch_scan(auth: BasicAuth, scan_ref: str, **kwargs) -> Tuple[DataFrame, str
         client_name (str): The client name. Defaults to None. Only available for consultant subscriptions.
 
     Returns:
-        Tuple[pandas.DataFrame, str]: A tuple containing a pandas DF of the response and the scan reference ID.
+        pd.DataFrame: The scan results in a pandas DataFrame.
     """
 
     # Call manage_scan with the action set to "fetch":

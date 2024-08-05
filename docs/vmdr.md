@@ -1,4 +1,5 @@
 # VMDR APIs
+
 VMDR APIs return data on vulnerabilities in your environment as well as from the Qualys KB. It also returns data on assets, IPs/subnets, asset groups, and more.
 
 After running:
@@ -27,7 +28,7 @@ You can use any of the VMDR endpoints currently supported:
 |```cancel_scan```| Cancel a scan.|
 |```delete_scan```| Delete a scan out of VMDR.|
 |```launch_scan```| Create/launch a new VMDR scan.|
-|```fetch_scan```| Pull the results of a VMDR scan as a tuple. ```tuple[0]``` is a ```pandas.DataFrame``` containing the results and ```tuple[1]``` is the ```scan_ref```.|
+|```fetch_scan```| Pull the results of a VMDR scan as a ```pandas.DataFrame```.|
 |```get_scanner_list```| Pull a list of VMDR scanner appliances.|
 |```get_static_searchlists```| Pull a list of static search lists, according to the ```ids``` parameter.|
 |```get_report_list```| Pull a list of reports.|
@@ -414,7 +415,7 @@ scheduled_scans = get_scan_list(auth, type='Scheduled', show_ags=True, show_op=T
 
 ### Pause Scan API
 
-The ```pause_scan()``` API lets you pause a currently-running VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
+The ```pause_scan()``` API lets you pause a currently-running VM scan in VMDR. Results are returned as a string, which is the response message from Qualys. Acceptable params are:
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
@@ -428,11 +429,11 @@ from qualyspy.vmdr import pause_scan
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
 result = pause_scan(auth, scan_ref='scan/123456789')
->>>("Pausing scan", "scan/123456789")
+>>>Pausing scan
 ```
 
 ### Resume Scan API
-The ```resume_scan()``` API lets you resume a paused VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
+The ```resume_scan()``` API lets you resume a paused VM scan in VMDR. Results are returned as a string, which is the response message from Qualys. Acceptable params are:
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
@@ -446,11 +447,11 @@ from qualyspy.vmdr import resume_scan
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
 result = resume_scan(auth, scan_ref='scan/123456789')
->>>("Resuming scan", "scan/123456789")
+>>>Resuming scan
 ```
 
 ### Cancel Scan API
-The ```cancel_scan()``` API lets you cancel a VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
+The ```cancel_scan()``` API lets you cancel a VM scan in VMDR. Results are returned as string, which is the response message from Qualys. Acceptable params are:
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
@@ -464,11 +465,11 @@ from qualyspy.vmdr import cancel_scan
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
 result = cancel_scan(auth, scan_ref='scan/123456789')
->>>("Cancelling scan", "scan/123456789")
+>>>Cancelling scan
 ```
 
 ### Delete Scan API
-The ```delete_scan()``` API lets you delete a VM scan in VMDR. Results are returned as a tuple with two strings. tuple[0] is the response message from Qualys and tuple[1] is the scan reference. Acceptable params are:
+The ```delete_scan()``` API lets you delete a VM scan in VMDR. Results are returned as a string, which is the response message from Qualys. Acceptable params are:
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
@@ -482,11 +483,11 @@ from qualyspy.vmdr import delete_scan
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
 result = delete_scan(auth, scan_ref='scan/123456789')
->>>("Deleted scan", "scan/123456789")
+>>>Deleted scan
 ```
 
 ### Fetch Scan Results API
-The ```fetch_scan()``` API lets you download the results of a VM scan. Results are returned as a tuple. tuple[0] is the data as a pandas dataframe and tuple[1] is the scan reference. Acceptable params are:
+The ```fetch_scan()``` API lets you download the results of a VM scan. Results are returned as a ```pandas.DataFrame```. Acceptable params are:
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
@@ -504,7 +505,7 @@ from qualyspy.vmdr import fetch_scan
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
 result = fetch_scan(auth, scan_ref='scan/123456789')
->>> (pandas.DataFrame, "scan/123456789")
+>>> pandas.DataFrame
 ```
 
 ### Launch Scan API

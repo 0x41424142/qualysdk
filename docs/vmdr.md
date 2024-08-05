@@ -1,4 +1,4 @@
-﻿# VMDR APIs
+# VMDR APIs
 VMDR APIs return data on vulnerabilities in your environment as well as from the Qualys KB. It also returns data on assets, IPs/subnets, asset groups, and more.
 
 After running:
@@ -809,7 +809,7 @@ from qualyspy.vmdr import cancel_report
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
 result = cancel_report(auth)
->>>
+>>>Report cancelled
 ```
 
 ### Fetch Report Results API

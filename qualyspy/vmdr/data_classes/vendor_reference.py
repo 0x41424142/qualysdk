@@ -2,7 +2,7 @@
 vendor_reference.py - contains the VendorReference dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 
 
@@ -44,6 +44,18 @@ class VendorReference:
 
     def is_url(self, url: str):
         return self.URL == url
+
+    def to_dict(self):
+        return asdict(self)
+
+    def keys(self):
+        return self.to_dict().keys()
+
+    def values(self):
+        return self.to_dict().values()
+
+    def items(self):
+        return self.to_dict().items()
 
     @classmethod
     def from_dict(cls, data: dict):

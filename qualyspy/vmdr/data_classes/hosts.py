@@ -2,7 +2,7 @@
 hosts.py - contains the VMDRHosts class for the Qualyspy package.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 from datetime import datetime
 
@@ -467,6 +467,36 @@ class VMDRHost:
             and (isinstance(v, BaseList) and v != BaseList())
         }
 
+    def to_dict(self) -> dict:
+        """
+        Convert the host object to a dictionary.
+        """
+        return asdict(self)
+
+    def __dict__(self) -> dict:
+        """
+        Convert the host object to a dictionary.
+        """
+        return asdict(self)
+
+    def keys(self) -> list:
+        """
+        Return the keys of the host object.
+        """
+        return self.__dict__.keys()
+
+    def values(self) -> list:
+        """
+        Return the values of the host object.
+        """
+        return self.__dict__.values()
+
+    def items(self) -> list:
+        """
+        Return the items of the host object.
+        """
+        return self.__dict__.items()
+
     @classmethod
     def from_dict(cls, data: dict) -> "VMDRHost":
         """
@@ -520,6 +550,12 @@ class VMDRID:
             return f"VMDRID({self.ID}, type='asset')"
         else:
             return f"VMDRID({self.ID}, type='host')"
+
+    def __dict__(self) -> dict:
+        return asdict(self)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
 
     def __iter__(self):
         """

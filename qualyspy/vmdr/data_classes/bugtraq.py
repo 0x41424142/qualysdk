@@ -2,7 +2,7 @@
 bugtraq.py - contains the BugTraq dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 
 
@@ -28,6 +28,9 @@ class Bugtraq:
     def __str__(self):
         return str(self.ID)
 
+    def __dict__(self):
+        return asdict(self)
+
     def __contains__(self, item):
         return item in self.ID or item in self.URL
 
@@ -39,6 +42,18 @@ class Bugtraq:
 
     def is_url(self, url: str):
         return self.URL == url
+
+    def to_dict(self):
+        return asdict(self)
+
+    def keys(self):
+        return self.to_dict().keys()
+
+    def values(self):
+        return self.to_dict().values()
+
+    def items(self):
+        return self.to_dict().items()
 
     @classmethod
     def from_dict(cls, data: dict):

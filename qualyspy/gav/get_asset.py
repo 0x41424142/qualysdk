@@ -8,19 +8,20 @@ from ..exceptions.Exceptions import *
 from .hosts import Host
 
 
-def get_asset(auth: TokenAuth, **kwargs):
+def get_asset(auth: TokenAuth, **kwargs) -> Host:
     """
     Get a specific host from the Global AssetView API.
 
     Params:
         auth (TokenAuth): The authentication object.
-    API params (kwargs):
+
+    :Kwargs:
         assetId (int): The asset ID to get.
         lastSeenAssetId (int): The last seen asset ID.
         lastModifiedDate (str): The last modified date.
 
     Returns:
-        dict: The response from the API.
+        Host: The Host object.
     """
     # despite the fact that this is a POST request, we still need to send stuff as a parameter
     # because Qualys is Qualys.

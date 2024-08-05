@@ -24,6 +24,7 @@ from .data_classes import (
     VMDRReport,
     ReportTemplate,
     VMDRScheduledReport,
+    User,
 )
 
 from .data_classes.lists import BaseList
@@ -54,3 +55,5 @@ from .reports import (
     get_scheduled_report_list,
     launch_scheduled_report,
 )
+
+from .users import get_user_list, add_user, edit_user

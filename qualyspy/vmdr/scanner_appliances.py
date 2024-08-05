@@ -17,7 +17,7 @@ def get_scanner_list(auth: BasicAuth, **kwargs) -> BaseList[ScannerAppliance]:
         auth (BasicAuth): The BasicAuth context to use.
         **kwargs: Additional keyword arguments to filter the Scanner Appliances by.
 
-    Keyword Args:
+    :Kwargs:
         action (str): The action to filter by. NOTE: the SDK force-sets this to "list". It is just included for completeness.
         echo_request (bool): Whether to echo the request. NOTE: the SDK force-sets this to False. It is just included for completeness.
         output_mode (Literal['brief', 'full']): The output mode. Defaults to 'brief'.

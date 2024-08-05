@@ -9,13 +9,14 @@ from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import *
 
 
-def count_assets(auth: TokenAuth, **kwargs):
+def count_assets(auth: TokenAuth, **kwargs) -> dict:
     """
     Count assets in the Global AssetView API based on a QQL filter.
 
     Params:
         auth (TokenAuth): The authentication object.
-    API params (kwargs):
+
+    :Kwargs:
         filter (str): The Qualys QQL filter to use.
         lastSeenAssetId (int): The last seen asset ID.
         lastModifiedDate (str): The last modified date.

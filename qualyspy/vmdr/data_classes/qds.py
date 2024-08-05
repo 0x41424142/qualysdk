@@ -2,7 +2,7 @@
 qds.py - contains the QDS dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 
 
@@ -50,6 +50,18 @@ class QDS:
 
     def get_score(self):
         return self.SCORE
+
+    def to_dict(self):
+        return asdict(self)
+
+    def keys(self):
+        return self.to_dict().keys()
+
+    def values(self):
+        return self.to_dict().values()
+
+    def items(self):
+        return self.to_dict().items()
 
     @classmethod
     def from_dict(cls, data: dict):

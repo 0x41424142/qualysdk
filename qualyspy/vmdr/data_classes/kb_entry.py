@@ -4,7 +4,7 @@ kb_entry.py - contains the KBEntry class for the Qualyspy package.
 This class is used to represent a single entry in the Qualys KnowledgeBase (KB).
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import *
 from datetime import datetime
 from warnings import catch_warnings, simplefilter
@@ -12,14 +12,6 @@ from warnings import catch_warnings, simplefilter
 from bs4 import BeautifulSoup
 
 from .lists import BaseList
-
-from .bugtraq import Bugtraq
-from .software import Software
-from .vendor_reference import VendorReference
-from .cve import CVEID
-from .threat_intel import ThreatIntel
-from .compliance import Compliance
-from .tag import Tag, CloudTag
 
 
 @dataclass(order=True)
@@ -251,6 +243,12 @@ class KBEntry:
 
     def extend(self, other):
         return self.__dict__.update(other.__dict__)
+
+    def __dict__(self):
+        return asdict(self)
+
+    def to_dict(self):
+        return asdict(self)
 
     @classmethod
     def from_dict(cls, data: dict):

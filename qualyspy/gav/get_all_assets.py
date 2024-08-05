@@ -12,14 +12,15 @@ from .hosts import Host
 
 def get_all_assets(
     auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs
-) -> list:
+) -> list[Host]:
     """
     Get all assets in the Global AssetView API.
 
     Params:
         auth (TokenAuth): The authentication object.
         page_count (Union[int, "all"]): The number of pages to get. If "all", get all pages. Defaults to "all".
-    API params (kwargs):
+
+    :Kwargs:
         excludeFields (str): The fields to exclude.
         includeFields (str): The fields to include.
         lastSeenAssetId (int): The last seen asset ID. Used for automatic pagination.

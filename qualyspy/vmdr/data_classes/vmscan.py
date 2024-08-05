@@ -27,8 +27,11 @@ def parse_duration(duration: str) -> timedelta:
         days = 0
         time = duration
 
-    hours, minutes, seconds = map(int, time.split(":"))
-    return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+    try:
+        hours, minutes, seconds = map(int, time.split(":"))
+        return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+    except ValueError:
+        return timedelta(days=days)
 
 
 @dataclass(order=True)

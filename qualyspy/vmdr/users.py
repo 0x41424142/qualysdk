@@ -18,7 +18,7 @@ def get_user_list(auth: BasicAuth, **kwargs) -> List[User]:
     Params:
         auth (BasicAuth): The authentication object.
 
-    Kwargs:
+    :Kwargs:
         external_id__contains (str): Filter by external ID containing this string.
         external_id_assigned (bool): Filter by external ID assigned.
 
@@ -95,7 +95,7 @@ def add_user(
         country (str): The country of the user.
         state (str): The state of the user.
 
-    Kwargs:
+    :Kwargs:
         send_email (bool): Send an email to the user about their activation. True by default. If False, output will contain the username and password.
         asset_groups (str): Comma-separated string of asset group IDs.
         fax (str): The fax number of the user. Because 21st century...
@@ -145,3 +145,54 @@ def add_user(
 
     else:
         return result["USER_OUTPUT"]["RETURN"]["MESSAGE"]
+
+
+def edit_user(auth: BasicAuth, login: str, **kwargs) -> str:
+    """
+    Change details of a pre-existing user in Qualys.
+    NOTE: To clear a field, specify it with an empty string in the kwargs.
+
+    Parameters:
+        auth (BasicAuth): The authentication object.
+        login (str): The login of the user to edit.
+
+    :Kwargs:
+        asset_groups (str): Comma-separated string of asset group IDs.
+        first_name (str): The first name of the user.
+        last_name (str): The last name of the user.
+        title (str): The title of the user.
+        phone (str): The phone number of the user.
+        fax (str): The fax number of the user. Because 21st century...
+        email (str): The email of the user.
+        address1 (str): The address of the user.
+        address2 (str): The second line of the address.
+        city (str): The city of the user.
+        country (str): The country of the user.
+        state (str): The state of the user.
+        zip_code (str): The zip code.
+        external_id (str): The external ID of the user.
+
+    Returns:
+        str: The message from Qualys.
+    """
+
+    params = {"action": "edit", "login": login}
+    params.update(kwargs)
+
+    response = call_api(
+        auth=auth,
+        module="vmdr",
+        endpoint="edit_user",
+        params=params,
+        headers={"X-Requested-With": "qualyspy SDK"},
+    )
+
+    if response.status_code != 200:
+        raise QualysAPIError(response.text)
+
+    result = xml_parser(response.text)
+
+    if result["USER_OUTPUT"]["RETURN"]["@status"] == "FAILED":
+        raise QualysAPIError(result["USER_OUTPUT"]["RETURN"]["MESSAGE"])
+
+    return result["USER_OUTPUT"]["RETURN"]["MESSAGE"]

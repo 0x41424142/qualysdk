@@ -24,7 +24,8 @@ def get_host_list(
     Params:
         auth (BasicAuth): The authentication object.
         page_count (Union[int, "all"]): The number of pages to get. If "all", get all pages. Defaults to "all".
-    API params (kwargs):
+
+    :Kwargs:
         ```
         action (Optional[str]) #The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
         echo_request (Optional[bool]) #Whether to show the request. Default is 'False'. ends up being passed to API as 0 or 1.

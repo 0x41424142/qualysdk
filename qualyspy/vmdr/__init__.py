@@ -56,4 +56,4 @@ from .reports import (
     launch_scheduled_report,
 )
 
-from .users import get_user_list, add_user
+from .users import get_user_list, add_user, edit_user

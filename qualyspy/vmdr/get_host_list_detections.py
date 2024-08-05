@@ -77,7 +77,7 @@ def hld_backend(
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
         **kwargs: Additional keyword arguments to pass to the API. See below.
 
-    Keyword Args:
+    :Kwargs:
         ```
         action (Optional[str]) #The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
         echo_request (Optional[bool]) #Whether to echo the request. Default is False. Ends up being passed to the API as 0 or 1. WARNING: this SDK does not include this field in the data.

@@ -21,7 +21,7 @@ def get_ag_list(
         auth (BasicAuth): Qualys BasicAuth object.
         page_count (Union["all", int]): The number of pages to retrieve. Defaults to "all". If an integer is passed, that number of pages will be retrieved.
 
-    Keyword Args:
+    :Kwargs:
         ```
         action (str): Action to perform on the asset groups. Defaults to "list". WARNING: SDK automatically sets this value to list. It is just included for completeness.
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value to 0. It is just included for completeness.
@@ -116,7 +116,7 @@ def manage_ag(
         action (Literal["add", "edit", "delete"]): The action to perform on the asset group.
         id (Union[AssetGroup, BaseList, str]): The ID of the asset group to edit or delete. Defaults to None. If a single AssetGroup, or a BaseList of AssetGroups is passed, the function will iterate over them.
 
-    Keyword Args:
+    :Kwargs:
         ```
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value to 0. It is just included for completeness.
 
@@ -253,7 +253,7 @@ def add_ag(auth: BasicAuth, title: str, **kwargs) -> str:
         auth (BasicAuth): Qualys BasicAuth object.
         title (str): Title of the asset group.
 
-    Keyword Args:
+    :Kwargs:
         ```
         comments (str): Comments for the asset group.
         division (str): Division of the asset group.
@@ -287,7 +287,7 @@ def edit_ag(auth: BasicAuth, id: Union[AssetGroup, BaseList, str], **kwargs) -> 
         auth (BasicAuth): Qualys BasicAuth object.
         id (Union[AssetGroup, BaseList, str]): The ID of the asset group to edit. If a single AssetGroup, or a BaseList of AssetGroups is passed, the function will iterate over them.
 
-    Keyword Args:
+    :Kwargs:
         ```
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value to 0. It is just included for completeness.
         set_comments (str): New comments for the asset group.

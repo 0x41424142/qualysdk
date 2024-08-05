@@ -975,8 +975,8 @@ Parameter| Possible Values |Description|Required|
 |```email```|```str```|The email address of the user.|✅|
 |```address1```|```str```|The first line of the user's address.|✅|
 |```city```|```str```|The city of the user.|✅|
-|```state```|```str```|The state of the user. Must be the full state name, such as "Maryland" or "Pennsylvania".|✅|
-|```country```|```str```|The country of the user. Must be the full country name, such as "United States of America".|✅|
+|```state```|```str```|The state of the user. Must be the full state name, such as ```"Maryland"``` or ```"Pennsylvania"```.|✅|
+|```country```|```str```|The country of the user. Must be the full country name, such as ```"United States of America"```.|✅|
 |```send_email```|```True/False```|If ```True```, an email will be sent to the user with their login information. If ```False```, the username and password will be returned in the response. Defaults to ```True```.|❌|
 |```asset_groups```|```str```|A comma-separated string of asset groups to assign to the user.|❌|
 |```fax```|```str```|The fax number of the user - because fax is still very widely used nowadays. 😉|❌|
@@ -997,6 +997,44 @@ result = add_user(auth, user_role='manager', business_unit='Unassigned', first_n
 # Add a new user to VMDR and return their username and password:
 result = add_user(auth, user_role='manager', business_unit='Unassigned', first_name='Alice', last_name='Smith', title='Manager', phone='555-555-5555', ..., send_email=False)
 >>>User alice_123 created. User:Pass is: alice_123, Password: 12345
+```
+
+### Edit User API
+
+This API lets you edit an existing user account in VMDR. It returns a string with the Qualys response. Certain fields can not be edited. If you try to edit one of these, the SDK will raise a ```QualysAPIError``` Exception. You can also clear/"wipe" certain fields by specifiying an empty string in the kwarg.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```login```|```str```|The username of the user to edit.|✅|
+|```asset_groups```|```str```|A comma-separated string of asset groups to assign to the user.|❌|
+|```first_name```|```str```|The first name of the user.|❌|
+|```last_name```|```str```|The last name of the user.|❌|
+|```title```|```str```|The title of the user.|❌|
+|```phone```|```str```|The phone number of the user.|❌|
+|```fax```|```str```|The fax number of the user.|❌|
+|```email```|```str```|The email address of the user.|❌|
+|```address1```|```str```|The first line of the user's address.|❌|
+|```address2```|```str```|The second line of the user's address.|❌|
+|```city```|```str```|The city of the user.|❌|
+|```state```|```str```|The state of the user. Must be the full state name, such as ```"Maryland"``` or ```"Pennsylvania"```.|❌|
+|```country```|```str```|The country of the user. Must be the full country name, such as ```"United States of America"```.|❌|
+|```zip_code```|```str```|The ZIP code of the user.|❌|
+|```external_id```|```str```|The external ID of the user.|❌|
+
+```py
+from qualyspy.auth import BasicAuth
+from qualyspy.vmdr import edit_user
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+# Edit Alice's phone number:
+result = edit_user(auth, login='alice_123', phone='555-555-5555')
+>>>User alice_123 has been successfully updated.
+
+# Clear Alice's phone number:
+result = edit_user(auth, login='alice_123', phone='')
+>>>User alice_123 has been successfully updated.
 ```
 
 ## Querying the KB

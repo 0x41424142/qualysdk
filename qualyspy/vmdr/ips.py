@@ -19,7 +19,7 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
     Params:
         auth (BasicAuth): Qualys BasicAuth object.
 
-    Keyword Args:
+    :Kwargs:
         ```
         action (str): Action to perform on the IP addresses. Defaults to "list". WARNING: SDK automatically sets this value. It is just included for completeness.
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value. It is just included for completeness.
@@ -97,7 +97,7 @@ def add_ips(
         enable_sca (bool): Whether to enable SCA on the IP addresses. Defaults to False.
         NOTE: EITHER enable_pc OR enable_vm MUST BE TRUE FOR THE IP ADDITION TO WORK!
 
-    Keyword Args:
+    :Kwargs:
         ```
         action (str): Action to perform on the IP addresses. Defaults to "add". WARNING: SDK automatically sets this value. It is just included for completeness.
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value. It is just included for completeness.
@@ -163,7 +163,7 @@ def update_ips(auth: BasicAuth, ips: Union[str, BaseList], **kwargs) -> None:
         auth (BasicAuth): Qualys BasicAuth object.
         ips (Union[str, BaseList): List of IP addresses/ranges to update. Can be a string or a BaseList object containing IPs. Multiple entries are comma separated. A host IP range is specified with a hyphen.
 
-    Keyword Args:
+    :Kwargs:
         ```
         action (str): Action to perform on the IP addresses. Defaults to "update". WARNING: SDK automatically sets this value. It is just included for completeness.
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value. It is just included for completeness.

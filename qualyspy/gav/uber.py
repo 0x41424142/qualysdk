@@ -54,6 +54,9 @@ class GAVUber:
         Params:
             endpoint (str): The endpoint to call. Must be one of the keys in CALL_SCHEMA["gav"].
             **kwargs: The keyword arguments to pass to the endpoint.
+
+        Returns:
+            The response from the API call.
         """
 
         match endpoint:

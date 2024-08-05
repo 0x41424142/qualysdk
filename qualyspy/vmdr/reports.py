@@ -33,7 +33,7 @@ def manage_scheduled_reports(
     Returns:
         Response - The response from the API.
 
-    Kwargs:
+    :Kwargs:
         Look at the specific functions for the kwargs they accept: get_scheduled_report_list, launch_scheduled_report, etc.
     """
 
@@ -81,7 +81,7 @@ def manage_reports(
     Returns:
         Response - The response from the API.
 
-    Kwargs:
+    :Kwargs:
         Look at the specific functions for the kwargs they accept: get_report_list, launch_report, etc.
     """
 
@@ -148,7 +148,7 @@ def get_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]:
     Parameters:
         auth: Required[BasicAuth] - The BasicAuth object.
 
-    Kwargs:
+    :Kwargs:
         id: Optional[Union[int,str]] - A specific report ID to get.
         state: Optional[str] - Filter output to reports in a specific state.
         user_login: Optional[str] - Filter output to reports launched by a specific user.
@@ -223,7 +223,7 @@ def launch_report(auth: BasicAuth, template_id: str, **kwargs) -> int:
         auth: Required[BasicAuth] - The BasicAuth object.
         template_id: Union[int, str] - The ID of the template to use for the report.
 
-    Kwargs:
+    :Kwargs:
 
         Parameter| Possible Values |Description|Required|
         |--|--|--|--|
@@ -375,7 +375,7 @@ def get_scheduled_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]
     Parameters:
         auth: Required[BasicAuth] - The BasicAuth object.
 
-    Kwargs:
+    :Kwargs:
         id: Optional[Union[int,str]] - A specific report ID to get.
         is_active: Optional[bool] - Filter output to active or inactive reports. True for active, False for inactive.
 

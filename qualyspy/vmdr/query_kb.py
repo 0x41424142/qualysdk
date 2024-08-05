@@ -22,7 +22,8 @@ def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
 
     Params:
         auth (BasicAuth) The authentication object.
-    API params (kwargs):
+
+    :Kwargs:
         ```
         action (str) #The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
         code_modified_after (str) #The date to search for vulnerabilities modified after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.

@@ -12,7 +12,9 @@ from ..exceptions.Exceptions import *
 from .hosts import Host
 
 
-def query_assets(auth: TokenAuth, page_count: Union["all", int] = "all", **kwargs)-> list[Host]:
+def query_assets(
+    auth: TokenAuth, page_count: Union["all", int] = "all", **kwargs
+) -> list[Host]:
     """
     Queries GAV inventory for assets that satisfy a Qualys Query Language (QQL) filter.
 

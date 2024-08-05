@@ -716,7 +716,7 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
-            "edit_user":{
+            "edit_user": {
                 "endpoint": "/msp/user.php",
                 "method": ["GET", "POST"],
                 "valid_params": [

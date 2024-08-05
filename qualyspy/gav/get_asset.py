@@ -14,7 +14,7 @@ def get_asset(auth: TokenAuth, **kwargs) -> Host:
 
     Params:
         auth (TokenAuth): The authentication object.
-        
+
     :Kwargs:
         assetId (int): The asset ID to get.
         lastSeenAssetId (int): The last seen asset ID.

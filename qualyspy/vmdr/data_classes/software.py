@@ -39,16 +39,16 @@ class Software:
 
     def is_name(self, product: str):
         return self.PRODUCT.lower() == product.lower()
-    
+
     def to_dict(self):
         return asdict(self)
-    
+
     def keys(self):
         return self.to_dict().keys()
-    
+
     def values(self):
         return self.to_dict().values()
-    
+
     def items(self):
         return self.to_dict().items()
 

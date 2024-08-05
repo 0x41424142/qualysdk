@@ -116,7 +116,7 @@ class VMDRReport:
 
     def items(self):
         return asdict(self).items()
-    
+
     def to_dict(self):
         return asdict(self)
 

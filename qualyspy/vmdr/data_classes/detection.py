@@ -234,16 +234,16 @@ class Detection:
         This function is used to convert the Detection object to a dictionary.
         """
         return asdict(self)
-    
+
     def __dict__(self):
         return asdict(self)
-    
+
     def keys(self):
         return self.__dict__().keys()
-    
+
     def values(self):
         return self.__dict__().values()
-    
+
     def items(self):
         return self.__dict__().items()
 

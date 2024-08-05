@@ -50,16 +50,16 @@ class QDS:
 
     def get_score(self):
         return self.SCORE
-    
+
     def to_dict(self):
         return asdict(self)
-    
+
     def keys(self):
         return self.to_dict().keys()
-    
+
     def values(self):
         return self.to_dict().values()
-    
+
     def items(self):
         return self.to_dict().items()
 

@@ -282,7 +282,7 @@ class AssetGroup:
         This function is used to convert the AssetGroup object to a dictionary.
         """
         return asdict(self)
-    
+
     def __dict__(self):
         return asdict(self)
 

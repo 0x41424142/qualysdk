@@ -81,16 +81,16 @@ class QDSFactor:
 
     def get_name(self):
         return self.NAME
-    
+
     def to_dict(self):
         return asdict(self)
-    
+
     def keys(self):
         return self.to_dict().keys()
-    
+
     def values(self):
         return self.to_dict().values()
-    
+
     def items(self):
         return self.to_dict().items()
 

@@ -708,7 +708,7 @@ CALL_SCHEMA = frozendict(
                     "fax",
                     "address2",
                     "zip_code",
-                    "external_id"
+                    "external_id",
                 ],
                 "valid_POST_data": [],
                 "use_requests_json_data": False,

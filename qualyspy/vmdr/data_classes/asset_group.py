@@ -53,7 +53,7 @@ class AssetGroup:
         BaseList[Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]]
     ] = field(
         metadata={"description": "The IP set of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
     BUSINESS_IMPACT: Optional[str] = field(
         metadata={"description": "The business impact of the asset group."},
@@ -65,29 +65,29 @@ class AssetGroup:
     )
     APPLIANCE_IDS: Optional[BaseList[int]] = field(
         metadata={"description": "The appliance IDs of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
     DNS_LIST: Optional[BaseList[str]] = field(
         metadata={"description": "The DNS list of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
     NETBIOS_LIST: Optional[BaseList[str]] = field(
         metadata={"description": "The NetBIOS list of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
     HOST_IDS: Optional[BaseList[VMDRID]] = field(
         metadata={
             "description": "The host IDs of the asset group. BaseList of VMDRID objects."
         },
-        default_factory=BaseList,
+        default=None,
     )
     ASSIGNED_USER_IDS: Optional[BaseList[int]] = field(
         metadata={"description": "The assigned user IDs of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
     ASSIGNED_UNIT_IDS: Optional[BaseList[int]] = field(
         metadata={"description": "The assigned unit IDs of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
     OWNER_USER_NAME: Optional[str] = field(
         metadata={"description": "The owner user name of the asset group."},
@@ -115,15 +115,15 @@ class AssetGroup:
     )
     EC2_IDS: Optional[BaseList[str]] = field(
         metadata={"description": "The EC2 IDs of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
     COMMENTS: Optional[BaseList[str]] = field(
         metadata={"description": "The comments of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
     DOMAIN_LIST: Optional[BaseList[str]] = field(
         metadata={"description": "The domain list of the asset group."},
-        default_factory=BaseList,
+        default=None,
     )
 
     def __post_init__(self):
@@ -156,16 +156,16 @@ class AssetGroup:
                     )
 
         for field in DT_FIELDS:
-            if getattr(self, field) is not None:
+            if getattr(self, field):
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
         for field in INT_FIELDS:
-            if getattr(self, field) is not None:
+            if getattr(self, field):
                 setattr(self, field, int(getattr(self, field)))
 
         # Convert IP_SET to BaseList of ipaddress.* objs.:
-        final_ip_set = BaseList()
         if self.IP_SET:
+            final_ip_set = BaseList()
             if self.IP_SET.get("IP_RANGE"):
                 if isinstance(self.IP_SET.get("IP_RANGE"), str):
                     # We can use single_range here because it's a single IP range.
@@ -182,11 +182,11 @@ class AssetGroup:
                     # We can use convert_ips here because it's a list of IPs.
                     final_ip_set.extend(convert_ips(self.IP_SET.get("IP")))
 
-        self.IP_SET = final_ip_set
+            self.IP_SET = final_ip_set
 
         # Convert HOST_IDS to BaseList of VMDRID objs.:
-        final_host_ids = BaseList()
         if self.HOST_IDS:
+            final_host_ids = BaseList()
             if isinstance(self.HOST_IDS, str):
                 final_host_ids.extend(
                     [
@@ -199,10 +199,10 @@ class AssetGroup:
                     [VMDRID(ID=host_id, TYPE="host") for host_id in self.HOST_IDS]
                 )
 
-        self.HOST_IDS = final_host_ids
+            self.HOST_IDS = final_host_ids
 
     def __str__(self):
-        return str(self.ID)
+        return self.TITLE
 
     def __contains__(self, item):
         return (
@@ -300,3 +300,36 @@ class AssetGroup:
             )
 
         return cls(**data)
+
+    def to_sql(self) -> dict:
+        """
+        Prepare the dataclass for insertion into a SQL database
+        by converting it to a dictionary with appropriate list
+        and datetime conversions.
+        """
+
+        # TODO: NOTE: INSTEAD OF ASDICT, MAYBE TRY ACCESSING THE ATTRIBUTES DIRECTLY, MODIFYING THEM, AND THEN DOING ASDICT???
+        # NOTE: ABOVE WORKS. DO IT.
+        LIST_FIELDS = [
+            "IP_SET",
+            "APPLIANCE_IDS",
+            "DNS_LIST",
+            "HOST_IDS",
+            "NETBIOS_LIST",
+            "ASSIGNED_USER_IDS",
+            "ASSIGNED_UNIT_IDS",
+            "EC2_IDS",
+            "COMMENTS",
+            "DOMAIN_LIST",
+        ]
+
+        # Iterate over the attrs of the dataclass and convert them to the appropriate format for SQL insertion.
+
+        for attr in self.__dataclass_fields__.keys():
+            if getattr(self, attr):
+                if attr in LIST_FIELDS:
+                    setattr(self, attr, str(getattr(self, attr)))
+
+        sql_dict = self.to_dict()
+
+        return sql_dict

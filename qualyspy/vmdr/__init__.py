@@ -6,6 +6,7 @@ This module contains ways to interact with the Qualys VMDR API. Valid endpoints 
 VMDR QQL Syntax help: https://qualysguard.qg2.apps.qualys.com/portal-help/en/vm/search/how_to_search.htm
 """
 
+"""
 from .data_classes import (
     Software,
     VendorReference,
@@ -28,12 +29,12 @@ from .data_classes import (
 )
 
 from .data_classes.lists import BaseList
-
+"""
 from .query_kb import query_kb
 from .get_host_list import get_host_list
 from .get_host_list_detections import get_hld
 from .ips import get_ip_list, add_ips, update_ips
-from .assetgroups import *
+from .assetgroups import get_ag_list, add_ag, edit_ag, delete_ag
 from .vmscans import (
     get_scan_list,
     launch_scan,

@@ -37,9 +37,9 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |--|--|
 | GAV (Global AssetView) |✅|
 | VMDR | In Progress (```query_kb```, ```get_host_list```, ```get_hld```, ```get_ag_list```, ```add/edit/remove_ag```, ```get_ip_list```, ```add/update_ips```, ```get_scan_list```, ```pause_scan```, ```cancel_scan```, ```resume_scan```, ```delete_scan```, ```launch_scan```, ```fetch_scan```, ```get_scanner_list```, ```get_static_searchlists```, ```get_report_list```, ```launch/cancel/fetch/delete_report```, ```get_template_list```, ```get_scheduled_report_list```, ```launch_scheduled_report```, ```get_user_list```, ```add/edit_user``` implemented) |
-| PM (Patch Management) | In Planning |
-| WAS | Not Started |
-| TC (TotalCloud) | Not Started |
+| PM (Patch Management) | Not Started |
+| WAS | In Planning |
+| TC (TotalCloud) | Started |
 |Connectors | Not Started |
 |Cloud Agent | Not Started |
 |CS (Container Security) | Not Started
@@ -64,6 +64,6 @@ For official tools and support, please refer to the official Qualys resources an
 
 - Continue adding VMDR APIs.
 
-- Start work on PM module.
+- Start work on TotalCloud/WAS modules.
 
-- Begin SQL integration.
+- Continue SQL integration.

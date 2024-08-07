@@ -14,6 +14,8 @@ bs4 = "^0.0.2"
 lxml = "^5.2.2"
 pandas = "^2.2.2"
 mkdocs = "^1.6.0"
+sqlalchemy = "^2.0.32"
+pyodbc = "^5.1.0"
 
 
 [build-system]

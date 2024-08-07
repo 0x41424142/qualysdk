@@ -11,6 +11,7 @@ from .gav.uber import GAVUber
 
 from .vmdr import query_kb, get_host_list, get_hld
 
+from .sql import db_connect
 
 # surprise!
 __surprise__ = b"\xe2\x9c\xa8\xe2\x9c\xa8\xe2\x9c\xa8 Have a great day!".decode("utf-8")

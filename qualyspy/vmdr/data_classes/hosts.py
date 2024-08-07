@@ -206,7 +206,7 @@ class VMDRHost:
     )
 
     DETECTION_LIST: Optional[Union[list[Detection], BaseList[Detection]]] = field(
-        default_factory=BaseList,
+        default=None,
         metadata={"description": "The detection list of the host."},
         compare=False,
     )
@@ -388,21 +388,10 @@ class VMDRHost:
         """
         String representation of the host object.
         """
-        if self.ASSET_ID:
-            return f"Host({self.ASSET_ID})"
-        elif self.ID:
-            return f"Host({self.ID})"
-        else:
-            # fall back to QG_HostID:
-            return f"Host({self.QG_HOSTID})"
+        return str(self.ID)
 
     def __int__(self) -> int:
-        if self.ASSET_ID:
-            return self.ASSET_ID
-        elif self.ID:
-            return self.ID
-        else:
-            raise ValueError("Host object does not have an asset ID or host ID.")
+        return self.ID
 
     def __repr__(self) -> str:
         """
@@ -530,14 +519,7 @@ class VMDRID:
         if not self.ID:
             raise ValueError("ID attribute cannot be None.")
 
-        if self.TYPE == "asset" and self.ID:
-            self.ID = int(self.ID)
-        elif self.TYPE == "host" and self.ID:
-            self.ID = int(self.ID)
-        else:
-            raise ValueError(
-                f"TYPE attribute must be 'asset' or 'host, not {self.TYPE}'"
-            )
+        self.ID = int(self.ID)
 
     def __str__(self) -> str:
         return str(self.ID)

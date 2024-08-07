@@ -20,10 +20,10 @@ class Bugtraq:
     def __post_init__(self):
         # make sure that the ID is an integer:
         if not isinstance(self.ID, int):
-            raise TypeError(f"BugTraq ID must be an integer, not {type(self.ID)}")
+            self.ID = int(self.ID)
         # and that url is a string:
         if not isinstance(self.URL, str):
-            raise TypeError(f"BugTraq URL must be a string, not {type(self.URL)}")
+            self.URL = str(self.URL)
 
     def __str__(self):
         return str(self.ID)

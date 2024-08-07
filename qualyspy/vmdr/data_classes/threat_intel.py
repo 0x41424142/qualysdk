@@ -22,10 +22,10 @@ class ThreatIntel:
     def __post_init__(self):
         # make sure that the ID is an integer:
         if not isinstance(self.ID, int):
-            raise TypeError(f"ThreatIntel ID must be an integer, not {type(self.ID)}")
+            self.ID = int(self.ID)
         # and that text is a string:
         if not isinstance(self.TEXT, str):
-            raise TypeError(f"ThreatIntel TEXT must be a string, not {type(self.TEXT)}")
+            self.TEXT = str(self.TEXT)
 
     def __str__(self):
         return str(self.TEXT)

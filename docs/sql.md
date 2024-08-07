@@ -36,8 +36,8 @@ Each upload function takes 2 parameters. The first is the ```BaseList``` of data
 | Function Name | Module  | ```qualyspy``` Function Data Source |
 | -- | -- | -- |
 | ```upload_ags``` | VMDR | ```vmdr.get_ag_list()```|
-| ```upload_kb``` | VMDR | ```vmdr.query_kb```|
-| ```upload_vmdr_hosts``` | VMDR | ```vmdr.get_host_list```|
+| ```upload_kb``` | VMDR | ```vmdr.query_kb()```|
+| ```upload_vmdr_hosts``` | VMDR | ```vmdr.get_host_list()```|
 
 ## A Friendly Recommendation For Getting Data
 

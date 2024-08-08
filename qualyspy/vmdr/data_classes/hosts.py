@@ -449,7 +449,6 @@ class VMDRHost:
 
         # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
         if self.DETECTION_LIST:
-
             detections_bl = BaseList()
             data = self.DETECTION_LIST["DETECTION"]
 

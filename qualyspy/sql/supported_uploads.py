@@ -9,9 +9,9 @@ from .base import upload_data, prepare_dataclass
 from ..vmdr.data_classes.lists import BaseList
 
 
-def upload_ags(ags: BaseList, cnxn: Connection) -> int:
+def upload_vmdr_ags(ags: BaseList, cnxn: Connection) -> int:
     """
-    Upload data from vmdr.get_ag_list() to SQL Server.
+    Upload data from vmdr.get_ag_list() to SQL.
 
     Parameters:
     ags (BaseList): The Asset Group List to upload.
@@ -66,9 +66,9 @@ def upload_ags(ags: BaseList, cnxn: Connection) -> int:
     return upload_data(df, "AssetGroups", cnxn, dtype=COLS)
 
 
-def upload_kb(kbs: BaseList, cnxn: Connection) -> int:
+def upload_vmdr_kb(kbs: BaseList, cnxn: Connection) -> int:
     """
-    Upload data from vmdr.query_kb() to SQL Server.
+    Upload data from vmdr.query_kb() to SQL.
 
     Parameters:
     kbs (BaseList): The KB List to upload.
@@ -120,7 +120,7 @@ def upload_kb(kbs: BaseList, cnxn: Connection) -> int:
 
 def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection) -> int:
     """
-    Upload data from vmdr.get_host_list() to SQL Server.
+    Upload data from vmdr.get_host_list() to SQL.
 
     Parameters:
         hosts (BaseList): The Host List to upload.
@@ -166,6 +166,17 @@ def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection) -> int:
         "CLOUD_SERVICE": types.String(),
         "CLOUD_RESOURCE_ID": types.String(),
         "EC2_INSTANCE_ID": types.String(),
+        "CLOUD_GROUP_NAME": types.String(),
+        "CLOUD_INSTANCE_STATE": types.String(),
+        "CLOUD_INSTANCE_TYPE": types.String(),
+        "CLOUD_IS_SPOT_INSTANCE": types.Boolean(),
+        "CLOUD_ARCHITECTURE": types.String(),
+        "CLOUD_REGION": types.String(),
+        "CLOUD_IMAGE_ID": types.String(),
+        "CLOUD_AMI_ID": types.String(),
+        "CLOUD_PUBLIC_HOSTNAME": types.String(),
+        "CLOUD_PUBLIC_IPV4": types.String(),
+        "CLOUD_ACCOUNT_ID": types.BigInteger(),
         "CLOUD_PROVIDER_TAGS": types.String(),
         "ASSET_RISK_SCORE": types.Integer(),
         "TRURISK_SCORE": types.Integer(),
@@ -180,3 +191,29 @@ def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection) -> int:
 
     # Upload the data:
     return upload_data(df, "vmdr_hosts_list", cnxn, dtype=COLS)
+
+def upload_vmdr_ips(ips: BaseList, cnxn: Connection) -> int:
+    """
+    Upload data from vmdr.get_ip_list() to SQL.
+    
+    Parameters:
+        ips (BaseList): The IP List to upload from vmdr.get_ip_list().
+        cnxn (Connection): The Connection object to the SQL database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "IP_OBJ": types.String(),
+        "TYPE": types.String(),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(ip) for ip in ips], columns=["IP"])
+
+    # Add the TYPE column, which shows if it is a single IP or a range:
+    df["TYPE"] = df["IP"].apply(lambda x: "Single IP" if "/" not in str(x) else "IP Range")
+
+    # Upload the data:
+    return upload_data(df, "vmdr_ips", cnxn, dtype=COLS)

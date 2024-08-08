@@ -146,18 +146,18 @@ class VMScan:
         return int(self.REF.split("/")[-1])
 
     def keys(self):
-        return self.__dict__.keys()
+        return self.__dict__().keys()
 
     def values(self):
-        return self.__dict__.values()
+        return self.__dict__().values()
 
     def items(self):
-        return self.__dict__.items()
+        return self.__dict__().items()
 
     def valid_values(self):
         return {
             k: v
-            for k, v in self.__dict__.items()
+            for k, v in self.__dict__().items()
             if v is not None
             and v != ""
             and v != []

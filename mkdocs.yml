@@ -7,7 +7,7 @@ nav:
   - Authentication: authentication.md
   - Global AssetView: gav.md
   - VMDR: vmdr.md
-  - SQL Server Uploads: sql.md
+  - SQL Uploads: sql.md
   - The Call Schema: callschema.md
 
 markdown_extensions:

@@ -235,6 +235,72 @@ class VMDRHost:
         compare=False,
     )
 
+    CLOUD_GROUP_NAME: Optional[str] = field(
+        default=None,
+        metadata={"description": "The cloud group name of the host."},
+        compare=False,
+    )
+
+    CLOUD_INSTANCE_STATE: Optional[str] = field(
+        default=None,
+        metadata={"description": "The cloud instance state of the host."},
+        compare=False,
+    )
+
+    CLOUD_INSTANCE_TYPE: Optional[str] = field(
+        default=None,
+        metadata={"description": "The cloud instance type of the host."},
+        compare=False,
+    )
+
+    CLOUD_IS_SPOT_INSTANCE: Optional[bool] = field(
+        default=None,
+        metadata={"description": "The cloud is spot instance of the host."},
+        compare=False,
+    )
+
+    CLOUD_ARCHITECTURE: Optional[str] = field(
+        default=None,
+        metadata={"description": "The cloud architecture of the host."},
+        compare=False,
+    )
+
+    CLOUD_IMAGE_ID: Optional[str] = field(
+        default=None,
+        metadata={"description": "The cloud image ID of the host."},
+        compare=False,
+    )
+
+    CLOUD_REGION: Optional[str] = field(
+        default=None,
+        metadata={"description": "The cloud region of the host."},
+        compare=False,
+    )
+
+    CLOUD_AMI_ID: Optional[str] = field(
+        default=None,
+        metadata={"description": "The cloud AMI ID of the host."},
+        compare=False,
+    )
+
+    CLOUD_PUBLIC_HOSTNAME: Optional[str] = field(
+        default=None,
+        metadata={"description": "The cloud public hostname of the host."},
+        compare=False,
+    )
+
+    CLOUD_PUBLIC_IPV4: Optional[Union[str, IPv4Address]] = field(
+        default=None,
+        metadata={"description": "The cloud public IPv4 of the host."},
+        compare=False,
+    )
+
+    CLOUD_ACCOUNT_ID: Optional[Union[str, int]] = field(
+        default=None,
+        metadata={"description": "The cloud account ID of the host."},
+        compare=False,
+    )
+
     def __post_init__(self):
         """
         Pull up nested dict values as attributes, convert IPs,
@@ -262,7 +328,8 @@ class VMDRHost:
             "ASSET_RISK_SCORE",
             "TRURISK_SCORE",
             "ASSET_CRITICALITY_SCORE",
-        ]  # (cloud) ACCOUNT_ID cannot go here as it is not initialized yet
+            "CLOUD_ACCOUNT_ID",
+        ]
 
         if self.DNS_DATA:
             for field in DNS_DATA_FIELDS:
@@ -281,12 +348,6 @@ class VMDRHost:
                 setattr(
                     self, DATE_FIELD, datetime.fromisoformat(getattr(self, DATE_FIELD))
                 )
-
-        for INT_FIELD in INT_FIELDS:
-            if getattr(self, INT_FIELD) and not isinstance(
-                getattr(self, INT_FIELD), int
-            ):
-                setattr(self, INT_FIELD, int(getattr(self, INT_FIELD)))
 
         if self.TAGS:
             # if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
@@ -363,12 +424,24 @@ class VMDRHost:
                         if item["NAME"] == key[1]:
                             setattr(self, f"CLOUD_{key[0]}", item["VALUE"])
                 else:
-                    if self.METADATA[key_selector]["ATTRIBUTE"]["NAME"] == key:
+                    if self.METADATA[key_selector]["ATTRIBUTE"]["NAME"] and self.METADATA[key_selector]["ATTRIBUTE"]["NAME"] == key:
                         setattr(
                             self,
                             f"CLOUD_{key[0]}",
                             self.METADATA[key_selector]["ATTRIBUTE"]["VALUE"],
                         )
+
+        for INT_FIELD in INT_FIELDS:
+            if getattr(self, INT_FIELD) and not isinstance(
+                getattr(self, INT_FIELD), int
+            ):
+                setattr(self, INT_FIELD, int(getattr(self, INT_FIELD)))
+
+        if self.CLOUD_PUBLIC_IPV4 and not isinstance(self.CLOUD_PUBLIC_IPV4, IPv4Address):
+            self.CLOUD_PUBLIC_IPV4 = IPv4Address(self.CLOUD_PUBLIC_IPV4)
+
+        if self.CLOUD_IS_SPOT_INSTANCE:
+            self.CLOUD_IS_SPOT_INSTANCE = bool(self.CLOUD_IS_SPOT_INSTANCE)
 
         # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
         if self.DETECTION_LIST:
@@ -410,7 +483,7 @@ class VMDRHost:
         """
         Allows for iteration over the host object.
         """
-        for key, value in self.__dict__.items():
+        for key, value in self.to_dict().items():
             yield key, value
 
     def has_agent(self) -> bool:
@@ -441,7 +514,7 @@ class VMDRHost:
         """
         Create a copy of the host object.
         """
-        return VMDRHost(**self.__dict__)
+        return VMDRHost.from_dict(self.to_dict())
 
     def valid_values(self) -> list:
         """
@@ -449,11 +522,8 @@ class VMDRHost:
         """
         return {
             k: v
-            for k, v in self.__dict__.items()
-            if v is not None
-            and v != ""
-            and v != []
-            and (isinstance(v, BaseList) and v != BaseList())
+            for k, v in self.items()
+            if v
         }
 
     def to_dict(self) -> dict:
@@ -472,19 +542,19 @@ class VMDRHost:
         """
         Return the keys of the host object.
         """
-        return self.__dict__.keys()
+        return self.to_dict().keys()
 
     def values(self) -> list:
         """
         Return the values of the host object.
         """
-        return self.__dict__.values()
+        return self.to_dict().values()
 
     def items(self) -> list:
         """
         Return the items of the host object.
         """
-        return self.__dict__.items()
+        return self.to_dict().items()
 
     @classmethod
     def from_dict(cls, data: dict) -> "VMDRHost":
@@ -543,20 +613,20 @@ class VMDRID:
         """
         Iterate over the fields of the host object.
         """
-        for key, value in self.__dict__.items():
+        for key, value in self.to_dict().items():
             yield key, value
 
     def values(self):
         """
         Return the values of the object.
         """
-        return self.__dict__.values()
+        return self.to_dict().values()
 
     def keys(self):
         """
         Return the keys of the object.
         """
-        return self.__dict__.keys()
+        return self.to_dict().keys()
 
     @classmethod
     def from_dict(cls, data: dict) -> "VMDRID":

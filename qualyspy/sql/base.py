@@ -4,8 +4,16 @@ base.py - contains the base functionality for the SQL module of qualysPy.
 
 from datetime import datetime
 from dataclasses import dataclass
+from typing import Literal
 
 from sqlalchemy import types
+
+try:
+    import pyodbc
+except ImportError as e:
+    raise Warning(
+        "Pyodbc cannot be imported. If you are on Mac or Unix, this usually can be resolved by installing unixODBC:\n\nMac: brew install unixodbc\nUbuntu: sudo apt install unixodbc\n\nThen, install pyodbc with pip install pyodbc."
+    ) from e
 
 from pandas import DataFrame
 from sqlalchemy import create_engine, Connection, types
@@ -18,6 +26,7 @@ def db_connect(
     password: str = None,
     driver: str = "ODBC Driver 17 for SQL Server",
     trusted_cnxn: bool = False,
+    db_type: Literal["mssql", "mysql", "postgresql", "sqlite", "oracle"] = "mssql",
 ) -> Connection:
     """
     Generate a sqlalchemy Connection object to a SQL database.
@@ -29,6 +38,7 @@ def db_connect(
     password (str): The password to use to connect to the database.
     driver (str): The ODBC driver to use to connect to the database.
     trusted_cnxn (bool): If True, use trusted connection.
+    db_type (str): The type of database to connect to.
 
     Returns:
     Connection: The Connection object to the SQL database.
@@ -39,12 +49,21 @@ def db_connect(
         raise ValueError(
             "You must provide a username and password, or use trusted connection."
         )
+    
+    if driver not in pyodbc.drivers():
+        raise ValueError(
+            f"Driver '{driver}' not found. Pyodbc found drivers: {pyodbc.drivers()}"
+        )
 
     # Generate the connection string:
     if trusted_cnxn:
-        conn_str = f"mssql+pyodbc://{host}/{db}?driver={driver}&trusted_connection=yes"
+        conn_str = (
+            f"{db_type}+pyodbc://{host}/{db}?driver={driver}&trusted_connection=yes"
+        )
     else:
-        conn_str = f"mssql+pyodbc://{username}:{password}@{host}/{db}?driver={driver}"
+        conn_str = (
+            f"{db_type}+pyodbc://{username}:{password}@{host}/{db}?driver={driver}"
+        )
 
     engine = create_engine(conn_str)
 
@@ -56,10 +75,10 @@ def upload_data(df: DataFrame, table: str, cnxn: Connection, dtype: dict) -> int
     Upload a DataFrame to a SQL table. Appends 'import_datetime' column to the DataFrame.
 
     Parameters:
-    df (DataFrame): The DataFrame to upload.
-    table (str): The name of the table to upload to.
-    cnxn (Connection): The Connection object to the SQL database.
-    dtype (dict): The data types of the columns in the table.
+        df (DataFrame): The DataFrame to upload.
+        table (str): The name of the table to upload to.
+        cnxn (Connection): The Connection object to the SQL database.
+        dtype (dict): The data types of the columns in the table. Key is the column name, value is the data type as sqlalchemy.types.Something()
 
     Returns:
     int: The number of rows uploaded.

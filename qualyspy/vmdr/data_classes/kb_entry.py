@@ -298,36 +298,27 @@ class KBEntry:
         return hash(self.QID)
 
     def __iter__(self):
-        for key, value in self.__dict__.items():
+        for key, value in self.items():
             yield key, value
 
     def __contains__(self, item):
         return item in self.QID or item in self.TITLE
 
     def copy(self):
-        return KBEntry(**self.__dict__)
+        return KBEntry.from_dict(self.to_dict())
 
     def is_qid(self, qid: int):
         return self.QID == qid
 
-    def pop(self, key):
-        return self.__dict__.pop(key)
-
-    def get(self, key, default=None):
-        return self.__dict__.get(key, default)
-
     def items(self):
-        return self.__dict__.items()
+        return self.to_dict().items()
 
     def keys(self):
-        return self.__dict__.keys()
+        return self.to_dict().keys()
 
     def values(self):
         # return the values
-        return self.__dict__.values()
-
-    def extend(self, other):
-        return self.__dict__.update(other.__dict__)
+        return self.to_dict().values()
 
     def __dict__(self):
         return asdict(self)

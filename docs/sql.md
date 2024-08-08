@@ -1,8 +1,8 @@
-# Uploading Data to SQL Server
+# Uploading Data to a SQL Database
 
->**Head's Up!:** ```qualyspy.sql``` is currently in development and has been tested using Microsoft SQL Server only. It will be expanded to other databases in the future.
+>**Head's Up!:** ```qualyspy.sql``` is currently in development and has been tested using Microsoft SQL Server only. Other DBs will be tested at some point.
 
-```qualyspy``` supports uploading data it has pulled to a SQL Server instance using various ```upload_*``` functions. Thanks to the Pandas library and qualyspy's ```BaseList``` class, uploading is rather easy.
+```qualyspy``` supports uploading data it has pulled to a SQL Database using various ```upload_<module>_*``` functions. Thanks to the [Pandas library](https://pandas.pydata.org) and qualyspy's ```BaseList``` class, uploading is rather easy.
 
 ## Steps to Get Going
 
@@ -12,9 +12,9 @@
 from qualyspy.sql import *
 ```
 
-### Step 2: Building the Sqlalchemy Connection
+### Step 2: Building the SQLAlchemy Connection
 
-Next, build your connection object. ```qualyspy``` supports username/password auth as well as trusted connections. It also supports specifying a custom driver (default driver is ```"ODBC Driver 17 for SQL Server"```):
+Next, build your connection object. ```qualyspy``` supports username/password auth as well as trusted connections. It also supports specifying a custom driver (default driver is ```"ODBC Driver 17 for SQL Server"```) and specifying the type of DB you are connecting to (default is ```"mssql"```) via ```db_type```.:
 
 ```py
 
@@ -35,9 +35,10 @@ Each upload function takes 2 parameters. The first is the ```BaseList``` of data
 
 | Function Name | Module  | ```qualyspy``` Function Data Source |
 | -- | -- | -- |
-| ```upload_ags``` | VMDR | ```vmdr.get_ag_list()```|
-| ```upload_kb``` | VMDR | ```vmdr.query_kb()```|
+| ```upload_vmdr_ags``` | VMDR | ```vmdr.get_ag_list()```|
+| ```upload_vmdr_kb``` | VMDR | ```vmdr.query_kb()```|
 | ```upload_vmdr_hosts``` | VMDR | ```vmdr.get_host_list()```|
+| ```upload_vmdr_ips``` | VMDR | ```vmdr.get_ip_list()```|
 
 ## A Friendly Recommendation For Getting Data
 
@@ -47,8 +48,7 @@ For example, using ```vmdr.get_host_list()```, you should make your call look li
 
 ```py
 
-vmdr_hosts = vmdr.get_host_list
-    (
+vmdr_hosts = vmdr.get_host_list(
         auth, 
         details='All/AGs', 
         show_asset_id=True, 

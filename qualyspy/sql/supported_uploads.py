@@ -192,10 +192,11 @@ def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection) -> int:
     # Upload the data:
     return upload_data(df, "vmdr_hosts_list", cnxn, dtype=COLS)
 
+
 def upload_vmdr_ips(ips: BaseList, cnxn: Connection) -> int:
     """
     Upload data from vmdr.get_ip_list() to SQL.
-    
+
     Parameters:
         ips (BaseList): The IP List to upload from vmdr.get_ip_list().
         cnxn (Connection): The Connection object to the SQL database.
@@ -213,7 +214,9 @@ def upload_vmdr_ips(ips: BaseList, cnxn: Connection) -> int:
     df = DataFrame([prepare_dataclass(ip) for ip in ips], columns=["IP"])
 
     # Add the TYPE column, which shows if it is a single IP or a range:
-    df["TYPE"] = df["IP"].apply(lambda x: "Single IP" if "/" not in str(x) else "IP Range")
+    df["TYPE"] = df["IP"].apply(
+        lambda x: "Single IP" if "/" not in str(x) else "IP Range"
+    )
 
     # Upload the data:
     return upload_data(df, "vmdr_ips", cnxn, dtype=COLS)

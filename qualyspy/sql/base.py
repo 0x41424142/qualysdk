@@ -49,7 +49,7 @@ def db_connect(
         raise ValueError(
             "You must provide a username and password, or use trusted connection."
         )
-    
+
     if driver not in pyodbc.drivers():
         raise ValueError(
             f"Driver '{driver}' not found. Pyodbc found drivers: {pyodbc.drivers()}"

@@ -424,7 +424,10 @@ class VMDRHost:
                         if item["NAME"] == key[1]:
                             setattr(self, f"CLOUD_{key[0]}", item["VALUE"])
                 else:
-                    if self.METADATA[key_selector]["ATTRIBUTE"]["NAME"] and self.METADATA[key_selector]["ATTRIBUTE"]["NAME"] == key:
+                    if (
+                        self.METADATA[key_selector]["ATTRIBUTE"]["NAME"]
+                        and self.METADATA[key_selector]["ATTRIBUTE"]["NAME"] == key
+                    ):
                         setattr(
                             self,
                             f"CLOUD_{key[0]}",
@@ -437,7 +440,9 @@ class VMDRHost:
             ):
                 setattr(self, INT_FIELD, int(getattr(self, INT_FIELD)))
 
-        if self.CLOUD_PUBLIC_IPV4 and not isinstance(self.CLOUD_PUBLIC_IPV4, IPv4Address):
+        if self.CLOUD_PUBLIC_IPV4 and not isinstance(
+            self.CLOUD_PUBLIC_IPV4, IPv4Address
+        ):
             self.CLOUD_PUBLIC_IPV4 = IPv4Address(self.CLOUD_PUBLIC_IPV4)
 
         if self.CLOUD_IS_SPOT_INSTANCE:
@@ -520,11 +525,7 @@ class VMDRHost:
         """
         Return a list of keys that have values.
         """
-        return {
-            k: v
-            for k, v in self.items()
-            if v
-        }
+        return {k: v for k, v in self.items() if v}
 
     def to_dict(self) -> dict:
         """

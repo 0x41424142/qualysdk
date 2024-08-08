@@ -21,7 +21,7 @@ def get_host_list(
     """
     Get the host list from the VMDR API.
     For a full list of parameters, see the Qualys API documentation: [Qualys API VMPc User Guide](https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf)
-    
+
     Parameters:
         auth (BasicAuth): The authentication object.
         page_count (Union[int, "all"]): The number of pages to get. If "all", get all pages. Defaults to "all".

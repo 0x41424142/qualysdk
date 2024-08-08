@@ -28,6 +28,8 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 >>>[VMDRHost(12345), ...]
 ```
 
+>**Head's Up!:** SQL DB uploading is currently in development! 🎉
+
 ## Current Supported Modules 
 
 |Module| Status |

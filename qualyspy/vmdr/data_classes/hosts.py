@@ -205,7 +205,7 @@ class VMDRHost:
         compare=False,
     )
 
-    DETECTION_LIST: Optional[Union[list[Detection], BaseList[Detection]]] = field(
+    DETECTION_LIST: Optional[BaseList[Detection]] = field(
         default=None,
         metadata={"description": "The detection list of the host."},
         compare=False,
@@ -328,7 +328,6 @@ class VMDRHost:
             "ASSET_RISK_SCORE",
             "TRURISK_SCORE",
             "ASSET_CRITICALITY_SCORE",
-            "CLOUD_ACCOUNT_ID",
         ]
 
         if self.DNS_DATA:
@@ -450,17 +449,20 @@ class VMDRHost:
 
         # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
         if self.DETECTION_LIST:
-            if isinstance(self.DETECTION_LIST["DETECTION"], list):
-                self.DETECTION_LIST = BaseList(
-                    [
-                        Detection.from_dict(detection)
-                        for detection in self.DETECTION_LIST["DETECTION"]
-                    ]
-                )
-            else:
-                self.DETECTION_LIST = BaseList(
-                    [Detection.from_dict(self.DETECTION_LIST["DETECTION"])]
-                )
+
+            detections_bl = BaseList()
+            data = self.DETECTION_LIST["DETECTION"]
+
+            if isinstance(data, dict):
+                data = [data]
+
+            for detection in data:
+                # Append the host's ID attr to the detection dictionary
+                # to allow for a relationship:
+                detection["ID"] = self.ID
+                detections_bl.append(Detection.from_dict(detection))
+
+            self.DETECTION_LIST = detections_bl
 
     def __str__(self) -> str:
         """

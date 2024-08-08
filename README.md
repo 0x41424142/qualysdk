@@ -33,6 +33,8 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 
 ## Current Supported Modules 
 
+>**Head's Up!:** SQL DB uploading is currently in development! 🎉
+
 |Module| Status |
 |--|--|
 | GAV (Global AssetView) |✅|

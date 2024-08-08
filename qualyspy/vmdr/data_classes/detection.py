@@ -221,11 +221,7 @@ class Detection:
 
     def valid_values(self):
         # return a list of attribute names that have non-None values
-        return {
-            k: v
-            for k, v in self.__dict__.items()
-            if v is not None and v != "" and v != []
-        }
+        return {k: v for k, v in self.items() if v is not None and v != "" and v != []}
 
     def to_dict(self):
         """
@@ -239,13 +235,13 @@ class Detection:
         return asdict(self)
 
     def keys(self):
-        return self.__dict__().keys()
+        return self.to_dict().keys()
 
     def values(self):
-        return self.__dict__().values()
+        return self.to_dict().values()
 
     def items(self):
-        return self.__dict__().items()
+        return self.to_dict().items()
 
     @classmethod
     def from_dict(cls, data: Union[dict, list]):

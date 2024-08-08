@@ -124,7 +124,7 @@ class VMDRReport:
         """
         valid_values - returns a dictionary of attributes that have non-None values.
         """
-        return {k: v for k, v in self.__dict__.items() if v}
+        return {k: v for k, v in self.to_dict().items() if v}
 
 
 @dataclass(order=True)
@@ -242,4 +242,4 @@ class VMDRScheduledReport:
         """
         valid_values - returns a dictionary of attributes that have non-None values.
         """
-        return {k: v for k, v in self.__dict__.items() if v}
+        return {k: v for k, v in self.to_dict().items() if v}

@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 
 from .qds_factor import QDSFactor
 from .qds import QDS as qds
+from ..data_classes.lists import BaseList
 
 
 @dataclass(order=True)
@@ -117,6 +118,11 @@ class Detection:
         compare=False,
     )
 
+    ID: int = field(
+        metadata={"description": "The host ID of host the detection is on."},
+        default=None,
+    )
+
     def __post_init__(self):
         # convert the datetimes to datetime objects
         DATETIME_FIELDS = [
@@ -132,7 +138,7 @@ class Detection:
 
         BOOL_FIELDS = ["IS_IGNORED", "IS_DISABLED", "SSL"]
 
-        INT_FIELDS = ["UNIQUE_VULN_ID", "QID", "SEVERITY", "TIMES_FOUND", "PORT"]
+        INT_FIELDS = ["UNIQUE_VULN_ID", "QID", "SEVERITY", "TIMES_FOUND", "PORT", "ID"]
 
         for field in DATETIME_FIELDS:
             if (
@@ -173,20 +179,19 @@ class Detection:
 
         # convert the QDS factors to QDSFactor objects
         if self.QDS_FACTORS:
-            # if [QDS_FACTORS][QDS_FACTOR] is a list of dictionaries, itereate through each dictionary and convert it to a QDSFactor object
-            # if it is just one dictionary, convert it to a QDSFactor object
-            if isinstance(self.QDS_FACTORS["QDS_FACTOR"], list):
-                self.QDS_FACTORS = [
+            factors_bl = BaseList()
+            data = self.QDS_FACTORS["QDS_FACTOR"]
+
+            # Normalize QDS factors to a list for easier processing
+            if isinstance(data, dict):
+                data = [data]
+
+            for factor in data:
+                factors_bl.append(
                     QDSFactor(NAME=factor["@name"], VALUE=factor["#text"])
-                    for factor in self.QDS_FACTORS["QDS_FACTOR"]
-                ]
-            else:
-                self.QDS_FACTORS = [
-                    QDSFactor(
-                        NAME=self.QDS_FACTORS["QDS_FACTOR"]["@name"],
-                        VALUE=self.QDS_FACTORS["QDS_FACTOR"]["#text"],
-                    )
-                ]
+                )
+
+            self.QDS_FACTORS = factors_bl
 
     def __str__(self):
         # return str(self.UNIQUE_VULN_ID)

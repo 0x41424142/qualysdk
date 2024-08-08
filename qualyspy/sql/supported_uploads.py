@@ -63,7 +63,7 @@ def upload_vmdr_ags(ags: BaseList, cnxn: Connection) -> int:
     df = DataFrame([prepare_dataclass(ag) for ag in ags])
 
     # Upload the data:
-    return upload_data(df, "AssetGroups", cnxn, dtype=COLS)
+    return upload_data(df, "vmdr_assetgroups", cnxn, dtype=COLS)
 
 
 def upload_vmdr_kb(kbs: BaseList, cnxn: Connection) -> int:
@@ -115,16 +115,17 @@ def upload_vmdr_kb(kbs: BaseList, cnxn: Connection) -> int:
     df = DataFrame([prepare_dataclass(kb) for kb in kbs])
 
     # Upload the data:
-    return upload_data(df, "knowledgebase", cnxn, dtype=COLS)
+    return upload_data(df, "vmdr_knowledgebase", cnxn, dtype=COLS)
 
 
-def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection) -> int:
+def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection, is_hld: bool = False) -> int:
     """
     Upload data from vmdr.get_host_list() to SQL.
 
     Parameters:
         hosts (BaseList): The Host List to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        is_hld (bool): If the data is from a Host List Detail pull. You can ignore this.
 
     Returns:
         int: The number of rows uploaded.
@@ -189,8 +190,10 @@ def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection) -> int:
 
     df.drop(columns=["METADATA", "DNS_DATA", "DETECTION_LIST"], inplace=True)
 
-    # Upload the data:
-    return upload_data(df, "vmdr_hosts_list", cnxn, dtype=COLS)
+    # Upload the data, with table depdening on if it is a Host List Detail pull or not:
+    return upload_data(
+        df, "vmdr_hosts_list" if not is_hld else "vmdr_hld_hosts_list", cnxn, dtype=COLS
+    )
 
 
 def upload_vmdr_ips(ips: BaseList, cnxn: Connection) -> int:
@@ -206,17 +209,85 @@ def upload_vmdr_ips(ips: BaseList, cnxn: Connection) -> int:
     """
 
     COLS = {
-        "IP_OBJ": types.String(),
+        "IP": types.String(),
         "TYPE": types.String(),
     }
 
     # Convert the BaseList to a DataFrame:
-    df = DataFrame([prepare_dataclass(ip) for ip in ips], columns=["IP"])
+    df = DataFrame([str(ip) for ip in ips], columns=["IP"])
 
     # Add the TYPE column, which shows if it is a single IP or a range:
-    df["TYPE"] = df["IP"].apply(
-        lambda x: "Single IP" if "/" not in str(x) else "IP Range"
-    )
+    df["TYPE"] = df["IP"].apply(lambda x: "Single IP" if "/" not in x else "IP Range")
 
     # Upload the data:
     return upload_data(df, "vmdr_ips", cnxn, dtype=COLS)
+
+
+def upload_vmdr_hld(hld: BaseList, cnxn: Connection) -> int:
+    """
+    Upload data from vmdr.get_hld() to SQL.
+
+    Parameters:
+        hld (BaseList): The Host List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+
+    Returns:
+        int: The number of rows uploaded.
+
+    """
+
+    """
+    Get_hld and get_host_list technically return the same data. get_hld just
+    includes the DETECTION_LIST attribute. We can use the same upload function
+    for the host part, and then snip off the DETECTION_LIST attribute to upload
+    to a detections table.
+    """
+
+    # Isolate the detection lists. Since the Detection objects themselves
+    # have an ID attribute, we can use that to link them back to the host.
+    detections = BaseList()
+    for host in hld:
+        if host.DETECTION_LIST:
+            for detection in host.DETECTION_LIST:
+                detections.append(detection)
+
+    # upload_vmdr_hosts automatically ignores the DETECTION_LIST attribute,
+    # so we can use it here with the is_hld flag set to True to put the hosts
+    # in a different table than get_host_list.
+    hosts_uploaded = upload_vmdr_hosts(hld, cnxn, is_hld=True)
+    print(
+        f"Uploaded {hosts_uploaded} hosts to vmdr_hld_hosts_list. Moving to detections..."
+    )
+
+    COLS = {
+        "UNIQUE_VULN_ID": types.BigInteger(),
+        "QID": types.BigInteger(),
+        "TYPE": types.String(),
+        "SEVERITY": types.Integer(),
+        "STATUS": types.String(),
+        "SSL": types.Boolean(),
+        "RESULTS": types.String(),
+        "FIRST_FOUND_DATETIME": types.DateTime(),
+        "LAST_FOUND_DATETIME": types.DateTime(),
+        "QDS": types.Integer(),
+        "QDS_FACTORS": types.String(),
+        "TIMES_FOUND": types.Integer(),
+        "LAST_TEST_DATETIME": types.DateTime(),
+        "LAST_UPDATE_DATETIME": types.DateTime(),
+        "IS_IGNORED": types.Boolean(),
+        "IS_DISABLED": types.Boolean(),
+        "LAST_PROCESSED_DATETIME": types.DateTime(),
+        "LAST_FIXED_DATETIME": types.DateTime(),
+        "PORT": types.Integer(),
+        "PROTOCOL": types.String(),
+        "FQDN": types.String(),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(detection) for detection in detections])
+
+    # Set QDS to an integer:
+    df["QDS"] = df["QDS"].apply(lambda x: int(x) if x else None)
+
+    # Upload the data:
+    return upload_data(df, "vmdr_hld_detections", cnxn, dtype=COLS)

@@ -65,7 +65,12 @@ def db_connect(
             f"{db_type}+pyodbc://{username}:{password}@{host}/{db}?driver={driver}"
         )
 
-    engine = create_engine(conn_str)
+    if db_type != "mssql" and driver == "ODBC Driver 17 for SQL Server":
+        engine = create_engine(conn_str)
+    else:
+        # We can enable fast_executemany for mssql to speed up inserts:
+        print("Enabling fast_executemany for mssql...")
+        engine = create_engine(conn_str, fast_executemany=True)
 
     return engine.connect()
 
@@ -90,9 +95,9 @@ def upload_data(df: DataFrame, table: str, cnxn: Connection, dtype: dict) -> int
 
     # For any string values in the DataFrame, make sure it doesn't
     # exceed VARCHAR(MAX) length:
-    for col in df.columns:
-        if df[col].dtype == "object":
-            df[col] = df[col].str.slice(0, 2147483647)
+    # for col in df.columns:
+    #    if df[col].dtype == "object":
+    #        df[col] = df[col].str.slice(0, 2147483647)
 
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table}...")
@@ -136,7 +141,10 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "TRURISK_SCORE_FACTORS",
         "IP",
         "IPV6",
+        "QDS",
+        "QDS_FACTORS",
     ]
+
     DICT_FIELDS = [
         "CORRELATION",
         "CVSS",

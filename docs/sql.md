@@ -14,7 +14,7 @@ from qualyspy.sql import *
 
 ### Step 2: Building the SQLAlchemy Connection
 
-Next, build your connection object. ```qualyspy``` supports username/password auth as well as trusted connections. It also supports specifying a custom driver (default driver is ```"ODBC Driver 17 for SQL Server"```) and specifying the type of DB you are connecting to (default is ```"mssql"```) via ```db_type```.:
+Next, build your connection object. ```qualyspy``` supports username/password auth as well as trusted connections. It also supports specifying a custom driver (default driver is ```"ODBC Driver 17 for SQL Server"```) and specifying the type of DB you are connecting to (default is ```"mssql"```) via ```db_type```:
 
 ```py
 

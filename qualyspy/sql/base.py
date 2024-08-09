@@ -75,7 +75,13 @@ def db_connect(
     return engine.connect()
 
 
-def upload_data(df: DataFrame, table: str, cnxn: Connection, dtype: dict, override_import_dt: datetime = None) -> int:
+def upload_data(
+    df: DataFrame,
+    table: str,
+    cnxn: Connection,
+    dtype: dict,
+    override_import_dt: datetime = None,
+) -> int:
     """
     Upload a DataFrame to a SQL table. Appends 'import_datetime' column to the DataFrame.
 
@@ -91,7 +97,9 @@ def upload_data(df: DataFrame, table: str, cnxn: Connection, dtype: dict, overri
     """
 
     # Add an import_datetime column:
-    df["import_datetime"] = datetime.now() if not override_import_dt else override_import_dt
+    df["import_datetime"] = (
+        datetime.now() if not override_import_dt else override_import_dt
+    )
     dtype["import_datetime"] = types.DateTime()
 
     # For any string values in the DataFrame, make sure it doesn't

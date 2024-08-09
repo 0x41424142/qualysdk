@@ -65,7 +65,8 @@ cnxn = db_connect(host='10.0.0.1', db='qualysdata', trusted_cnxn=True)
 
 # Upload a previous vmdr.get_host_list() call to the DB, with override_import_dt set
 # to 10-25-2023 12:00:00
-uploaded = upload_vmdr_hosts(vmdr_hosts, cnxn, override_import_dt=datetime.datetime(2023, 10, 25, 12, 0, 0))
+dt = datetime.datetime(2023, 10, 25, 12, 0, 0)
+uploaded = upload_vmdr_hosts(vmdr_hosts, cnxn, override_import_dt=dt)
 >>>Uploaded 12345 records to vmdr_hosts_list
 
 ## A Friendly Recommendation For Getting Data

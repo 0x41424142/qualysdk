@@ -29,19 +29,22 @@ def db_connect(
     db_type: Literal["mssql", "mysql", "postgresql", "sqlite", "oracle"] = "mssql",
 ) -> Connection:
     """
+
     Generate a sqlalchemy Connection object to a SQL database.
 
     Parameters:
-    host (str): The hostname of the SQL server.
-    db (str): The name of the database.
-    username (str): The username to use to connect to the database.
-    password (str): The password to use to connect to the database.
-    driver (str): The ODBC driver to use to connect to the database.
-    trusted_cnxn (bool): If True, use trusted connection.
-    db_type (str): The type of database to connect to.
+
+        host (str): The hostname of the SQL server.
+        db (str): The name of the database.
+        username (str): The username to use to connect to the database.
+        password (str): The password to use to connect to the database.
+        driver (str): The ODBC driver to use to connect to the database. Defaults to 'ODBC Driver 17 for SQL Server'.
+        trusted_cnxn (bool): If True, use trusted connection. If False, use username and password. Defaults to False.
+        db_type (str): The type of database to connect to. Defaults to 'mssql'. Options are 'mssql', 'mysql', 'postgresql', 'sqlite', 'oracle'.
 
     Returns:
-    Connection: The Connection object to the SQL database.
+
+        Connection: The Connection object to the SQL database.
     """
 
     # Check if user AND password are provided, or trusted connection is used:
@@ -51,9 +54,12 @@ def db_connect(
         )
 
     if driver not in pyodbc.drivers():
-        raise ValueError(
-            f"Driver '{driver}' not found. Pyodbc found drivers: {pyodbc.drivers()}"
-        )
+        if len(pyodbc.drivers()) == 0:
+            raise ValueError("No ODBC drivers found. Please install an ODBC driver & specify it with the driver parameter.")
+        else:
+            raise ValueError(
+                f"Driver '{driver}' not found. Pyodbc found drivers: {pyodbc.drivers()}"
+            )
 
     # Generate the connection string:
     if trusted_cnxn:
@@ -65,12 +71,7 @@ def db_connect(
             f"{db_type}+pyodbc://{username}:{password}@{host}/{db}?driver={driver}"
         )
 
-    if db_type != "mssql" and driver == "ODBC Driver 17 for SQL Server":
-        engine = create_engine(conn_str)
-    else:
-        # We can enable fast_executemany for mssql to speed up inserts:
-        print("Enabling fast_executemany for mssql...")
-        engine = create_engine(conn_str, fast_executemany=True)
+    engine = create_engine(conn_str)
 
     return engine.connect()
 
@@ -101,12 +102,6 @@ def upload_data(
         datetime.now() if not override_import_dt else override_import_dt
     )
     dtype["import_datetime"] = types.DateTime()
-
-    # For any string values in the DataFrame, make sure it doesn't
-    # exceed VARCHAR(MAX) length:
-    # for col in df.columns:
-    #    if df[col].dtype == "object":
-    #        df[col] = df[col].str.slice(0, 2147483647)
 
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table}...")
@@ -147,7 +142,6 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "COMPLIANCE_LIST",
         "TAGS",
         "CLOUD_PROVIDER_TAGS",
-        "TRURISK_SCORE_FACTORS",
         "IP",
         "IPV6",
         "QDS",
@@ -162,6 +156,7 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "DISCOVERY",
         "CHANGE_LOG",
         "USER_DEF",
+        "TRURISK_SCORE_FACTORS"
     ]
 
     # Iterate over the attrs of the dataclass and convert them to the appropriate format for SQL insertion.
@@ -174,6 +169,12 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
                 setattr(
                     dataclass, attr, flatten_dict_to_string(getattr(dataclass, attr))
                 )
+
+    # If there are any leftover empty dictionaries, 
+    # convert them to None as a failsafe:
+    for attr in dataclass.__dataclass_fields__.keys():
+        if getattr(dataclass, attr) == {}:
+            setattr(dataclass, attr, None)
 
     sql_dict = dataclass.to_dict()
 

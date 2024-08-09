@@ -199,7 +199,7 @@ def upload_vmdr_hosts(
         "CLOUD_AMI_ID": types.String(),
         "CLOUD_PUBLIC_HOSTNAME": types.String(),
         "CLOUD_PUBLIC_IPV4": types.String(),
-        "CLOUD_ACCOUNT_ID": types.BigInteger(),
+        "CLOUD_ACCOUNT_ID": types.String(),
         "CLOUD_PROVIDER_TAGS": types.String(),
         "ASSET_RISK_SCORE": types.Integer(),
         "TRURISK_SCORE": types.Integer(),

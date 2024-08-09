@@ -12,7 +12,7 @@ try:
     import pyodbc
 except ImportError as e:
     raise Warning(
-        "Pyodbc cannot be imported. If you are on Mac or Unix, this usually can be resolved by installing unixODBC:\n\nMac: brew install unixodbc\nUbuntu: sudo apt install unixodbc\n\nThen, install pyodbc with pip install pyodbc."
+        "Pyodbc cannot be imported. If you are on Mac or Unix, this usually can be resolved by installing unixODBC:\n\nMac: brew install unixodbc\nUbuntu: sudo apt install unixodbc"
     ) from e
 
 from pandas import DataFrame

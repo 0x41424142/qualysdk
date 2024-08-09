@@ -1,7 +1,7 @@
 # The CALL_SCHEMA Dictionary
 >**TL;DR**: The ```CALL_SCHEMA``` is ***VERY*** important! 
 
-CALL_SCHEMA is a backend ```frozendict``` dictionary that the package automatically uses to correctly set up the underlying ```qualyspy.base.call_api()``` function. ```call_api``` in turn then sets up the appropriate ```requests.Request()``` call using an endpoint's schema.
+CALL_SCHEMA is a backend ```frozendict``` dictionary that the package automatically uses to correctly set up the underlying ```qualysdk.base.call_api()``` function. ```call_api``` in turn then sets up the appropriate ```requests.Request()``` call using an endpoint's schema.
 
 The schema stores information such as what HTTP methods the endpoint accepts, the authentication type the endpoint expects, its path, acceptable kwargs when calling an API (and whether a kwarg should be sent as a URL parameter, in a POST form, or using the requests' library's ```json=``` feature), what Qualys URL structure to use (gateway vs. qualysapi), and more.
 
@@ -14,7 +14,7 @@ If you want to take a look at what an endpoint (or what an entire module's colle
 >**Pro Tip!**: use ```schema_query(...pretty=True)``` to return a beautified string of the query results.
 
 ```py
-from qualyspy import schema_query
+from qualysdk import schema_query
 
 #Get one specific endpoint's schema:
 print(schema_query(module='gav', endpoint='query_assets'))

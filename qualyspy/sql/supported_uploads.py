@@ -11,14 +11,16 @@ from .base import upload_data, prepare_dataclass
 from ..vmdr.data_classes.lists import BaseList
 
 
-def upload_vmdr_ags(ags: BaseList, cnxn: Connection, override_import_dt: datetime = None) -> int:
+def upload_vmdr_ags(
+    ags: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
     """
     Upload data from vmdr.get_ag_list() to SQL.
 
     Parameters:
     ags (BaseList): The Asset Group List to upload.
     cnxn (Connection): The Connection object to the SQL database.
-    override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database. 
+    override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
     int: The number of rows uploaded.
@@ -66,10 +68,14 @@ def upload_vmdr_ags(ags: BaseList, cnxn: Connection, override_import_dt: datetim
     df = DataFrame([prepare_dataclass(ag) for ag in ags])
 
     # Upload the data:
-    return upload_data(df, "vmdr_assetgroups", cnxn, dtype=COLS, override_import_dt=override_import_dt)
+    return upload_data(
+        df, "vmdr_assetgroups", cnxn, dtype=COLS, override_import_dt=override_import_dt
+    )
 
 
-def upload_vmdr_kb(kbs: BaseList, cnxn: Connection, override_import_dt: datetime = None) -> int:
+def upload_vmdr_kb(
+    kbs: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
     """
     Upload data from vmdr.query_kb() to SQL.
 
@@ -119,10 +125,21 @@ def upload_vmdr_kb(kbs: BaseList, cnxn: Connection, override_import_dt: datetime
     df = DataFrame([prepare_dataclass(kb) for kb in kbs])
 
     # Upload the data:
-    return upload_data(df, "vmdr_knowledgebase", cnxn, dtype=COLS, override_import_dt=override_import_dt)
+    return upload_data(
+        df,
+        "vmdr_knowledgebase",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )
 
 
-def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection, is_hld: bool = False, override_import_dt: datetime = None) -> int:
+def upload_vmdr_hosts(
+    hosts: BaseList,
+    cnxn: Connection,
+    is_hld: bool = False,
+    override_import_dt: datetime = None,
+) -> int:
     """
     Upload data from vmdr.get_host_list() to SQL.
 
@@ -197,11 +214,17 @@ def upload_vmdr_hosts(hosts: BaseList, cnxn: Connection, is_hld: bool = False, o
 
     # Upload the data, with table depdening on if it is a Host List Detail pull or not:
     return upload_data(
-        df, "vmdr_hosts_list" if not is_hld else "vmdr_hld_hosts_list", cnxn, dtype=COLS, override_import_dt=override_import_dt
+        df,
+        "vmdr_hosts_list" if not is_hld else "vmdr_hld_hosts_list",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
     )
 
 
-def upload_vmdr_ips(ips: BaseList, cnxn: Connection, override_import_dt: datetime = None) -> int:
+def upload_vmdr_ips(
+    ips: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
     """
     Upload data from vmdr.get_ip_list() to SQL.
 
@@ -226,10 +249,14 @@ def upload_vmdr_ips(ips: BaseList, cnxn: Connection, override_import_dt: datetim
     df["TYPE"] = df["IP"].apply(lambda x: "Single IP" if "/" not in x else "IP Range")
 
     # Upload the data:
-    return upload_data(df, "vmdr_ips", cnxn, dtype=COLS, override_import_dt=override_import_dt)
+    return upload_data(
+        df, "vmdr_ips", cnxn, dtype=COLS, override_import_dt=override_import_dt
+    )
 
 
-def upload_vmdr_hld(hld: BaseList, cnxn: Connection, override_import_dt: datetime = None) -> int:
+def upload_vmdr_hld(
+    hld: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
     """
     Upload data from vmdr.get_hld() to SQL.
 
@@ -296,4 +323,10 @@ def upload_vmdr_hld(hld: BaseList, cnxn: Connection, override_import_dt: datetim
     df["QDS"] = df["QDS"].apply(lambda x: int(x) if x else None)
 
     # Upload the data:
-    return upload_data(df, "vmdr_hld_detections", cnxn, dtype=COLS, override_import_dt=override_import_dt)
+    return upload_data(
+        df,
+        "vmdr_hld_detections",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

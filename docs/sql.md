@@ -44,7 +44,10 @@ And finally, you can use the following supported functions:
 
 >**Head's Up:** More upload functions are coming soon!
 
-Each upload function takes 2 parameters. The first is the ```BaseList``` of data, and the second is the ```sqlalchemy.Connection``` object you built above.
+Each upload function takes 2 positional parameters. The first is the ```BaseList``` of data, and the second is the ```sqlalchemy.Connection``` object you built above. 
+
+Functions also take an optional ```override_import_dt``` parameter that will set the resulting SQL table's ```import_datetime``` field to the value you specify. ```override_import_dt``` is a ```datetime.datetime``` object.
+
 
 | Function Name | Module  | ```qualyspy``` Function Data Source | Resulting Table Name |
 | -- | -- | -- | -- |
@@ -53,6 +56,18 @@ Each upload function takes 2 parameters. The first is the ```BaseList``` of data
 | ```upload_vmdr_hosts``` | VMDR | ```vmdr.get_host_list()```| ```vmdr_hosts_list``` |
 | ```upload_vmdr_hld``` | VMDR | ```vmdr.get_hld()```| ```vmdr_hld_hosts_list``` for hosts and ```vmdr_hld_detections``` for detections |
 | ```upload_vmdr_ips``` | VMDR | ```vmdr.get_ip_list()```| ```vmdr_ips``` |
+
+```py
+from qualyspy.sql import *
+
+# Get a connection to the DB
+cnxn = db_connect(host='10.0.0.1', db='qualysdata', trusted_cnxn=True)
+
+# Upload a previous vmdr.get_host_list() call to the DB, with override_import_dt set
+# to 10-25-2023 12:00:00
+dt = datetime.datetime(2023, 10, 25, 12, 0, 0)
+uploaded = upload_vmdr_hosts(vmdr_hosts, cnxn, override_import_dt=dt)
+>>>Uploaded 12345 records to vmdr_hosts_list
 
 ## A Friendly Recommendation For Getting Data
 

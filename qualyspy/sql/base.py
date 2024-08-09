@@ -75,7 +75,13 @@ def db_connect(
     return engine.connect()
 
 
-def upload_data(df: DataFrame, table: str, cnxn: Connection, dtype: dict) -> int:
+def upload_data(
+    df: DataFrame,
+    table: str,
+    cnxn: Connection,
+    dtype: dict,
+    override_import_dt: datetime = None,
+) -> int:
     """
     Upload a DataFrame to a SQL table. Appends 'import_datetime' column to the DataFrame.
 
@@ -84,13 +90,16 @@ def upload_data(df: DataFrame, table: str, cnxn: Connection, dtype: dict) -> int
         table (str): The name of the table to upload to.
         cnxn (Connection): The Connection object to the SQL database.
         dtype (dict): The data types of the columns in the table. Key is the column name, value is the data type as sqlalchemy.types.Something()
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
 
     Returns:
     int: The number of rows uploaded.
     """
 
     # Add an import_datetime column:
-    df["import_datetime"] = datetime.now()
+    df["import_datetime"] = (
+        datetime.now() if not override_import_dt else override_import_dt
+    )
     dtype["import_datetime"] = types.DateTime()
 
     # For any string values in the DataFrame, make sure it doesn't

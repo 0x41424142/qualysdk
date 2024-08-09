@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "qualysdk"
-version = "0.1.0"
+version = "0.1.1"
 description = "SDK for interacting with Qualys APIs, across most of modules the platform offers."
-authors = ["0x41424142 <j.n.lindsay@email.msmary.edu>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
+authors = ["0x41424142 <jake@jakelindsay.uk>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
 readme = "README.md"
 license = "MIT License"
 

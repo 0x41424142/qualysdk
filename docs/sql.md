@@ -1,20 +1,20 @@
 # Uploading Data to a SQL Database
 
->**Head's Up!:** ```qualyspy.sql``` is currently in development and has been tested using Microsoft SQL Server only. Other DBs will be tested at some point.
+>**Head's Up!:** ```qualysdk.sql``` is currently in development and has been tested using Microsoft SQL Server only. Other DBs will be tested at some point.
 
-```qualyspy``` supports uploading data it has pulled to a SQL Database using various ```upload_<module>_*``` functions. Thanks to the [Pandas library](https://pandas.pydata.org) and qualyspy's ```BaseList``` class, uploading is rather easy. ```qualyspy``` automatically will create the table for you if it does not exist, and will append data to the table if it does exist. The ```import_datetime``` field is also added to each table to track when the data was uploaded.
+```qualysdk``` supports uploading data it has pulled to a SQL Database using various ```upload_<module>_*``` functions. Thanks to the [Pandas library](https://pandas.pydata.org) and qualysdk's ```BaseList``` class, uploading is rather easy. ```qualysdk``` automatically will create the table for you if it does not exist, and will append data to the table if it does exist. The ```import_datetime``` field is also added to each table to track when the data was uploaded.
 
 ## Steps to Get Going
 
 ### Step 1: Importing Functionality
 
 ```py
-from qualyspy.sql import *
+from qualysdk.sql import *
 ```
 
 ### Step 2: Building the SQLAlchemy Connection
 
-Next, build your connection object. ```qualyspy``` supports username/password auth as well as trusted connections. It also supports specifying a custom driver (default driver is ```"ODBC Driver 17 for SQL Server"```) and specifying the type of DB you are connecting to (default is ```"mssql"```) via ```db_type```:
+Next, build your connection object. ```qualysdk``` supports username/password auth as well as trusted connections. It also supports specifying a custom driver (default driver is ```"ODBC Driver 17 for SQL Server"```) and specifying the type of DB you are connecting to (default is ```"mssql"```) via ```db_type```:
 
 ```py
 
@@ -49,7 +49,7 @@ Each upload function takes 2 positional parameters. The first is the ```BaseList
 Functions also take an optional ```override_import_dt``` parameter that will set the resulting SQL table's ```import_datetime``` field to the value you specify. ```override_import_dt``` is a ```datetime.datetime``` object.
 
 
-| Function Name | Module  | ```qualyspy``` Function Data Source | Resulting Table Name |
+| Function Name | Module  | ```qualysdk``` Function Data Source | Resulting Table Name |
 | -- | -- | -- | -- |
 | ```upload_vmdr_ags``` | VMDR | ```vmdr.get_ag_list()```| ```vmdr_assetgroups``` |
 | ```upload_vmdr_kb``` | VMDR | ```vmdr.query_kb()```| ```vmdr_knowledgebase``` |
@@ -58,7 +58,7 @@ Functions also take an optional ```override_import_dt``` parameter that will set
 | ```upload_vmdr_ips``` | VMDR | ```vmdr.get_ip_list()```| ```vmdr_ips``` |
 
 ```py
-from qualyspy.sql import *
+from qualysdk.sql import *
 
 # Get a connection to the DB
 cnxn = db_connect(host='10.0.0.1', db='qualysdata', trusted_cnxn=True)

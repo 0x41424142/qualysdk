@@ -1,13 +1,13 @@
-﻿# qualyspy - A Python SDK for Interacting With Qualys APIs
-![Logo](./imgs/QualysPyLogo.png)
+﻿# qualysdk - A Python SDK for Interacting With Qualys APIs
+![Logo](./imgs/qualysdkLogo.png)
 
 This SDK attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
 
-[![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Development Status](https://img.shields.io/badge/in%20development-8A2BE2) ![Black Formatter Status](https://github.com/0x41424142/qualyspy/actions/workflows/black.yml/badge.svg?event=push) ![CodeQL Scan Status](https://github.com/0x41424142/qualyspy/actions/workflows/codeql.yml/badge.svg?branch=main)
+[![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) ![Development Status](https://img.shields.io/badge/in%20development-8A2BE2) ![Black Formatter Status](https://github.com/0x41424142/qualysdk/actions/workflows/black.yml/badge.svg?event=push) ![CodeQL Scan Status](https://github.com/0x41424142/qualysdk/actions/workflows/codeql.yml/badge.svg?branch=main)
 
 ## Uber Class Example
 ```py
-from qualyspy import TokenAuth, GAVUber
+from qualysdk import TokenAuth, GAVUber
 
 auth = TokenAuth(<username>, <password>, platform='qg1')
 uber = GAVUber(auth)
@@ -21,8 +21,8 @@ assets = uber.get(
 ```
 ## Non-Uber Class Example
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import get_host_list
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_host_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -52,7 +52,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 # Documentation/Get Started
 
 
-For more detailed information on the package, including how to get up and running, please see the [documentation](https://qualyspy.jakelindsay.uk).
+For more detailed information on the package, including how to get up and running, please see the [documentation](https://qualysdk.jakelindsay.uk).
 
 # Disclaimer
 

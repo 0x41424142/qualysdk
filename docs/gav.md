@@ -5,7 +5,7 @@ Global AssetView APIs return data on hosts within your Qualys subscription.
 After running:
 
 ```py
-from qualyspy.gav import *
+from qualysdk.gav import *
 ```
 You can any of the 4 GAV endpoints:
 
@@ -20,7 +20,7 @@ You can any of the 4 GAV endpoints:
 Or use the uber class:
 
 ```py
-from qualyspy import TokenAuth, GAVUber
+from qualysdk import TokenAuth, GAVUber
 
 #Hey look! context managers!
 with TokenAuth(<username>, <password>, platform='qg1') as auth:

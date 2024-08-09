@@ -55,7 +55,9 @@ def db_connect(
 
     if driver not in pyodbc.drivers():
         if len(pyodbc.drivers()) == 0:
-            raise ValueError("No ODBC drivers found. Please install an ODBC driver & specify it with the driver parameter.")
+            raise ValueError(
+                "No ODBC drivers found. Please install an ODBC driver & specify it with the driver parameter."
+            )
         else:
             raise ValueError(
                 f"Driver '{driver}' not found. Pyodbc found drivers: {pyodbc.drivers()}"
@@ -156,7 +158,7 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "DISCOVERY",
         "CHANGE_LOG",
         "USER_DEF",
-        "TRURISK_SCORE_FACTORS"
+        "TRURISK_SCORE_FACTORS",
     ]
 
     # Iterate over the attrs of the dataclass and convert them to the appropriate format for SQL insertion.
@@ -170,7 +172,7 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
                     dataclass, attr, flatten_dict_to_string(getattr(dataclass, attr))
                 )
 
-    # If there are any leftover empty dictionaries, 
+    # If there are any leftover empty dictionaries,
     # convert them to None as a failsafe:
     for attr in dataclass.__dataclass_fields__.keys():
         if getattr(dataclass, attr) == {}:

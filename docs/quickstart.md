@@ -1,6 +1,6 @@
 # Getting Started
 
-To install using poetry, run the following commands:
+## Installing with Poetry
 
 ```bash
 git clone https://github.com/0x41424142/qualyspy.git
@@ -8,7 +8,8 @@ cd qualyspy
 poetry shell #if you want to use a venv
 poetry install
 ```
-You can also install using pip, preferably in a virtual environment:
+
+## Installing with Pip
 
 ```bash
 git clone https://github.com/0x41424142/qualyspy.git

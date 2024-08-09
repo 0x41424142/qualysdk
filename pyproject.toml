@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "qualyspy"
+name = "qualyspy-sdk"
 version = "0.1.0"
 description = "SDK for interacting with Qualys APIs, across most of modules the platform offers."
 authors = ["0x41424142 <j.n.lindsay@email.msmary.edu>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]

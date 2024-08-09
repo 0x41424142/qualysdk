@@ -1,10 +1,10 @@
-# qualyspy - A Python SDK for Interacting With Qualys APIs
+# qualysdk - A Python SDK for Interacting With Qualys APIs
 
 This SDK attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
 
 ## Uber Class Example
 ```py
-from qualyspy import TokenAuth, GAVUber
+from qualysdk import TokenAuth, GAVUber
 
 auth = TokenAuth(<username>, <password>, platform='qg1')
 uber = GAVUber(auth)
@@ -18,8 +18,8 @@ assets = uber.get(
 ```
 ## Non-Uber Class Example
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import get_host_list
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_host_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 

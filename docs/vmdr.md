@@ -4,7 +4,7 @@ VMDR APIs return data on vulnerabilities in your environment as well as from the
 
 After running:
 ```py
-from qualyspy.vmdr import *
+from qualysdk.vmdr import *
 ```
 You can use any of the VMDR endpoints currently supported:
 
@@ -64,8 +64,8 @@ Some important kwargs this API accepts:
 
 >**Heads Up!**: For a full breakdown of acceptable kwargs, see Qualys' documentation [here](https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf).
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import get_hld
+from qualysdk import BasicAuth
+from qualysdk.vmdr import get_hld
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -93,8 +93,8 @@ Using the ```details``` kwarg, the shape of the output can be controlled:
 |```"All/AGs"```| Return a ```list[dict]``` containing all host details plus asset group information.
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import get_host_list
+from qualysdk import BasicAuth
+from qualysdk.vmdr import get_host_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -111,7 +111,7 @@ yesterdays_scanned_assets = get_host_list(
 
 ## IP Management
 
-This collection of APIs allows for the management of IP addresses/ranges in VMDR, located under ```qualyspy.vmdr.ips```. The APIs are as follows:
+This collection of APIs allows for the management of IP addresses/ranges in VMDR, located under ```qualysdk.vmdr.ips```. The APIs are as follows:
 
 |API Call| Description|
 |--|--|
@@ -125,7 +125,7 @@ The ```get_ip_list()``` API returns a list of all IP addresses or ranges in VMDR
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to search for.|❌|
 |```network_id```|```str```|The network ID to search for.|❌ (usually not even enabled in a Qualys subscription)|
 |```tracking_method```|```Literal['IP', 'DNS', 'NETBIOS']```| Return IPs/ranges based on the tracking method.|❌|
@@ -133,8 +133,8 @@ The ```get_ip_list()``` API returns a list of all IP addresses or ranges in VMDR
 |```certview_enabled```|```bool```|Return IPs/ranges based on if CertView tracking is enabled on it.|❌|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr.ips import get_ip_list
+from qualysdk import BasicAuth
+from qualysdk.vmdr.ips import get_ip_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -153,7 +153,7 @@ The ```add_ips()``` API allows for the addition of IP addresses or ranges to VMD
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to add.|✅|
 |```tracking_method```|```Literal['IP', 'DNS', 'NETBIOS']```| The tracking method to use for the IP address/range.|❌|
 |```enable_pc```|```bool```|Enable Policy Compliance tracking on the IP address/range.|See **Heads Up!** below.|
@@ -171,8 +171,8 @@ The ```add_ips()``` API allows for the addition of IP addresses or ranges to VMD
 >**Heads Up!**: At least one of the following must be enabled: ```enable_pc```, ```enable_vm```, ```enable_sca```, or ```enable_certview```, or the API will return an error.
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr.ips import add_ips
+from qualysdk import BasicAuth
+from qualysdk.vmdr.ips import add_ips
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -185,7 +185,7 @@ The ```update_ips()``` API allows for the modification of IP addresses or ranges
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```ips```|```str(<ip_address/range>)``` or ```BaseList[str, IPV4Address, IPV4Network, IPV6Address, IPV6Network]```|The IP address or range to update.|✅|
 |```tracking_method```|```Literal['IP', 'DNS', 'NETBIOS']```| The tracking method to use for the IP address/range.|❌|
 |```host_dns```|```str```|The DNS name of the IP address/range.|❌|
@@ -197,8 +197,8 @@ The ```update_ips()``` API allows for the modification of IP addresses or ranges
 |```comment```|```str```|A comment to add to the IP address/range.|❌|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr.ips import update_ips
+from qualysdk import BasicAuth
+from qualysdk.vmdr.ips import update_ips
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -207,7 +207,7 @@ update_ips(auth, ips='1.2.3.4', host_dns='new_dns_name')
 ```
 
 ## Asset Group Management
-This collection of APIs allows for the management of asset groups (AGs) in VMDR, located under ```qualyspy.vmdr.assetgroups```. The APIs are as follows:
+This collection of APIs allows for the management of asset groups (AGs) in VMDR, located under ```qualysdk.vmdr.assetgroups```. The APIs are as follows:
 
 |API Call| Description|
 |--|--|
@@ -223,7 +223,7 @@ The ```get_ag_list()``` API returns a list of all AGs in VMDR, matching the give
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```page_count```|```Literal['all']``` (default), ```int >= 0```| How many pages to pull. Note that ```page_count``` does not apply if ```truncation_limit``` is set to 0, or not specified.|❌|
 |```ids```|```str```: '12345', '12345,6789'| Filter to specific AG IDs.|❌|
 |```id_min```|```int```| Only return AGs with an ID >= ```id_min```.| ❌|
@@ -236,8 +236,8 @@ The ```get_ag_list()``` API returns a list of all AGs in VMDR, matching the give
 |```show_attributes```|```str```: 'ALL', 'ID', 'TITLE', 'ID,TITLE', ```...``` (For full list, check [Qualys documentation](https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf), under "Asset Group List" Section.| Only return specific attributes of an AG record. If not specified, basic details are returned (ID, TITLE, ```...```)|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import get_ag_list
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_ag_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -249,7 +249,7 @@ The ```add_ag()``` API allows for the addition of asset groups to VMDR. Acceptab
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```title```|```str```|The title of the asset group.|✅|
 |```comments```|```str```|Comments to add to the asset group.|❌|
 |```division```|```str```|The division the asset group belongs to.|❌|
@@ -268,8 +268,8 @@ The ```add_ag()``` API allows for the addition of asset groups to VMDR. Acceptab
 |```cvss_enviro_ar```|```Literal["high", "medium", "low"]```|The CVSS environmental AR of the asset group.|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import add_ag
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import add_ag
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -283,7 +283,7 @@ The ```edit_ag()``` API allows for the modification of asset groups in VMDR. Acc
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[AssetGroup, BaseList[AssetGroup, int, str], str]```|The ID of the asset group to edit.|✅|
 |```set_comments```|```str```|The comments to set for the asset group.|❌|
 |```set_division```|```str```|The division to set for the asset group.|❌|
@@ -314,8 +314,8 @@ The ```edit_ag()``` API allows for the modification of asset groups in VMDR. Acc
 |```set_cvss_enviro_ar```|```Literal["high", "medium", "low"]```|The CVSS environmental AR to set for the asset group.|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import edit_ag
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import edit_ag
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -330,12 +330,12 @@ The ```delete_ag()``` API allows for the deletion of asset groups in VMDR. Accep
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[AssetGroup, BaseList[AssetGroup, int, str], str]```|The ID of the asset group to delete.|✅|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import delete_ag
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import delete_ag
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -345,7 +345,7 @@ delete_ag(auth, id=12345)
 ```
 
 ## VM Scan Management
-This collection of APIs allows for the management of VM scans in VMDR, located under ```qualyspy.vmdr.vmscans```. 
+This collection of APIs allows for the management of VM scans in VMDR, located under ```qualysdk.vmdr.vmscans```. 
 
 >**Heads up!**: When VM scans change status, it will take a few minutes before interaction can continue. This is due to Qualys needing to update the scan status in their backend. Use ```get_scan_list()``` (described below) with a specific scan reference to check the status of a scan.
 
@@ -387,7 +387,7 @@ The ```get_scan_list()``` API returns a list of all VM scans in VMDR, matching t
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```scan_ref```|```str```|The reference string of the scan to search for. Formatted like: ```scan/123455677```|❌|
 |```state```|```Literal["Running", "Paused", "Cancelled", "Finished", "Error", "Queued", "Loading"]```|Filter by the state of the scan.|❌|
 |```processed```|```bool```|Filter by if the scan results have been processed.|❌|
@@ -405,8 +405,8 @@ The ```get_scan_list()``` API returns a list of all VM scans in VMDR, matching t
 |```ignore_target```|```bool```|Ignore the target IPs of the scan. Defaults to ```False```.|❌|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import get_scan_list
+from qualysdk import BasicAuth
+from qualysdk.vmdr import get_scan_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -422,12 +422,12 @@ The ```pause_scan()``` API lets you pause a currently-running VM scan in VMDR. R
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```scan_ref```|```str```|The reference string of the scan to pause. Formatted like: ```scan/123455677```|✅|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import pause_scan
+from qualysdk import BasicAuth
+from qualysdk.vmdr import pause_scan
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -440,12 +440,12 @@ The ```resume_scan()``` API lets you resume a paused VM scan in VMDR. Results ar
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```scan_ref```|```str```|The reference string of the scan to resume. Formatted like: ```scan/123455677```|✅|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import resume_scan
+from qualysdk import BasicAuth
+from qualysdk.vmdr import resume_scan
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -458,12 +458,12 @@ The ```cancel_scan()``` API lets you cancel a VM scan in VMDR. Results are retur
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```scan_ref```|```str```|The reference string of the scan to cancel. Formatted like: ```scan/123455677```|✅|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import cancel_scan
+from qualysdk import BasicAuth
+from qualysdk.vmdr import cancel_scan
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -476,12 +476,12 @@ The ```delete_scan()``` API lets you delete a VM scan in VMDR. Results are retur
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```scan_ref```|```str```|The reference string of the scan to delete. Formatted like: ```scan/123455677```|✅|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import delete_scan
+from qualysdk import BasicAuth
+from qualysdk.vmdr import delete_scan
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -494,7 +494,7 @@ The ```fetch_scan()``` API lets you download the results of a VM scan. Results a
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```scan_ref```|```str```|The reference string of the scan to fetch. Formatted like: ```scan/123455677```|✅|
 |```ips```|```str```| Only include results for specific IPs. Accepts a comma-separated string of IPs.|❌|
 |```mode```|```Literal["brief", "extended"]```|The level of detail to include in the results. Defaults to ```brief```|❌|
@@ -502,8 +502,8 @@ The ```fetch_scan()``` API lets you download the results of a VM scan. Results a
 |```client_name```|```str```|Filter by the client name of the scan. This must be enabled in the Qualys subscription.|❌|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import fetch_scan
+from qualysdk import BasicAuth
+from qualysdk.vmdr import fetch_scan
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -516,7 +516,7 @@ result = fetch_scan(auth, scan_ref='scan/123456789')
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```runtime_http_header```|```str```|The value for the ```Qualys.Scan``` HTTP header to use for the scan.|❌|
 |```scan_title```|```str```|The title of the scan.|❌|
 |```option_id```|```int```|The option profile ID to use for the scan.|⚠️ (Must be specified if ```option_title``` is not specified)|
@@ -547,8 +547,8 @@ result = fetch_scan(auth, scan_ref='scan/123456789')
 |```ec2_endpoint```|```str```| The EC2 region code or VPC ID zone.|⚠️ Required for EC2 scans.|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import launch_scan
+from qualysdk import BasicAuth
+from qualysdk.vmdr import launch_scan
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -561,7 +561,7 @@ result
 
 ## VMDR Scanner Appliance Management
 
-This collection of APIs allows for the management of scanner appliances in VMDR, located under ```qualyspy.vmdr.scanner_appliances```. 
+This collection of APIs allows for the management of scanner appliances in VMDR, located under ```qualysdk.vmdr.scanner_appliances```. 
 
 ### Scanner Appliance List API
 
@@ -573,7 +573,7 @@ Acceptable params are:
 
 |Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```output_mode```| ```Literal["brief", "full"]```| Show some or all details of scanner appliances. Defaults to brief.|❌|
 |```scan_detail```|```bool```| If ```True```, output includes scan details for scans that are currently running on an appliance.|❌|
 |```show_tags```|```bool```| Show tag information for each scanner appliance in the output.|⚠️ Requires ```output_mode``` to be ```True``` to be able to be used.|
@@ -586,8 +586,8 @@ Acceptable params are:
 |```platform_provider```|```Literal["ec2", "ec2_compat", "gce", "azure", "vCenter"]```| Filter output to scanners that are hosted on a specific provider.|❌|
 
 ```py
-from qualyspy import BasicAuth
-from qualyspy.vmdr import get_scanner_list
+from qualysdk import BasicAuth
+from qualysdk.vmdr import get_scanner_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -614,12 +614,12 @@ Search lists help to filter QIDs in a subscription by specific QIDs, option prof
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```ids```|```str```| A comma-separated string of static search lists IDs to return.|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import get_static_searchlists
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_static_searchlists
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -687,7 +687,7 @@ This API lets you pull a list of reports in your subscription, according to kwar
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[int, str]```| A specific report ID to pull.|❌|
 |```state```|```str```|Filter output to reports in a specific state.|❌|
 |```user_login```|```str```|Filter output to reports launched by a specific user.|❌|
@@ -696,8 +696,8 @@ Parameter| Possible Values |Description|Required|
 |```client_name```|```str```|Filter output to reports for a specific client name. ⚠️ ONLY VALID FOR CONSULTANT SUBSCRIPTIONS!|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import get_static_searchlists
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_static_searchlists
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -712,13 +712,13 @@ This API lets you pull a list of scheduled reports in VMDR, according to kwarg f
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[int, str]```| A specific report ID to pull.|❌|
 |```is_active```|```True/False```|Filter output to just active (```True```) or inactive (```False```) reports.|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import get_scheduled_report_list
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_scheduled_report_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -735,7 +735,7 @@ Acceptable kwargs are:
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```template_id```|```Union[int, str]``` |The template that the report will follow. Use ```get_report_template_list()``` To select one.|✅|
 |```report_title```|```str```|The name to give to the report. ```⚠️ IF YOU REQUEST A PCI COMPLIANCE REPORT, THE TITLE IS AUTO-GENERATED BY QUALYS!```|❌|
 ```output_format```| FOR MAP REPORT: <br> ```pdf, html, mht, xml, csv```<br>FOR SCAN REPORT:<br>```pdf, html mht, xml, csv, docx```<br>FOR REMEDIATION REPORT:<br>```pdf, html, mht, csv```<br>FOR COMPLIANCE (NON-PCI) REPORT:<br>```pdf, html, mht```<br>FOR PCI COMPLIANCE REPORT:<br>```pdf, html```<br>FOR PATCH REPORT:<br>```pdf, online, xml, csv```<br>FOR COMPLIANCY POLICY REPORT:<br>```pdf, html, mht, xml, csv```|The format that the report will be generated in.|❌|
@@ -769,8 +769,8 @@ Parameter| Possible Values |Description|
 |```tag_set_exclude```|```str```|Comma-separated string of either tag IDs or names to exclude in the report.|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import launch_report
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import launch_report
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -784,12 +784,12 @@ This API lets you start an otherwise scheduled report. Returns the status messag
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[int, str]``` |The ID number of the in-progress report to cancel.|✅|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import launch_scheduled_report
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import launch_scheduled_report
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -803,12 +803,12 @@ This API cancels a report that is currently in progress. It returns a string wit
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[int, str]``` |The ID number of the in-progress report to cancel.|✅|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import cancel_report
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import cancel_report
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -818,17 +818,17 @@ result = cancel_report(auth)
 
 ### Fetch Report Results API
 
-This API lets you download the results of a report. The ```write_out``` parameter controls if the data is written to the ```<qualyspy_dir>/vmdr/output``` directory. By default, ```write_out``` is ```False```. If the report is in XML or CSV format, the data will be returned in a pandas DataFrame. Otherwise, ```write_out``` is set to ```True``` automatically, and results are written to disk. The output directory is created if it does not already exist.
+This API lets you download the results of a report. The ```write_out``` parameter controls if the data is written to the ```<qualysdk_dir>/vmdr/output``` directory. By default, ```write_out``` is ```False```. If the report is in XML or CSV format, the data will be returned in a pandas DataFrame. Otherwise, ```write_out``` is set to ```True``` automatically, and results are written to disk. The output directory is created if it does not already exist.
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[int, str]``` |The ID number of the in-progress report to cancel.|✅|
 |```write_out```|```True/False```|Choose if you want the data written to disk in the ```output``` directory. Automatically set to ```True``` if the report format is not XML or CSV.|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import fetch_report
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import fetch_report
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -843,8 +843,8 @@ GLOSSARY             {'VULN_DETAILS_LIST': {'VULN_DETAILS': [{'@id'...
 
 #PDF report, automatically gets written to disk:
 fetch_report(auth, id=92345678)
->>>Detected PDF format. Writing to <qualyspy_dir>/vmdr/output/<report_id>.pdf
-Wrote report to <qualyspy_dir>/vmdr/output/<report_id>.pdf
+>>>Detected PDF format. Writing to <qualysdk_dir>/vmdr/output/<report_id>.pdf
+Wrote report to <qualysdk_dir>/vmdr/output/<report_id>.pdf
 ```
 
 ### Delete Report API
@@ -853,12 +853,12 @@ This API deletes a report out of Qualys. It returns a string with the Qualys res
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```id```|```Union[int, str]``` |The ID number of the report to delete.|✅|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import delete_report
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import delete_report
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -873,8 +873,8 @@ This API lets you pull a list of all VMDR report templates in your account. Usef
 This API takes no parameters other than the ```BasicAuth``` object.
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import get_template_list
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_template_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -945,13 +945,13 @@ This API lets you pull a list of user accounts in your subscription, according t
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```external_id_contains```|```str```|Filter output to users with a specific external ID pattern.|❌|
 |```external_id_assigned```|```True/False```|Filter output to users with an external ID assigned.|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import get_user_list
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_user_list
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -965,7 +965,7 @@ This API lets you create a new user account in VMDR. It returns a string with th
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```user_role```|```Literal["manager", "unit_manager", "scanner", "reader", "contact", "administrator"]```|The role of the user.|✅|
 |```business_unit```|```Union[Literal["Unassigned"], str]```|The business unit of the user.|✅|
 |```first_name```|```str```|The first name of the user.|✅|
@@ -985,8 +985,8 @@ Parameter| Possible Values |Description|Required|
 |```external_id```|```str```|The external ID of the user.|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import add_user
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import add_user
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -1005,7 +1005,7 @@ This API lets you edit an existing user account in VMDR. It returns a string wit
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
-|```auth```|```qualyspy.auth.BasicAuth```|The authentication object.|✅|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```login```|```str```|The username of the user to edit.|✅|
 |```asset_groups```|```str```|A comma-separated string of asset groups to assign to the user.|❌|
 |```first_name```|```str```|The first name of the user.|❌|
@@ -1023,8 +1023,8 @@ Parameter| Possible Values |Description|Required|
 |```external_id```|```str```|The external ID of the user.|❌|
 
 ```py
-from qualyspy.auth import BasicAuth
-from qualyspy.vmdr import edit_user
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import edit_user
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
@@ -1043,7 +1043,7 @@ The Qualys KnowledgeBase (KB) is a collection of vulnerabilities that Qualys has
 >**Heads Up!**: When calling ```query_kb()```, the function returns a regular list of ```KBEntry``` objects.
 
 ```py
-from qualyspy import BasicAuth, vmdr
+from qualysdk import BasicAuth, vmdr
 
 with BasicAuth(<username>, <password>, platform='qg1') as auth:
     #Full KB pull:

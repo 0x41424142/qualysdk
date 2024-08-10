@@ -8,7 +8,7 @@
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": [ 
     "sudo apt update && sudo apt upgrade -y",
-    "sudo apt install unixodbc",
+    "sudo apt install unixodbc -y",
     "pip3 install --user poetry", 
     "pip3 install --user ."
   ]

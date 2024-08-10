@@ -6,6 +6,6 @@
   },
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "pip3 install --user ."
+  "postCreateCommand": ["pip3 install --user .", "pip3 install --user poetry"]
 
 }

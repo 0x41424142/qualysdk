@@ -5,6 +5,7 @@ base.py - contains the base functionality for the SQL module of qualysdk.
 from datetime import datetime
 from dataclasses import dataclass
 from typing import Literal
+from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
 from sqlalchemy import types
 
@@ -172,11 +173,22 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
                     dataclass, attr, flatten_dict_to_string(getattr(dataclass, attr))
                 )
 
-    # If there are any leftover empty dictionaries,
-    # convert them to None as a failsafe:
+    # If there are any leftover empties or ipv4/ipv6 addresses,
+    # convert them to None/str as a failsafe: #NOTE: Refactor at some point!
     for attr in dataclass.__dataclass_fields__.keys():
         if getattr(dataclass, attr) == {}:
             setattr(dataclass, attr, None)
+        elif getattr(dataclass, attr) == "":
+            setattr(dataclass, attr, None)
+        elif getattr(dataclass, attr) == []:
+            setattr(dataclass, attr, None)
+        elif type(getattr(dataclass, attr)) in [
+            IPv4Address,
+            IPv6Address,
+            IPv4Network,
+            IPv6Network,
+        ]:
+            setattr(dataclass, attr, str(getattr(dataclass, attr)))
 
     sql_dict = dataclass.to_dict()
 

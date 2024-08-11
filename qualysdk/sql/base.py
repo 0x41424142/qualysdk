@@ -182,7 +182,12 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
             setattr(dataclass, attr, None)
         elif getattr(dataclass, attr) == []:
             setattr(dataclass, attr, None)
-        elif type(getattr(dataclass, attr)) in [IPv4Address, IPv6Address, IPv4Network, IPv6Network]:
+        elif type(getattr(dataclass, attr)) in [
+            IPv4Address,
+            IPv6Address,
+            IPv4Network,
+            IPv6Network,
+        ]:
             setattr(dataclass, attr, str(getattr(dataclass, attr)))
 
     sql_dict = dataclass.to_dict()

@@ -200,11 +200,11 @@ class ScannerCloudInfo:
             self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")["SETTING"]
 
         for field in INT_FIELDS:
-            if getattr(self, field) not in ["", [], {}, None]:
+            if getattr(self, field):
                 setattr(self, field, int(getattr(self, field)))
 
         for field in IPV4_FIELDS:
-            if getattr(self, field) is not None:
+            if getattr(self, field):
                 setattr(self, field, IPv4Address(getattr(self, field)))
 
         del self.EC2_INFO
@@ -244,11 +244,7 @@ class ScannerCloudInfo:
         )
 
     def valid_values(self):
-        return {
-            k: v
-            for k, v in asdict(self).items()
-            if v is not None and v != "" and v not in [[], {}]
-        }
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass
@@ -363,7 +359,8 @@ class InterfaceSettings:
             del self.DNS
 
     def __str__(self):
-        return self.INTERFACE
+        # Comma-separated string of non-empty values in k:v format
+        return ", ".join(f"{k}:{v}" for k, v in self.valid_values().items() if v)
 
     def __repr__(self) -> str:
         # Only return non-empty values
@@ -374,11 +371,7 @@ class InterfaceSettings:
         )
 
     def valid_values(self):
-        return {
-            k: v
-            for k, v in asdict(self).items()
-            if v is not None and v != "" and v not in [[], {}]
-        }
+        return {k: v for k, v in asdict(self).items() if v}
 
     def keys(self):
         return asdict(self).keys()
@@ -624,7 +617,7 @@ class ScannerAppliance:
         CUSTOM_DATACLASSES = [("ASSET_GROUP_LIST", "ag"), ("ASSET_TAGS_LIST", "tag")]
 
         for field in INT_FIELDS:
-            if getattr(self, field) not in ["", [], {}, None]:
+            if getattr(self, field):
                 # Special case for polling interval. Split by space and take the first value.
                 if field == "POLLING_INTERVAL":
                     setattr(self, field, int(getattr(self, field).split()[0]))
@@ -636,7 +629,7 @@ class ScannerAppliance:
                 setattr(self, field, float(getattr(self, field)))
 
         for field in DT_FIELDS:
-            if getattr(self, field) is not None:
+            if getattr(self, field):
                 setattr(
                     self,
                     field,
@@ -657,6 +650,9 @@ class ScannerAppliance:
         # convert UUID:
         if self.UUID:
             setattr(self, "UUID", uuid(self.UUID))
+
+        if self.UPDATED:
+            setattr(self, "UPDATED", self.UPDATED == "Yes")
 
         # Convert IS_CLOUD_DEPLOYED to bool:
         if self.IS_CLOUD_DEPLOYED:
@@ -728,8 +724,4 @@ class ScannerAppliance:
         return asdict(self)
 
     def valid_values(self):
-        return {
-            k: v
-            for k, v in asdict(self).items()
-            if v is not None and v != "" and v != []
-        }
+        return {k: v for k, v in asdict(self).items() if v}

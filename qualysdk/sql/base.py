@@ -160,6 +160,9 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "CHANGE_LOG",
         "USER_DEF",
         "TRURISK_SCORE_FACTORS",
+        "VLANS",
+        "ML_VERSION",
+        "VULNSIGS_VERSION",
     ]
 
     # Iterate over the attrs of the dataclass and convert them to the appropriate format for SQL insertion.
@@ -176,20 +179,26 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
     # If there are any leftover empties or ipv4/ipv6 addresses,
     # convert them to None/str as a failsafe: #NOTE: Refactor at some point!
     for attr in dataclass.__dataclass_fields__.keys():
-        if getattr(dataclass, attr) == {}:
+        """
+        if getattr(dataclass, attr) in {}:
             setattr(dataclass, attr, None)
         elif getattr(dataclass, attr) == "":
             setattr(dataclass, attr, None)
         elif getattr(dataclass, attr) == []:
             setattr(dataclass, attr, None)
-        elif type(getattr(dataclass, attr)) in [
+        """
+        if not getattr(dataclass, attr):
+            setattr(dataclass, attr, None)
+        elif type(getattr(dataclass, attr)) not in [str, int, float, bool, datetime]:
+            setattr(dataclass, attr, str(getattr(dataclass, attr)))
+        """elif type(getattr(dataclass, attr)) in [
             IPv4Address,
             IPv6Address,
             IPv4Network,
             IPv6Network,
         ]:
             setattr(dataclass, attr, str(getattr(dataclass, attr)))
-
+        """
     sql_dict = dataclass.to_dict()
 
     return sql_dict

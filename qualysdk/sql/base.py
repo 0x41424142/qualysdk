@@ -149,6 +149,7 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "IPV6",
         "QDS",
         "QDS_FACTORS",
+        "QIDS",
     ]
 
     DICT_FIELDS = [
@@ -163,6 +164,10 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "VLANS",
         "ML_VERSION",
         "VULNSIGS_VERSION",
+        "OPTION_PROFILES",
+        "REPORT_TEMPLATES",
+        "REMEDIATION_POLICIES",
+        "DISTRIBUTION_GROUPS",
     ]
 
     # Iterate over the attrs of the dataclass and convert them to the appropriate format for SQL insertion.

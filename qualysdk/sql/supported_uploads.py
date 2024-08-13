@@ -407,3 +407,47 @@ def upload_vmdr_scanners(
     return upload_data(
         df, "vmdr_scanners", cnxn, dtype=COLS, override_import_dt=override_import_dt
     )
+
+
+def upload_static_searchlists(
+    searchlists: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_static_searchlists() to SQL.
+
+    Parameters:
+        searchlists (BaseList): The Search List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "ID": types.Integer(),
+        "TITLE": types.String(),
+        "GLOBAL": types.Boolean(),
+        "OWNER": types.String(),
+        "CREATED": types.DateTime(),
+        "MODIFIED": types.DateTime(),
+        "MODIFIED_BY": types.String(),
+        "QIDS": types.String(),  # BaseList
+        "OPTION_PROFILES": types.String(),  # dict
+        "REPORT_TEMPLATES": types.String(),  # dict
+        "REMEDIATION_POLICIES": types.String(),  # dict
+        "DISTRIBUTION_GROUPS": types.String(),  # dict
+        "COMMENTS": types.String(),  # dict
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(searchlist) for searchlist in searchlists])
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_static_searchlists",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

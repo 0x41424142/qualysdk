@@ -10,4 +10,5 @@ from .supported_uploads import (
     upload_vmdr_ips,
     upload_vmdr_hld,
     upload_vmdr_scanners,
+    upload_static_searchlists,
 )

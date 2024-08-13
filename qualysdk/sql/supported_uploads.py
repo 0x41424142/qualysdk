@@ -330,3 +330,124 @@ def upload_vmdr_hld(
         dtype=COLS,
         override_import_dt=override_import_dt,
     )
+
+
+def upload_vmdr_scanners(
+    scanners: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_scanner_list() to SQL.
+
+    Parameters:
+        scanners (BaseList): The Scanner List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "ID": types.Integer(),
+        "NAME": types.String(),
+        "SOFTWARE_VERSION": types.Float(),
+        "RUNNING_SCAN_COUNT": types.Integer(),
+        "STATUS": types.String(),
+        "UUID": types.Uuid(),
+        "RUNNING_SLICES_COUNT": types.Integer(),
+        "MODEL_NUMBER": types.String(),
+        "TYPE": types.String(),
+        "SERIAL_NUMBER": types.String(),
+        "ACTIVATION_CODE": types.BigInteger(),
+        "INTERFACE_SETTINGS": types.String(),
+        "PROXY_SETTINGS": types.String(),  # dict.
+        "IS_CLOUD_DEPLOYED": types.Boolean(),
+        "CLOUD_INFO": types.String(),  # dict. DROP THIS! INFO IS IN BELOW FIELDS:
+        "PLATFORM_PROVIDER": types.String(),
+        "INSTANCE_ID": types.String(),
+        "AMI_ID": types.String(),
+        "ACCOUNT_ID": types.String(),
+        "INSTANCE_REGION": types.String(),
+        "INSTANCE_AVAIBILITY_ZONE": types.String(),
+        "INSTANCE_ZONE_TYPE": types.String(),
+        "INSTANCE_VPC_ID": types.String(),
+        "INSTANCE_SUBNET_ID": types.String(),
+        "INSTANCE_ADDRESS_PRIVATE": types.String(),
+        "INSTANCE_ADDRESS_PUBLIC": types.String(),
+        "HOSTNAME_PRIVATE": types.String(),
+        "SECURITY_GROUPS": types.String(),
+        "API_PROXY_SETTINGS": types.String(),
+        "VLANS": types.String(),  # dict.
+        "STATIC_ROUTES": types.String(),  # dict.
+        "ML_LATEST": types.String(),
+        "ML_VERSION": types.String(),
+        "VULNSIGS_LATEST": types.String(),
+        "VULNSIGS_VERSION": types.String(),
+        "ASSET_GROUP_COUNT": types.Integer(),
+        "ASSET_GROUP_LIST": types.String(),  # BaseList
+        "LAST_UPDATED_DATE": types.DateTime(),
+        "POLLING_INTERVAL": types.Integer(),
+        "USER_LOGIN": types.String(),
+        "HEARTBEATS_MISSED": types.Integer(),
+        "SS_CONNECTIION": types.String(),
+        "SS_LAST_CONNECTED": types.DateTime(),
+        "USER_LIST": types.String(),  # dict
+        "UPDATED": types.String(),
+        "COMMENTS": types.String(),
+        "MAX_CAPACITY_UNITS": types.Float(),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(scanner) for scanner in scanners])
+
+    # Drop the CLOUD_INFO and EC2_INFO columns:
+    df.drop(columns=["CLOUD_INFO"], inplace=True)
+
+    # Upload the data:
+    return upload_data(
+        df, "vmdr_scanners", cnxn, dtype=COLS, override_import_dt=override_import_dt
+    )
+
+
+def upload_static_searchlists(
+    searchlists: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_static_searchlists() to SQL.
+
+    Parameters:
+        searchlists (BaseList): The Search List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "ID": types.Integer(),
+        "TITLE": types.String(),
+        "GLOBAL": types.Boolean(),
+        "OWNER": types.String(),
+        "CREATED": types.DateTime(),
+        "MODIFIED": types.DateTime(),
+        "MODIFIED_BY": types.String(),
+        "QIDS": types.String(),  # BaseList
+        "OPTION_PROFILES": types.String(),  # dict
+        "REPORT_TEMPLATES": types.String(),  # dict
+        "REMEDIATION_POLICIES": types.String(),  # dict
+        "DISTRIBUTION_GROUPS": types.String(),  # dict
+        "COMMENTS": types.String(),  # dict
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(searchlist) for searchlist in searchlists])
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_static_searchlists",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

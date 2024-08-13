@@ -76,9 +76,12 @@ def call_api(
         case "gateway":
             url = f"https://gateway.{auth.platform}.apps.qualys.com{SCHEMA['endpoint']}"
         case "api":
-            url = (
-                f"https://qualysapi.{auth.platform}.apps.qualys.com{SCHEMA['endpoint']}"
-            )
+            if (
+                auth.platform == "qg1"
+            ):  # Special case for qg1 platform: no qg or apps in the URL
+                url = f"https://qualysapi.qualys.com{SCHEMA['endpoint']}"
+            else:
+                url = f"https://qualysapi.{auth.platform}.apps.qualys.com{SCHEMA['endpoint']}"
         case _:
             raise ValueError(f"Invalid url_type {SCHEMA['url_type']}.")
 

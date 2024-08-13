@@ -28,6 +28,9 @@ cnxn = db_connect(host='10.0.0.1', db='qualysdata', username='Jane', password='S
 
 Note that you are required to call ```.close()``` on the connection object when you are done with it to close the connection to the DB.
 
+>**Head's Up!:** If you are on Mac or a Linux flavor, ```qualysdk``` will raise an ```ImportError``` related to pyodbc. To fix, you will need to install the ```unixODBC``` package as well as whatever driver you need for your DB.
+
+
 ```py
 
 cnxn = db_connect(host='10.0.0.1', db='qualysdata', trusted_cnxn=True)
@@ -56,6 +59,8 @@ Functions also take an optional ```override_import_dt``` parameter that will set
 | ```upload_vmdr_hosts``` | VMDR | ```vmdr.get_host_list()```| ```vmdr_hosts_list``` |
 | ```upload_vmdr_hld``` | VMDR | ```vmdr.get_hld()```| ```vmdr_hld_hosts_list``` for hosts and ```vmdr_hld_detections``` for detections |
 | ```upload_vmdr_ips``` | VMDR | ```vmdr.get_ip_list()```| ```vmdr_ips``` |
+| ```upload_vmdr_scanners``` | VMDR | ```vmdr.get_scanner_list()```| ```vmdr_scanners``` |
+| ```upload_static_searchlists``` | VMDR | ```vmdr.get_static_searchlists()```| ```vmdr_static_searchlists``` |
 
 ```py
 from qualysdk.sql import *

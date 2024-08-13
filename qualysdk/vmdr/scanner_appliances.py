@@ -21,7 +21,7 @@ def get_scanner_list(auth: BasicAuth, **kwargs) -> BaseList[ScannerAppliance]:
         action (str): The action to filter by. NOTE: the SDK force-sets this to "list". It is just included for completeness.
         echo_request (bool): Whether to echo the request. NOTE: the SDK force-sets this to False. It is just included for completeness.
         output_mode (Literal['brief', 'full']): The output mode. Defaults to 'brief'.
-        scan_details (bool): Whether to include details on currently running scans. Defaults to False. Details include ID, title, scan_ref, type, and date.
+        scan_detail (bool): Whether to include details on currently running scans. Defaults to False. Details include ID, title, scan_ref, type, and date.
         show_tags (bool): Whether to include tags. Defaults to False.
         include_cloud_info (bool): Whether to include cloud information. Defaults to False. Requires output_mode='full'. If set, output includes cloud data for appliances in a cloud platform.
         busy (bool): Whether to include busy appliances. Defaults to True.

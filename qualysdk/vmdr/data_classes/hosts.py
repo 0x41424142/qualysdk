@@ -421,7 +421,13 @@ class VMDRHost:
                 if isinstance(self.METADATA[key_selector]["ATTRIBUTE"], list):
                     for item in self.METADATA[key_selector]["ATTRIBUTE"]:
                         if item["NAME"] == key[1]:
-                            setattr(self, f"CLOUD_{key[0]}", item["VALUE"] if item["VALUE"] not in ["", {}, []] else None) # if item['VALUE'] seems to leave behind empties, hence the list
+                            setattr(
+                                self,
+                                f"CLOUD_{key[0]}",
+                                item["VALUE"]
+                                if item["VALUE"] not in ["", {}, []]
+                                else None,
+                            )  # if item['VALUE'] seems to leave behind empties, hence the list
                             break
                 else:
                     if (

@@ -200,10 +200,10 @@ class User:
                 bl.append(item)
             self.ASSET_GROUP_TITLE = bl
 
-        if self.MAP == 'none':
+        if self.MAP == "none":
             self.MAP = None
 
-        if self.SCAN == 'none':
+        if self.SCAN == "none":
             self.SCAN = None
 
     def __dict__(self):

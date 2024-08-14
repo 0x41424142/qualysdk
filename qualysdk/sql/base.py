@@ -148,6 +148,8 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "QDS_FACTORS",
         "QIDS",
         "ASSET_GROUP_TITLE",
+        "ASSET_GROUP_TITLE_LIST",
+        "TARGET",
     ]
 
     DICT_FIELDS = [
@@ -166,6 +168,7 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "REPORT_TEMPLATES",
         "REMEDIATION_POLICIES",
         "DISTRIBUTION_GROUPS",
+        "OPTION_PROFILE",
     ]
 
     # Iterate over the attrs of the dataclass and convert them to the appropriate format for SQL insertion.

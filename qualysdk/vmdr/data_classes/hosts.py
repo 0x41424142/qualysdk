@@ -424,9 +424,11 @@ class VMDRHost:
                             setattr(
                                 self,
                                 f"CLOUD_{key[0]}",
-                                item["VALUE"]
-                                if item["VALUE"] not in ["", {}, []]
-                                else None,
+                                (
+                                    item["VALUE"]
+                                    if item["VALUE"] not in ["", {}, []]
+                                    else None
+                                ),
                             )  # if item['VALUE'] seems to leave behind empties, hence the list
                             break
                 else:

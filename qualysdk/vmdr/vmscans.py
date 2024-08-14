@@ -8,7 +8,6 @@ from typing import Union, Literal
 from io import StringIO
 
 from pandas import read_json, DataFrame
-from numpy import nan
 
 from ..base import call_api, xml_parser
 from .data_classes.lists.base_list import BaseList
@@ -21,11 +20,10 @@ def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
     """
     Pull a list of scans in the Qualys subscription.
 
-    Params:
+    Args:
         auth (BasicAuth): Qualys BasicAuth object.
 
     Keyword Args:
-        ```
         SCAN LIST FILTERS:
         scan_ref (str): Scan reference ID. Formatted like scan/1234567890123456, compliance/1234567890123456, or qscap/1234567890123456.
         state (Union[Literal["Running", "Paused", "Canceled", "Finished", "Error", "Queued", "Loading"], BaseList[str]): State of the scan. Multiple states can be specified as a comma-separated string. Can also pass a BaseList of strings.
@@ -45,7 +43,6 @@ def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
         show_status (bool): Whether to show status. Defaults to None.
         show_last (bool): Whether to show last scan. Defaults to None.
         ignore_target (bool): Whether to ignore the target. Defaults to None.
-        ```
 
     Returns:
         BaseList: BaseList object containing the scan(s) in the Qualys subscription.
@@ -107,7 +104,6 @@ def launch_scan(auth: BasicAuth, **kwargs) -> VMScan:
     a pre-existing VMDR scan on supplied target (IP, asset group IDs, etc.).
 
     Keyword args:
-        ```
         action (Literal["launch"]): The action to perform. Defaults to "launch". WARNING: the SDK will force-set this to "launch".
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: the SDK will force-set this to False.
         runtime_http_header (str): The value the scanner will put in the Qualys-Scan header. Defaults to None. Used to "drop defenses".
@@ -147,6 +143,7 @@ def launch_scan(auth: BasicAuth, **kwargs) -> VMScan:
         ec2_endpoint (str): The EC2 region code or VPC ID zone. Defaults to None. Required for EC2 scans.
 
         EXAMPLE:
+        ```
         # Launch a scan on a single IP:
         result = launch_scan(auth, ip="1.2.3.4", scan_title="My Scan", priority=5, option_id=123456)
         >>> "New vm scan launched with REF: scan/1234567890123456"
@@ -217,7 +214,7 @@ def manage_scan(
     """
     Perform an action on a VMDR scan.
 
-    Params:
+    Args:
         auth (BasicAuth): Qualys BasicAuth object.
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
         action (Literal["pause", "resume", "cancel", "fetch", "delete"]): The action to perform on the scan.
@@ -311,7 +308,7 @@ def pause_scan(auth: BasicAuth, scan_ref: str) -> str:
     """
     Pause a VMDR scan.
 
-    Params:
+    Args:
         auth (BasicAuth): Qualys BasicAuth object.
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 
@@ -327,7 +324,7 @@ def resume_scan(auth: BasicAuth, scan_ref: str) -> str:
     """
     Resume a VMDR scan.
 
-    Params:
+    Args:
         auth (BasicAuth): Qualys BasicAuth object.
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 
@@ -343,7 +340,7 @@ def cancel_scan(auth: BasicAuth, scan_ref: str) -> str:
     """
     Cancel a VMDR scan.
 
-    Params:
+    Args:
         auth (BasicAuth): Qualys BasicAuth object.
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 
@@ -359,7 +356,7 @@ def delete_scan(auth: BasicAuth, scan_ref: str) -> str:
     """
     Delete a VMDR scan.
 
-    Params:
+    Args:
         auth (BasicAuth): Qualys BasicAuth object.
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 
@@ -375,7 +372,7 @@ def fetch_scan(auth: BasicAuth, scan_ref: str, **kwargs) -> DataFrame:
     """
     Fetch VMDR scan results.
 
-    Params:
+    Args:
         auth (BasicAuth): Qualys BasicAuth object.
         scan_ref (str): The scan reference ID. Formatted like scan/1234567890123456.
 

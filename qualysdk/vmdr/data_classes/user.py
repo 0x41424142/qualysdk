@@ -6,6 +6,8 @@ from typing import Union
 from datetime import datetime
 from dataclasses import dataclass, field, asdict
 
+from ..data_classes.lists import BaseList
+
 
 @dataclass
 class User:
@@ -132,7 +134,7 @@ class User:
 
     # BELOW ARE PARSED OUT OF ASSIGNED_ASSET_GROUPS
 
-    ASSET_GROUP_TITLE: str = field(
+    ASSET_GROUP_TITLE: BaseList[str] = field(
         metadata={"description": "Asset group title."}, default=None
     )  # May need to be a list in the future?
 
@@ -154,19 +156,19 @@ class User:
 
         if self.CONTACT_INFO:
             for key, value in self.CONTACT_INFO.items():
-                setattr(self, key, value)
+                setattr(self, key, value if value else None)
 
         if self.PERMISSIONS:
             for key, value in self.PERMISSIONS.items():
-                setattr(self, key, value)
+                setattr(self, key, value if value else None)
 
         if self.NOTIFICATIONS:
             for key, value in self.NOTIFICATIONS.items():
-                setattr(self, key, value)
+                setattr(self, key, value if value else None)
 
         if self.ASSIGNED_ASSET_GROUPS:
             for key, value in self.ASSIGNED_ASSET_GROUPS.items():
-                setattr(self, key, value)
+                setattr(self, key, value if value else None)
 
         # Convert the fields to the correct types
 
@@ -188,6 +190,21 @@ class User:
         for field in BOOL_FIELDS:
             if getattr(self, field):
                 setattr(self, field, bool(getattr(self, field)))
+
+        if self.ASSET_GROUP_TITLE:
+            bl = BaseList()
+            data = self.ASSET_GROUP_TITLE
+            if not isinstance(data, list):
+                data = [data]
+            for item in data:
+                bl.append(item)
+            self.ASSET_GROUP_TITLE = bl
+
+        if self.MAP == "none":
+            self.MAP = None
+
+        if self.SCAN == "none":
+            self.SCAN = None
 
     def __dict__(self):
         return asdict(self)

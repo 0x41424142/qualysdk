@@ -5,7 +5,6 @@ base.py - contains the base functionality for the SQL module of qualysdk.
 from datetime import datetime
 from dataclasses import dataclass
 from typing import Literal
-from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
 from sqlalchemy import types
 
@@ -33,8 +32,7 @@ def db_connect(
 
     Generate a sqlalchemy Connection object to a SQL database.
 
-    Parameters:
-
+    Args:
         host (str): The hostname of the SQL server.
         db (str): The name of the database.
         username (str): The username to use to connect to the database.
@@ -44,7 +42,6 @@ def db_connect(
         db_type (str): The type of database to connect to. Defaults to 'mssql'. Options are 'mssql', 'mysql', 'postgresql', 'sqlite', 'oracle'.
 
     Returns:
-
         Connection: The Connection object to the SQL database.
     """
 
@@ -89,7 +86,7 @@ def upload_data(
     """
     Upload a DataFrame to a SQL table. Appends 'import_datetime' column to the DataFrame.
 
-    Parameters:
+    Args:
         df (DataFrame): The DataFrame to upload.
         table (str): The name of the table to upload to.
         cnxn (Connection): The Connection object to the SQL database.
@@ -97,7 +94,7 @@ def upload_data(
         override_import_dt (datetime): If provided, will override the import_datetime column with this value.
 
     Returns:
-    int: The number of rows uploaded.
+        int: The number of rows uploaded.
     """
 
     # Add an import_datetime column:
@@ -119,11 +116,11 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
     by converting it to a dictionary with appropriate list/dataclass
     conversions.
 
-    Parameters:
-    dataclass (dataclass): The dataclass to convert.
+    Args:
+        dataclass (dataclass): The dataclass to convert.
 
     Returns:
-    dict: The dataclass converted to a dictionary.
+        dict: The dataclass converted to a dictionary.
     """
 
     TO_STR_FIELDS = [
@@ -150,6 +147,7 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "QDS",
         "QDS_FACTORS",
         "QIDS",
+        "ASSET_GROUP_TITLE",
     ]
 
     DICT_FIELDS = [
@@ -184,26 +182,11 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
     # If there are any leftover empties or ipv4/ipv6 addresses,
     # convert them to None/str as a failsafe: #NOTE: Refactor at some point!
     for attr in dataclass.__dataclass_fields__.keys():
-        """
-        if getattr(dataclass, attr) in {}:
-            setattr(dataclass, attr, None)
-        elif getattr(dataclass, attr) == "":
-            setattr(dataclass, attr, None)
-        elif getattr(dataclass, attr) == []:
-            setattr(dataclass, attr, None)
-        """
         if not getattr(dataclass, attr):
             setattr(dataclass, attr, None)
         elif type(getattr(dataclass, attr)) not in [str, int, float, bool, datetime]:
             setattr(dataclass, attr, str(getattr(dataclass, attr)))
-        """elif type(getattr(dataclass, attr)) in [
-            IPv4Address,
-            IPv6Address,
-            IPv4Network,
-            IPv6Network,
-        ]:
-            setattr(dataclass, attr, str(getattr(dataclass, attr)))
-        """
+
     sql_dict = dataclass.to_dict()
 
     return sql_dict

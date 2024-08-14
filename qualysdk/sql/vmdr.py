@@ -1,5 +1,5 @@
 """
-supported_uploads.py - Contains the functions to upload supported API pulls to SQL Server.
+vmdr.py - Contains the functions to upload supported VMDR API pulls to SQL DBs.
 """
 
 from datetime import datetime
@@ -17,13 +17,13 @@ def upload_vmdr_ags(
     """
     Upload data from vmdr.get_ag_list() to SQL.
 
-    Parameters:
-    ags (BaseList): The Asset Group List to upload.
-    cnxn (Connection): The Connection object to the SQL database.
-    override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+    Args:
+        ags (BaseList): The Asset Group List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
-    int: The number of rows uploaded.
+        int: The number of rows uploaded.
     """
 
     COLS = {
@@ -79,13 +79,13 @@ def upload_vmdr_kb(
     """
     Upload data from vmdr.query_kb() to SQL.
 
-    Parameters:
-    kbs (BaseList): The KB List to upload.
-    cnxn (Connection): The Connection object to the SQL database.
-    override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+    Args:
+        kbs (BaseList): The KB List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
-    int: The number of rows uploaded.
+        int: The number of rows uploaded.
     """
 
     COLS = {
@@ -143,7 +143,7 @@ def upload_vmdr_hosts(
     """
     Upload data from vmdr.get_host_list() to SQL.
 
-    Parameters:
+    Args:
         hosts (BaseList): The Host List to upload.
         cnxn (Connection): The Connection object to the SQL database.
         is_hld (bool): If the data is from a Host List Detail pull. You can ignore this.
@@ -228,7 +228,7 @@ def upload_vmdr_ips(
     """
     Upload data from vmdr.get_ip_list() to SQL.
 
-    Parameters:
+    Args:
         ips (BaseList): The IP List to upload from vmdr.get_ip_list().
         cnxn (Connection): The Connection object to the SQL database.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
@@ -260,7 +260,7 @@ def upload_vmdr_hld(
     """
     Upload data from vmdr.get_hld() to SQL.
 
-    Parameters:
+    Args:
         hld (BaseList): The Host List to upload.
         cnxn (Connection): The Connection object to the SQL database.
 
@@ -338,7 +338,7 @@ def upload_vmdr_scanners(
     """
     Upload data from vmdr.get_scanner_list() to SQL.
 
-    Parameters:
+    Args:
         scanners (BaseList): The Scanner List to upload.
         cnxn (Connection): The Connection object to the SQL database.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
@@ -409,13 +409,13 @@ def upload_vmdr_scanners(
     )
 
 
-def upload_static_searchlists(
+def upload_vmdr_static_searchlists(
     searchlists: BaseList, cnxn: Connection, override_import_dt: datetime = None
 ) -> int:
     """
     Upload data from vmdr.get_static_searchlists() to SQL.
 
-    Parameters:
+    Args:
         searchlists (BaseList): The Search List to upload.
         cnxn (Connection): The Connection object to the SQL database.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
@@ -447,6 +447,85 @@ def upload_static_searchlists(
     return upload_data(
         df,
         "vmdr_static_searchlists",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )
+
+
+def upload_vmdr_users(
+    users: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_user_list() to SQL.
+
+    Args:
+        users (BaseList): The user list to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "USER_LOGIN": types.String(),
+        "USER_ID": types.Integer(),
+        "EXTERNAL_ID": types.String(),
+        "FIRSTNAME": types.String(),
+        "LASTNAME": types.String(),
+        "TITLE": types.String(),
+        "PHONE": types.String(),
+        "FAX": types.String(),
+        "EMAIL": types.String(),
+        "COMPANY": types.String(),
+        "ADDRESS1": types.String(),
+        "ADDRESS2": types.String(),
+        "CITY": types.String(),
+        "COUNTRY": types.String(),
+        "STATE": types.String(),
+        "ZIP_CODE": types.String(),
+        "TIME_ZONE_CODE": types.String(),
+        "USER_STATUS": types.String(),
+        "CREATION_DATE": types.DateTime(),
+        "USER_ROLE": types.String(),
+        "BUSINESS_UNIT": types.String(),
+        "MANAGER_POC": types.String(),
+        "UI_INTERFACE_STYLE": types.String(),
+        "CREATE_OPTION_PROFILES": types.Boolean(),
+        "PURGE_INFO": types.Boolean(),
+        "ADD_ASSETS": types.Boolean(),
+        "EDIT_REMEDIATION_POLICY": types.Boolean(),
+        "EDIT_AUTH_RECORDS": types.Boolean(),
+        "LATEST_VULN": types.String(),
+        "MAP": types.String(),
+        "DAILY_TICKETS": types.Boolean(),
+        "ASSET_GROUP_TITLE": types.String(),  # BaseList
+        "LAST_LOGIN_DATE": types.DateTime(),
+        "UNIT_MANAGER_POC": types.Float(),
+        "MAP": types.String(),
+        "SCAN": types.String(),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(user) for user in users])
+
+    # Drop contact_info, assigned_asset_groups,
+    # permissions, notifications:
+    df.drop(
+        columns=[
+            "CONTACT_INFO",
+            "ASSIGNED_ASSET_GROUPS",
+            "PERMISSIONS",
+            "NOTIFICATIONS",
+        ],
+        inplace=True,
+    )
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_users",
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,

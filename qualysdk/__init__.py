@@ -8,8 +8,10 @@ from .help import schema_query
 from .auth import BasicAuth, TokenAuth
 
 from .gav.uber import GAVUber
+from . import gav
 
 from .vmdr import query_kb, get_host_list, get_hld
+from . import vmdr
 
 from .sql import db_connect
 

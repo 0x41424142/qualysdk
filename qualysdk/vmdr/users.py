@@ -11,11 +11,11 @@ from .data_classes.user import User
 from ..exceptions import *
 
 
-def get_user_list(auth: BasicAuth, **kwargs) -> List[User]:
+def get_user_list(auth: BasicAuth, **kwargs) -> BaseList[User]:
     """
     Get a list of users in the subscription.
 
-    Params:
+    Args:
         auth (BasicAuth): The authentication object.
 
     :Kwargs:
@@ -23,7 +23,7 @@ def get_user_list(auth: BasicAuth, **kwargs) -> List[User]:
         external_id_assigned (bool): Filter by external ID assigned.
 
     Returns:
-        List[User]: List of User objects.
+        BaseList[User]: BaseList of User objects.
     """
 
     response = call_api(
@@ -80,7 +80,7 @@ def add_user(
     """
     Adds a user to the subscription.
 
-    Parameters:
+    Args:
         auth (BasicAuth): The authentication object.
         user_role (Literal["manager", "unit_manager", "scanner", "reader", "contact", "administrator"]): The role of the user.
         business_unit (Union[Literal["Unassigned"], str]): The business unit of the user.
@@ -152,7 +152,7 @@ def edit_user(auth: BasicAuth, login: str, **kwargs) -> str:
     Change details of a pre-existing user in Qualys.
     NOTE: To clear a field, specify it with an empty string in the kwargs.
 
-    Parameters:
+    Args:
         auth (BasicAuth): The authentication object.
         login (str): The login of the user to edit.
 

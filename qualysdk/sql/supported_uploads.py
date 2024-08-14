@@ -409,7 +409,7 @@ def upload_vmdr_scanners(
     )
 
 
-def upload_static_searchlists(
+def upload_vmdr_static_searchlists(
     searchlists: BaseList, cnxn: Connection, override_import_dt: datetime = None
 ) -> int:
     """

@@ -4,11 +4,15 @@ There are a few ways to get started with ```qualysdk```:
 
 ## Installing From PyPI
 
+For the latest (hopefully stable) version, you can install from PyPI:
+
 ```bash
 pip install qualysdk
 ```
 
 ## Installing From GitHub (Bleeding Edge)
+
+If you want the latest and greatest, you can install from GitHub:
 
 ### Installing with Poetry
 

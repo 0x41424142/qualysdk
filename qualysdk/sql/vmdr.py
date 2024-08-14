@@ -530,3 +530,49 @@ def upload_vmdr_users(
         dtype=COLS,
         override_import_dt=override_import_dt,
     )
+
+
+def upload_vmdr_scanlist(
+    scans: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_scan_list() to SQL.
+
+    Args:
+        scans (BaseList): The Scan List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "REF": types.String(),
+        "TYPE": types.String(),
+        "TITLE": types.String(),
+        "USER_LOGIN": types.String(),
+        "LAUNCH_DATETIME": types.DateTime(),
+        "DURATION": types.String(),
+        "PROCESSING_PRIORITY": types.String(),
+        "PROCESSED": types.Boolean(),
+        "STATE": types.String(),
+        "TARGET": types.String(),  # BaseList
+        "OPTION_PROFILE": types.String(),  # dict
+        "ASSET_GROUP_TITLE_LIST": types.String(),  # BaseList
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(scan) for scan in scans])
+
+    # Drop the STATUS column, as it is parsed out into STATE:
+    df.drop(columns=["STATUS"], inplace=True)
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_scans",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

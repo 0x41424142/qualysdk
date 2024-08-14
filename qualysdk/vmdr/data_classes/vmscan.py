@@ -155,11 +155,4 @@ class VMScan:
         return self.__dict__().items()
 
     def valid_values(self):
-        return {
-            k: v
-            for k, v in self.__dict__().items()
-            if v is not None
-            and v != ""
-            and v != []
-            and (isinstance(v, BaseList) and v != BaseList())
-        }
+        return {k: v for k, v in self.__dict__().items() if v}

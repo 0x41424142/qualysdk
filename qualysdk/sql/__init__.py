@@ -12,4 +12,5 @@ from .vmdr import (
     upload_vmdr_scanners,
     upload_vmdr_static_searchlists,
     upload_vmdr_users,
+    upload_vmdr_scanlist,
 )

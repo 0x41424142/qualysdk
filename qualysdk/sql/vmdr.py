@@ -452,7 +452,10 @@ def upload_vmdr_static_searchlists(
         override_import_dt=override_import_dt,
     )
 
-def upload_vmdr_users(users: BaseList, cnxn: Connection, override_import_dt: datetime = None) -> int:
+
+def upload_vmdr_users(
+    users: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
     """
     Upload data from vmdr.get_user_list() to SQL.
 
@@ -497,7 +500,7 @@ def upload_vmdr_users(users: BaseList, cnxn: Connection, override_import_dt: dat
         "LATEST_VULN": types.String(),
         "MAP": types.String(),
         "DAILY_TICKETS": types.Boolean(),
-        "ASSET_GROUP_TITLE": types.String(), #BaseList
+        "ASSET_GROUP_TITLE": types.String(),  # BaseList
         "LAST_LOGIN_DATE": types.DateTime(),
         "UNIT_MANAGER_POC": types.Float(),
         "MAP": types.String(),
@@ -507,10 +510,17 @@ def upload_vmdr_users(users: BaseList, cnxn: Connection, override_import_dt: dat
     # Convert the BaseList to a DataFrame:
     df = DataFrame([prepare_dataclass(user) for user in users])
 
-    # Drop contact_info, assigned_asset_groups, 
+    # Drop contact_info, assigned_asset_groups,
     # permissions, notifications:
-    df.drop(columns=["CONTACT_INFO", "ASSIGNED_ASSET_GROUPS", "PERMISSIONS", "NOTIFICATIONS"], inplace=True)
-
+    df.drop(
+        columns=[
+            "CONTACT_INFO",
+            "ASSIGNED_ASSET_GROUPS",
+            "PERMISSIONS",
+            "NOTIFICATIONS",
+        ],
+        inplace=True,
+    )
 
     # Upload the data:
     return upload_data(

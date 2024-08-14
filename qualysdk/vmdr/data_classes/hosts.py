@@ -398,7 +398,7 @@ class VMDRHost:
                 ("AMI_ID", "latest/meta-data/ami-id"),
                 ("PUBLIC_HOSTNAME", "latest/meta-data/public-hostname"),
                 ("PUBLIC_IPV4", "latest/meta-data/public-ipv4"),
-                ("ACCOUNT_ID", "asset.aws.ec2.accountId"),
+                ("ACCOUNT_ID", "latest/dynamic/instance-identity/document/accountId"),
             ]
             VALID_AZURE_KEYS = [
                 ("PUBLIC_IPV4", "latest/meta-data/public-ipv4"),
@@ -421,7 +421,14 @@ class VMDRHost:
                 if isinstance(self.METADATA[key_selector]["ATTRIBUTE"], list):
                     for item in self.METADATA[key_selector]["ATTRIBUTE"]:
                         if item["NAME"] == key[1]:
-                            setattr(self, f"CLOUD_{key[0]}", item["VALUE"])
+                            setattr(
+                                self,
+                                f"CLOUD_{key[0]}",
+                                item["VALUE"]
+                                if item["VALUE"] not in ["", {}, []]
+                                else None,
+                            )  # if item['VALUE'] seems to leave behind empties, hence the list
+                            break
                 else:
                     if (
                         self.METADATA[key_selector]["ATTRIBUTE"]["NAME"]

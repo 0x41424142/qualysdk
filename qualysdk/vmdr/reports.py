@@ -320,8 +320,22 @@ def fetch_report(
             # Check for a summarization header. If it exists, skip it.
             # We can delete everything before "\r\n\r\n\r\n"
             content = response.text
-            if content.count("\r\n\r\n\r\n") > 0:
-                content = content.split("\r\n\r\n\r\n")[1]
+            count = content.count("\r\n\r\n\r\n")
+            if count > 0:
+                # Special case for reports with a small table before the actual CSV data starts:
+                split_content = content.split("\r\n\r\n\r\n")
+                if (
+                    '"Severity","Total","Confirmed","Potential","Information Gathered"\r\n'
+                    in split_content[~0]
+                ):
+                    # Split again to get the actual data, this time with 2 \r\n's:
+                    content = split_content[~0].split("\r\n\r\n", 1)[
+                        ~0
+                    ]  # maxsplit lets us ignore newlines except for the table separator
+                else:
+                    content = split_content[
+                        ~0
+                    ]  # get the last element, which is the actual data...
             data = read_csv(StringIO(content))
             return_data = True
 

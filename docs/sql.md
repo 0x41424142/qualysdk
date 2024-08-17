@@ -60,11 +60,12 @@ Functions also take an optional ```override_import_dt``` parameter that will set
 | ```upload_vmdr_hld``` | VMDR | ```vmdr.get_hld()```| ```vmdr_hld_hosts_list``` for hosts and ```vmdr_hld_detections``` for detections |
 | ```upload_vmdr_ips``` | VMDR | ```vmdr.get_ip_list()```| ```vmdr_ips``` |
 | ```upload_vmdr_scanners``` | VMDR | ```vmdr.get_scanner_list()```| ```vmdr_scanners``` |
-| ```upload_vmdr_static_searchlists``` | VMDR | ```vmdr.get_static_searchlists()```| ```vmdr_static_searchlists``` |
+| ```upload_vmdr_static_search_lists``` | VMDR | ```vmdr.get_static_searchlists()```| ```vmdr_static_searchlists``` |
 | ```upload_vmdr_users``` | VMDR | ```vmdr.get_user_list()```| ```vmdr_users``` |
-| ```upload_vmdr_scanlist``` | VMDR | ```vmdr.get_scan_list()```| ```vmdr_scans``` |
-| ```upload_vmdr_reportlist``` | VMDR | ```vmdr.get_report_list()```| ```vmdr_reports``` |
-| ```upload_vmdr_scheduledreportlist``` | VMDR | ```vmdr.get_scheduled_report_list()```| ```vmdr_scheduled_reports``` |
+| ```upload_vmdr_scan_list``` | VMDR | ```vmdr.get_scan_list()```| ```vmdr_scans``` |
+| ```upload_vmdr_report_list``` | VMDR | ```vmdr.get_report_list()```| ```vmdr_reports``` |
+| ```upload_vmdr_scheduled_report_list``` | VMDR | ```vmdr.get_scheduled_report_list()```| ```vmdr_scheduled_reports``` |
+| ```upload_vmdr_template_list``` | VMDR | ```vmdr.get_template_list()```| ```vmdr_report_templates``` |
 
 ```py
 from qualysdk.sql import *

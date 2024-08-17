@@ -409,7 +409,7 @@ def upload_vmdr_scanners(
     )
 
 
-def upload_vmdr_static_searchlists(
+def upload_vmdr_static_search_lists(
     searchlists: BaseList, cnxn: Connection, override_import_dt: datetime = None
 ) -> int:
     """
@@ -532,7 +532,7 @@ def upload_vmdr_users(
     )
 
 
-def upload_vmdr_scanlist(
+def upload_vmdr_scan_list(
     scans: BaseList, cnxn: Connection, override_import_dt: datetime = None
 ) -> int:
     """
@@ -578,7 +578,7 @@ def upload_vmdr_scanlist(
     )
 
 
-def upload_vmdr_reportlist(
+def upload_vmdr_report_list(
     reports: BaseList, cnxn: Connection, override_import_dt: datetime = None
 ) -> int:
     """
@@ -621,7 +621,7 @@ def upload_vmdr_reportlist(
     )
 
 
-def upload_vmdr_scheduledreportlist(
+def upload_vmdr_scheduled_report_list(
     reports: BaseList, cnxn: Connection, override_import_dt: datetime = None
 ) -> int:
     """
@@ -661,6 +661,67 @@ def upload_vmdr_scheduledreportlist(
     return upload_data(
         df,
         "vmdr_scheduled_reports",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )
+
+
+def upload_vmdr_template_list(
+    templates: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_template_list() to SQL.
+
+    Args:
+        templates (BaseList): The Report List of VMDRTemplates to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "ID": types.Integer(),
+        "TYPE": types.String(),
+        "TEMPLATE_TYPE": types.String(),
+        "TITLE": types.String(),
+        "LOGIN": types.String(),
+        "FIRSTNAME": types.String(),
+        "LASTNAME": types.String(),
+        "LAST_UPDATE": types.DateTime(),
+        "GLOBAL": types.Boolean(),
+    }
+
+    def prepare_template(template) -> dict:
+        """
+        Helper function to use instead of prepare_dataclass
+        to handle the USER attribute.
+
+        df.drop is not necessary due to del data['USER'] here.
+
+        Args:
+            template (ReportTemplate): The template to prepare.
+
+        Returns:
+            dict: The template prepared for upload.
+        """
+        data = template.to_dict()
+        data["LOGIN"] = template.USER.get("LOGIN")
+        data["FIRSTNAME"] = template.USER.get("FIRSTNAME")
+        data["LASTNAME"] = template.USER.get("LASTNAME")
+        del data["USER"]
+
+        return data
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_template(template) for template in templates])
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_templates",
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,

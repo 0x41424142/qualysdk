@@ -169,6 +169,8 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "REMEDIATION_POLICIES",
         "DISTRIBUTION_GROUPS",
         "OPTION_PROFILE",
+        "STATUS",
+        "DETAILS",
     ]
 
     # Iterate over the attrs of the dataclass and convert them to the appropriate format for SQL insertion.

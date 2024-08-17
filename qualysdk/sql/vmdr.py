@@ -576,3 +576,92 @@ def upload_vmdr_scanlist(
         dtype=COLS,
         override_import_dt=override_import_dt,
     )
+
+
+def upload_vmdr_reportlist(
+    reports: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_report_list() to SQL.
+
+    Args:
+        reports (BaseList): The Report List of VMDRReports to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "ID": types.Integer(),
+        "TITLE": types.String(),
+        "TYPE": types.String(),
+        "USER_LOGIN": types.String(),
+        "LAUNCH_DATETIME": types.DateTime(),
+        "OUTPUT_FORMAT": types.String(),
+        "SIZE": types.Float(),
+        "STATUS": types.String(),
+        "EXPIRATION_DATETIME": types.DateTime(),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(report) for report in reports])
+
+    # Drop the STATUS column, as it is parsed out into STATE:
+    df.drop(columns=["STATUS"], inplace=True)
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_reports",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )
+
+
+def upload_vmdr_scheduledreportlist(
+    reports: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_scheduled_report_list() to SQL.
+
+    Args:
+        reports (BaseList): The Report List of VMDRScheduledReports to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "ID": types.Integer(),
+        "TITLE": types.String(),
+        "OUTPUT_FORMAT": types.String(),
+        "TEMPLATE_TITLE": types.String(),
+        "ACTIVE": types.Boolean(),
+        "SCHEDULE": types.String(),  # dict
+        "START_DATE_UTC": types.DateTime(),
+        "START_HOUR": types.Integer(),
+        "START_MINUTE": types.Integer(),
+        "TIME_ZONE_CODE": types.String(),
+        "TIME_ZONE_DETAILS": types.String(),
+        "DST_SELECTED": types.Boolean(),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(report) for report in reports])
+
+    # Drop TIME_ZONE column, as it is parsed out into TIME_ZONE_CODE and TIME_ZONE_DETAILS:
+    df.drop(columns=["TIME_ZONE"], inplace=True)
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_scheduled_reports",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

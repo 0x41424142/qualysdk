@@ -63,6 +63,8 @@ Functions also take an optional ```override_import_dt``` parameter that will set
 | ```upload_vmdr_static_searchlists``` | VMDR | ```vmdr.get_static_searchlists()```| ```vmdr_static_searchlists``` |
 | ```upload_vmdr_users``` | VMDR | ```vmdr.get_user_list()```| ```vmdr_users``` |
 | ```upload_vmdr_scanlist``` | VMDR | ```vmdr.get_scan_list()```| ```vmdr_scans``` |
+| ```upload_vmdr_reportlist``` | VMDR | ```vmdr.get_report_list()```| ```vmdr_reports``` |
+| ```upload_vmdr_scheduledreportlist``` | VMDR | ```vmdr.get_scheduled_report_list()```| ```vmdr_scheduled_reports``` |
 
 ```py
 from qualysdk.sql import *

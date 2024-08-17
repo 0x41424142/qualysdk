@@ -10,7 +10,10 @@ from .vmdr import (
     upload_vmdr_ips,
     upload_vmdr_hld,
     upload_vmdr_scanners,
-    upload_vmdr_static_searchlists,
+    upload_vmdr_static_search_lists,
     upload_vmdr_users,
-    upload_vmdr_scanlist,
+    upload_vmdr_scan_list,
+    upload_vmdr_report_list,
+    upload_vmdr_scheduled_report_list,
+    upload_vmdr_template_list,
 )

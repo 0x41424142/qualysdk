@@ -243,3 +243,6 @@ class VMDRScheduledReport:
         valid_values - returns a dictionary of attributes that have non-None values.
         """
         return {k: v for k, v in self.to_dict().items() if v}
+
+    def to_dict(self):
+        return asdict(self)

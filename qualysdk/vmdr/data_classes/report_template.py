@@ -81,3 +81,6 @@ class ReportTemplate:
 
     def valid_values(self):
         return {k: v for k, v in self.__dict__().items() if v}
+
+    def to_dict(self):
+        return asdict(self)

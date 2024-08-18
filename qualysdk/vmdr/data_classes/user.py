@@ -6,7 +6,7 @@ from typing import Union
 from datetime import datetime
 from dataclasses import dataclass, field, asdict
 
-from ..data_classes.lists import BaseList
+from ...base.base_list import BaseList
 
 
 @dataclass

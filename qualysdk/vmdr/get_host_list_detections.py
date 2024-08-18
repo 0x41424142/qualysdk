@@ -11,7 +11,7 @@ from queue import Queue, Empty
 from os import cpu_count
 
 from .data_classes.hosts import VMDRHost, VMDRID
-from .data_classes.lists.base_list import BaseList
+from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from .get_host_list import (

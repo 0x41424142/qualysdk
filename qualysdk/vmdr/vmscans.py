@@ -10,7 +10,7 @@ from io import StringIO
 from pandas import read_json, DataFrame
 
 from ..base import call_api, xml_parser
-from .data_classes.lists.base_list import BaseList
+from ..base.base_list import BaseList
 from .data_classes.vmscan import VMScan
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *

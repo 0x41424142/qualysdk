@@ -8,7 +8,7 @@ from pandas import DataFrame
 from sqlalchemy import Connection, types
 
 from .base import upload_data, prepare_dataclass
-from ..vmdr.data_classes.lists import BaseList
+from ..base.base_list import BaseList
 
 
 def upload_vmdr_ags(

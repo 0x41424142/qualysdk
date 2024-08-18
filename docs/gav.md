@@ -32,6 +32,6 @@ with TokenAuth(<username>, <password>, platform='qg1') as auth:
 ## The GAV Host Dataclass
 >**Heads Up!**: The ```Host``` class does not apply to ```count_assets()```
 
-When results are received from a GAV API, each host record is stored in a ```Host``` object, with its data points as attributes. The ```Host``` class is decorated with ```@dataclass(frozen=True)``` to maintain consistency with the Qualys platform.	
+When results are received from a GAV API, each host record is stored in a ```Host``` object, with its data points as attributes.
 
 Chances are, there will be a good chunk of attributes returned from Qualys that will be null. To deal with this, almost all attributes are defined as ```typing.Optional[]```, with the main exception being ```assetId```. It is also somewhat likely that I have mistyped certain attributes, as both the Qualys documentation and the data I am working with to build this package return a decent amount of null values. Should you come across something, submit a PR.

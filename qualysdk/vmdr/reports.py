@@ -14,7 +14,7 @@ from .data_classes import VMDRReport, ReportTemplate, VMDRScheduledReport
 from ..auth import BasicAuth
 from ..base import call_api
 from ..base import xml_parser
-from .data_classes.lists import BaseList
+from ..base.base_list import BaseList
 from ..exceptions.Exceptions import *
 
 

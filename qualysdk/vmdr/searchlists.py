@@ -7,7 +7,7 @@ from typing import *
 from ..exceptions import *
 from ..auth import BasicAuth
 from ..base import call_api, xml_parser
-from .data_classes import BaseList
+from ..base.base_list import BaseList
 from .data_classes import StaticSearchList
 
 

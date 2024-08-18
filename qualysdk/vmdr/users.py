@@ -6,7 +6,7 @@ from typing import List, Union, Literal
 
 from ..auth import BasicAuth
 from ..base import xml_parser, call_api
-from .data_classes.lists import BaseList
+from ..base.base_list import BaseList
 from .data_classes.user import User
 from ..exceptions import *
 

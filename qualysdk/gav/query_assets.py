@@ -6,6 +6,7 @@ Gets all assets that satisfy a Qualys Query Language (QQL) filter.
 
 from typing import Union
 
+from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import *
@@ -14,7 +15,7 @@ from .hosts import Host
 
 def query_assets(
     auth: TokenAuth, page_count: Union["all", int] = "all", **kwargs
-) -> list[Host]:
+) -> BaseList[Host]:
     """
     Queries GAV inventory for assets that satisfy a Qualys Query Language (QQL) filter.
 
@@ -31,10 +32,10 @@ def query_assets(
         pageSize (int): The number of assets to get per page.
 
     Returns:
-        List[Host]: List of Host objects.
+        BaseList[Host]: BaseList of Host objects.
     """
 
-    responses = []  # list to hold all the responses
+    responses = BaseList()
     pulled = 0
 
     while True:
@@ -51,7 +52,7 @@ def query_assets(
         for record in j["assetListData"]["asset"]:
             responses.append(Host(**record))
         (
-            print(f"Page {pulled+1} of {page_count}complete.")
+            print(f"Page {pulled+1} of {page_count} complete.")
             if page_count != "all"
             else print(f"Page {pulled+1} complete.")
         )

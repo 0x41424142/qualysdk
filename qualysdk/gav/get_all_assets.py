@@ -4,6 +4,7 @@ get_all_assets.py - contains the get_all_assets function for the Global AssetVie
 
 from typing import Union
 
+from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import *
@@ -12,7 +13,7 @@ from .hosts import Host
 
 def get_all_assets(
     auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs
-) -> list[Host]:
+) -> BaseList[Host]:
     """
     Get all assets in the Global AssetView API.
 
@@ -28,10 +29,10 @@ def get_all_assets(
         pageSize (int): The number of assets to get per page.
 
     Returns:
-        list[Hosts]: The response from the API as a list of Hosts objects.
+        BaseList[Hosts]: The response from the API as a BaseList of Hosts objects.
     """
 
-    responses = []  # list to hold all the responses
+    responses = BaseList()
     pulled = 0
 
     while True:

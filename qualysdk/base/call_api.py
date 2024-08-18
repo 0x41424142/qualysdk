@@ -140,18 +140,22 @@ def call_api(
     if response.status_code in range(400, 599):
         # print(f"Error: {response.text}")
         # response.raise_for_status()
-        parsed = xml_parser(response.text)
-        # Common path is [SIMPLE_RETURN][RESPONSE][TEXT]
-        if "SIMPLE_RETURN" in parsed:
-            raise QualysAPIError(parsed["SIMPLE_RETURN"]["RESPONSE"]["TEXT"])
-        elif "html" in parsed:
-            raise Exception(
-                f"Error: {parsed['html']['body']['h1']}: {parsed['html']['body']['p'][1]['#text']}"
-            )
-        else:
-            # yeah... turns out a homegrown xml parsers aren't super easy...
-            raise Exception(
-                f"Error: {parsed['{http://www.w3.org/1999/xhtml}html']['{http://www.w3.org/1999/xhtml}body']['{http://www.w3.org/1999/xhtml}h1']}"
-            )
+        parsed = xml_parser(response.text) if module not in ["gav"] else None
+
+        # Common path is [SIMPLE_RETURN][RESPONSE][TEXT] for XML
+        if parsed:
+            if "SIMPLE_RETURN" in parsed:
+                raise QualysAPIError(parsed["SIMPLE_RETURN"]["RESPONSE"]["TEXT"])
+            elif "html" in parsed:
+                raise Exception(
+                    f"Error: {parsed['html']['body']['h1']}: {parsed['html']['body']['p'][1]['#text']}"
+                )
+            else:
+                # yeah... turns out a homegrown xml parsers aren't super easy...
+                raise Exception(
+                    f"Error: {parsed['{http://www.w3.org/1999/xhtml}html']['{http://www.w3.org/1999/xhtml}body']['{http://www.w3.org/1999/xhtml}h1']}"
+                )
+        else:  # or JSON
+            raise QualysAPIError(response.text)
 
     return response

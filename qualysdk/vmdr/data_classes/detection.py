@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 from .qds_factor import QDSFactor
 from .qds import QDS as qds
-from ..data_classes.lists import BaseList
+from ...base.base_list import BaseList
 
 
 @dataclass(order=True)

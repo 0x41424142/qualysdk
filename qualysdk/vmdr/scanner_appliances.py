@@ -5,7 +5,7 @@ scanner_appliances.py - Contains functions to interact with Scanner Appliances i
 from ..exceptions import *
 from ..base import call_api, xml_parser
 from .data_classes import ScannerAppliance
-from .data_classes.lists import BaseList
+from ..base.base_list import BaseList
 from ..auth import BasicAuth
 
 

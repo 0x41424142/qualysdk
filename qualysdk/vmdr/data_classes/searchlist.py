@@ -6,7 +6,7 @@ from dataclasses import dataclass, field, asdict
 from typing import *
 from datetime import datetime
 
-from ..data_classes.lists import BaseList
+from ...base.base_list import BaseList
 from .kb_entry import KBEntry
 
 

@@ -8,7 +8,7 @@ from datetime import datetime
 
 from ipaddress import IPv4Address, IPv6Address
 
-from .lists import BaseList
+from ...base.base_list import BaseList
 from .tag import Tag, CloudTag
 from .detection import Detection
 

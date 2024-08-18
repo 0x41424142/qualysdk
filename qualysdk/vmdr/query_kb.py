@@ -8,7 +8,7 @@ from typing import *
 from urllib.parse import parse_qs, urlparse
 
 from .data_classes.kb_entry import KBEntry
-from .data_classes.lists.base_list import BaseList
+from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..base.xml_parser import xml_parser

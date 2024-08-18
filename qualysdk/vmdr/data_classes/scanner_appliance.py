@@ -8,7 +8,7 @@ from typing import Literal
 from datetime import datetime
 from ipaddress import IPv4Address
 
-from .lists.base_list import BaseList
+from ...base.base_list import BaseList
 from .asset_group import AssetGroup
 from .tag import Tag
 

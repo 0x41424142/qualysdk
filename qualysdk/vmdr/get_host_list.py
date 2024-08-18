@@ -11,7 +11,7 @@ from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.hosts import VMDRHost, VMDRID
-from .data_classes.lists.base_list import BaseList
+from ..base.base_list import BaseList
 from ..base import xml_parser
 
 

@@ -11,7 +11,7 @@ from warnings import catch_warnings, simplefilter
 
 from bs4 import BeautifulSoup
 
-from .lists import BaseList
+from ...base.base_list import BaseList
 from .bugtraq import Bugtraq
 from .software import Software
 from .vendor_reference import VendorReference

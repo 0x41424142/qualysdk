@@ -7,7 +7,7 @@ from urllib.parse import parse_qs, urlparse
 from ipaddress import IPv4Address, IPv6Address
 
 from ..auth import BasicAuth
-from .data_classes import AssetGroup, BaseList
+from .data_classes import AssetGroup
 from ..base import *
 
 

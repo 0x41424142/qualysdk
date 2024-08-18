@@ -6,7 +6,7 @@ from typing import Union, Literal
 from datetime import datetime, timedelta
 from dataclasses import dataclass, field, asdict
 
-from .lists.base_list import BaseList
+from ...base.base_list import BaseList
 from .ip_converters import *
 
 

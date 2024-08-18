@@ -14,7 +14,7 @@ from ipaddress import (
 
 from .ip_converters import *
 from .hosts import VMDRID
-from .lists.base_list import BaseList
+from ...base.base_list import BaseList
 
 
 @dataclass(order=True)

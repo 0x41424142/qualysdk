@@ -66,6 +66,7 @@ Functions also take an optional ```override_import_dt``` parameter that will set
 | ```upload_vmdr_report_list``` | VMDR | ```vmdr.get_report_list()```| ```vmdr_reports``` |
 | ```upload_vmdr_scheduled_report_list``` | VMDR | ```vmdr.get_scheduled_report_list()```| ```vmdr_scheduled_reports``` |
 | ```upload_vmdr_template_list``` | VMDR | ```vmdr.get_template_list()```| ```vmdr_report_templates``` |
+| ```upload_gav_hosts``` | GAV | ```gav.get_all_assets()``` or ```gav.query_assets()``` | ```gav_hosts``` |
 
 ```py
 from qualysdk.sql import *

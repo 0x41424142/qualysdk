@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qualysdk"
-version = "0.1.9"
+version = "0.1.10"
 description = "SDK for interacting with Qualys APIs, across most of modules the platform offers."
 authors = ["0x41424142 <jake@jakelindsay.uk>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
 readme = "README.md"
@@ -18,6 +18,12 @@ sqlalchemy = "^2.0.32"
 pyodbc = "^5.1.0"
 numpy = "^2.0.1"
 
+
+[tool.poetry.urls]
+Homepage = "https://github.com/0x41424142/qualysdk"
+Documentation = "https://qualysdk.jakelindsay.uk"
+Repository = "https://github.com/0x41424142/qualysdk"
+Issues = "https://github.com/0x41424142/qualysdk/issues"
 
 [build-system]
 requires = ["poetry-core"]

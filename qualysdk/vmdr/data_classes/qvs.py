@@ -49,7 +49,6 @@ class KBQVS:
     rti: Optional[Union[list[str], BaseList[str]]] = field(default=None, compare=False)
 
     def __post_init__(self):
-
         if not self.base:
             raise ValueError("The base attribute is required.")
 
@@ -68,7 +67,6 @@ class KBQVS:
             setattr(self, "idType", self.base.get("idType"))
 
         if self.contributingFactors and isinstance(self.contributingFactors, dict):
-
             if "epss" in self.contributingFactors.keys():
                 setattr(self, "epss", float(self.contributingFactors.get("epss")[0]))
 

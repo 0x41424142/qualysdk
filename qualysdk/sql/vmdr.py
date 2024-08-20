@@ -726,3 +726,51 @@ def upload_vmdr_template_list(
         dtype=COLS,
         override_import_dt=override_import_dt,
     )
+
+
+def upload_vmdr_kb_qvs(
+    qvs: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_kb_qvs() to SQL.
+
+    Args:
+        qvs (BaseList): The KBQVS List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "id": types.String(),
+        "idType": types.String(),
+        "qvs": types.Integer(),
+        "qvsLastChangedDate": types.DateTime(),
+        "nvdPublishedDate": types.DateTime(),
+        "cvss": types.Float(),
+        "cvssVersion": types.String(),
+        "cvssString": types.String(),
+        "epss": types.Float(),
+        "threatActors": types.String(),  # BaseList
+        "exploitMaturity": types.String(),  # BaseList
+        "trending": types.String(),  # BaseList
+        "mitigationControls": types.String(),  # BaseList
+        "malwareName": types.String(),  # BaseList
+        "malwareHash": types.String(),  # BaseList
+        "rti": types.String(),  # BaseList
+    }
+
+    df = DataFrame([prepare_dataclass(qv) for qv in qvs])
+
+    df.drop(columns=["contributingFactors", "base"], inplace=True)
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_kb_qvs",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

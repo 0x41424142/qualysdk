@@ -8,13 +8,14 @@ from typing import *
 from urllib.parse import parse_qs, urlparse
 
 from .data_classes.kb_entry import KBEntry
+from .data_classes.qvs import KBQVS
 from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..base.xml_parser import xml_parser
 
 
-def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
+def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
     """
     Query the Qualys KnowledgeBase (KB) for vulnerabilities matching the kiven kwargs.
     Can be used to download the entire KB (no kwargs) or to search for specific vulnerabilities.
@@ -24,33 +25,32 @@ def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
         auth (BasicAuth) The authentication object.
 
     :Kwargs:
-        ```
-        action (str) #The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
-        code_modified_after (str) #The date to search for vulnerabilities modified after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        code_modified_before (str) #The date to search for vulnerabilities modified before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        echo_request (str) #Response will include the request you sent.
-        details Literal["Basic", "All", "None"]: #The level of detail to return. Default is 'Basic'.
-        ids (str) #The IDs of the vulnerabilities to return as a comma-separated string.
-        id_min (int) #The minimum ID of the vulnerabilities to return.
-        id_max (int) #The maximum ID of the vulnerabilities to return.
-        is_patchable (bool) #Whether the vulnerability is patchable. Default is 'False'.
-        last_modified_after (str) #The date to search for vulnerabilities last modified after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        last_modified_before (str) #The date to search for vulnerabilities last modified before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        last_modified_by_user_after (str) #The date to search for vulnerabilities last modified by user after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        last_modified_by_user_before (str) #The date to search for vulnerabilities last modified by user before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        last_modified_by_service_after (str) #The date to search for vulnerabilities last modified by service after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        last_modified_by_service_before (str) #The date to search for vulnerabilities last modified by service before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        published_after (str) #The date to search for vulnerabilities published after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        published_before (str) #The date to search for vulnerabilities published before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        discovery_method (str) #The discovery method of the vulnerability.
-        discovery_auth_types (str) #The authentication types used to discover the vulnerability.
-        show_pci_reasons (bool) #Whether to show PCI reasons. Default is 'False'.
-        show_supported_modules_info (bool) #Whether to show supported modules info. Default is 'False'.
-        show_disabled_flag (bool) #Whether to show the disabled flag. Default is 'False'.
-        show_qid_change_log (bool) #Whether to show the QID change log. Default is 'False'.
-        ```
+        action (str) The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
+        code_modified_after (str): The date to search for vulnerabilities modified after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        code_modified_before (str): The date to search for vulnerabilities modified before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        echo_request (str): Response will include the request you sent.
+        details Literal["Basic", "All", "None"]: The level of detail to return. Default is 'Basic'.
+        ids (str): The IDs of the vulnerabilities to return as a comma-separated string.
+        id_min (int): The minimum ID of the vulnerabilities to return.
+        id_max (int): The maximum ID of the vulnerabilities to return.
+        is_patchable (bool): Whether the vulnerability is patchable. Default is 'False'.
+        last_modified_after (str): The date to search for vulnerabilities last modified after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        last_modified_before (str): The date to search for vulnerabilities last modified before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        last_modified_by_user_after (str): The date to search for vulnerabilities last modified by user after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        last_modified_by_user_before (str): The date to search for vulnerabilities last modified by user before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        last_modified_by_service_after (str): The date to search for vulnerabilities last modified by service after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        last_modified_by_service_before (str): The date to search for vulnerabilities last modified by service before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        published_after (str): The date to search for vulnerabilities published after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        published_before (str): The date to search for vulnerabilities published before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        discovery_method (str): The discovery method of the vulnerability.
+        discovery_auth_types (str): The authentication types used to discover the vulnerability.
+        show_pci_reasons (bool): Whether to show PCI reasons. Default is 'False'.
+        show_supported_modules_info (bool): Whether to show supported modules info. Default is 'False'.
+        show_disabled_flag (bool): Whether to show the disabled flag. Default is 'False'.
+        show_qid_change_log (bool): Whether to show the QID change log. Default is 'False'.
+
     Returns:
-        List of KBEntry objects representing the vulnerabilities returned by the query.
+        BaseList of KBEntry objects representing the vulnerabilities returned by the query.
     """
 
     # add the action to the kwargs:
@@ -112,3 +112,48 @@ def query_kb(auth: BasicAuth, **kwargs) -> List[KBEntry]:
             break
 
     return responses
+
+
+def get_kb_qvs(auth: BasicAuth, cve: str, **kwargs) -> BaseList[KBQVS]:
+    """
+    Download Qualys KB QVS (Qualys Vulnerability Score) data for 1+ CVEs.
+
+    Params:
+        auth (BasicAuth) The authentication object.
+        cve (str): The CVE ID(s) to search for. Comma-separated string.
+        **kwargs: Additional filters/parameters to pass to the API. See below for details.
+
+    :Kwargs:
+        action (Literal['list']): The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
+        details (Literal['All', 'Basic', 'None']): The level of detail to return. Default is 'Basic'.
+        qvs_last_modified_before (str): The date to search for QVS last modified before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        qvs_last_modified_after (str): The date to search for QVS last modified after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        qvs_min (int): The minimum QVS score to return.
+        qvs_max (int): The maximum QVS score to return.
+        nvd_published_before (str): The date to search for NVD published before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        nvd_published_after (str): The date to search for NVD published after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+
+    Returns:
+        BaseList of KBQVS objects representing the QVS data for the CVEs returned by the query.
+    """
+
+    kwargs["action"] = "list"
+    if kwargs.get("details"):
+        kwargs["details"] = kwargs["details"].capitalize()
+    kwargs["cve"] = cve
+
+    bl = BaseList()
+
+    response = call_api(
+        auth=auth,
+        module="vmdr",
+        endpoint="get_kb_qvs",
+        params=kwargs,
+        headers={"X-Requested-With": "qualysdk SDK"},
+    )
+
+    if r := response.json():
+        for data in r.values():
+            bl.append(KBQVS.from_dict(data))
+
+    return bl

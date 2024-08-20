@@ -743,6 +743,26 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_kb_qvs": {
+                "endpoint": "/api/2.0/fo/knowledge_base/qvs/",
+                "method": ["GET", "POST"],
+                "valid_params": [
+                    "action",
+                    "details",
+                    "cve",
+                    "qvs_last_modified_before",
+                    "qvs_last_modified_after",
+                    "qvs_min",
+                    "qvs_max",
+                    "nvd_published_before",
+                    "nvd_published_after",
+                ],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "basic",
+            },
         },
     }
 )

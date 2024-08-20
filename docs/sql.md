@@ -56,6 +56,7 @@ Functions also take an optional ```override_import_dt``` parameter that will set
 | -- | -- | -- | -- |
 | ```upload_vmdr_ags``` | VMDR | ```vmdr.get_ag_list()```| ```vmdr_assetgroups``` |
 | ```upload_vmdr_kb``` | VMDR | ```vmdr.query_kb()```| ```vmdr_knowledgebase``` |
+| ```upload_vmdr_kb_qvs``` | VMDR | ```vmdr.get_kb_qvs()```| ```vmdr_kb_qvs``` |
 | ```upload_vmdr_hosts``` | VMDR | ```vmdr.get_host_list()```| ```vmdr_hosts_list``` |
 | ```upload_vmdr_hld``` | VMDR | ```vmdr.get_hld()```| ```vmdr_hld_hosts_list``` for hosts and ```vmdr_hld_detections``` for detections |
 | ```upload_vmdr_ips``` | VMDR | ```vmdr.get_ip_list()```| ```vmdr_ips``` |

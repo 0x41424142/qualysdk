@@ -13,6 +13,7 @@ You can use any of the VMDR endpoints currently supported:
 |API Call| Description |
 |--|--|
 | ```query_kb``` | Query the Qualys KnowledgeBase (KB) for vulnerabilities.|
+| ```get_kb_qvs``` | Query the Qualys KB for CVEs and their associated details/scores.|
 | ```get_host_list``` | Query your VMDR host inventory based on kwargs. |
 |```get_hld``` | Query your VMDR host inventory with QID detections under the ```VMDRHost.DETECTION_LIST``` attribute.|
 |```get_ip_list```| Get a list of all IPs in your subscription, according to kwarg filters.|
@@ -1059,6 +1060,33 @@ with BasicAuth(<username>, <password>, platform='qg1') as auth:
     len(in_scope_qids)
 >>>400
 ```
+
+### Query CVE's Qualys Vulnerability Scores
+
+```get_kb_qvs``` lets you query Qualys for QVS, EPSS, and CVSS scores for a comma-separated string of CVE IDs. Output also includes supporting details such as known threat actors, malware names/hashes, trending QIDs associated with the CVE, and more.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
+| ```cve``` | ```str``` | A comma-separated string of CVE IDs to query. | ✅ |
+| ```details``` | ```Literal['Basic', 'All']``` | The level of detail to return. Defaults to ```Basic```, which only includes CVE ID, QVS score, and last changed/published dates.| ❌ |
+| ```qvs_last_modified_before``` | ```str``` | Filter output to CVEs with a QVS score last modified before this date. Formatted like ```YYYY-MM-DD[THH:MM:SSZ]``` | ❌ |
+| ```qvs_last_modified_after``` | ```str``` | Filter output to CVEs with a QVS score last modified after this date. Formatted like ```YYYY-MM-DD[THH:MM:SSZ]``` | ❌ |
+| ```qvs_min``` | ```int``` | Filter output to CVEs with a QVS score greater than or equal to this value. | ❌ |
+| ```qvs_max``` | ```int``` | Filter output to CVEs with a QVS score less than or equal to this value. | ❌ |
+| ```nvd_published_before``` | ```str``` | Filter output to CVEs with an NVD score published before this date. Formatted like ```YYYY-MM-DD[THH:MM:SSZ]``` | ❌ |
+| ```nvd_published_after``` | ```str``` | Filter output to CVEs with an NVD score published after this date. Formatted like ```YYYY-MM-DD[THH:MM:SSZ]``` | ❌ |
+
+
+```py
+from qualysdk import BasicAuth, vmdr
+
+with BasicAuth(<username>, <password>, platform='qg1') as auth:
+    cves = 'CVE-2021-44228,CVE-2021-40438'
+    result = vmdr.get_kb_qvs(auth, cve=cves, details='All')
+>>>[KBQVS(id='CVE-2021-44228', qvs=95, ...), ...]
+```
+
 
 ## Special Dataclasses for VMDR
 

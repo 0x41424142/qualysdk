@@ -20,3 +20,4 @@ from .searchlist import StaticSearchList
 from .report import VMDRReport, VMDRScheduledReport
 from .report_template import ReportTemplate
 from .user import User
+from .qvs import KBQVS

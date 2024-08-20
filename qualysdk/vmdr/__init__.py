@@ -6,7 +6,7 @@ This module contains ways to interact with the Qualys VMDR API. Valid endpoints 
 VMDR QQL Syntax help: https://qualysguard.qg2.apps.qualys.com/portal-help/en/vm/search/how_to_search.htm
 """
 
-from .query_kb import query_kb
+from .query_kb import query_kb, get_kb_qvs
 from .get_host_list import get_host_list
 from .get_host_list_detections import get_hld
 from .ips import get_ip_list, add_ips, update_ips

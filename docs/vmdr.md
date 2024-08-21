@@ -43,6 +43,8 @@ You can use any of the VMDR endpoints currently supported:
 |```get_user_list```|Get a list of users in your subscription.|
 |```add_user```|Add a new user to your subscription.|
 |```edit_user```|Edit a user in your subscription.|
+|```query_kb_qvs```|Pull Qualys Vulnerability Score details on one or more CVEs.|
+|```get_activity_log```| Pull the activity log for your Qualys subscription.|
 
 ## Host List Detection
 
@@ -1089,7 +1091,7 @@ with BasicAuth(<username>, <password>, platform='qg1') as auth:
 
 ## Get User Activity Log
 
-```get_user_activity_log``` lets you pull a list of user activity logs in your subscription. Returns a ```BaseList``` of ```ActivityLog``` objects.
+```get_activity_log``` lets you pull a list of user activity logs in your subscription. Returns a ```BaseList``` of ```ActivityLog``` objects.
 
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
@@ -1108,7 +1110,7 @@ from qualysdk import BasicAuth, vmdr
 
 with BasicAuth(<username>, <password>, platform='qg4') as auth:
     # Get 3 pages of manager user details since 2024-06-01:
-    activity_log = vmdr.get_user_activity_log(
+    activity_log = vmdr.get_activity_log(
         auth, 
         page_count=3
         user_role='Manager',

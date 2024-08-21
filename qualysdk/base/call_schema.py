@@ -763,6 +763,27 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_activity_log": {
+                "endpoint": "/api/2.0/fo/activity_log",
+                "method": ["GET", "POST"],
+                "valid_params": [
+                    "action",
+                    "user_action",
+                    "action_details",
+                    "username",
+                    "since_datetime",
+                    "until_datetime",
+                    "user_role",
+                    "id_max",
+                    "truncation_limit",
+                    "output_format",
+                ],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": True,
+                "auth_type": "basic",
+            },
         },
     }
 )

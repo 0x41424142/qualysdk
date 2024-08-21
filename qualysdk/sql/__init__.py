@@ -17,6 +17,7 @@ from .vmdr import (
     upload_vmdr_scheduled_report_list,
     upload_vmdr_template_list,
     upload_vmdr_kb_qvs,
+    upload_vmdr_activity_log,
 )
 
 from .gav import upload_gav_hosts

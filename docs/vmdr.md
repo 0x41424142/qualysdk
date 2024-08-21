@@ -1087,6 +1087,35 @@ with BasicAuth(<username>, <password>, platform='qg1') as auth:
 >>>[KBQVS(id='CVE-2021-44228', qvs=95, ...), ...]
 ```
 
+## Get User Activity Log
+
+```get_user_activity_log``` lets you pull a list of user activity logs in your subscription. Returns a ```BaseList``` of ```ActivityLog``` objects.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
+| ```page_count``` | ```Union[int, 'all'] = 'all'``` | The number of pages to return. Defaults to ```'all'```. | ❌ |
+| ```user_action``` | ```str``` | Filter output to logs with a specific user action, such as ```"login"``` or ```"launch"```. | ❌ |
+| ```action_details``` | ```str``` | Filter output to logs with specific action details. | ❌ |
+| ```username``` | ```str``` | Filter output to logs for a specific username. | ❌ |
+| ```since_datetime``` | ```str``` | Filter output to logs since this datetime. Formatted like ```YYYY-MM-DD HH:ii:ss``` | ❌ |
+| ```until_datetime``` | ```str``` | Filter output to logs until this datetime. Formatted like ```YYYY-MM-DD HH:ii:ss``` | ❌ |
+| ```user_role``` | ```str``` | Filter output to logs for a specific user role. | ❌ |
+| ```truncation_limit``` | ```int``` | Limit the number of log entries per page returned. | ❌ |
+
+```py
+from qualysdk import BasicAuth, vmdr
+
+with BasicAuth(<username>, <password>, platform='qg4') as auth:
+    # Get 3 pages of manager user details since 2024-06-01:
+    activity_log = vmdr.get_user_activity_log(
+        auth, 
+        page_count=3
+        user_role='Manager',
+        since_datetime='2024-06-01 00:00:00'    
+    )
+>>>[ActivityLog(User_Name='alice_123', User_Role='Manager', Action='login', Details='Logged in', ...), ...]
+```
 
 ## Special Dataclasses for VMDR
 

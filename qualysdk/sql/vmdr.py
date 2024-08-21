@@ -774,3 +774,41 @@ def upload_vmdr_kb_qvs(
         dtype=COLS,
         override_import_dt=override_import_dt,
     )
+
+
+def upload_vmdr_activity_log(
+    activity_log: BaseList, cnxn: Connection, override_import_dt: datetime = None
+) -> int:
+    """
+    Upload data from vmdr.get_activity_log() to SQL.
+
+    Args:
+        activity_log (BaseList): The Activity Log to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "Date": types.DateTime(),
+        "Action": types.String(),
+        "Module": types.String(),
+        "Details": types.String(),
+        "User_Name": types.String(),
+        "User_Role": types.String(),
+        "User_IP": types.String(),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(log) for log in activity_log])
+
+    # Upload the data:
+    return upload_data(
+        df,
+        "vmdr_activity_log",
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

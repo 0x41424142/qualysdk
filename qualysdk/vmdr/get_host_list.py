@@ -163,11 +163,6 @@ def get_host_list(
                 # return a list of VMDRHost objects
                 responses.append(VMDRHost.from_dict(host))
 
-        """(
-            print(f"Page {pulled+1} of {page_count} complete.")
-            if page_count != "all"
-            else print(f"Page {pulled+1} complete.")
-        )"""
         pulled += 1
 
         if page_count != "all" and pulled >= page_count:

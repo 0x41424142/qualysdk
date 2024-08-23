@@ -44,7 +44,7 @@ def query_assets(
             auth=auth, module="gav", endpoint="query_assets", params=kwargs
         )
         # if there is no response, break the loop
-        if response.text == "":
+        if not response.text:
             print("No Results returned.")
             break
 

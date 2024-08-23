@@ -68,7 +68,7 @@ For official tools and support, please refer to the official Qualys resources an
 
 # TODO:
 
-- Continue adding VMDR APIs.
+- Multithread ```gav.get_all_assets```.
 
 - Start work on TotalCloud/WAS modules.
 

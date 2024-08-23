@@ -19,6 +19,25 @@ with BasicAuth(<username>,<password>, platform='qg1') as auth:
 
 >>>qualysdk.exceptions.Exceptions.AuthTypeMismatchError: Auth type mismatch. Expected token but got basic.
  ```
+
+## ```TokenAuth```-specific Notes
+
+Qualys configures JWT tokens to expire 4 hours after they are created. When you make an API call using a ```TokenAuth``` object, ```qualysdk``` will automatically check if the token is expired and refresh it if necessary before making the call. This is especially useful if ```qualysdk``` throttles itself due to hitting your subscription's rate limit, where after sleeping for a variable amount of time (determined by the ```X-RateLimit-ToWait-Sec``` header) it will try the call again:
+
+```py
+# Example of being rate limited and qualysdk refreshing the token automatically:
+>>>Warning: This endpoint will accept 2 more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0.
+
+...
+
+>>>WARNING: You have reached the rate limit for this endpoint. qualysdk will automatically sleep for <int> seconds and try again at approximately <datetime stamp>.
+
+...
+# After throttle is lifted:
+>>>Token is 4+ hours old. Refreshing token...
+```
+
+## Other Notes on Auth Classes
  
 Both ```BasicAuth``` and ```TokenAuth``` also have ```from_dict``` class methods, which allows for the creation of these objects from dictionaries:
 

@@ -12,7 +12,10 @@ from ..base.base_list import BaseList
 
 
 def upload_vmdr_ags(
-    ags: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    ags: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_assetgroups",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_ag_list() to SQL.
@@ -20,6 +23,7 @@ def upload_vmdr_ags(
     Args:
         ags (BaseList): The Asset Group List to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_assetgroups'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -69,12 +73,15 @@ def upload_vmdr_ags(
 
     # Upload the data:
     return upload_data(
-        df, "vmdr_assetgroups", cnxn, dtype=COLS, override_import_dt=override_import_dt
+        df, table_name, cnxn, dtype=COLS, override_import_dt=override_import_dt
     )
 
 
 def upload_vmdr_kb(
-    kbs: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    kbs: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_knowledgebase",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.query_kb() to SQL.
@@ -82,6 +89,7 @@ def upload_vmdr_kb(
     Args:
         kbs (BaseList): The KB List to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_knowledgebase'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -127,7 +135,7 @@ def upload_vmdr_kb(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_knowledgebase",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -137,7 +145,7 @@ def upload_vmdr_kb(
 def upload_vmdr_hosts(
     hosts: BaseList,
     cnxn: Connection,
-    is_hld: bool = False,
+    table_name: str = "vmdr_hosts_list",
     override_import_dt: datetime = None,
 ) -> int:
     """
@@ -146,7 +154,7 @@ def upload_vmdr_hosts(
     Args:
         hosts (BaseList): The Host List to upload.
         cnxn (Connection): The Connection object to the SQL database.
-        is_hld (bool): If the data is from a Host List Detail pull. You can ignore this.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_hosts_list'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -215,7 +223,7 @@ def upload_vmdr_hosts(
     # Upload the data, with table depdening on if it is a Host List Detail pull or not:
     return upload_data(
         df,
-        "vmdr_hosts_list" if not is_hld else "vmdr_hld_hosts_list",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -223,7 +231,10 @@ def upload_vmdr_hosts(
 
 
 def upload_vmdr_ips(
-    ips: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    ips: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_ips",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_ip_list() to SQL.
@@ -250,12 +261,16 @@ def upload_vmdr_ips(
 
     # Upload the data:
     return upload_data(
-        df, "vmdr_ips", cnxn, dtype=COLS, override_import_dt=override_import_dt
+        df, table_name, cnxn, dtype=COLS, override_import_dt=override_import_dt
     )
 
 
 def upload_vmdr_hld(
-    hld: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    hld: BaseList,
+    cnxn: Connection,
+    vulns_table_name: str = "vmdr_hld_detections",
+    hosts_table_name: str = "vmdr_hld_hosts_list",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_hld() to SQL.
@@ -263,6 +278,8 @@ def upload_vmdr_hld(
     Args:
         hld (BaseList): The Host List to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        vulns_table_name (str): The name of the table to upload the detections to. Defaults to 'vmdr_hld_detections'.
+        hosts_table_name (str): The name of the table to upload the hosts to. Defaults to 'vmdr_hld_hosts_list'.
 
     Returns:
         int: The number of rows uploaded.
@@ -287,9 +304,11 @@ def upload_vmdr_hld(
     # upload_vmdr_hosts automatically ignores the DETECTION_LIST attribute,
     # so we can use it here with the is_hld flag set to True to put the hosts
     # in a different table than get_host_list.
-    hosts_uploaded = upload_vmdr_hosts(hld, cnxn, is_hld=True)
+    hosts_uploaded = upload_vmdr_hosts(
+        hld, cnxn, hosts_table_name, override_import_dt=override_import_dt
+    )
     print(
-        f"Uploaded {hosts_uploaded} hosts to vmdr_hld_hosts_list. Moving to detections..."
+        f"Uploaded {hosts_uploaded} hosts to {hosts_table_name}. Moving to detections..."
     )
 
     COLS = {
@@ -325,7 +344,7 @@ def upload_vmdr_hld(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_hld_detections",
+        vulns_table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -333,7 +352,10 @@ def upload_vmdr_hld(
 
 
 def upload_vmdr_scanners(
-    scanners: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    scanners: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_scanners",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_scanner_list() to SQL.
@@ -341,6 +363,7 @@ def upload_vmdr_scanners(
     Args:
         scanners (BaseList): The Scanner List to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_scanners'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -405,12 +428,15 @@ def upload_vmdr_scanners(
 
     # Upload the data:
     return upload_data(
-        df, "vmdr_scanners", cnxn, dtype=COLS, override_import_dt=override_import_dt
+        df, table_name, cnxn, dtype=COLS, override_import_dt=override_import_dt
     )
 
 
 def upload_vmdr_static_search_lists(
-    searchlists: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    searchlists: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_static_searchlists",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_static_searchlists() to SQL.
@@ -446,7 +472,7 @@ def upload_vmdr_static_search_lists(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_static_searchlists",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -454,7 +480,10 @@ def upload_vmdr_static_search_lists(
 
 
 def upload_vmdr_users(
-    users: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    users: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_users",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_user_list() to SQL.
@@ -525,7 +554,7 @@ def upload_vmdr_users(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_users",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -533,7 +562,10 @@ def upload_vmdr_users(
 
 
 def upload_vmdr_scan_list(
-    scans: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    scans: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_scans",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_scan_list() to SQL.
@@ -541,6 +573,7 @@ def upload_vmdr_scan_list(
     Args:
         scans (BaseList): The Scan List to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_scans'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -571,7 +604,7 @@ def upload_vmdr_scan_list(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_scans",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -579,7 +612,10 @@ def upload_vmdr_scan_list(
 
 
 def upload_vmdr_report_list(
-    reports: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    reports: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_reports",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_report_list() to SQL.
@@ -587,6 +623,7 @@ def upload_vmdr_report_list(
     Args:
         reports (BaseList): The Report List of VMDRReports to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_reports'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -614,7 +651,7 @@ def upload_vmdr_report_list(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_reports",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -622,7 +659,10 @@ def upload_vmdr_report_list(
 
 
 def upload_vmdr_scheduled_report_list(
-    reports: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    reports: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_scheduled_reports",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_scheduled_report_list() to SQL.
@@ -630,6 +670,7 @@ def upload_vmdr_scheduled_report_list(
     Args:
         reports (BaseList): The Report List of VMDRScheduledReports to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_scheduled_reports'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -660,7 +701,7 @@ def upload_vmdr_scheduled_report_list(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_scheduled_reports",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -668,7 +709,10 @@ def upload_vmdr_scheduled_report_list(
 
 
 def upload_vmdr_template_list(
-    templates: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    templates: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_templates",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_template_list() to SQL.
@@ -676,6 +720,7 @@ def upload_vmdr_template_list(
     Args:
         templates (BaseList): The Report List of VMDRTemplates to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_templates'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -721,7 +766,7 @@ def upload_vmdr_template_list(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_templates",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -729,7 +774,10 @@ def upload_vmdr_template_list(
 
 
 def upload_vmdr_kb_qvs(
-    qvs: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    qvs: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_kb_qvs",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_kb_qvs() to SQL.
@@ -737,6 +785,7 @@ def upload_vmdr_kb_qvs(
     Args:
         qvs (BaseList): The KBQVS List to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_kb_qvs'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -769,7 +818,7 @@ def upload_vmdr_kb_qvs(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_kb_qvs",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,
@@ -777,7 +826,10 @@ def upload_vmdr_kb_qvs(
 
 
 def upload_vmdr_activity_log(
-    activity_log: BaseList, cnxn: Connection, override_import_dt: datetime = None
+    activity_log: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_activity_log",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload data from vmdr.get_activity_log() to SQL.
@@ -785,6 +837,7 @@ def upload_vmdr_activity_log(
     Args:
         activity_log (BaseList): The Activity Log to upload.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_activity_log'.
         override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
 
     Returns:
@@ -807,7 +860,7 @@ def upload_vmdr_activity_log(
     # Upload the data:
     return upload_data(
         df,
-        "vmdr_activity_log",
+        table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,

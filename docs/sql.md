@@ -51,8 +51,10 @@ Each upload function takes 2 positional parameters. The first is the ```BaseList
 
 Functions also take an optional ```override_import_dt``` parameter that will set the resulting SQL table's ```import_datetime``` field to the value you specify. ```override_import_dt``` is a ```datetime.datetime``` object.
 
+The final optional parameter is ```table_name```. If you want to specify a custom table name, you can do so with this parameter. Default table names are listed below. The one exception to this is ```vmdr.get_hld()```, which accepts ```vuln_table_name``` and ```hosts_table_name``` as optional parameters to specify the table names for the detections and hosts, respectively.
 
-| Function Name | Module  | ```qualysdk``` Function Data Source | Resulting Table Name |
+
+| Function Name | Module  | ```qualysdk``` Function Data Source | Default SQL Table Name |
 | -- | -- | -- | -- |
 | ```upload_vmdr_ags``` | VMDR | ```vmdr.get_ag_list()```| ```vmdr_assetgroups``` |
 | ```upload_vmdr_kb``` | VMDR | ```vmdr.query_kb()```| ```vmdr_knowledgebase``` |

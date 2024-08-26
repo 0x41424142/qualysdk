@@ -17,10 +17,10 @@ You can use any of the endpoints currently supported:
 
 ## Purge Agent API
 
-```purge_agent``` purges a cloud agent from the subscription. Returns a str with the Qualys response.
+```purge_agent``` purges a cloud agent from the subscription. Returns a ```str``` indicating success or an error message.
 
-||Parameter| Possible Values |Description| Required|
-|--|--|--|
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```asset_id``` | ```str``` | Singular asset ID | ✅ | 
 
@@ -35,11 +35,11 @@ purge_agent(auth, asset_id='123456789')
 
 ## Bulk Purge Agent API
 
-```bulk_purge_agent``` purges multiple cloud agents from the subscription. Returns a str with the Qualys response.
+```bulk_purge_agent``` purges multiple cloud agents from the subscription. Returns a ```str``` indicating success pr an error message.
 
 >**Head's Up!:** It is **HIGHLY** recommended to only use the ```asset_ids``` parameter for accuracy.
 
-|Parameter | Possible Values |Description| Required|
+|Parameter | Possible Values | Description | Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```asset_ids``` | ```List[str]``` | List of asset IDs | ❌, but recommended! | 

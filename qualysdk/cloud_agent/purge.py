@@ -93,7 +93,6 @@ def bulk_purge_agent(auth: BasicAuth, **kwargs) -> str:
     }
 
     for kwarg, value in kwargs.items():
-
         if not isinstance(value, list) and kwarg not in ["created", "updated"]:
             criteria = f'<Criteria field="{tag_lookup.get(kwarg, kwarg)}" operator="EQUALS">{str(value)}</Criteria>'
 

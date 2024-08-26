@@ -12,10 +12,7 @@ from ..base.base_list import BaseList
 
 
 def upload_gav_hosts(
-    hosts: BaseList,
-    cnxn: Connection,
-    table_name: str = "gav_hosts",
-    override_import_dt: datetime = None,
+    hosts: BaseList, cnxn: Connection, override_import_dt: datetime = None
 ) -> int:
     """
     Upload results from ```gav.query_assets``` or
@@ -24,7 +21,6 @@ def upload_gav_hosts(
     Args:
         hosts (BaseList): A BaseList of Host objects.
         cnxn (Connection): The Connection object to the SQL database.
-        table_name (str): The name of the table to upload to. Defaults to 'gav_hosts'.
         override_import_dt (datetime): If provided, will override the import_datetime column with this value.
 
     Returns:
@@ -197,4 +193,4 @@ def upload_gav_hosts(
     )
 
     # Upload the data:
-    return upload_data(df, table_name, cnxn, COLS, override_import_dt)
+    return upload_data(df, "gav_hosts", cnxn, COLS, override_import_dt)

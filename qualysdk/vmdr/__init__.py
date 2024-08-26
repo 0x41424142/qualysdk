@@ -35,3 +35,4 @@ from .reports import (
 
 from .users import get_user_list, add_user, edit_user
 from .activity_log import get_activity_log
+from .purge import purge_hosts

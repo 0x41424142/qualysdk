@@ -1119,6 +1119,45 @@ with BasicAuth(<username>, <password>, platform='qg4') as auth:
 >>>[ActivityLog(User_Name='alice_123', User_Role='Manager', Action='login', Details='Logged in', ...), ...]
 ```
 
+## Purge Hosts API
+
+```purge_hosts``` lets you purge hosts out of VMDR/PC. Returns a string with the Qualys response.
+
+Depending on the requesting account's permissions, the scope of assets that can be purged is as follows:
+
+| User Role | Can Purge Vuln Data | Can Purge Compliance Data |
+|--|--|--|
+| Manager | ✅ | ✅ |
+| Auditor | ❌ | ✅ |
+| Unit Manager, Scanner, Reader | ❌ (⚠️ Can be enabled if ```"Purge host information/history"``` is given as a permission) | ❌ (⚠️ Can be enabled if ```"Purge host information/history"``` is given as a permission) |
+
+
+>**Heads Up!**: Scan results are not purged when you purge a host. Only the host and host data are purged.
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
+| ```data_scope``` | ```Literal['vm','pc', 'vm,pc'] = 'vm,pc'``` | Limit scope of purge, or specify ```vm,pc```/```pc,vm``` (the default) to delete both. | ❌ |
+| ```ids``` |```str``` | A comma-separated string of host IDs to purge. | ❌ |
+| ```ips``` | ```str``` | A comma-separated string of IP addresses to purge. | ❌ |
+| ```ag_ids``` | ```str``` | A comma-separated string of asset group IDs to purge. | ❌ |
+| ```ag_titles``` | ```str``` | A comma-separated string of asset group titles to purge. | ❌ |
+| ```network_ids``` | ```str``` | A comma-separated string of network IDs to purge. ⚠️ REQUIRES NETWORK SUPPORT FEATURE ON SUBSCRIPTION | ❌ |
+| ```no_vm_scan_since``` | ```str``` | Purge hosts that have not been scanned since this date. Formatted like ```YYYYMM-DD[THH:MM:SSZ]``` | ❌ |
+| ```no_compliance_scan_since``` | ```str``` | Purge hosts that have not been scanned for compliance since this date. Formatted like ```YYYYMM-DD[THH:MM:SSZ]``` | ❌ |
+| ```compliance_enabled``` | ```bool``` | Purge hosts activated for policy compliance. | ❌ |
+| ```os_pattern``` | ```str``` | Purge hosts with a specific URL-encoded, PCRE OS regex pattern. | ❌ |
+
+```py
+from qualysdk import BasicAuth, vmdr
+
+with BasicAuth(<username>, <password>, platform='qg4') as auth:
+    # Purge hosts with IDs 12345 and 67890:
+    result = vmdr.purge_hosts(auth, ids='12345,67890')
+>>>Hosts Queued for Purging
+```
+
+
 ## Special Dataclasses for VMDR
 
 There are quite a few special dataclasses that are used in the VMDR module, as well as a ```BaseList``` class that is used to store these dataclasses and add some easier string functionality.

@@ -35,7 +35,7 @@ purge_agent(auth, asset_id='123456789')
 
 ## Bulk Purge Agent API
 
-```bulk_purge_agent``` purges multiple cloud agents from the subscription. Returns a ```str``` indicating success pr an error message.
+```bulk_purge_agent``` purges multiple cloud agents from the subscription. Returns a ```str``` indicating success or an error message.
 
 >**Head's Up!:** It is **HIGHLY** recommended to only use the ```asset_ids``` parameter for accuracy.
 

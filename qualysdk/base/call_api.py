@@ -128,6 +128,27 @@ def call_api(
         if params:
             params = convert_bools_and_nones(params)
 
+        # If the URL of an endpoint has the substring
+        # {placeholder}, .pop() from the params/payload
+        # and format the url with the value:
+        if "{placeholder}" in url:
+            if params and params.get("placeholder"):
+                url = url.format(placeholder=str(params.pop("placeholder")))
+            elif payload and payload.get("placeholder"):
+                url = url.format(placeholder=str(payload.pop("placeholder")))
+            else:
+                raise ValueError(
+                    f"Endpoint {module}-{endpoint} requires a placeholder value in the URL however none was found in params/POST data."
+                )
+
+        # If params/payload have the '_xml_data' key,
+        # convert the value to a string:
+        if payload and payload.get("_xml_data"):
+            payload = payload["_xml_data"]
+
+        if params and params.get("_xml_data"):
+            params = params["_xml_data"]
+
         # and finally, make the request:
         response = request(
             method=(
@@ -145,10 +166,14 @@ def call_api(
         if (
             response.status_code in range(400, 599)
             and response.status_code != 429
+            and endpoint != "bulk_purge_agent"  # Special case for bulk_purge_agent
             and (
                 response.status_code != 409
                 and "This API cannot be run again for another"
-                not in xml_parser(response.text)["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
+                not in xml_parser(response.text)
+                .get("SIMPLE_RETURN")
+                .get("RESPONSE")
+                .get("TEXT")
             )
         ):
             parsed = xml_parser(response.text) if module not in ["gav"] else None

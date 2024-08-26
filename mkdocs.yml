@@ -7,6 +7,7 @@ nav:
   - Authentication: authentication.md
   - Global AssetView: gav.md
   - VMDR: vmdr.md
+  - Cloud Agent: cloud_agent.md
   - SQL Uploads: sql.md
   - The Call Schema: callschema.md
 

@@ -13,6 +13,8 @@ from . import gav
 from .vmdr import query_kb, get_host_list, get_hld
 from . import vmdr
 
+from . import cloud_agent
+
 from .sql import db_connect
 
 # surprise!

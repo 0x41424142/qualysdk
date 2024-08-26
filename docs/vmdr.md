@@ -45,6 +45,7 @@ You can use any of the VMDR endpoints currently supported:
 |```edit_user```|Edit a user in your subscription.|
 |```query_kb_qvs```|Pull Qualys Vulnerability Score details on one or more CVEs.|
 |```get_activity_log```| Pull the activity log for your Qualys subscription.|
+| ```purge_hosts``` | Purge hosts from VMDR/Policy Compliance.|
 
 ## Host List Detection
 

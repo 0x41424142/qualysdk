@@ -808,5 +808,28 @@ CALL_SCHEMA = frozendict(
                 "auth_type": "basic",
             },
         },
+        "cloud_agent": {
+            "url_type": "api",
+            "purge_agent": {
+                "endpoint": "/qps/rest/2.0/uninstall/am/asset/{placeholder}",  # assetId
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": ["placeholder", "_xml_data"],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
+            "bulk_purge_agent": {
+                "endpoint": "/qps/rest/2.0/uninstall/am/asset",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": ["_xml_data"],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+            },
+        },
     }
 )

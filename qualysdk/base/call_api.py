@@ -165,7 +165,7 @@ def call_api(
         # check for errors not related to rate limiting:
         if (
             response.status_code in range(400, 599)
-            and response.status_code != 429
+            and response.status_code not in [429, 414]
             and endpoint
             not in [
                 "bulk_purge_agent",

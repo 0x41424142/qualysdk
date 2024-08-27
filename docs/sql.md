@@ -71,6 +71,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_vmdr_template_list``` | VMDR | ```vmdr.get_template_list()```| ```vmdr_report_templates``` |
 | ```upload_vmdr_activity_log``` | VMDR | ```vmdr.get_activity_log()```| ```vmdr_activity_log``` |
 | ```upload_gav_hosts``` | GAV | ```gav.get_all_assets()``` or ```gav.query_assets()``` | ```gav_hosts``` |
+| ```upload_cloud_agents``` | Cloud Agent | ```cloud_agent.list_agents()``` | ```cloud_agent_agents``` |
 
 ```py
 from qualysdk.sql import *

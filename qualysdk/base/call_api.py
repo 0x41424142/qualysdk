@@ -166,7 +166,11 @@ def call_api(
         if (
             response.status_code in range(400, 599)
             and response.status_code != 429
-            and endpoint != "bulk_purge_agent"  # Special case for bulk_purge_agent
+            and endpoint
+            not in [
+                "bulk_purge_agent",
+                "list_agents",
+            ]  # Special case for bulk_purge_agent
             and (
                 response.status_code != 409
                 and "This API cannot be run again for another"

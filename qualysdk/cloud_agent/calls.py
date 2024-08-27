@@ -88,7 +88,7 @@ def list_agents(
             combined_error = f"{parsed.get('ServiceResponse')['responseErrorDetails']['errorMessage']}: {parsed.get('ServiceResponse')['responseErrorDetails']['errorResolution']}"
             raise ValueError(combined_error)
 
-        if not parsed.get("ServiceResponse").get("data").get("HostAsset"):
+        if parsed.get("ServiceResponse").get("count") == "0":
             break
 
         data = parsed.get("ServiceResponse").get("data").get("HostAsset")

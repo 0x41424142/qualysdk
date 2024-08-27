@@ -12,7 +12,10 @@ from ..base.base_list import BaseList
 
 
 def upload_gav_hosts(
-    hosts: BaseList, cnxn: Connection, table_name: str = "gav_hosts", override_import_dt: datetime = None
+    hosts: BaseList,
+    cnxn: Connection,
+    table_name: str = "gav_hosts",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload results from ```gav.query_assets``` or

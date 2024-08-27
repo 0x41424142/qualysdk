@@ -830,6 +830,16 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "list_agents": {
+                "endpoint": "/qps/rest/2.0/search/am/hostasset",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": ["_xml_data"],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": True,
+                "auth_type": "basic",
+            },
         },
     }
 )

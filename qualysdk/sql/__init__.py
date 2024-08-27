@@ -21,3 +21,5 @@ from .vmdr import (
 )
 
 from .gav import upload_gav_hosts
+
+from .cloud_agent import upload_cloud_agents

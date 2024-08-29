@@ -98,7 +98,7 @@ def call_api(
             for key in params.keys():
                 if key not in SCHEMA["valid_params"]:
                     raise ValueError(
-                        f"Invalid parameter {key} for {module}-{endpoint}. Valid parameters are: {SCHEMA['valid_params']}."
+                        f"Invalid parameter {key} for {module}-{endpoint}. Valid parameters are: {SCHEMA['valid_params'].sort()}."
                     )
 
         # check post data:

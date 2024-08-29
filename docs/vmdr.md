@@ -73,18 +73,27 @@ from qualysdk.vmdr import get_hld
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
 
-# Pull 2 pages containing 50 assets each that meet the following criteria:
-# non-superseded QIDs, on-prem and EC2 assets, all tags included
-hosts_with_detections = get_hld(
-	auth, show_tags=True, show_cloud_tags=True, 
-	filter_superseded_qids=True, host_metadata='ec2', 
-	page_count=2, truncation_limit=50
+# Example pulling all hosts with all details and kwargs
+# with default threading and chunking settings:
+hosts = get_host_list(
+        auth,         
+        details='All/AGs', 
+        show_asset_id=True, 
+        show_tags=True, 
+        show_ars=True, 
+        show_ars_factors=True, 
+        show_trurisk=True, 
+        show_trurisk_factors=True, 
+        host_metadata='all', 
+        show_cloud_tags=True,
 )
 >>>BaseList[VMDRHost(12345), ...]
 ```
 
 ## VMDR Host List
-The ```get_host_list()``` API returns a ```BaseList``` of VMDRHost or VMDRID dataclasses. Pagination is controlled via the ```page_count``` kwarg. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination.
+The ```get_host_list()``` API returns a ```BaseList``` of VMDRHost or VMDRID dataclasses. Pagination is controlled via the ```page_count``` kwarg. By default, this is set to ```"all"```, pulling all pages. By default, this is set to ```"all"```, pulling all pages. You can specify an int to limit pagination, as well as ```truncation_limit``` to specify how many hosts should be returned per page.
+
+This function implements threading to significantly speed up data pulls. The number of threads is controlled by the ```threads``` parameter, which defaults to 5. A ```Queue``` object is created, containing chunks of hostIDs (pulled via ```get_host_list``` with ```details=None```) that the threads pop from. The threads then call the ```hld_backend``` function with the hostIDs they popped from the queue. The user can control how many IDs are in a chunk via the ```chunk_size``` parameter, which defaults to 3000. You should create a combination of ```threads``` and ```chunk_size``` that keeps all threads busy, while respecting your Qualys concurrency limit. There is also the ```chunk_count``` parameter, which controls how many chunks a thread will pull out of the ```Queue``` before it exits.
 
 Using the ```details``` kwarg, the shape of the output can be controlled:
 

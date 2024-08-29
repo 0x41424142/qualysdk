@@ -64,6 +64,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_vmdr_ips``` | VMDR | ```vmdr.get_ip_list()```| ```vmdr_ips``` |
 | ```upload_vmdr_scanners``` | VMDR | ```vmdr.get_scanner_list()```| ```vmdr_scanners``` |
 | ```upload_vmdr_static_search_lists``` | VMDR | ```vmdr.get_static_searchlists()```| ```vmdr_static_searchlists``` |
+| ```upload_vmdr_dynamic_search_lists``` | VMDR | ```vmdr.get_dynamic_searchlists()```| ```vmdr_dynamic_searchlists``` |
 | ```upload_vmdr_users``` | VMDR | ```vmdr.get_user_list()```| ```vmdr_users``` |
 | ```upload_vmdr_scan_list``` | VMDR | ```vmdr.get_scan_list()```| ```vmdr_scans``` |
 | ```upload_vmdr_report_list``` | VMDR | ```vmdr.get_report_list()```| ```vmdr_reports``` |

@@ -641,6 +641,31 @@ search_lists = get_static_searchlists(auth)
 >>>[StaticSearchList(ID=12345, TITLE="My search list", QIDS=[KBEntry(12345, ...)], ...)]
 ```
 
+### Get Dynamic Search Lists API
+
+```get_dynamic_searchlists``` Lets you pull a list of static search lists in your subscription. It accepts a single parameter, ```ids``` and returns a ```BaseList``` of ```DynamicSearchList``` objects. 
+
+Parameter| Possible Values |Description|Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
+|```ids```|```str```| A comma-separated string of dynamic search lists IDs to return.|❌|
+|```show_qids```|```bool```| If ```True```, include the QIDs in the output.|❌|
+|```show_option_profiles```|```bool```| If ```True```, include the option profiles in the output.|❌|
+|```show_distribution_groups```|```bool```| If ```True```, include the distribution groups in the output.|❌|
+|```show_report_templates```|```bool```| If ```True```, include the report templates in the output.|❌|
+|```show_remediation_policies```|```bool```| If ```True```, include the remediation policies in the output.|❌|
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.vmdr import get_dynamic_searchlists
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#Get all dynamic search lists:
+dynamic_search_lists = get_dynamic_searchlists(auth)
+>>>[DynamicSearchList(ID=12345, TITLE="My dynamic search list", ...)]
+```
+
 ## VMDR Report Management
 
 This collection of APIs lets you work with various types of reporting in VMDR.

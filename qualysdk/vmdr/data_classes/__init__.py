@@ -16,7 +16,7 @@ from .qds import QDS
 from .asset_group import AssetGroup
 from .vmscan import VMScan
 from .scanner_appliance import ScannerAppliance
-from .searchlist import StaticSearchList
+from .searchlist import StaticSearchList, DynamicSearchList
 from .report import VMDRReport, VMDRScheduledReport
 from .report_template import ReportTemplate
 from .user import User

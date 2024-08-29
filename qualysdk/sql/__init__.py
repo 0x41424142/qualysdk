@@ -11,6 +11,7 @@ from .vmdr import (
     upload_vmdr_hld,
     upload_vmdr_scanners,
     upload_vmdr_static_search_lists,
+    upload_vmdr_dynamic_search_lists,
     upload_vmdr_users,
     upload_vmdr_scan_list,
     upload_vmdr_report_list,

@@ -3,28 +3,32 @@ get_host_list.py - call the VMDR host list API.
 """
 
 from typing import Union
+from threading import Thread
 
-# from xmltodict import parse
-from urllib.parse import urlparse, parse_qs
-
-from ..base.call_api import call_api
 from ..auth.token import BasicAuth
+from .base.helpers import create_id_queue, thread_worker, prepare_args
 from ..exceptions.Exceptions import *
-from .data_classes.hosts import VMDRHost, VMDRID
 from ..base.base_list import BaseList
-from ..base import xml_parser
 
 
 def get_host_list(
-    auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
-) -> list:
+    auth: BasicAuth,
+    chunk_size: int = 3000,
+    threads: int = 5,
+    page_count: Union[int, "all"] = "all",
+    chunk_count: Union[int, "all"] = "all",
+    **kwargs,
+) -> BaseList:
     """
-    Get the host list from the VMDR API.
+    Get the host list from the VMDR API using multiple threads.
     For a full list of parameters, see the Qualys API documentation: [Qualys API VMPc User Guide](https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf)
 
     Parameters:
         auth (BasicAuth): The authentication object.
+        chunk_size (int): The number of hosts to get per thread. Defaults to 3000.
+        threads (int): The number of threads to use. Defaults to 5.
         page_count (Union[int, "all"]): The number of pages to get. If "all", get all pages. Defaults to "all".
+        chunk_count (Union[int, "all"]): The number of chunks to get. If "all", get all chunks. Defaults to "all".
 
     :Kwargs:
 
@@ -92,99 +96,45 @@ def get_host_list(
 
     Returns:
 
-        list[Union[VMDRHost, VMDRID]]: A list of VMDRHost or VMDRID objects.
+        BaseList[Union[VMDRHost, VMDRID]]: A list of VMDRHost or VMDRID objects.
     """
 
+    prepare_args(
+        auth=auth,
+        chunk_size=chunk_size,
+        threads=threads,
+        page_count=page_count,
+        chunk_count=chunk_count,
+        ids=kwargs.get("ids", None),
+    )
+
+    id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
+    print(
+        f"Starting get_host_list with {threads} {'threads.' if threads > 1 else 'thread.'}"
+    )
+
+    threads_list = []
+
     responses = BaseList()
-    pulled = 0
 
-    # add the action to the kwargs:
-    kwargs["action"] = "list"
-
-    if kwargs.get("truncation_limit") and (
-        kwargs["truncation_limit"] in [0, "0"]
-        and kwargs["details"] not in ["None", None]
-    ):
-        print(
-            "[!] Warning: You have specified to pull all data with no pagination. This is generally not recommended, as it uses lots of resources and take a long time to complete. Please consider specifying a page_count or truncation_limit to avoid this issue."
+    for i in range(threads):
+        thread = Thread(
+            target=thread_worker,
+            args=(
+                auth,
+                id_queue,
+                responses,
+                page_count,
+                chunk_count,
+                "get_host_list",
+                kwargs,
+            ),
         )
+        threads_list.append(thread)
+        thread.start()
 
-    while True:
-        # make the request:
-        response = call_api(
-            auth=auth,
-            module="vmdr",
-            endpoint="get_host_list",
-            params=kwargs,
-            headers={"X-Requested-With": "qualysdk SDK"},
-        )
-        if response.status_code != 200:
-            print("No data returned.")
-            return responses
+    for thread in threads_list:
+        thread.join()
 
-        xml = xml_parser(response.content)
-
-        if (
-            "HOST_LIST" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]
-            and "ID_SET" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]
-        ):
-            print("No host list returned.")
-            return
-
-        # If details is none, ID_SET will be returned instead of HOST_LIST
-        if "ID_SET" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:
-            # check if ID_SET is a list of dicts or a single dict:
-            if isinstance(xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"], dict):
-                # if it's a single dict, convert it to a list of dicts:
-                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"] = [
-                    xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"]
-                ]
-
-            for ID in xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"]:
-                # create a VMDRID object and append to responses
-                # This code will only run if details=None, so now we just need to check if show_asset_id is set to 1:
-                if kwargs.get("show_asset_id"):
-                    responses.append(VMDRID(ID=ID, TYPE="asset"))
-                else:  # elif not kwargs.get("show_asset_id"):
-                    responses.append(VMDRID(ID=ID, TYPE="host"))
-        else:
-            # HOST_LIST will be returned
-            # first, check if xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
-            # is a list of dicts or a single dict:
-            if isinstance(
-                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], dict
-            ):
-                # if it's a single dict, convert it to a list of dicts:
-                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
-                    xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
-                ]
-
-            for host in xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]:
-                # return a list of VMDRHost objects
-                responses.append(VMDRHost.from_dict(host))
-
-        pulled += 1
-
-        if page_count != "all" and pulled >= page_count:
-            print("Page count reached.")
-            break
-
-        if "WARNING" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:
-            if "URL" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]["WARNING"]:
-                print(
-                    f"Pagination detected. Pulling next page from url: {xml['HOST_LIST_OUTPUT']['RESPONSE']['WARNING']['URL']}"
-                )
-                # get the id_min parameter from the URL to pass into kwargs:
-                params = parse_qs(
-                    urlparse(
-                        xml["HOST_LIST_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
-                    ).query
-                )
-                kwargs["id_min"] = params["id_min"][0]
-
-            else:
-                break
-        else:
-            break
-
+    print("All threads have completed. Returning responses.")
     return responses

@@ -21,7 +21,7 @@ from .vmscans import (
     delete_scan,
 )
 from .scanner_appliances import get_scanner_list
-from .searchlists import get_static_searchlists
+from .searchlists import get_static_searchlists, get_dynamic_searchlists
 from .reports import (
     get_report_list,
     get_template_list,

@@ -479,6 +479,55 @@ def upload_vmdr_static_search_lists(
     )
 
 
+def upload_vmdr_dynamic_search_lists(
+    searchlists: BaseList,
+    cnxn: Connection,
+    table_name: str = "vmdr_dynamic_searchlists",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload data from vmdr.get_dynamic_searchlists() to SQL.
+
+    Args:
+        searchlists (BaseList): The Search List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_dynamic_searchlists'.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "ID": types.Integer(),
+        "TITLE": types.String(),
+        "GLOBAL": types.Boolean(),
+        "OWNER": types.String(),
+        "CREATED": types.DateTime(),
+        "MODIFIED": types.DateTime(),
+        "MODIFIED_BY": types.String(),
+        "QIDS": types.String(),  # BaseList
+        "CRITERIA": types.String(),  # BaseList
+        "OPTION_PROFILES": types.String(),  # BaseList
+        "REPORT_TEMPLATES": types.String(),  # BaseList
+        "REMEDIATION_POLICIES": types.String(),  # BaseList
+        "DISTRIBUTION_GROUPS": types.String(),  # BaseList
+        "COMMENTS": types.String(),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(searchlist) for searchlist in searchlists])
+
+    # Upload the data:
+    return upload_data(
+        df,
+        table_name,
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )
+
+
 def upload_vmdr_users(
     users: BaseList,
     cnxn: Connection,

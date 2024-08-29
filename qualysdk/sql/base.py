@@ -150,6 +150,10 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "ASSET_GROUP_TITLE",
         "ASSET_GROUP_TITLE_LIST",
         "TARGET",
+        "OPTION_PROFILES",
+        "REPORT_TEMPLATES",
+        "REMEDIATION_POLICIES",
+        "DISTRIBUTION_GROUPS",
     ]
 
     DICT_FIELDS = [
@@ -164,10 +168,6 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         "VLANS",
         "ML_VERSION",
         "VULNSIGS_VERSION",
-        "OPTION_PROFILES",
-        "REPORT_TEMPLATES",
-        "REMEDIATION_POLICIES",
-        "DISTRIBUTION_GROUPS",
         "OPTION_PROFILE",
         "STATUS",
         "DETAILS",

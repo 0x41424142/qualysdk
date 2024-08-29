@@ -105,7 +105,7 @@ def upload_data(
 
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table}...")
-    df.to_sql(table, cnxn, if_exists="append", index=False, dtype=dtype, method=None)
+    df.to_sql(table, cnxn, if_exists="append", index=False, dtype=dtype, chunksize=4000)
 
     return len(df)
 

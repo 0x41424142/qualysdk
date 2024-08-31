@@ -32,6 +32,7 @@ You can use any of the VMDR endpoints currently supported:
 |```fetch_scan```| Pull the results of a VMDR scan as a ```pandas.DataFrame```.|
 |```get_scanner_list```| Pull a list of VMDR scanner appliances.|
 |```get_static_searchlists```| Pull a list of static search lists, according to the ```ids``` parameter.|
+|```get_dynamic_searchlists``` | Pull a list of dynamic search lists, according to kwargs.|
 |```get_report_list```| Pull a list of reports.|
 |```launch_report```|Generate a new report.|
 |```cancel_report```|Cancel an in-progress report.|

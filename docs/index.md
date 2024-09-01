@@ -47,7 +47,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 | WAS | In Planning |
 | TC (TotalCloud) | Started |
 |Connectors | Not Started |
-|Cloud Agent | In Progress (```purge_agent```, ```bulk_purge_agent```, ```list_agents```, ```launch_ods``` implemnted) |
+|Cloud Agent | In Progress (```purge_agent```, ```bulk_purge_agent```, ```list_agents```, ```launch_ods```, ```bulk_launch_ods``` implemnted) |
 |CS (Container Security) | Not Started
 |ADMIN (Administration) | Not Started
 |Tagging| Not Started

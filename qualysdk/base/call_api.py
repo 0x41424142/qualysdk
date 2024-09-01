@@ -143,10 +143,10 @@ def call_api(
 
         # If _xml_data key is defined in call schema,
         # use it as the payload/params:
-        if payload and SCHEMA["_xml_data"] and payload.get("_xml_data"):
+        if payload and SCHEMA.get("_xml_data") and payload.get("_xml_data"):
             payload = payload["_xml_data"]
 
-        if params and SCHEMA["_xml_data"] and params.get("_xml_data"):
+        if params and SCHEMA.get("_xml_data") and params.get("_xml_data"):
             params = params["_xml_data"]
 
         # and finally, make the request:

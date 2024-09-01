@@ -98,7 +98,7 @@ def call_api(
             for key in params.keys():
                 if key not in SCHEMA["valid_params"]:
                     raise ValueError(
-                        f"Invalid parameter {key} for {module}-{endpoint}. Valid parameters are: {SCHEMA['valid_params'].sort()}."
+                        f"Invalid parameter {key} for {module}-{endpoint}. Valid parameters are: {SCHEMA['valid_params'].sort() if SCHEMA['valid_params'].sort() else SCHEMA['valid_params']}."
                     )
 
         # check post data:
@@ -141,12 +141,12 @@ def call_api(
                     f"Endpoint {module}-{endpoint} requires a placeholder value in the URL however none was found in params/POST data."
                 )
 
-        # If params/payload have the '_xml_data' key,
-        # convert the value to a string:
-        if payload and payload.get("_xml_data"):
+        # If _xml_data key is defined in call schema,
+        # use it as the payload/params:
+        if payload and SCHEMA["_xml_data"] and payload.get("_xml_data"):
             payload = payload["_xml_data"]
 
-        if params and params.get("_xml_data"):
+        if params and SCHEMA["_xml_data"] and params.get("_xml_data"):
             params = params["_xml_data"]
 
         # and finally, make the request:
@@ -166,11 +166,7 @@ def call_api(
         if (
             response.status_code in range(400, 599)
             and response.status_code not in [429, 414]
-            and endpoint
-            not in [
-                "bulk_purge_agent",
-                "list_agents",
-            ]  # Special case for bulk_purge_agent
+            and module != "cloud_agent"  # Special case for CA module
             and (
                 response.status_code != 409
                 and "This API cannot be run again for another"

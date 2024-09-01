@@ -2,7 +2,7 @@
 calls.py - contains the user-facing functions for most cloud agent API calls.
 """
 
-from typing import Union
+from typing import Union, Literal
 
 from .data_classes.Agent import CloudAgent
 from .prepare_criteria import prepare_criteria
@@ -10,6 +10,15 @@ from ..base.call_api import call_api
 from ..base.xml_parser import xml_parser
 from ..auth.basic import BasicAuth
 from ..base.base_list import BaseList
+
+TRANSLATION = {
+    "inv": "Inventory_Scan",
+    "vuln": "Vulnerability_Scan",
+    "pc": "PolicyCompliance_Scan",
+    "udc": "UDC_Scan",
+    "sca": "SCA_Scan",
+    "swca": "SWCA_Scan",
+}
 
 
 def list_agents(
@@ -117,3 +126,114 @@ def list_agents(
             )
 
     return results
+
+
+def launch_ods(
+    auth: BasicAuth,
+    asset_id: str,
+    scan: Literal["inv", "vuln", "pc", "udc", "sca", "swca"],
+    overrideConfigCpu: bool = False,
+) -> str:
+    """
+    Launch an on-demand scan on a Cloud Agent.
+
+    Args:
+        auth (BasicAuth): The authentication object containing the user's credentials.
+        asset_id (str): The **Asset ID** of the Cloud Agent to scan.
+        scan (Literal['inv', 'vuln', 'pc', 'udc', 'sca', 'swca']): The type of scan to launch.
+        overrideConfigCpu (bool): If True, override the CPU configuration. Defaults to False.
+
+    Returns:
+        str: The response from the API call.
+    """
+
+    # Check valid scan type:
+    if scan not in ["inv", "vuln", "pc", "udc", "sca", "swca"]:
+        raise ValueError(
+            f'Invalid scan type {scan}. Valid types are: {["inv", "vuln", "pc", "udc", "sca", "swca"]}.'
+        )
+
+    xml_data = (
+        '<?xml version="1.0" encoding="UTF-8" ?> <ServiceRequest></ServiceRequest>'
+    )
+
+    payload = {
+        "placeholder": asset_id,  # For formatting the URL
+        "_xml_data": xml_data,  # call_api will override body with this
+    }
+
+    params = {
+        "scan": TRANSLATION[scan],
+        "overrideConfigCpu": overrideConfigCpu,
+    }
+
+    response = call_api(
+        auth=auth,
+        module="cloud_agent",
+        endpoint="launch_ods",
+        payload=payload,
+        params=params,
+    )
+
+    parsed = xml_parser(response.text)
+
+    return (
+        parsed.get("ServiceResponse").get("responseCode")
+        if response.status_code == 200
+        else parsed.get("ServiceResponse")
+        .get("responseErrorDetails")
+        .get("errorMessage")
+        + f": {parsed.get('ServiceResponse').get('responseErrorDetails').get('errorResolution')}"
+    )
+
+
+def bulk_launch_ods(
+    auth: BasicAuth,
+    scan: Literal["inv", "vuln", "pc", "udc", "sca", "swca"],
+    ovverideConfigCpu: bool = False,
+    **kwargs,
+) -> str:
+    """
+    Launch on-demand scans in bulk based on asset ID, asset name, or tag name.
+
+    Args:
+        auth (BasicAuth): The authentication object containing the user's credentials.
+        **kwargs: The filters to apply to the bulk purge.
+
+    ## Kwargs:
+
+        asset_id (Union[list[str], str]): A list of asset IDs to purge. HIGHLY RECOMMENDED.
+        name (Union[list[str], str]): A list of asset names to purge.
+        tagName (str): A comma-separated string of tag names to purge assets under.
+
+    Returns:
+        str: The response from the API call.
+    """
+
+    payload = {"_xml_data": prepare_criteria(**kwargs)}
+
+    params = {
+        "scan": TRANSLATION[scan],
+        "overrideConfigCpu": ovverideConfigCpu,
+    }
+
+    response = call_api(
+        auth=auth,
+        module="cloud_agent",
+        endpoint="bulk_launch_ods",
+        payload=payload,
+        params=params,
+    )
+
+    parsed = xml_parser(response.text)
+
+    return (
+        parsed.get("ServiceResponse").get("responseCode")
+        if response.status_code == 200
+        else "ERROR: "
+        + xml_parser(response.text)
+        .get("ServiceResponse")
+        .get("responseErrorDetails")
+        .get("errorMessage")
+        + f": {parsed.get('ServiceResponse').get('responseErrorDetails').get('errorResolution')}"
+    )

@@ -15,6 +15,8 @@ You can use any of the endpoints currently supported:
 | ```purge_agent``` | Purges a cloud agent from the subscription. |
 | ```bulk_purge_agent``` | Purges multiple cloud agents from the subscription. |
 | ```list_agents``` | Lists all cloud agents in the subscription that match given kwargs. |
+| ```launch_ods``` | Launches an On-Demand Scan on a single cloud agent. |
+| ```bulk_launch_ods``` | Launches an On-Demand Scan on multiple cloud agents. |
 
 
 ## List Agents API
@@ -114,4 +116,45 @@ from qualysdk.cloud_agent import bulk_purge_agent
 auth = BasicAuth(<username>, <password>, platform='qg1')
 bulk_purge_agent(auth, asset_ids=['123456789', '987654321'])
 >>>SUCCESS
+```
+
+## Launch On-Demand Scan on a Single Agent API
+
+```launch_ods``` launches an On-Demand Scan on a single cloud agent. Returns a ```str``` indicating success or an error message.
+
+|Parameter | Possible Values | Description | Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```asset_id``` | ```str``` | Singular asset ID | ✅ |
+| ```scan``` | ```Literal['inv', 'vuln', 'pc', 'udc', 'sca', 'swca']``` | Scan type | ✅ |
+| ```overrideConfigCpu``` | ```bool``` | Override configuration profile's CPU throttling limits | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.cloud_agent import launch_ods
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+launch_ods(auth, asset_id='123456789', scan='inv')
+```
+
+## Launch On-Demand Scan on Multiple Agents API
+
+```bulk_launch_ods``` launches an On-Demand Scan on multiple cloud agents. Returns a ```str``` indicating success or an error message.
+
+|Parameter | Possible Values | Description | Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scan``` | ```Literal['inv', 'vuln', 'pc', 'udc', 'sca', 'swca']``` | Scan type | ✅ |
+| ```overrideConfigCpu``` | ```bool``` | Override configuration profile's CPU throttling limits | ❌ |
+| ```asset_ids``` | ```Union[str, List[str]]``` | List of asset IDs or comma-separated string of asset IDs | ❌, but recommended! | 
+| ```names``` | ```Union[str, List[str]]``` | List of asset names or comma-separated string of asset names | ❌ | 
+| ```tagName``` | ```str``` | Comma-separated string of tag names | ❌ |
+
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.cloud_agent import bulk_launch_ods
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+bulk_launch_ods(auth, asset_ids=['123456789', '987654321'], scan='inv')
 ```

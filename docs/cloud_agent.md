@@ -15,6 +15,7 @@ You can use any of the endpoints currently supported:
 | ```purge_agent``` | Purges a cloud agent from the subscription. |
 | ```bulk_purge_agent``` | Purges multiple cloud agents from the subscription. |
 | ```list_agents``` | Lists all cloud agents in the subscription that match given kwargs. |
+| ```launch_ods``` | Launches an On-Demand Scan on a single cloud agent. |
 
 
 ## List Agents API
@@ -114,4 +115,23 @@ from qualysdk.cloud_agent import bulk_purge_agent
 auth = BasicAuth(<username>, <password>, platform='qg1')
 bulk_purge_agent(auth, asset_ids=['123456789', '987654321'])
 >>>SUCCESS
+```
+
+## Launch On-Demand Scan on a Single Agent API
+
+```launch_ods``` launches an On-Demand Scan on a single cloud agent. Returns a ```str``` indicating success or an error message.
+
+|Parameter | Possible Values | Description | Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```asset_id``` | ```str``` | Singular asset ID | ✅ |
+| ```scan``` | ```Literal['inv', 'vuln', 'pc', 'udc', 'sca', 'swca']``` | Scan type | ✅ |
+| ```overrideConfigCpu``` | ```bool``` | Override configuration profile's CPU throttling limits | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.cloud_agent import launch_ods
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+launch_ods(auth, asset_id='123456789', scan='inv')
 ```

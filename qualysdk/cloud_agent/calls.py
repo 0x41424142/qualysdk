@@ -2,7 +2,7 @@
 calls.py - contains the user-facing functions for most cloud agent API calls.
 """
 
-from typing import Union
+from typing import Union, Literal
 
 from .data_classes.Agent import CloudAgent
 from .prepare_criteria import prepare_criteria
@@ -117,3 +117,71 @@ def list_agents(
             )
 
     return results
+
+
+def launch_ods(
+    auth: BasicAuth,
+    asset_id: str,
+    scan: Literal["inv", "vuln", "pc", "udc", "sca", "swca"],
+    overrideConfigCpu: bool = False,
+) -> str:
+    """
+    Launch an on-demand scan on a Cloud Agent.
+
+    Args:
+        auth (BasicAuth): The authentication object containing the user's credentials.
+        asset_id (str): The **Asset ID** of the Cloud Agent to scan.
+        scan (Literal['inv', 'vuln', 'pc', 'udc', 'sca', 'swca']): The type of scan to launch.
+        overrideConfigCpu (bool): If True, override the CPU configuration. Defaults to False.
+
+    Returns:
+        str: The response from the API call.
+    """
+
+    # Check valid scan type:
+    if scan not in ["inv", "vuln", "pc", "udc", "sca", "swca"]:
+        raise ValueError(
+            f'Invalid scan type {scan}. Valid types are: {["inv", "vuln", "pc", "udc", "sca", "swca"]}.'
+        )
+
+    translation = {
+        "inv": "Inventory_Scan",
+        "vuln": "Vulnerability_Scan",
+        "pc": "PolicyCompliance_Scan",
+        "udc": "UDC_Scan",
+        "sca": "SCA_Scan",
+        "swca": "SWCA_Scan",
+    }
+
+    xml_data = (
+        '<?xml version="1.0" encoding="UTF-8" ?> <ServiceRequest></ServiceRequest>'
+    )
+
+    payload = {
+        "placeholder": asset_id,  # For formatting the URL
+        "_xml_data": xml_data,  # call_api will override body with this
+    }
+
+    params = {
+        "scan": translation[scan],
+        "overrideConfigCpu": overrideConfigCpu,
+    }
+
+    response = call_api(
+        auth=auth,
+        module="cloud_agent",
+        endpoint="launch_ods",
+        payload=payload,
+        params=params,
+    )
+
+    parsed = xml_parser(response.text)
+
+    return (
+        parsed.get("ServiceResponse").get("responseCode")
+        if response.status_code == 200
+        else parsed.get("ServiceResponse")
+        .get("responseErrorDetails")
+        .get("errorMessage")
+        + f": {parsed.get('ServiceResponse').get('responseErrorDetails').get('errorResolution')}"
+    )

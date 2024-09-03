@@ -180,7 +180,7 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
         if getattr(dataclass, attr):
             if attr in TO_STR_FIELDS:
                 setattr(dataclass, attr, str(getattr(dataclass, attr)))
-            elif attr in DICT_FIELDS:
+            elif attr in DICT_FIELDS and isinstance(getattr(dataclass, attr), dict):
                 setattr(
                     dataclass, attr, flatten_dict_to_string(getattr(dataclass, attr))
                 )

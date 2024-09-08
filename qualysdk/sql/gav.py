@@ -6,6 +6,7 @@ from datetime import datetime
 
 from pandas import DataFrame
 from sqlalchemy import Connection, types
+from sqlalchemy.dialects.mysql import TEXT
 
 from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
@@ -32,111 +33,283 @@ def upload_gav_hosts(
 
     COLS = {
         "assetId": types.Integer(),
-        "assetUUID": types.String(),
+        "assetUUID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "hostId": types.Integer(),
         "lastModifiedDate": types.DateTime(),
-        "agentId": types.String(),
+        "agentId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "createdDate": types.DateTime(),
         "sensorLastUpdatedDate": types.DateTime(),
-        "assetType": types.String(),
-        "address": types.String(),
-        "dnsName": types.String(),
-        "assetName": types.String(),
-        "netbiosName": types.String(),
-        "timeZone": types.String(),
-        "biosDescription": types.String(),
+        "assetType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "address": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "dnsName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "assetName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "netbiosName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "timeZone": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "biosDescription": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "lastBoot": types.DateTime(),
         "totalMemory": types.Integer(),
         "cpuCount": types.Integer(),
-        "lastLoggedOnUser": types.String(),
-        "domainRole": types.String(),
-        "hwUUID": types.String(),
-        "biosSerialNumber": types.String(),
-        "biosAssetTag": types.String(),
+        "lastLoggedOnUser": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "domainRole": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hwUUID": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "biosSerialNumber": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "biosAssetTag": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "isContainerHost": types.Boolean(),
-        "operatingSystem_osName": types.String(),
-        "operatingSystem_fullName": types.String(),
-        "operatingSystem_category": types.String(),
-        "operatingSystem_category1": types.String(),
-        "operatingSystem_category2": types.String(),
-        "operatingSystem_productName": types.String(),
-        "operatingSystem_publisher": types.String(),
-        "operatingSystem_edition": types.String(),
-        "operatingSystem_marketVersion": types.String(),
-        "operatingSystem_version": types.String(),
-        "operatingSystem_update": types.String(),
-        "operatingSystem_architecture": types.String(),
-        "operatingSystem_lifecycle": types.String(),
-        "operatingSystem_productUrl": types.String(),
-        "operatingSystem_productFamily": types.String(),
-        "operatingSystem_release": types.String(),
-        "operatingSystem_cpeId": types.String(),
-        "operatingSystem_cpe": types.String(),
-        "operatingSystem_cpeType": types.String(),
+        "operatingSystem_osName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_fullName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_category": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_category1": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_category2": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_productName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_publisher": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_edition": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_marketVersion": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_version": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_update": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_architecture": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_lifecycle": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_productUrl": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_productFamily": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_release": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_cpeId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_cpe": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_cpeType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "operatingSystem_installDate": types.DateTime(),
-        "hardwareVendor": types.String(),
-        "hardware_fullName": types.String(),
-        "hardware_category": types.String(),
-        "hardware_category1": types.String(),
-        "hardware_category2": types.String(),
-        "hardware_manufacturer": types.String(),
-        "hardware_productName": types.String(),
-        "hardware_model": types.String(),
-        "hardware_lifecycle": types.String(),
-        "hardware_productUrl": types.String(),
-        "hardware_productFamily": types.String(),
-        "userAccountListData": types.String(),  # BaseList[str]
-        "openPortListData": types.String(),  # BaseList[str]
-        "volumeListData": types.String(),  # BaseList[str]
-        "networkInterfaceListData": types.String(),  # BaseList[str]
-        "softwareListData": types.String(),  # BaseList[str]
-        "softwareComponent": types.String(),
-        "cloudProvider": types.String(),
-        "cloudProvider_accountId": types.String(),
-        "cloudProvider_availabiltyZone": types.String(),
-        "cloudProvider_hostname": types.String(),
-        "cloudProvider_instanceId": types.String(),
-        "cloudProvider_imageId": types.String(),
-        "cloudProvider_instanceType": types.String(),
-        "cloudProvder_instanceState": types.String(),
+        "hardwareVendor": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_fullName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_category": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_category1": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_category2": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_manufacturer": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_productName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_model": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_lifecycle": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_productUrl": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_productFamily": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "userAccountListData": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "openPortListData": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "volumeListData": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "networkInterfaceListData": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "softwareListData": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "softwareComponent": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_accountId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_availabiltyZone": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_hostname": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_instanceId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_imageId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_instanceType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvder_instanceState": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "cloudProvider_qualysScanner": types.Boolean(),
         "cloudProvider_launchdate": types.DateTime(),
-        "cloudProvider_privateDNS": types.String(),
-        "cloudProvider_privateIpAddress": types.String(),
-        "cloudProvider_publicDNS": types.String(),
-        "cloudProvider_publicIpAddress": types.String(),
+        "cloudProvider_privateDNS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_privateIpAddress": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_publicDNS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_publicIpAddress": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "cloudProvider_hasAgent": types.Boolean(),
-        "cloudProvider_region": types.String(),
+        "cloudProvider_region": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "cloudProvider_spotInstance": types.Boolean(),
-        "cloudProvider_subnetId": types.String(),
-        "cloudProvider_vpcId": types.String(),
-        "cloudProvider_imageOffer": types.String(),
-        "cloudProvider_imagePublisher": types.String(),
-        "cloudProvider_imagePublisher": types.String(),
-        "cloudProvider_imageVersion": types.String(),
-        "cloudProvider_location": types.String(),
-        "cloudProvider_macAddress": types.String(),
-        "cloudProvider_name": types.String(),
-        "cloudProvider_platform": types.String(),
-        "cloudProvider_resourceGroupName": types.String(),
-        "cloudProvider_size": types.String(),
-        "cloudProvider_state": types.String(),
-        "cloudProvider_subnet": types.String(),
-        "cloudProvider_subscriptionId": types.String(),
-        "cloudProvider_virtualNetwork": types.String(),
-        "cloudProvider_vmId": types.String(),
-        "agent_version": types.String(),
-        "agent_configurationProfile": types.String(),
-        "agent_connectedFrom": types.String(),
+        "cloudProvider_subnetId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_vpcId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_imageOffer": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_imagePublisher": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_imagePublisher": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_imageVersion": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_location": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_macAddress": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_name": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_platform": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_resourceGroupName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_size": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_state": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_subnet": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_subscriptionId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_virtualNetwork": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudProvider_vmId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "agent_version": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "agent_configurationProfile": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "agent_connectedFrom": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "agent_lastActivity": types.DateTime(),
         "agent_lastCheckedIn": types.DateTime(),
         "agent_lastInventory": types.DateTime(),
         "agent_udcManifestAssigned": types.Boolean(),
         "agent_errorStatus": types.Boolean(),
-        "agent_key": types.String(),
-        "agent_status": types.String(),
-        "sensor_activatedForModules": types.String(),  # BaseList[str]
-        "sensor_pendingActivationForModules": types.String(),  # BaseList[str]
+        "agent_key": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "agent_status": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "sensor_activatedForModules": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "sensor_pendingActivationForModules": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
         "sensor_lastVMScan": types.DateTime(),
         "sensor_lastComplianceScan": types.DateTime(),
         "sensor_lastFullScan": types.DateTime(),
@@ -146,35 +319,69 @@ def upload_gav_hosts(
         "sensor_lastPcScanDateAgent": types.DateTime(),
         "sensor_firstEasmScanDate": types.DateTime(),
         "sensor_lastEasmScanDate": types.DateTime(),
-        "container_product": types.String(),
-        "container_version": types.String(),
+        "container_product": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "container_version": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "container_noOfContainers": types.Integer(),
         "container_noOfImages": types.Integer(),
         "container_hasSensor": types.Boolean(),
-        "inventory_source": types.String(),
+        "inventory_source": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "inventory_created": types.DateTime(),
         "inventory_lastUpdated": types.DateTime(),
         "activity_lastScannedDate": types.DateTime(),
-        "tagList": types.String(),  # BaseList[str]
-        "serviceList": types.String(),  # BaseList[str]
-        "lastLocation": types.String(),
+        "tagList": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "serviceList": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "lastLocation": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "criticality": types.Integer(),
-        "businessInformation": types.String(),
-        "assignedLocation": types.String(),
-        "businessAppListData": types.String(),  # BaseList[str]
+        "businessInformation": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "assignedLocation": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "businessAppListData": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
         "riskScore": types.Integer(),
-        "passiveSensor": types.String(),  # ???
-        "domain": types.String(),
-        "subdomain": types.String(),
-        "missingSoftware": types.String(),  # BaseList[str]
-        "whois": types.String(),
-        "organizationName": types.String(),
-        "isp": types.String(),
-        "asn": types.String(),
-        "easmTags": types.String(),  # BaseList[str]
-        "hostingCategory1": types.String(),
-        "customAttributes": types.String(),  # BaseList[str]
-        "processor": types.String(),
+        "passiveSensor": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # ???
+        "domain": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "subdomain": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "missingSoftware": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "whois": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "organizationName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "isp": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "asn": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "easmTags": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "hostingCategory1": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "customAttributes": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
+        "processor": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Prepare the dataclass for insertion:

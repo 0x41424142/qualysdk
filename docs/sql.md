@@ -1,8 +1,13 @@
 # Uploading Data to a SQL Database
 
->**Head's Up!:** ```qualysdk.sql``` is currently in development and has been tested using Microsoft SQL Server only. Other DBs will be tested at some point.
-
 ```qualysdk``` supports uploading data it has pulled to a SQL Database using various ```upload_<module>_*``` functions. Thanks to the [Pandas library](https://pandas.pydata.org) and qualysdk's ```BaseList``` class, uploading is rather easy. ```qualysdk``` automatically will create the table for you if it does not exist, and will append data to the table if it does exist. The ```import_datetime``` field is also added to each table to track when the data was uploaded.
+
+## Supported Databases
+
+- SQL Server (```db_type='mssql'```)
+- Postgresql (```db_type='postgresql'```)
+- MySQL/MariaDB (```db_type='mysql'```)
+- SQLite3 (```db_type='sqlite'```)
 
 ## Steps to Get Going
 
@@ -14,22 +19,32 @@ from qualysdk.sql import *
 
 ### Step 2: Building the SQLAlchemy Connection
 
-Next, build your connection object. ```qualysdk``` supports username/password auth as well as trusted connections. It also supports specifying a custom driver (default driver is ```"ODBC Driver 17 for SQL Server"```) and specifying the type of DB you are connecting to (default is ```"mssql"```) via ```db_type```:
+Next, build your connection object. ```qualysdk``` supports username/password auth as well as trusted connections for SQL Server. You can specify the type of DB you are connecting to (default is ```"mssql"```) via ```db_type```:
 
 ```py
 
 # Get a sqlalchemy.Connection using trusted_connection to SQL Server.
-# since driver defaults to "ODBC Driver 17 for SQL Server" and db_type defaults to "mssql", you can omit them.
-cnxn = db_connect(host='10.0.0.1', db='qualysdata', trusted_cnxn=True)
+# since db_type defaults to "mssql", you can omit it.
+cnxn = db_connect(
+    host='10.0.0.1', 
+    db='qualysdata', 
+    trusted_cnxn=True, 
+    port=1433
+)
 
-# Get a sqlalchemy.Connection with username/password auth to an oracle DB:
-cnxn = db_connect(host='10.0.0.1', db='qualysdata', username='Jane', password='SuperSecretPassword!', db_type='oracle', driver='Some Driver for Oracle')
+# Get a sqlalchemy.Connection with username/password 
+# auth to a Postgresql DB:
+cnxn = db_connect(
+    host='10.0.0.1', 
+    db='qualysdata', 
+    username='Jane', 
+    password='SuperSecretPassword!', 
+    db_type='postgresql', 
+    port=5432
+)
 ```
 
 Note that you are required to call ```.close()``` on the connection object when you are done with it to close the connection to the DB.
-
->**Head's Up!:** If you are on Mac or a Linux flavor, ```qualysdk``` will raise an ```ImportError``` related to pyodbc. To fix, you will need to install the ```unixODBC``` package as well as whatever driver you need for your DB.
-
 
 ```py
 
@@ -39,6 +54,15 @@ cnxn = db_connect(host='10.0.0.1', db='qualysdata', trusted_cnxn=True)
 ...
 
 cnxn.close()
+```
+
+For connections to a SQLite3 database, you can use the following:
+
+```py
+cnxn = db_connect(
+    db_type='sqlite',
+    db='C:\\path\\to\\your\\sqlite.db'
+)
 ```
 
 ### Step 3: Fire Away!

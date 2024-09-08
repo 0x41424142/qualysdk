@@ -19,8 +19,8 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
     Params:
         auth (BasicAuth): Qualys BasicAuth object.
 
-    :Kwargs:
-        ```
+    ## Kwargs:
+
         action (str): Action to perform on the IP addresses. Defaults to "list". WARNING: SDK automatically sets this value. It is just included for completeness.
         echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value. It is just included for completeness.
         ips (str): Show only certain IP addresses/ranges. One or more IPs/ranges may be specified. Multiple entries are comma separated. A host IP range is specified with a hyphen (for example, 10.10.10.44-10.10.10.90).

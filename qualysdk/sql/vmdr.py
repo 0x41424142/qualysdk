@@ -6,6 +6,7 @@ from datetime import datetime
 
 from pandas import DataFrame
 from sqlalchemy import Connection, types
+from sqlalchemy.dialects.mysql import TEXT
 
 from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
@@ -32,41 +33,93 @@ def upload_vmdr_ags(
 
     COLS = {
         "ID": types.Integer(),
-        "TITLE": types.String(),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "OWNER_ID": types.Integer(),
         "OWNER_USER_ID": types.Integer(),
         "UNIT_ID": types.Integer(),
         "LAST_UPDATE": types.DateTime(),
         "NETWORK_ID": types.Integer(),
-        "IP_SET": types.String(),
-        "BUSINESS_IMPACT": types.String(),
+        "IP_SET": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "BUSINESS_IMPACT": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "DEFAULT_APPLIANCE_ID": types.Integer(),
-        "APPLIANCE_IDS": types.String(),
-        "DNS_LIST": types.String(),
-        "NETBIOS_LIST": types.String(),
-        "HOST_IDS": types.String(),
-        "ASSIGNED_USER_IDS": types.String(),
-        "ASSIGNED_UNIT_IDS": types.String(),
-        "OWNER_USER_NAME": types.String(),
-        "CVSS_ENVIRO_CDP": types.String(),
-        "CVSS_ENVIRO_TD": types.String(),
-        "CVSS_ENVIRO_CR": types.String(),
-        "CVSS_ENVIRO_IR": types.String(),
-        "CVSS_ENVIRO_AR": types.String(),
-        "EC2_IDS": types.String(),
-        "COMMENTS": types.String(),
-        "DOMAIN_LIST": types.String(),
-        "CLOUD_GROUP_NAME": types.String(),
-        "CLOUD_INSTANCE_STATE": types.String(),
-        "CLOUD_INSTANCE_TYPE": types.String(),
+        "APPLIANCE_IDS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "DNS_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "NETBIOS_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "HOST_IDS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "ASSIGNED_USER_IDS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "ASSIGNED_UNIT_IDS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "OWNER_USER_NAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS_ENVIRO_CDP": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS_ENVIRO_TD": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS_ENVIRO_CR": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS_ENVIRO_IR": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS_ENVIRO_AR": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "EC2_IDS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "COMMENTS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "DOMAIN_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_GROUP_NAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_INSTANCE_STATE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_INSTANCE_TYPE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "CLOUD_IS_SPOT_INSTANCE": types.Boolean(),
-        "CLOUD_ARCHITECTURE": types.String(),
-        "CLOUD_REGION": types.String(),
-        "CLOUD_IMAGE_ID": types.String(),
-        "CLOUD_AMI_ID": types.String(),
-        "CLOUD_PUBLIC_HOSTNAME": types.String(),
-        "CLOUD_PUBLIC_IPV4": types.String(),
-        "CLOUD_ACCOUNT_ID": types.String(),
+        "CLOUD_ARCHITECTURE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_REGION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_IMAGE_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_AMI_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_PUBLIC_HOSTNAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_PUBLIC_IPV4": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_ACCOUNT_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     df = DataFrame([prepare_dataclass(ag) for ag in ags])
@@ -98,35 +151,73 @@ def upload_vmdr_kb(
 
     COLS = {
         "QID": types.Integer(),
-        "VULN_TYPE": types.String(),
+        "VULN_TYPE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "SEVERITY_LEVEL": types.Integer(),
-        "TITLE": types.String(),
-        "CATEGORY": types.String(),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "CATEGORY": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "LAST_SERVICE_MODIFICATION_DATETIME": types.DateTime(),
         "PUBLISHED_DATETIME": types.DateTime(),
         "CODE_MODIFIED_DATETIME": types.DateTime(),
-        "BUGTRAQ_LIST": types.String(),
+        "BUGTRAQ_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "PATCHABLE": types.Boolean(),
-        "SOFTWARE_LIST": types.String(),
-        "VENDOR_REFERENCE_LIST": types.String(),
-        "CVE_LIST": types.String(),
-        "DIAGNOSIS": types.String(),
-        "SOLUTION": types.String(),
-        "CONSEQUENCE": types.String(),
-        "CORRELATION": types.String(),
-        "CVSS": types.String(),
-        "CVSS_V3": types.String(),
-        "PCI_REASONS": types.String(),
+        "SOFTWARE_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "VENDOR_REFERENCE_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVE_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "DIAGNOSIS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "SOLUTION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CONSEQUENCE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CORRELATION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "CVSS_V3": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "PCI_REASONS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "PCI_FLAG": types.Boolean(),
-        "THREAT_INTELLIGENCE": types.String(),
-        "SUPPORTED_MODULES": types.String(),
-        "DISCOVERY": types.String(),
+        "THREAT_INTELLIGENCE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "SUPPORTED_MODULES": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "DISCOVERY": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "IS_DISABLED": types.Boolean(),
-        "CHANGE_LOG": types.String(),
-        "COMPLIANCE_LIST": types.String(),
-        "TECHNOLOGY": types.String(),
+        "CHANGE_LOG": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "COMPLIANCE_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TECHNOLOGY": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "LAST_CUSTOMIZATION": types.DateTime(),
-        "SOLUTION_COMMENT": types.String(),
+        "SOLUTION_COMMENT": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Convert the BaseList to a DataFrame:
@@ -165,23 +256,37 @@ def upload_vmdr_hosts(
     COLS = {
         "ID": types.Integer(),
         "ASSET_ID": types.Integer(),
-        "IP": types.String(),
-        "IPV6": types.String(),
-        "TRACKING_METHOD": types.String(),
-        "DNS": types.String(),
-        "NETBIOS": types.String(),
-        "OS": types.String(),
-        "QG_HOSTID": types.String(),
+        "IP": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "IPV6": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "TRACKING_METHOD": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "DNS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "NETBIOS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "OS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "QG_HOSTID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "LAST_BOOT": types.DateTime(),
         "LAST_SCAN_DATETIME": types.DateTime(),
-        "SERIAL_NUMBER": types.String(),
-        "HARDWARE_UUID": types.String(),
+        "SERIAL_NUMBER": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "HARDWARE_UUID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "FIRST_FOUND_DATE": types.DateTime(),
         "LAST_ACTIVITY": types.DateTime(),
         "LAST_ACTIVITY_DATE": types.DateTime(),
-        "AGENT_STATUS": types.String(),
-        "CLOUD_AGENT_RUNNING_ON": types.String(),
-        "TAGS": types.String(),
+        "AGENT_STATUS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_AGENT_RUNNING_ON": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TAGS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "LAST_VULN_SCAN_DATETIME": types.DateTime(),
         "LAST_VULN_SCAN_DATE": types.DateTime(),
         "LAST_VM_SCANNED_DATE": types.DateTime(),
@@ -190,28 +295,64 @@ def upload_vmdr_hosts(
         "LAST_VM_AUTH_SCANNED_DATE": types.DateTime(),
         "LAST_COMPLIANCE_SCAN_DATETIME": types.DateTime(),
         "LAST_PC_SCANNED_DATE": types.DateTime(),
-        "ASSET_GROUP_IDS": types.String(),
-        "USER_DEF": types.String(),
-        "OWNER": types.String(),
-        "CLOUD_PROVIDER": types.String(),
-        "CLOUD_SERVICE": types.String(),
-        "CLOUD_RESOURCE_ID": types.String(),
-        "EC2_INSTANCE_ID": types.String(),
-        "CLOUD_GROUP_NAME": types.String(),
-        "CLOUD_INSTANCE_STATE": types.String(),
-        "CLOUD_INSTANCE_TYPE": types.String(),
+        "ASSET_GROUP_IDS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "USER_DEF": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "OWNER": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "CLOUD_PROVIDER": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_SERVICE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_RESOURCE_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "EC2_INSTANCE_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_GROUP_NAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_INSTANCE_STATE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_INSTANCE_TYPE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "CLOUD_IS_SPOT_INSTANCE": types.Boolean(),
-        "CLOUD_ARCHITECTURE": types.String(),
-        "CLOUD_REGION": types.String(),
-        "CLOUD_IMAGE_ID": types.String(),
-        "CLOUD_AMI_ID": types.String(),
-        "CLOUD_PUBLIC_HOSTNAME": types.String(),
-        "CLOUD_PUBLIC_IPV4": types.String(),
-        "CLOUD_ACCOUNT_ID": types.String(),
-        "CLOUD_PROVIDER_TAGS": types.String(),
+        "CLOUD_ARCHITECTURE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_REGION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_IMAGE_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_AMI_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_PUBLIC_HOSTNAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_PUBLIC_IPV4": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_ACCOUNT_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CLOUD_PROVIDER_TAGS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "ASSET_RISK_SCORE": types.Integer(),
         "TRURISK_SCORE": types.Integer(),
-        "TRURISK_SCORE_FACTORS": types.String(),
+        "TRURISK_SCORE_FACTORS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "ASSET_CRITICALITY_SCORE": types.Integer(),
     }
 
@@ -249,8 +390,8 @@ def upload_vmdr_ips(
     """
 
     COLS = {
-        "IP": types.String(),
-        "TYPE": types.String(),
+        "IP": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "TYPE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Convert the BaseList to a DataFrame:
@@ -314,15 +455,19 @@ def upload_vmdr_hld(
     COLS = {
         "UNIQUE_VULN_ID": types.BigInteger(),
         "QID": types.BigInteger(),
-        "TYPE": types.String(),
+        "TYPE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "SEVERITY": types.Integer(),
-        "STATUS": types.String(),
+        "STATUS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "SSL": types.Boolean(),
-        "RESULTS": types.String(),
+        "RESULTS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "FIRST_FOUND_DATETIME": types.DateTime(),
         "LAST_FOUND_DATETIME": types.DateTime(),
         "QDS": types.Integer(),
-        "QDS_FACTORS": types.String(),
+        "QDS_FACTORS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "TIMES_FOUND": types.Integer(),
         "LAST_TEST_DATETIME": types.DateTime(),
         "LAST_UPDATE_DATETIME": types.DateTime(),
@@ -331,9 +476,14 @@ def upload_vmdr_hld(
         "LAST_PROCESSED_DATETIME": types.DateTime(),
         "LAST_FIXED_DATETIME": types.DateTime(),
         "PORT": types.Integer(),
-        "PROTOCOL": types.String(),
-        "FQDN": types.String(),
+        "PROTOCOL": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "FQDN": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
+
+    # Create a copy of the detections list so we do not modify the original:
+    detections = BaseList(detections)
 
     # Convert the BaseList to a DataFrame:
     df = DataFrame([prepare_dataclass(detection) for detection in detections])
@@ -372,51 +522,111 @@ def upload_vmdr_scanners(
 
     COLS = {
         "ID": types.Integer(),
-        "NAME": types.String(),
+        "NAME": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "SOFTWARE_VERSION": types.Float(),
         "RUNNING_SCAN_COUNT": types.Integer(),
-        "STATUS": types.String(),
+        "STATUS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "UUID": types.Uuid(),
         "RUNNING_SLICES_COUNT": types.Integer(),
-        "MODEL_NUMBER": types.String(),
-        "TYPE": types.String(),
-        "SERIAL_NUMBER": types.String(),
+        "MODEL_NUMBER": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TYPE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "SERIAL_NUMBER": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "ACTIVATION_CODE": types.BigInteger(),
-        "INTERFACE_SETTINGS": types.String(),
-        "PROXY_SETTINGS": types.String(),  # dict.
+        "INTERFACE_SETTINGS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "PROXY_SETTINGS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict.
         "IS_CLOUD_DEPLOYED": types.Boolean(),
-        "CLOUD_INFO": types.String(),  # dict. DROP THIS! INFO IS IN BELOW FIELDS:
-        "PLATFORM_PROVIDER": types.String(),
-        "INSTANCE_ID": types.String(),
-        "AMI_ID": types.String(),
-        "ACCOUNT_ID": types.String(),
-        "INSTANCE_REGION": types.String(),
-        "INSTANCE_AVAIBILITY_ZONE": types.String(),
-        "INSTANCE_ZONE_TYPE": types.String(),
-        "INSTANCE_VPC_ID": types.String(),
-        "INSTANCE_SUBNET_ID": types.String(),
-        "INSTANCE_ADDRESS_PRIVATE": types.String(),
-        "INSTANCE_ADDRESS_PUBLIC": types.String(),
-        "HOSTNAME_PRIVATE": types.String(),
-        "SECURITY_GROUPS": types.String(),
-        "API_PROXY_SETTINGS": types.String(),
-        "VLANS": types.String(),  # dict.
-        "STATIC_ROUTES": types.String(),  # dict.
-        "ML_LATEST": types.String(),
-        "ML_VERSION": types.String(),
-        "VULNSIGS_LATEST": types.String(),
-        "VULNSIGS_VERSION": types.String(),
+        "CLOUD_INFO": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict. DROP THIS! INFO IS IN BELOW FIELDS:
+        "PLATFORM_PROVIDER": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "INSTANCE_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "AMI_ID": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "ACCOUNT_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "INSTANCE_REGION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "INSTANCE_AVAIBILITY_ZONE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "INSTANCE_ZONE_TYPE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "INSTANCE_VPC_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "INSTANCE_SUBNET_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "INSTANCE_ADDRESS_PRIVATE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "INSTANCE_ADDRESS_PUBLIC": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "HOSTNAME_PRIVATE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "SECURITY_GROUPS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "API_PROXY_SETTINGS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "VLANS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict.
+        "STATIC_ROUTES": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict.
+        "ML_LATEST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "ML_VERSION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "VULNSIGS_LATEST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "VULNSIGS_VERSION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "ASSET_GROUP_COUNT": types.Integer(),
-        "ASSET_GROUP_LIST": types.String(),  # BaseList
+        "ASSET_GROUP_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
         "LAST_UPDATED_DATE": types.DateTime(),
         "POLLING_INTERVAL": types.Integer(),
-        "USER_LOGIN": types.String(),
+        "USER_LOGIN": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "HEARTBEATS_MISSED": types.Integer(),
-        "SS_CONNECTIION": types.String(),
+        "SS_CONNECTIION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "SS_LAST_CONNECTED": types.DateTime(),
-        "USER_LIST": types.String(),  # dict
-        "UPDATED": types.String(),
-        "COMMENTS": types.String(),
+        "USER_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict
+        "UPDATED": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "COMMENTS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "MAX_CAPACITY_UNITS": types.Float(),
     }
 
@@ -452,18 +662,32 @@ def upload_vmdr_static_search_lists(
 
     COLS = {
         "ID": types.Integer(),
-        "TITLE": types.String(),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "GLOBAL": types.Boolean(),
-        "OWNER": types.String(),
+        "OWNER": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "CREATED": types.DateTime(),
         "MODIFIED": types.DateTime(),
-        "MODIFIED_BY": types.String(),
-        "QIDS": types.String(),  # BaseList
-        "OPTION_PROFILES": types.String(),  # dict
-        "REPORT_TEMPLATES": types.String(),  # dict
-        "REMEDIATION_POLICIES": types.String(),  # dict
-        "DISTRIBUTION_GROUPS": types.String(),  # dict
-        "COMMENTS": types.String(),  # dict
+        "MODIFIED_BY": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "QIDS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "OPTION_PROFILES": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict
+        "REPORT_TEMPLATES": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict
+        "REMEDIATION_POLICIES": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict
+        "DISTRIBUTION_GROUPS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict
+        "COMMENTS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict
     }
 
     # Convert the BaseList to a DataFrame:
@@ -500,19 +724,35 @@ def upload_vmdr_dynamic_search_lists(
 
     COLS = {
         "ID": types.Integer(),
-        "TITLE": types.String(),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "GLOBAL": types.Boolean(),
-        "OWNER": types.String(),
+        "OWNER": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "CREATED": types.DateTime(),
         "MODIFIED": types.DateTime(),
-        "MODIFIED_BY": types.String(),
-        "QIDS": types.String(),  # BaseList
-        "CRITERIA": types.String(),  # BaseList
-        "OPTION_PROFILES": types.String(),  # BaseList
-        "REPORT_TEMPLATES": types.String(),  # BaseList
-        "REMEDIATION_POLICIES": types.String(),  # BaseList
-        "DISTRIBUTION_GROUPS": types.String(),  # BaseList
-        "COMMENTS": types.String(),
+        "MODIFIED_BY": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "QIDS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "CRITERIA": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "OPTION_PROFILES": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "REPORT_TEMPLATES": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "REMEDIATION_POLICIES": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "DISTRIBUTION_GROUPS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "COMMENTS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Convert the BaseList to a DataFrame:
@@ -547,42 +787,76 @@ def upload_vmdr_users(
     """
 
     COLS = {
-        "USER_LOGIN": types.String(),
+        "USER_LOGIN": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "USER_ID": types.Integer(),
-        "EXTERNAL_ID": types.String(),
-        "FIRSTNAME": types.String(),
-        "LASTNAME": types.String(),
-        "TITLE": types.String(),
-        "PHONE": types.String(),
-        "FAX": types.String(),
-        "EMAIL": types.String(),
-        "COMPANY": types.String(),
-        "ADDRESS1": types.String(),
-        "ADDRESS2": types.String(),
-        "CITY": types.String(),
-        "COUNTRY": types.String(),
-        "STATE": types.String(),
-        "ZIP_CODE": types.String(),
-        "TIME_ZONE_CODE": types.String(),
-        "USER_STATUS": types.String(),
+        "EXTERNAL_ID": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "FIRSTNAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "LASTNAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "PHONE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "FAX": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "EMAIL": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "COMPANY": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "ADDRESS1": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "ADDRESS2": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CITY": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "COUNTRY": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "STATE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "ZIP_CODE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TIME_ZONE_CODE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "USER_STATUS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "CREATION_DATE": types.DateTime(),
-        "USER_ROLE": types.String(),
-        "BUSINESS_UNIT": types.String(),
-        "MANAGER_POC": types.String(),
-        "UI_INTERFACE_STYLE": types.String(),
+        "USER_ROLE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "BUSINESS_UNIT": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "MANAGER_POC": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "UI_INTERFACE_STYLE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "CREATE_OPTION_PROFILES": types.Boolean(),
         "PURGE_INFO": types.Boolean(),
         "ADD_ASSETS": types.Boolean(),
         "EDIT_REMEDIATION_POLICY": types.Boolean(),
         "EDIT_AUTH_RECORDS": types.Boolean(),
-        "LATEST_VULN": types.String(),
-        "MAP": types.String(),
+        "LATEST_VULN": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "MAP": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "DAILY_TICKETS": types.Boolean(),
-        "ASSET_GROUP_TITLE": types.String(),  # BaseList
+        "ASSET_GROUP_TITLE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
         "LAST_LOGIN_DATE": types.DateTime(),
         "UNIT_MANAGER_POC": types.Float(),
-        "MAP": types.String(),
-        "SCAN": types.String(),
+        "MAP": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "SCAN": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Convert the BaseList to a DataFrame:
@@ -630,18 +904,30 @@ def upload_vmdr_scan_list(
     """
 
     COLS = {
-        "REF": types.String(),
-        "TYPE": types.String(),
-        "TITLE": types.String(),
-        "USER_LOGIN": types.String(),
+        "REF": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "TYPE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "USER_LOGIN": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "LAUNCH_DATETIME": types.DateTime(),
-        "DURATION": types.String(),
-        "PROCESSING_PRIORITY": types.String(),
+        "DURATION": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "PROCESSING_PRIORITY": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "PROCESSED": types.Boolean(),
-        "STATE": types.String(),
-        "TARGET": types.String(),  # BaseList
-        "OPTION_PROFILE": types.String(),  # dict
-        "ASSET_GROUP_TITLE_LIST": types.String(),  # BaseList
+        "STATE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "TARGET": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "OPTION_PROFILE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict
+        "ASSET_GROUP_TITLE_LIST": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
     }
 
     # Convert the BaseList to a DataFrame:
@@ -681,13 +967,17 @@ def upload_vmdr_report_list(
 
     COLS = {
         "ID": types.Integer(),
-        "TITLE": types.String(),
-        "TYPE": types.String(),
-        "USER_LOGIN": types.String(),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "TYPE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "USER_LOGIN": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "LAUNCH_DATETIME": types.DateTime(),
-        "OUTPUT_FORMAT": types.String(),
+        "OUTPUT_FORMAT": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "SIZE": types.Float(),
-        "STATUS": types.String(),
+        "STATUS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "EXPIRATION_DATETIME": types.DateTime(),
     }
 
@@ -728,16 +1018,26 @@ def upload_vmdr_scheduled_report_list(
 
     COLS = {
         "ID": types.Integer(),
-        "TITLE": types.String(),
-        "OUTPUT_FORMAT": types.String(),
-        "TEMPLATE_TITLE": types.String(),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "OUTPUT_FORMAT": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TEMPLATE_TITLE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "ACTIVE": types.Boolean(),
-        "SCHEDULE": types.String(),  # dict
+        "SCHEDULE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # dict
         "START_DATE_UTC": types.DateTime(),
         "START_HOUR": types.Integer(),
         "START_MINUTE": types.Integer(),
-        "TIME_ZONE_CODE": types.String(),
-        "TIME_ZONE_DETAILS": types.String(),
+        "TIME_ZONE_CODE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TIME_ZONE_DETAILS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "DST_SELECTED": types.Boolean(),
     }
 
@@ -778,12 +1078,18 @@ def upload_vmdr_template_list(
 
     COLS = {
         "ID": types.Integer(),
-        "TYPE": types.String(),
-        "TEMPLATE_TYPE": types.String(),
-        "TITLE": types.String(),
-        "LOGIN": types.String(),
-        "FIRSTNAME": types.String(),
-        "LASTNAME": types.String(),
+        "TYPE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "TEMPLATE_TYPE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TITLE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "LOGIN": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "FIRSTNAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "LASTNAME": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "LAST_UPDATE": types.DateTime(),
         "GLOBAL": types.Boolean(),
     }
@@ -842,22 +1148,40 @@ def upload_vmdr_kb_qvs(
     """
 
     COLS = {
-        "id": types.String(),
-        "idType": types.String(),
+        "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "idType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "qvs": types.Integer(),
         "qvsLastChangedDate": types.DateTime(),
         "nvdPublishedDate": types.DateTime(),
         "cvss": types.Float(),
-        "cvssVersion": types.String(),
-        "cvssString": types.String(),
+        "cvssVersion": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cvssString": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "epss": types.Float(),
-        "threatActors": types.String(),  # BaseList
-        "exploitMaturity": types.String(),  # BaseList
-        "trending": types.String(),  # BaseList
-        "mitigationControls": types.String(),  # BaseList
-        "malwareName": types.String(),  # BaseList
-        "malwareHash": types.String(),  # BaseList
-        "rti": types.String(),  # BaseList
+        "threatActors": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "exploitMaturity": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "trending": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "mitigationControls": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "malwareName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "malwareHash": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
+        "rti": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList
     }
 
     df = DataFrame([prepare_dataclass(qv) for qv in qvs])
@@ -895,12 +1219,20 @@ def upload_vmdr_activity_log(
 
     COLS = {
         "Date": types.DateTime(),
-        "Action": types.String(),
-        "Module": types.String(),
-        "Details": types.String(),
-        "User_Name": types.String(),
-        "User_Role": types.String(),
-        "User_IP": types.String(),
+        "Action": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "Module": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "Details": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "User_Name": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "User_Role": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "User_IP": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Convert the BaseList to a DataFrame:

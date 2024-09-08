@@ -148,7 +148,8 @@ def get_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]:
     Parameters:
         auth: Required[BasicAuth] - The BasicAuth object.
 
-    :Kwargs:
+    ## Kwargs:
+
         id: Optional[Union[int,str]] - A specific report ID to get.
         state: Optional[str] - Filter output to reports in a specific state.
         user_login: Optional[str] - Filter output to reports launched by a specific user.

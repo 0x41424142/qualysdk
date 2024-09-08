@@ -8,25 +8,18 @@ from typing import Literal
 
 from sqlalchemy import types
 
-try:
-    import pyodbc
-except ImportError as e:
-    raise Warning(
-        "Pyodbc cannot be imported. If you are on Mac or Unix, this usually can be resolved by installing unixODBC:\n\nMac: brew install unixodbc\nUbuntu: sudo apt install unixodbc"
-    ) from e
-
 from pandas import DataFrame
 from sqlalchemy import create_engine, Connection, types
 
 
 def db_connect(
-    host: str,
-    db: str,
+    host: str = "localhost",
+    db: str = "qualysdk",
     username: str = None,
     password: str = None,
-    driver: str = "ODBC Driver 17 for SQL Server",
     trusted_cnxn: bool = False,
-    db_type: Literal["mssql", "mysql", "postgresql", "sqlite", "oracle"] = "mssql",
+    db_type: Literal["mssql", "mysql", "postgresql", "sqlite"] = "mssql",
+    port: int = 1433,
 ) -> Connection:
     """
 
@@ -37,39 +30,37 @@ def db_connect(
         db (str): The name of the database.
         username (str): The username to use to connect to the database.
         password (str): The password to use to connect to the database.
-        driver (str): The ODBC driver to use to connect to the database. Defaults to 'ODBC Driver 17 for SQL Server'.
-        trusted_cnxn (bool): If True, use trusted connection. If False, use username and password. Defaults to False.
-        db_type (str): The type of database to connect to. Defaults to 'mssql'. Options are 'mssql', 'mysql', 'postgresql', 'sqlite', 'oracle'.
+        trusted_cnxn (bool): If True, use trusted connection on MSSQL. If False, use username and password. Defaults to False.
+        db_type (str): The type of database to connect to. Defaults to 'mssql'. Options are 'mssql', 'mysql', 'postgresql', 'sqlite'.
+        port (int): The port to connect to the database on. Defaults to 1433.
 
     Returns:
         Connection: The Connection object to the SQL database.
     """
 
     # Check if user AND password are provided, or trusted connection is used:
-    if not (username and password) and not trusted_cnxn:
+    if not (username and password) and not trusted_cnxn and db_type != "sqlite":
         raise ValueError(
             "You must provide a username and password, or use trusted connection."
         )
 
-    if driver not in pyodbc.drivers():
-        if len(pyodbc.drivers()) == 0:
-            raise ValueError(
-                "No ODBC drivers found. Please install an ODBC driver & specify it with the driver parameter."
-            )
-        else:
-            raise ValueError(
-                f"Driver '{driver}' not found. Pyodbc found drivers: {pyodbc.drivers()}"
-            )
+    if trusted_cnxn and db_type != "mssql":
+        raise ValueError("Trusted connection is only available for MSSQL.")
 
-    # Generate the connection string:
-    if trusted_cnxn:
-        conn_str = (
-            f"{db_type}+pyodbc://{host}/{db}?driver={driver}&trusted_connection=yes"
-        )
-    else:
-        conn_str = (
-            f"{db_type}+pyodbc://{username}:{password}@{host}/{db}?driver={driver}"
-        )
+    match db_type:
+        case "mssql":
+            if trusted_cnxn:
+                conn_str = rf"mssql+pymssql://{host}:{port}/{db}"
+            else:
+                conn_str = f"mssql+pymssql://{username}:{password}@{host}:{port}/{db}"
+        case "mysql":
+            conn_str = f"mysql+pymysql://{username}:{password}@{host}:{port}/{db}"
+        case "postgresql":
+            conn_str = f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{db}"
+        case "sqlite":
+            conn_str = f"sqlite:///{db}"
+        case _:
+            raise ValueError("Database type not supported.")
 
     engine = create_engine(conn_str)
 

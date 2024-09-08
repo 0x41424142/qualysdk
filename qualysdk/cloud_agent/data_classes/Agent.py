@@ -171,9 +171,7 @@ class CloudAgent:
                 if data and not isinstance(data, list):
                     data = [data]
                 for software_item in data:
-                    software.append(
-                        f"{software_item.get('name')} ({software_item.get('version')})"
-                    )
+                    software.append(f"{software_item.get('name')}")
 
             if len(software) > 0:
                 setattr(self, "software", software)

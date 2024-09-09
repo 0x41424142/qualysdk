@@ -114,7 +114,7 @@ uploaded = upload_vmdr_hosts(vmdr_hosts, cnxn, override_import_dt=dt)
 
 ## A Friendly Recommendation For Getting Data
 
-When calling any of the data source functions to get the data to upload, it is recommended to make the call as verbose as possible via kwargs. 
+When calling any of the data source functions to get the data to upload, it is recommended to make the call as verbose as possible via kwargs, or if the function supports it, using the ```all_details``` parameter.
 
 For example, using ```vmdr.get_host_list()```, you should make your call look like the following so all data fields are captured:
 
@@ -122,14 +122,6 @@ For example, using ```vmdr.get_host_list()```, you should make your call look li
 
 vmdr_hosts = vmdr.get_host_list(
         auth, 
-        details='All/AGs', 
-        show_asset_id=True, 
-        show_tags=True, 
-        show_ars=True, 
-        show_ars_factors=True, 
-        show_trurisk=True, 
-        show_trurisk_factors=True, 
-        host_metadata='all', 
-        show_cloud_tags=True
+        all_details=True,
     )
 ```

@@ -120,3 +120,28 @@ def get_connector_details(auth: BasicAuth, connectorId: str) -> Connector:
     j = response.json()
 
     return Connector(**j)
+
+
+def get_aws_base_account(auth: BasicAuth) -> dict:
+    """
+    Get the AWS Base Account details
+
+    Params:
+        auth (BasicAuth): The authentication object.
+
+    Returns:
+        dict: The response from the API as a dictionary.
+    """
+
+    response = call_api(
+        auth=auth,
+        module="cloudview",
+        endpoint="get_aws_base_account",
+    )
+
+    if response.status_code != 200:
+        raise QualysAPIError(
+            f"Error retrieving AWS Base Account details. Status code: {response.status_code}"
+        )
+
+    return response.json()

@@ -907,6 +907,16 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_aws_base_account": {
+                "endpoint": "/cloudview-api/rest/v1/aws/connectors/awsBaseAccountId",
+                "method": ["GET"],
+                "valid_params": [],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "basic",
+            },
         },
     }
 )

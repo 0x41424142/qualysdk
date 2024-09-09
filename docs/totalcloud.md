@@ -15,6 +15,8 @@ You can use any of the endpoints currently supported:
 |API Call| Description |
 |--|--|
 | ```get_connectors``` | Get a list of AWS connectors in your Qualys subscription. |
+| ```get_connector_details``` | Get details about a specific connector. |
+| ```get_aws_base_account``` | Get the base account for an AWS connector. |
 
 
 
@@ -70,4 +72,29 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 # Get details for a specific connector:
 get_connector_details(auth, connectorId='12345678-1234-1234-1234-123456789012')
 >>>Connector(name="myConnector", connectorId="12345678-1234-1234-1234-123456789012", ...)
+```
+
+## Get AWS Base Account API
+
+```get_aws_base_account``` returns the base account details for AWS.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+
+```py
+from json import dumps
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_aws_base_account
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+print(dumps(get_aws_base_account(auth), indent=2))
+>>>{
+    'globalAccountId': '123456789012', 
+    'chinaAccountId': '210987654321', 
+    'govAccountId': '001122334455', 
+    'customerGlobalAccount': 'false', 
+    'customerChinaAccount': 'false', 
+    'customerGovAccount': 'false'
+}
 ```

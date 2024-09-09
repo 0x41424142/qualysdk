@@ -4,6 +4,6 @@
   "features": {
     "ghcr.io/devcontainers-contrib/features/coverage-py:2": {}
   },
-
-  "postCreateCommand": "pip3 install --user poetry && sudo apt install gh"
+  
+  "postCreateCommand": "sudo apt install sqlite3"
 }

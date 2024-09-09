@@ -11,6 +11,7 @@ hldTest.py
 demo.html
 profile.html
 profile.json
+*.db
 
 # VSCode:
 .vscode/

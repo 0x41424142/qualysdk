@@ -885,5 +885,38 @@ CALL_SCHEMA = frozendict(
                 "_xml_data": True,
             },
         },
+        "cloudview": {  # TOTALCLOUD
+            "url_type": "base",
+            "get_aws_connectors": {
+                "endpoint": "/cloudview-api/rest/v1/aws/connectors",
+                "method": ["GET"],
+                "valid_params": ["pageNo", "pageSize", "filter", "sort"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": True,
+                "auth_type": "basic",
+            },
+            "get_aws_connector_details": {
+                "endpoint": "/cloudview-api/rest/v1/aws/connectors/{placeholder}",
+                "method": ["GET"],
+                "valid_params": ["placeholder"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "basic",
+            },
+            "get_aws_base_account": {
+                "endpoint": "/cloudview-api/rest/v1/aws/connectors/awsBaseAccountId",
+                "method": ["GET"],
+                "valid_params": [],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "basic",
+            },
+        },
     }
 )

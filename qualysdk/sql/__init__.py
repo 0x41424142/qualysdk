@@ -23,4 +23,6 @@ from .vmdr import (
 
 from .gav import upload_gav_hosts
 
+from .totalcloud import upload_aws_totalcloud_connectors
+
 from .cloud_agent import upload_cloud_agents

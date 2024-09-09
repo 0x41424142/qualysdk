@@ -45,7 +45,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 | VMDR | In Progress (```query_kb```, ```get_kb_qvs```, ```get_host_list```, ```get_hld```, ```get_ag_list```, ```add/edit/remove_ag```, ```get_ip_list```, ```add/update_ips```, ```get_scan_list```, ```pause_scan```, ```cancel_scan```, ```resume_scan```, ```delete_scan```, ```launch_scan```, ```fetch_scan```, ```get_scanner_list```, ```get_static_searchlists```, ```get_report_list```, ```launch/cancel/fetch/delete_report```, ```get_template_list```, ```get_scheduled_report_list```, ```launch_scheduled_report```, ```get_user_list```, ```add/edit_user```, ```get_activity_log```, ```purge_hosts```, ```get_dynamic_searchlists``` implemented) |
 | PM (Patch Management) | Not Started |
 | WAS | In Planning |
-| TC (TotalCloud) | Started |
+| TC (TotalCloud) | In Progress (```get_aws_connectors```, ```get_aws_connector_details```, ```get_aws_base_account``` implemented) |
 |Connectors | Not Started |
 |Cloud Agent | In Progress (```purge_agent```, ```bulk_purge_agent```, ```list_agents```, ```launch_ods```, ```bulk_launch_ods``` implemnted) |
 |CS (Container Security) | Not Started
@@ -65,11 +65,3 @@ This SDK tool is an independent project and is not an official product of Qualys
 Users of this SDK are advised to use it at their own risk and discretion.
 
 For official tools and support, please refer to the official Qualys resources and documentation.
-
-# TODO:
-
-- Multithread ```gav.get_all_assets```.
-
-- Start work on TotalCloud/WAS modules.
-
-- Continue SQL integration.

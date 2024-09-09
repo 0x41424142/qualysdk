@@ -83,6 +83,11 @@ def call_api(
                     url = f"https://qualysapi.qualys.com{SCHEMA['endpoint']}"
                 else:
                     url = f"https://qualysapi.{auth.platform}.apps.qualys.com{SCHEMA['endpoint']}"
+            case "base":
+                if auth.platform == "qg1":
+                    url = f"https://qualysguard.qualys.com{SCHEMA['endpoint']}"
+                else:
+                    url = f"https://qualysguard.{auth.platform}.apps.qualys.com{SCHEMA['endpoint']}"
             case _:
                 raise ValueError(f"Invalid url_type {SCHEMA['url_type']}.")
 
@@ -166,7 +171,7 @@ def call_api(
         if (
             response.status_code in range(400, 599)
             and response.status_code not in [429, 414]
-            and module != "cloud_agent"  # Special case for CA module
+            and module not in ["cloud_agent", "cloudview"]
             and (
                 response.status_code != 409
                 and "This API cannot be run again for another"

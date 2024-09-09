@@ -1,5 +1,5 @@
 """
-get_connectors.py - returns a list of Connector objects
+get_aws_connectors.py - returns a list of Connector objects for AWS
 """
 
 from typing import Union
@@ -9,14 +9,14 @@ from ..base.call_api import call_api
 from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
-from .data_classes.connector import Connector
+from .data_classes.awsconnector import Connector
 
 
-def get_connectors(
+def get_aws_connectors(
     auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
 ) -> BaseList[Connector]:
     """
-    Get all Connector definitions from the Qualys CloudView API
+    Get all Connector definitions from the Qualys CloudView API for AWS
 
     Params:
         auth (BasicAuth): The authentication object.
@@ -59,7 +59,7 @@ def get_connectors(
 
         # Make the API request to retrieve the connectors
         response = call_api(
-            auth=auth, module="cloudview", endpoint="get_connectors", params=kwargs
+            auth=auth, module="cloudview", endpoint="get_aws_connectors", params=kwargs
         )
 
         if response.status_code != 200:
@@ -91,7 +91,7 @@ def get_connectors(
     return responses
 
 
-def get_connector_details(auth: BasicAuth, connectorId: str) -> Connector:
+def get_aws_connector_details(auth: BasicAuth, connectorId: str) -> Connector:
     """
     Get details for a single connector by connectorId
 
@@ -106,7 +106,7 @@ def get_connector_details(auth: BasicAuth, connectorId: str) -> Connector:
     response = call_api(
         auth=auth,
         module="cloudview",
-        endpoint="get_connector_details",
+        endpoint="get_aws_connector_details",
         params={
             "placeholder": connectorId
         },  # placeholder lets us append the connectorId to the URL path

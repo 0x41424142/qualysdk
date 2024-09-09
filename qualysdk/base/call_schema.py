@@ -887,7 +887,7 @@ CALL_SCHEMA = frozendict(
         },
         "cloudview": {  # TOTALCLOUD
             "url_type": "base",
-            "get_connectors": {
+            "get_aws_connectors": {
                 "endpoint": "/cloudview-api/rest/v1/aws/connectors",
                 "method": ["GET"],
                 "valid_params": ["pageNo", "pageSize", "filter", "sort"],
@@ -897,7 +897,7 @@ CALL_SCHEMA = frozendict(
                 "pagination": True,
                 "auth_type": "basic",
             },
-            "get_connector_details": {
+            "get_aws_connector_details": {
                 "endpoint": "/cloudview-api/rest/v1/aws/connectors/{placeholder}",
                 "method": ["GET"],
                 "valid_params": ["placeholder"],

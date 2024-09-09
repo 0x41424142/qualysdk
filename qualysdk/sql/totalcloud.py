@@ -12,10 +12,10 @@ from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
 
 
-def upload_totalcloud_connectors(
+def upload_aws_totalcloud_connectors(
     connectors: BaseList,
     cnxn: Connection,
-    table_name: str = "totalcloud_connectors",
+    table_name: str = "totalcloud_aws_connectors",
     override_import_dt: datetime = None,
 ) -> int:
     """

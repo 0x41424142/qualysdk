@@ -1,5 +1,5 @@
 """
-connector.py - contains the dataclass for a Qualys Connector Type
+awsconnector.py - contains the dataclass for a Qualys AWS Connector
 """
 
 from dataclasses import dataclass, asdict

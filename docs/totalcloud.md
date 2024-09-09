@@ -14,15 +14,15 @@ You can use any of the endpoints currently supported:
 
 |API Call| Description |
 |--|--|
-| ```get_connectors``` | Get a list of AWS connectors in your Qualys subscription. |
-| ```get_connector_details``` | Get details about a specific connector. |
+| ```get_aws_connectors``` | Get a list of AWS connectors in your Qualys subscription. |
+| ```get_aws_connector_details``` | Get details about a specific connector. |
 | ```get_aws_base_account``` | Get the base account for an AWS connector. |
 
 
 
 ## List Connectors API
 
-```get_connectors``` returns a list of AWS in the subscription.
+```get_aws_connectors``` returns a list of AWS in the subscription.
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
@@ -57,7 +57,7 @@ get_connectors(auth, filter='state:SUCCESS')
 
 ## Connector Details API
 
-```get_connector_details``` returns details about a specific connector.
+```get_aws_connector_details``` returns details about a specific connector.
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|

@@ -899,6 +899,13 @@ CALL_SCHEMA = frozendict(
             },
             "get_connector_details": {
                 "endpoint": "/cloudview-api/rest/v1/aws/connectors/{placeholder}",
+                "method": ["GET"],
+                "valid_params": ["placeholder"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "basic",
             },
         },
     }

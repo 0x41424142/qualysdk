@@ -52,3 +52,22 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 get_connectors(auth, filter='state:SUCCESS')
 >>>[Connector(name="myConnector", ...), ...]
 ```
+
+## Connector Details API
+
+```get_connector_details``` returns details about a specific connector.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```connectorId``` | ```str``` | The ID of the connector to get details for | ✅ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_connector_details
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+# Get details for a specific connector:
+get_connector_details(auth, connectorId='12345678-1234-1234-1234-123456789012')
+>>>Connector(name="myConnector", connectorId="12345678-1234-1234-1234-123456789012", ...)
+```

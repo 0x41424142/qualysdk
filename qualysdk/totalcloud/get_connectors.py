@@ -35,6 +35,24 @@ def get_connectors(
     responses = BaseList()
     currentPage = 0
 
+    if kwargs.get("filter"):
+        # Make sure the query key is valid
+        if not kwargs["filter"].split(":")[0] in [
+            "name",
+            "description",
+            "state",
+            "connector.uuid",
+            "lastSyncedOn",
+        ]:
+            raise QualysAPIError(
+                "Invalid filter key. Valid keys: name, description, state, connector.uuid, lastSyncedOn"
+            )
+        # If using state, make sure value is UPPERCASE:
+        if kwargs["filter"].split(":")[0] == "state":
+            kwargs["filter"] = (
+                f"{kwargs['filter'].split(':')[0]}:{kwargs['filter'].split(':')[1].upper()}"
+            )
+
     while True:
         # Set the current page number and page size in kwargs
         kwargs["pageNo"] = currentPage
@@ -71,3 +89,34 @@ def get_connectors(
     print(f"All pages complete. {str(len(responses))} Connector records retrieved.")
 
     return responses
+
+
+def get_connector_details(auth: BasicAuth, connectorId: str) -> Connector:
+    """
+    Get details for a single connector by connectorId
+
+    Params:
+        auth (BasicAuth): The authentication object.
+        connectorId (str): The connectorId of the connector to get details for.
+
+    Returns:
+        Connector: The response from the API as a Connector object.
+    """
+
+    response = call_api(
+        auth=auth,
+        module="cloudview",
+        endpoint="get_connector_details",
+        params={
+            "placeholder": connectorId
+        },  # placeholder lets us append the connectorId to the URL path
+    )
+
+    if response.status_code != 200:
+        raise QualysAPIError(
+            f"Error retrieving connector details. Status code: {response.status_code}"
+        )
+
+    j = response.json()
+
+    return Connector(**j)

@@ -26,7 +26,8 @@ def get_connectors(
 
         pageNo (int): The ordered page to start retrieving connectors from, or if page_count is 1, the page to retrieve.
         pageSize (int): The number of connectors to get per page.
-        sort (Literal['asc', 'desc']): Sort the connectors by lastSyncedOn in ascending or descending order.
+        filter (str): Filter connectors by providing a query. Queryable fields are: name, description, state (SUCCESS, PENDING, REGIONS_DISCOVERED, ERROR), connector.uuid, lastSyncedOn (in UTC). Example: filter="name:MyConnector"
+        sort (Literal['lastSyncedOn:asc', 'lastSyncedOn:desc']): Sort the connectors by lastSyncedOn in ascending or descending order.
 
     Returns:
         BaseList[Connector]: The response from the API as a BaseList of Connector objects.
@@ -49,6 +50,10 @@ def get_connectors(
             )
 
         j = response.json()
+
+        if len(j["content"]) == 0:
+            print("No connectors found.")
+            break
 
         # Iterate through the records in the response and create Connector objects
         for record in j["content"]:

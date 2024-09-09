@@ -28,7 +28,19 @@ You can use any of the endpoints currently supported:
 | ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to pull | ❌ |
 | ```pageNo``` | ```int``` | Page number to start pulling from, or page to pull if ```page_count``` is set to 1 | ❌ |
 | ```pageSize``` | ```int``` | Number of records to pull per page | ❌ |
-| ```sort``` | ```Literal["asc", "desc"]``` | Sort last synced date in ascending or descending order | ❌ |
+| ```filter``` | ```str``` | Filter the results. See below for acceptable search tokens | ❌ |
+| ```sort``` | ```Literal["lastSyncedOn:asc", "lastSyncedOn:desc"]``` | Sort last synced date in ascending or descending order | ❌ |
+
+
+### ```filter``` Search Tokens
+
+
+|Token| Description |
+|--|--|
+| ```name``` | Filter by connector name |
+| ```description``` | Filter by connector description |
+| ```state``` | Filter by connector state. Acceptable values are: ```SUCCESS```, ```PENDING```, ```REGIONS_DISCOVERED```, ```ERROR``` |
+| ```lastSynced``` | Filter by last synced date. Must be in UTC time |
 
 
 ```py
@@ -36,6 +48,7 @@ from qualysdk.auth import BasicAuth
 from qualysdk.totalcloud import get_connectors
 
 auth = BasicAuth(<username>, <password>, platform='qg1')
-get_connectors(auth)
+# Get all connectors that are successfully synced:
+get_connectors(auth, filter='state:SUCCESS')
 >>>[Connector(name="myConnector", ...), ...]
 ```

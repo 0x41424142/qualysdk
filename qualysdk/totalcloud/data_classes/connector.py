@@ -37,6 +37,7 @@ class Connector:
     arn: Optional[str] = None
     portalConnectorUuid: Optional[str] = None
     isPortalConnector: Optional[bool] = None
+    groups: Optional[BaseList[str]] = None
 
     def __post_init__(self):
         """
@@ -74,6 +75,15 @@ class Connector:
         for field in INT_FIELDS:
             if getattr(self, field):
                 setattr(self, field, int(getattr(self, field)))
+
+        if self.groups:
+            bl = BaseList()
+            data = self.groups
+            if isinstance(data, dict):
+                data = [data]
+            for group in data:
+                bl.append(group["name"])
+            setattr(self, "groups", bl)
 
     def to_dict(self):
         """

@@ -1,5 +1,6 @@
 """
-awsconnector.py - contains the dataclass for a Qualys AWS Connector
+connector.py - contains the dataclasses for a Qualys AWS Connector 
+and subclasses for AWS/Azure/GCP connectors.
 """
 
 from dataclasses import dataclass, asdict
@@ -13,6 +14,9 @@ from ...base.base_list import BaseList
 class Connector:
     """
     Connector - represents a Qualys Connector resource record.
+
+    NOTE: You should not use this class directly. Use one of the
+    AWS/Azure/GCP-specific subclasses.
     """
 
     name: Optional[str] = None
@@ -27,14 +31,11 @@ class Connector:
     qualysTags: Optional[BaseList[str]] = None
     isGovCloud: Optional[bool] = None
     isChinaRegion: Optional[bool] = None
-    awsAccountId: Optional[Union[str, int]] = None
     accountAlias: Optional[str] = None
     isDisabled: Optional[bool] = None
     pollingFrequency: Optional[Union[dict, str]] = None
     error: Optional[str] = None
-    baseAccountId: Optional[str] = None
     externalId: Optional[str] = None
-    arn: Optional[str] = None
     portalConnectorUuid: Optional[str] = None
     isPortalConnector: Optional[bool] = None
     groups: Optional[BaseList[str]] = None
@@ -70,11 +71,6 @@ class Connector:
                             getattr(self, field), "%a %b %d %H:%M:%S %Z %Y"
                         ),
                     )
-
-        INT_FIELDS = ["awsAccountId", "baseAccountId"]
-        for field in INT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, int(getattr(self, field)))
 
         if self.groups:
             bl = BaseList()
@@ -118,3 +114,52 @@ class Connector:
         from_dict - creates a Connector object from a dictionary
         """
         return cls(**data)
+
+
+@dataclass
+class AWSConnector(Connector):
+    """
+    AWS-specific subclass of the Connector dataclass
+
+    Adds awsAccountId and baseAccountId fields to the Connector dataclass
+    """
+
+    awsAccountId: Optional[Union[str, int]] = None
+    baseAccountId: Optional[str] = None
+    arn: Optional[str] = None
+
+    def __post_init__(self):
+        INT_FIELDS = ["awsAccountId", "baseAccountId"]
+        for field in INT_FIELDS:
+            if getattr(self, field) and not isinstance(getattr(self, field), int):
+                setattr(self, field, int(getattr(self, field)))
+
+        super().__post_init__()
+
+
+@dataclass
+class AzureConnector(Connector):
+    """
+    Azure-specific subclass of the Connector dataclass
+    """
+
+    subscriptionId: Optional[str] = None
+    tenantId: Optional[str] = None
+    applicationId: Optional[str] = None
+    subscriptionName: Optional[str] = None
+    directoryId: Optional[str] = None
+
+    def __post_init__(self):
+        super().__post_init__()
+
+
+@dataclass
+class GCPConnector(Connector):
+    """
+    GCP-specific subclass of the Connector dataclass
+    """
+
+    projectId: Optional[str] = None
+
+    def __post_init__(self):
+        super().__post_init__()

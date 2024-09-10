@@ -4,4 +4,4 @@ CloudView data_classes module
 This module contains ways to interact with the Qualys CloudView APIs. 
 """
 
-from .awsconnector import Connector
+from .connector import AWSConnector, AzureConnector, GCPConnector

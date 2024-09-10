@@ -136,6 +136,7 @@ def call_api(
         # If the URL of an endpoint has the substring
         # {placeholder}, .pop() from the params/payload
         # and format the url with the value:
+        """
         if "{placeholder}" in url:
             if params and params.get("placeholder"):
                 url = url.format(placeholder=str(params.pop("placeholder")))
@@ -144,6 +145,36 @@ def call_api(
             else:
                 raise ValueError(
                     f"Endpoint {module}-{endpoint} requires a placeholder value in the URL however none was found in params/POST data."
+                )
+            
+        # If the URL of an endpoint has the substring {cloudprovider},
+        # .pop() from the params/payload and format the url with the value:
+        if "{cloudprovider}" in url:
+            if params and params.get("cloudprovider"):
+                url = url.format(cloudprovider=str(params.pop("cloudprovider")))
+            elif payload and payload.get("cloudprovider"):
+                url = url.format(cloudprovider=str(payload.pop("cloudprovider")))
+            else:
+                raise ValueError(
+                    f"Endpoint {module}-{endpoint} requires a cloudprovider value in the URL however none was found in params/POST data."
+                )
+        """
+        if "{placeholder}" in url or "{cloudprovider}" in url:
+            if params and (params.get("placeholder") or params.get("cloudprovider")):
+                url = url.format(
+                    placeholder=str(params.pop("placeholder", None)),
+                    cloudprovider=str(params.pop("cloudprovider", None)),
+                )
+            elif payload and (
+                payload.get("placeholder") or payload.get("cloudprovider")
+            ):
+                url = url.format(
+                    placeholder=str(payload.pop("placeholder", None)),
+                    cloudprovider=str(payload.pop("cloudprovider", None)),
+                )
+            else:
+                raise ValueError(
+                    f"Endpoint {module}-{endpoint} requires a placeholder or cloudprovider value in the URL however none was found in params/POST data. Base URL is: {url}"
                 )
 
         # If _xml_data key is defined in call schema,

@@ -42,12 +42,12 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |Module| Status |
 |--|--|
 | GAV (Global AssetView) |✅|
-| VMDR | In Progress (```query_kb```, ```get_kb_qvs```, ```get_host_list```, ```get_hld```, ```get_ag_list```, ```add/edit/remove_ag```, ```get_ip_list```, ```add/update_ips```, ```get_scan_list```, ```pause_scan```, ```cancel_scan```, ```resume_scan```, ```delete_scan```, ```launch_scan```, ```fetch_scan```, ```get_scanner_list```, ```get_static_searchlists```, ```get_report_list```, ```launch/cancel/fetch/delete_report```, ```get_template_list```, ```get_scheduled_report_list```, ```launch_scheduled_report```, ```get_user_list```, ```add/edit_user```, ```get_activity_log```, ```purge_hosts```, ```get_dynamic_searchlists``` implemented) |
+| VMDR | In Progress. See VMDR [documentation page](https://qualysdk.jakelindsay.uk/vmdr/) for supported calls |
 | PM (Patch Management) | Not Started |
 | WAS | In Planning |
-| TC (TotalCloud) | In Progress (```get_aws_connectors```, ```get_aws_connector_details```, ```get_aws_base_account``` implemented) |
+| TC (TotalCloud) | In Progress. See TotalCloud [documentation page](https://qualysdk.jakelindsay.uk/totalcloud/) for supported calls. |
 |Connectors | Not Started |
-|Cloud Agent | In Progress (```purge_agent```, ```bulk_purge_agent```, ```list_agents```, ```launch_ods```, ```bulk_launch_ods```, implemnted) |
+|Cloud Agent | In Progress. See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloudagent/) for supported calls |
 |CS (Container Security) | Not Started
 |ADMIN (Administration) | Not Started
 |Tagging| Not Started

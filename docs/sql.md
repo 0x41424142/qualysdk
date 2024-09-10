@@ -61,7 +61,7 @@ For connections to a SQLite3 database, you can use the following:
 ```py
 cnxn = db_connect(
     db_type='sqlite',
-    db='C:\\path\\to\\your\\sqlite.db'
+    db='C:\\path\\to\\your\\sqlite.db' #Windows
 )
 ```
 
@@ -97,7 +97,10 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_vmdr_activity_log``` | VMDR | ```vmdr.get_activity_log()```| ```vmdr_activity_log``` |
 | ```upload_gav_hosts``` | GAV | ```gav.get_all_assets()``` or ```gav.query_assets()``` | ```gav_hosts``` |
 | ```upload_cloud_agents``` | Cloud Agent | ```cloud_agent.list_agents()``` | ```cloud_agent_agents``` |
-| ```upload_aws_totalcloud_connectors``` | TotalCloud | ```totalcloud.get_aws_connectors()``` | ```totalcloud_aws_connectors``` |
+| ```upload_totalcloud_aws_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_aws_connectors``` |
+| ```upload_totalcloud_azure_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_azure_connectors``` |
+| ```upload_totalcloud_gcp_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_gcp_connectors``` |
+| ```upload_totalcloud_control_metadata``` | TotalCloud | ```totalcloud.get_control_metadata()``` | ```totalcloud_control_metadata``` |
 
 ```py
 from qualysdk.sql import *

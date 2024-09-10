@@ -1,25 +1,28 @@
 """
-get_aws_connectors.py - returns a list of Connector objects for AWS
+Interact with connectors for a given cloud provider.
 """
 
-from typing import Union
+from typing import Union, Literal
 
-# Import necessary modules and functions
 from ..base.call_api import call_api
 from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
-from .data_classes.awsconnector import Connector
+from .data_classes.Connectors import AWSConnector, GCPConnector, AzureConnector
 
 
-def get_aws_connectors(
-    auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
-) -> BaseList[Connector]:
+def get_connectors(
+    auth: BasicAuth,
+    provider: Literal["aws", "azure", "gcp"],
+    page_count: Union[int, "all"] = "all",
+    **kwargs,
+) -> BaseList[Union[AWSConnector, GCPConnector, AzureConnector]]:
     """
-    Get all Connector definitions from the Qualys CloudView API for AWS
+    Get all Connector definitions from the Qualys CloudView API
 
     Params:
         auth (BasicAuth): The authentication object.
+        provider (Literal['aws', 'azure', 'gcp']): The cloud provider to get connectors for.
         page_count (int): The number of pages to return. If 'all', return all pages. Default is 'all'.
 
     ## Kwargs:
@@ -30,8 +33,16 @@ def get_aws_connectors(
         sort (Literal['lastSyncedOn:asc', 'lastSyncedOn:desc']): Sort the connectors by lastSyncedOn in ascending or descending order.
 
     Returns:
-        BaseList[Connector]: The response from the API as a BaseList of Connector objects.
+        BaseList[Connector]: The response from the API as a BaseList of <provider>Connector objects.
     """
+
+    # Check cloud provider is valid
+    provider = provider.lower()
+    if provider not in ["aws", "gcp", "azure"]:
+        raise QualysAPIError(
+            f"Invalid provider {provider}. Valid providers: aws, gcp, azure"
+        )
+
     responses = BaseList()
     currentPage = 0
 
@@ -56,15 +67,17 @@ def get_aws_connectors(
     while True:
         # Set the current page number and page size in kwargs
         kwargs["pageNo"] = currentPage
+        # Set the cloudprovider in kwargs so it is appended to the URL path
+        kwargs["cloudprovider"] = provider
 
         # Make the API request to retrieve the connectors
         response = call_api(
-            auth=auth, module="cloudview", endpoint="get_aws_connectors", params=kwargs
+            auth=auth, module="cloudview", endpoint=f"get_connectors", params=kwargs
         )
 
         if response.status_code != 200:
             raise QualysAPIError(
-                f"Error retrieving connectors. Status code: {response.status_code}"
+                f"Error retrieving {provider} connectors. Status code: {response.status_code}. Requests reporting {response.reason}"
             )
 
         j = response.json()
@@ -75,10 +88,16 @@ def get_aws_connectors(
 
         # Iterate through the records in the response and create Connector objects
         for record in j["content"]:
-            responses.append(Connector(**record))
+            match provider:
+                case "aws":
+                    responses.append(AWSConnector(**record))
+                case "gcp":
+                    responses.append(GCPConnector(**record))
+                case "azure":
+                    responses.append(AzureConnector(**record))
 
         # Print a message indicating the current page was retrieved successfully
-        print(f"Page {currentPage+1} retrieved successfully.")
+        print(f"Page {currentPage+1} of {provider} connectors retrieved successfully.")
         currentPage += 1
 
         # Break the loop if all pages are retrieved or the requested number of pages are retrieved
@@ -86,40 +105,64 @@ def get_aws_connectors(
             break
 
     # Print a message indicating all pages have been retrieved
-    print(f"All pages complete. {str(len(responses))} Connector records retrieved.")
+    print(
+        f"All pages complete. {str(len(responses))} {provider} connector records retrieved."
+    )
 
     return responses
 
 
-def get_aws_connector_details(auth: BasicAuth, connectorId: str) -> Connector:
+def get_connector_details(
+    auth: BasicAuth, provider: Literal["aws", "azure", "gcp"], connectorId: str
+) -> Union[AWSConnector, GCPConnector, AzureConnector]:
     """
     Get details for a single connector by connectorId
 
     Params:
         auth (BasicAuth): The authentication object.
+        provider (Literal['aws', 'azure', 'gcp']): The cloud provider to get connectors for.
         connectorId (str): The connectorId of the connector to get details for.
 
     Returns:
-        Connector: The response from the API as a Connector object.
+        Connector: The response from the API as a <provider>Connector object.
     """
+
+    # Check cloud provider is valid
+    provider = provider.lower()
+    if provider not in ["aws", "gcp", "azure"]:
+        raise QualysAPIError(
+            f"Invalid provider {provider}. Valid providers: aws, gcp, azure"
+        )
 
     response = call_api(
         auth=auth,
         module="cloudview",
-        endpoint="get_aws_connector_details",
+        endpoint=f"get_connector_details",
         params={
-            "placeholder": connectorId
-        },  # placeholder lets us append the connectorId to the URL path
+            "placeholder": connectorId,
+            "cloudprovider": provider,
+        },  # placeholders let us append the connectorId/cloud provider to the URL path
     )
 
     if response.status_code != 200:
         raise QualysAPIError(
-            f"Error retrieving connector details. Status code: {response.status_code}"
+            f"Error retrieving {provider} connector details. Status code: {response.status_code}"
         )
 
     j = response.json()
 
-    return Connector(**j)
+    match provider:
+        case "aws":
+            return AWSConnector(**j)
+        case "gcp":
+            return GCPConnector(**j)
+        case "azure":
+            return AzureConnector(**j)
+
+
+# BEGIN PLATFORM SPECIFIC FUNCTIONS:
+
+"""AWS FUNCTIONS"""
 
 
 def get_aws_base_account(auth: BasicAuth) -> dict:
@@ -141,7 +184,7 @@ def get_aws_base_account(auth: BasicAuth) -> dict:
 
     if response.status_code != 200:
         raise QualysAPIError(
-            f"Error retrieving AWS Base Account details. Status code: {response.status_code}"
+            f"Error retrieving AWS base account details. Status code: {response.status_code}"
         )
 
     return response.json()

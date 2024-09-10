@@ -1,15 +1,14 @@
 """
-get_connectors.py - returns a list of Connector objects for a given cloud provider.
+Interact with connectors for a given cloud provider.
 """
 
 from typing import Union, Literal
 
-# Import necessary modules and functions
 from ..base.call_api import call_api
 from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
-from .data_classes.connector import AWSConnector, GCPConnector, AzureConnector
+from .data_classes.Connectors import AWSConnector, GCPConnector, AzureConnector
 
 
 def get_connectors(
@@ -78,7 +77,7 @@ def get_connectors(
 
         if response.status_code != 200:
             raise QualysAPIError(
-                f"Error retrieving {provider} connectors. Status code: {response.status_code}"
+                f"Error retrieving {provider} connectors. Status code: {response.status_code}. Requests reporting {response.reason}"
             )
 
         j = response.json()

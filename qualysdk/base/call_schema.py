@@ -923,6 +923,16 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_control_metadata": {
+                "endpoint": "/cloudview-api/rest/v1/controls/metadata/list",
+                "method": ["GET"],
+                "valid_params": ["pageNo", "pageSize", "filter"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": True,
+                "auth_type": "basic",
+            },
         },
     }
 )

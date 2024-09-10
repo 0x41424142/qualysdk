@@ -9,3 +9,5 @@ from .get_connectors import (
     get_connector_details,
     get_aws_base_account,
 )
+
+from .get_metadata import get_control_metadata

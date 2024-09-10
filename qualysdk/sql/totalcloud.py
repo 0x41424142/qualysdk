@@ -244,3 +244,102 @@ def upload_totalcloud_gcp_connectors(
         dtype=COLS,
         override_import_dt=override_import_dt,
     )
+
+
+def upload_totalcloud_control_metadata(
+    controls: BaseList,
+    cnxn: Connection,
+    table_name: str = "totalcloud_control_metadata",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload data from totalcloud.get_metadata() to SQL.
+
+    Args:
+        controls (BaseList): The BaseList of Controls to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'vmdr_reports'.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "cid": types.BigInteger(),
+        "controlName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "created": types.DateTime(),
+        "modified": types.DateTime(),
+        "controlType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "provider": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "isCustomizable": types.Boolean(),
+        "serviceType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "criticality": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "evaluation_description": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "evaluation_passMessage": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "evaluation_failMessage": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "evaluation_criteria": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "specification": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "rationale": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "manualRemediation": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "references": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "buildTimeRemediation": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "resourceType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "remediationEnabled": types.Boolean(),
+        "policyNames": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "executionType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "workflowBased": types.Boolean(),
+        "templateType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(control) for control in controls])
+
+    # Drop the evaluation column:
+    df.drop(columns=["evaluation"], inplace=True)
+
+    # Upload the data:
+
+    return upload_data(
+        df,
+        table_name,
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

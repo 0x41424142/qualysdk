@@ -27,6 +27,7 @@ from .totalcloud import (
     upload_totalcloud_aws_connectors,
     upload_totalcloud_azure_connectors,
     upload_totalcloud_gcp_connectors,
+    upload_totalcloud_control_metadata,
 )
 
 from .cloud_agent import upload_cloud_agents

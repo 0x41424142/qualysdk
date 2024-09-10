@@ -61,7 +61,7 @@ For connections to a SQLite3 database, you can use the following:
 ```py
 cnxn = db_connect(
     db_type='sqlite',
-    db='C:\\path\\to\\your\\sqlite.db'
+    db='C:\\path\\to\\your\\sqlite.db' #Windows
 )
 ```
 
@@ -100,6 +100,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_totalcloud_aws_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_aws_connectors``` |
 | ```upload_totalcloud_azure_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_azure_connectors``` |
 | ```upload_totalcloud_gcp_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_gcp_connectors``` |
+| ```upload_totalcloud_control_metadata``` | TotalCloud | ```totalcloud.get_control_metadata()``` | ```totalcloud_control_metadata``` |
 
 ```py
 from qualysdk.sql import *

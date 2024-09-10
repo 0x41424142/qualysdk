@@ -159,7 +159,7 @@ def call_api(
                     f"Endpoint {module}-{endpoint} requires a cloudprovider value in the URL however none was found in params/POST data."
                 )
         """
-        if "{placeholder}" or "{cloudprovider}" in url:
+        if "{placeholder}" in url or "{cloudprovider}" in url:
             if params and (params.get("placeholder") or params.get("cloudprovider")):
                 url = url.format(
                     placeholder=str(params.pop("placeholder", None)),

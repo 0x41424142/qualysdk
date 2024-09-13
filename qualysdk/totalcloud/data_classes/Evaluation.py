@@ -20,7 +20,6 @@ class Evaluation:
     dateFixed: Union[str, datetime] = None
 
     def __post_init__(self):
-
         fields = self.__dataclass_fields__.keys()
 
         for field in fields:

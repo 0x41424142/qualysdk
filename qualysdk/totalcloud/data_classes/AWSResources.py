@@ -177,7 +177,6 @@ class AWSNetworkACL(BaseResource):
     networkAclId: str = None
 
     def __post_init__(self):
-
         if self.associations:
             data = self.associations
             bl = BaseList()
@@ -281,7 +280,6 @@ class AWSRDS(BaseResource):
     storageType: str = None
 
     def __post_init__(self):
-
         if self.subnetId:
             data = self.subnetId
             bl = BaseList()
@@ -393,7 +391,6 @@ class AWSIAMUser(BaseResource):
     user: str = None
 
     def __post_init__(self):
-
         POLICY_FIELDS = ["userPolicies", "userAttachedPolicies"]
         for field in POLICY_FIELDS:
             if getattr(self, field):
@@ -523,7 +520,6 @@ class AWSVPC(BaseResource):
     ipv6CidrBlockAssociationSet: BaseList[str] = None
 
     def __post_init__(self):
-
         if self.ipv6CidrBlockAssociationSet:
             data = self.ipv6CidrBlockAssociationSet
             bl = BaseList()
@@ -567,7 +563,6 @@ class AWSSecurityGroup(BaseResource):
     groupName: str = None
 
     def __post_init__(self):
-
         if self.ipPermissionList:
             data = self.ipPermissionList
             bl = BaseList()
@@ -784,7 +779,6 @@ class AWSSubnet(BaseResource):
     defaultForAz: bool = None
 
     def __post_init__(self):
-
         if self.ipv6CidrBlockAssociationSet:
             data = self.ipv6CidrBlockAssociationSet
             bl = BaseList()
@@ -823,7 +817,6 @@ class AWSInternetGateway(BaseResource):
     internetGatewayId: str = None
 
     def __post_init__(self):
-
         if self.attachments:
             data = self.attachments
             bl = BaseList()
@@ -868,7 +861,6 @@ class AWSLoadBalancer(BaseResource):
     securityGroups: BaseList[AWSSecurityGroup] = None  # Double check!
 
     def __post_init__(self):
-
         BL_STR_FIELDS = [
             "subnetAvailabilityZonePair",
             "availabilityZones",
@@ -966,7 +958,6 @@ class AWSEC2Instance(BaseResource):
     vulnerabilities: BaseList[str] = None  # empty list?
 
     def __post_init__(self):
-
         DICT_BL_FIELDS = ["networkInterfaceAddresses", "securityGroups"]
         STR_BL_FIELDS = ["events", "classifications"]
         PARSE_OUT_FIELDS = ["iamInstanceProfileRoleDetails", "iamInstanceProfile"]
@@ -1057,7 +1048,6 @@ class AWSRouteTable(BaseResource):
     routeTableId: str = None
 
     def __post_init__(self):
-
         BL_FIELDS = ["associations", "routeDtos", "routes"]
 
         for field in BL_FIELDS:
@@ -1101,7 +1091,6 @@ class AWSEBSVolume(BaseResource):
     kmsKeyId: str = None
 
     def __post_init__(self):
-
         if self.attachments:
             data = self.attachments
             bl = BaseList()
@@ -1143,7 +1132,6 @@ class AWSAutoScalingGroup(BaseResource):
     loadBalancerNames: BaseList[str] = None  # list of ???
 
     def __post_init__(self):
-
         STR_BL_FIELDS = [
             "instances",
             "availabilityZones",
@@ -1211,7 +1199,6 @@ class AWSEKSCluster(BaseResource):
     status: str = None
 
     def __post_init__(self):
-
         if self.version:
             setattr(self, "version", float(self.version))
 
@@ -1311,7 +1298,6 @@ class AWSEKSNodeGroup(BaseResource):
     health: BaseList[str] = None
 
     def __post_init__(self):
-
         if self.version:
             setattr(self, "version", float(self.version))
 
@@ -1409,7 +1395,6 @@ class AWSEKSFargateProfile(BaseResource):
     status: str = None
 
     def __post_init__(self):
-
         if self.associations:
             data = self.associations
             setattr(self, "associations_clusterArn", data.get("clusterArn", None))
@@ -1474,7 +1459,6 @@ class AWSVPCEndpoint(BaseResource):
     subnetIds: BaseList[str] = None  # list of strs
 
     def __post_init__(self):
-
         STR_BL_FIELDS = ["routeTableIds", "networkInterfaceIds", "subnetIds"]
 
         for field in STR_BL_FIELDS:
@@ -1547,7 +1531,6 @@ class AWSVPCEndpointService(BaseResource):
     vpcEndpointPolicySupported: bool = None
 
     def __post_init__(self):
-
         STR_BL_FIELDS = ["availabilityZone", "baseEndpointDnsName"]
 
         for field in STR_BL_FIELDS:
@@ -1585,7 +1568,6 @@ class AWSIAMGroup(BaseResource):
     arn: str = None
 
     def __post_init__(self):
-
         if self.classifications:
             data = self.classifications
             bl = BaseList()
@@ -1673,7 +1655,6 @@ class AWSIAMPolicy(BaseResource):
     arn: str = None
 
     def __post_init__(self):
-
         if self.defaultPolicyVersion:
             data = self.defaultPolicyVersion
             setattr(self, "defaultPolicyVersion_VersionId", data.get("VersionId", None))
@@ -1794,7 +1775,6 @@ class AWSIAMRole(BaseResource):
     InstanceProfileList: BaseList[str] = None  # list of dicts
 
     def __post_init__(self):
-
         if self.AttachedManagedPolicies:
             data = self.AttachedManagedPolicies
             bl = BaseList()
@@ -1949,7 +1929,6 @@ class AWSSagemakerNotebook(BaseResource):
     kmsKeyId: str = None
 
     def __post_init__(self):
-
         if self.securityGroups:
             data = self.securityGroups
             bl = BaseList()
@@ -2026,7 +2005,6 @@ class AWSCloudfrontDistribution(BaseResource):
     acmCertificateARN: str = None
 
     def __post_init__(self):
-
         if self.defaultCacheBehavior:
             # Sigh...
             data = self.defaultCacheBehavior

@@ -16,6 +16,7 @@ You can use any of the endpoints currently supported:
 | ```get_connector_details``` | Get details about a specific connector by provider. |
 | ```get_aws_base_account``` | Get the base account for an AWS connector. |
 | ```get_control_metadata``` | Get details on controls Qualys checks for in your cloud provider. |
+| ```get_inventory``` | Get your inventory for a specific resource type on a specific cloud provider. |
 
 
 
@@ -144,4 +145,71 @@ get_control_metadata(auth, filter='provider:AWS')
 # Get all controls for BUCKET resources:
 get_control_metadata(auth, filter='resource.type:BUCKET')
 >>>[Control(name="Some Control", ...), ...]
+```
+
+## Get Inventory API
+
+```get_inventory``` returns your inventory for a specific resource type on a specific cloud provider.
+
+This function takes advantage of multithreading to pull down data faster. You can specify the number of threads with the ```thread_count``` argument, which defaults to 5.
+
+>>**Head's Up!:** At maximum, this API will return up to the 200 pages of data. The SDK is configured to pull 50 records per page, so you can expect a maximum of 10,000 records to be pulled. This is not user-configurable. If you have more than 50K records under a single ```resourceType```, you will need to use the ```filter``` argument to narrow down the results and make repeated calls to get all the data.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```provider``` | ```Literal["aws", "azure", "gcp"]``` | The cloud provider to get inventory for | ✅ |
+| ```resourceType``` | ```str``` | The resource type to get inventory for. See below for acceptable values by cloud provider. | ✅ |
+| ```page_count``` | ```Union[int>=1, 'all'] = 'all'``` | Number of pages to pull | ❌ |
+| ```thread_count``` | ```int >=1``` | Number of threads to use for pulling data | ❌ |
+| ```sort``` | ```Literal['lastSyncedOn:asc', 'lastSyncedOn:desc']``` | Sort last synced date in ascending or descending order | ❌ |
+| ```updated``` | ```str``` | Filter by updated date | ❌ |
+| ```filter``` | ```str``` | Filter the results using TotalCloud QQL | ❌ |
+
+### ```resourceType``` Values
+
+```resourceType``` is case-insensitive. Values are translated to their expected API names.
+
+#### AWS ```resourceType``` Values
+
+| Provider | Resource Type/Final API-Expected Name | Acceptable ```resourceType``` Values |
+|--|--|--|
+| AWS | RDS | ```"RDS"``` |
+| AWS | NETWORK_ACL | ```"NETWORK ACL"```, ```"ACL"``` |
+| AWS | BUCKET | ```"BUCKET"```, ```"S3 BUCKET"```, ```"S3"``` |
+| AWS | IAM_USER | ```"IAM USER"```, ```"IAM"``` |
+| AWS | VPC | ```"VPC"``` |
+| AWS | VPC_SECURITY_GROUP | ```"VPC SECURITY GROUP"```, ```"SECURITY GROUP"```, ```"SG"``` |
+| AWS | LAMBDA | ```"LAMBDA"```, ```"LAMBDA FUNCTION"``` |
+| AWS | SUBNET | ```"SUBNET"``` |
+| AWS | INTERNET_GATEWAY | ```"INTERNET GATEWAY"```, ```"IG"```, ```"IGW"```, ```"GATEWAY"``` |
+| AWS | LOAD_BALANCER | ```"LOAD BALANCER"```, ```"ELB"```, ```"LB"``` |
+| AWS | EC2_INSTANCE | ```"EC2 INSTANCE"```, ```"EC2"```, ```"INSTANCE"``` |
+| AWS | ROUTE_TABLE | ```"ROUTE TABLE"```, ```"ROUTE"```, ```"ROUTES"``` |
+| AWS | EBS | ```"EBS"```, ```"VOLUME"```, ```"VOLUMES"```, ```"EBS VOLUME"```, ```"EBS VOLUMES"``` |
+| AWS | AUTO_SCALING_GROUP | ```"AUTO SCALING GROUP"```, ```"ASG"```, ```"AUTO SCALING"``` |
+| AWS | EKS_CLUSTER | ```"EKS CLUSTER"```, ```"EKS"``` |
+| AWS | EKS_NODEGROUP | ```"EKS NODE GROUP"```, ```"EKSNG"```. ```"NODE GROUP"``` |
+| AWS | EKS_FARGATE_PROFILE | ```"EKS FARGATE PROFILE"```, ```"FARGATE PROFILE"```, ```"EKS FARGATE"```, ```"FARGATE"``` |
+| AWS | VPC_ENDPOINT | ```"VPC ENDPOINT"```, ```"ENDPOINT"``` |
+| AWS | VPC_ENDPOINT_SERVICE | ```"VPC ENDPOINT SERVICE"```, ```"ENDPOINT SERVICE"``` |
+| AWS | IAM_GROUP | ```"IAM GROUP"```, ```"IAMGROUP"``` |
+| AWS | IAM_POLICY | ```"IAM POLICY"```, ```"IAMPOLICY"``` |
+| AWS | IAM_ROLE | ```"IAM ROLE"```, ```"IAMROLE"``` |
+| AWS | SAGEMAKER_NOTEBOOK | ```"SAGEMAKER NOTEBOOK"```, ```"NOTEBOOK"```, ```"SAGEMAKER"``` |
+| AWS | CLOUDFRONT_DISTRIBUTION | ```"CLOUDFRONT DISTRIBUTION"```, ```"CLOUDFRONT"```|
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_inventory
+
+# Pull pull all EC2s with vulnerabilities
+# using 8 threads:
+vulnerable_ec2s = get_inventory(
+    auth,
+    provider='aws',
+    resourceType='ec2',
+    filter="vulnerability.typeDetected in (Confirmed, Potential) and NOT vulnerability.status:FIXED"
+)
+>>>[AWSEC2Instance(instanceId="i-1234567890abcdef0", ...), ...]
 ```

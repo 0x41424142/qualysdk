@@ -1946,6 +1946,7 @@ class AWSSagemakerNotebook(BaseResource):
     securityGroups: BaseList[str] = None  # list of strs
     status: str = None
     defaultCodeRepository: str = None
+    kmsKeyId: str = None
 
     def __post_init__(self):
 

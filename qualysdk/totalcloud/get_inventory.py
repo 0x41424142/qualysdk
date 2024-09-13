@@ -2,6 +2,9 @@
 Pull resources from a cloud provider account.
 """
 
+from threading import Lock, Thread
+from threading import current_thread
+from queue import Queue
 from typing import Literal, Union
 
 from ..base.call_api import call_api
@@ -80,7 +83,7 @@ COMMON_NAMES = {
         "EC2_INSTANCE": ["EC2", "INSTANCE"],
         "ROUTE_TABLE": ["ROUTE", "ROUTES"],
         "EBS": ["VOLUME", "VOLUMES", "EBS_VOLUME", "EBS_VOLUMES"],
-        "AUTO_SCALING_GROUP": ["ASG"],
+        "AUTO_SCALING_GROUP": ["ASG", "AUTO_SCALING"],
         "EKS_CLUSTER": ["EKS"],
         "EKS_NODEGROUP": ["NODE_GROUP", "EKSNG", "EKS_NODE_GROUP"],
         "EKS_FARGATE_PROFILE": ["FARGATE_PROFILE", "EKS_FARGATE", "FARGATE"],
@@ -123,12 +126,132 @@ resource_map = {
     "CLOUDFRONT_DISTRIBUTION": AWSCloudfrontDistribution,
 }
 
+termination_flag = False
+
+
+def fetch_page(
+    auth: BasicAuth,
+    provider: str,
+    resourceType: str,
+    pageNo: int,
+    results: BaseList,
+    queue: Queue,
+    lock: Lock,
+    page_count: Union[int, "all"],
+    **kwargs,
+):
+    """
+    Worker function to fetch a single page of resources.
+    """
+    try:
+        global termination_flag
+
+        kwargs["placeholder"] = resourceType
+        kwargs["cloudprovider"] = provider.upper()
+        kwargs["pageNo"] = pageNo
+
+        response = call_api(
+            auth=auth,
+            module="cloudview",
+            endpoint="get_inventory",
+            params=kwargs,
+        )
+
+        if response.status_code not in [200, 400, 404]:
+            if not response.text:
+                raise QualysAPIError(
+                    "An error occurred while retrieving the inventory. Most likely, a parameter you set is incorrect."
+                )
+            else:
+                raise QualysAPIError(response.json())
+
+        # Check for empty response or invalid page count
+        if (
+            not response.text
+            or response.status_code in [400, 404]
+            or (page_count != "all" and pageNo >= 199)
+        ):
+            with lock:
+                termination_flag = True
+            return
+
+        j = response.json()
+
+        if len(j["content"]) == 0:
+            with lock:
+                termination_flag = True
+            return
+
+        with lock:
+            for i in j["content"]:
+                resource_class = resource_map.get(resourceType, None)
+                if resource_class:
+                    if "type" in i.keys():
+                        i["_type"] = i.pop("type")
+                    i = resource_class(**i)
+                else:
+                    raise ValueError(
+                        f"Invalid resource type {resourceType} for provider {provider}. Valid resource types are:\n{VALID_RESOURCETYPES[provider]}"
+                    )
+                results.append(i)
+
+            if (pageNo + 1) % 50 == 0:
+                print(
+                    f"({current_thread().name}) Page {pageNo+1} of {provider}-{resourceType} retrieved successfully."
+                )
+    except Exception as e:
+        if "INTERNAL_SERVER_ERROR" in response.text and response.status_code == 502:
+            # We have reached the end of the pages
+            with lock:
+                termination_flag = True
+        else:
+            raise e
+
+
+def worker(
+    auth,
+    provider,
+    resourceType,
+    results,
+    queue,
+    lock,
+    page_count,
+    **kwargs,
+):
+    global termination_flag
+
+    while True:
+        if termination_flag:
+            break
+
+        pageNo = queue.get()
+        if pageNo is None:
+            break
+
+        fetch_page(
+            auth,
+            provider,
+            resourceType,
+            pageNo,
+            results,
+            queue,
+            lock,
+            page_count,
+            **kwargs,
+        )
+        queue.task_done()
+
+
+def check_termination_or_empty(queue):
+    return queue.empty() or termination_flag
+
 
 def get_inventory(
     auth: BasicAuth,
     provider: Literal["aws", "azure", "gcp"],
     resourceType: str,
     page_count: Union[int, "all"] = "all",
+    thread_count: int = 5,
     **kwargs,
 ) -> BaseList:
     """
@@ -137,108 +260,91 @@ def get_inventory(
     Args:
         auth (BasicAuth): The authentication object.
         provider (Literal["aws", "azure", "gcp", "oci"]): The cloud provider to get resources from.
-        resourceType (str): The type of resource to get. Valid resource types are:
-            aws (str): ['RDS', 'NETWORK ACL', 'S3 BUCKET', 'IAM USER', 'VPC', 'SECURITY GROUP', 'LAMBDA FUNCTION', 'SUBNET', 'INTERNET GATEWAY', 'LOAD BALANCER', 'INSTANCE', 'ROUTE TABLE', 'EBS VOLUME', 'AUTO SCALING GROUP', 'EKS CLUSTER', 'EKS NODE GROUP', 'EKS FARGATE PROFILE', 'VPC ENDPOINT', 'VPC ENDPOINT SERVICE', 'IAM GROUP', 'IAM POLICY', 'IAM ROLE', 'SAGEMAKER NOTEBOOK', 'CLOUDFRONT DISTRIBUTION']
+        resourceType (str): The type of resource to get.
+        page_count (Union[int, "all"]): The number of pages to return. MAX VALUE IS 200. If 'all', return all pages. Default is 'all'.
+        thread_count (int): The number of threads to use for fetching data.
 
-            azure (str): ['SQL SERVER', 'FUNCTION APP', 'SQL SERVER DATABASE', 'RESOURCE GROUP', 'VIRTUAL NETWORK', 'VIRTUAL MACHINE', 'NETWORK SECURITY GROUP', 'WEB APP', 'NETWORK INTERFACES', 'POSTGRE SINGLE SERVER', 'LOAD BALANCER', 'FIREWALL', 'MYSQL', 'STORAGE ACCOUNT', 'APPLICATION GATEWAYS', 'SECRETS', 'MARIADB', 'COSMODB', 'NAT GATEWAYS']
+     ## Kwargs:
 
-            gcp (str): ['VM INSTANCES', 'NETWORKS', 'FIREWALL RULES', 'SUBNETWORKS', 'CLOUD FUNCTIONS']
+         sort (Literal['lastSyncedOn:asc', 'lastSyncedOn:desc']): Sort the resources by lastSyncedOn in ascending or descending order.
+         updated (str): Filter resources by the last updated date. Format is Qualys QQL, like [2024-01-01 ... 2024-12-31], [2024-01-01 ... now-1m] (month), 2024-01-01, etc.
+         filter (str): Filter resources by providing a query.
 
-            oci (str): ['COMPUTE INSTANCE', 'IAM USERS', 'BUCKET', 'SECURITY LISTS']
-
-    ## Kwargs:
-
-        page_count (int): The number of pages to return. If 'all', return all pages. Default is 'all'.
-        pageSize (int): The number of resources to get per page.
-        pageNo (int): The page number to get if page_count is not 'all'. If page_count is 'all', this is the starting page number.
-        sort (Literal['lastSyncedOn:asc', 'lastSyncedOn:desc']): Sort the resources by lastSyncedOn in ascending or descending order.
-        updated (str): Filter resources by the last updated date. Format is Qualys QQL, like [2024-01-01 ... 2024-12-31], [2024-01-01 ... now-1m] (month), 2024-01-01, etc.
-        filter (str): Filter resources by providing a query.
 
     Returns:
         BaseList: The response from the API as a BaseList of Resource objects.
     """
 
-    # Check if the provider is valid
+    global termination_flag
+    termination_flag = False
+
+    # Validate provider
     provider = provider.lower()
     resourceType = resourceType.upper()
 
-    # Check if the provider is valid
+    kwargs["pageSize"] = 50
+
     if provider not in ["aws", "azure", "gcp"]:
         raise ValueError("Invalid provider. Must be 'aws', 'azure', 'gcp', or 'oci'.")
 
-    # For convenience, allow the user to input 'common names': e.g. 'ACL' for 'NETWORK_ACL'
-    if " " in resourceType:
-        resourceType = resourceType.replace(" ", "_")
-
+    # Handle common names
+    resourceType = resourceType.replace(" ", "_")
     for key, value in COMMON_NAMES[provider].items():
         if resourceType in value:
             resourceType = key
             break
 
-    # Check if the resource type is valid
     if resourceType not in VALID_RESOURCETYPES[provider]:
         raise ValueError(
             f"Invalid resource type for provider {provider}. Valid resource types are: {VALID_RESOURCETYPES[provider]}"
         )
 
+    if page_count != "all" and (not isinstance(page_count, int)):
+        raise ValueError("page_count must be an integer <= 200 or 'all'.")
+
+    # If user has set page_count to a number >= 200, set it to 199
+    if page_count != "all" and page_count >= 200:
+        page_count = 199
+    elif page_count != "all" and page_count < 1:
+        raise ValueError("page_count must be an integer >= 1.")
+
+    if not isinstance(thread_count, int) or thread_count < 1:
+        raise ValueError("thread_count must be an integer >= 1.")
+
     results = BaseList()
-    currentPage = 0
+    page_queue = Queue()
+    lock = Lock()
 
-    while True:
-        # Set the current page number and page size in kwargs
-        kwargs["placeholder"] = resourceType
-        kwargs["cloudprovider"] = provider.upper()
-        kwargs["pageNo"] = currentPage
+    # Pre-fill the queue with page numbers
+    for i in range(200) if page_count == "all" else range(page_count):
+        page_queue.put(i)
 
-        # Make the API call
-        response = call_api(
-            auth=auth,
-            module="cloudview",
-            endpoint="get_inventory",
-            params=kwargs,
+    # Start worker threads
+    threads = []
+    for _ in range(thread_count):
+        t = Thread(
+            target=worker,
+            args=(auth, provider, resourceType, results, page_queue, lock, page_count),
+            kwargs=kwargs,
         )
+        threads.append(t)
 
-        if response.status_code != 200:
-            if not response.text:
-                raise QualysAPIError(
-                    "An error occurred while retrieving the inventory Most likely, a parameter you set is incorrect."
-                )
-            else:
-                raise QualysAPIError(response.json())
-
-        j = response.json()
-
-        if len(j["content"]) == 0:
-            print(f"No items found for inventory type {resourceType}.")
-            break
-
-        for i in j["content"]:
-            resource_class = resource_map.get(resourceType, None)
-            if resource_class:
-                # Some resources have a type key, which we will overwrite to _type:
-                if "type" in i.keys():
-                    i["_type"] = i.pop("type")
-                i = resource_class(**i)
-
-            else:
-                raise ValueError(
-                    f"Invalid resource type {resourceType} for provider {provider}. Valid resource types are:\n{VALID_RESOURCETYPES[provider]}"
-                )
-            results.append(i)
-
-        # Print a message indicating the current page was retrieved successfully
-        print(
-            f"Page {currentPage+1} of {provider}-{resourceType} retrieved successfully."
-        )
-        currentPage += 1
-
-        # Break the loop if all pages are retrieved or the requested number of pages are retrieved
-        if (page_count != "all" and currentPage + 1 > page_count) or j["last"]:
-            break
-
-    # Print a message indicating all pages have been retrieved
     print(
-        f"All pages complete. {str(len(results))} {provider} {resourceType} records retrieved."
+        f"Starting get_inventory for {provider}-{resourceType} with {thread_count} {'threads' if thread_count > 1 else 'thread'}..."
     )
+
+    for t in threads:
+        t.start()
+
+    # Wait for the queue to be empty, or the termination flag to be set
+    while not check_termination_or_empty(page_queue):
+        pass
+
+    # Stop the worker threads
+    for _ in range(thread_count):
+        page_queue.put(None)
+    for t in threads:
+        t.join()
+
+    print(f"{str(len(results))} {provider} {resourceType} records retrieved.")
     return results

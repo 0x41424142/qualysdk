@@ -153,7 +153,7 @@ get_control_metadata(auth, filter='resource.type:BUCKET')
 
 This function takes advantage of multithreading to pull down data faster. You can specify the number of threads with the ```thread_count``` argument, which defaults to 5.
 
->>**Head's Up!:** At maximum, this API will return up to the 200 pages of data. The SDK is configured to pull 50 records per page, so you can expect a maximum of 10,000 records to be pulled. This is not user-configurable. If you have more than 50K records under a single ```resourceType```, you will need to use the ```filter``` argument to narrow down the results and make repeated calls to get all the data.
+>>**Head's Up!:** At maximum, this API will return up to the 200 pages of data. The SDK is configured to pull 50 records per page, so you can expect a maximum of 10,000 records to be pulled. This is not user-configurable. If you have more than 10K records under a single ```resourceType```, you will need to use the ```filter``` argument to narrow down the results and make repeated calls to get all the data.
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|

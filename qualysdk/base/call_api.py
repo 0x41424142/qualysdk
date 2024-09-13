@@ -159,18 +159,48 @@ def call_api(
                     f"Endpoint {module}-{endpoint} requires a cloudprovider value in the URL however none was found in params/POST data."
                 )
         """
-        if "{placeholder}" in url or "{cloudprovider}" in url:
-            if params and (params.get("placeholder") or params.get("cloudprovider")):
+        if any(
+            keyword in url
+            for keyword in [
+                "{placeholder}",
+                "{cloudprovider}",
+                "{connectorid}",
+                "{controlid}",
+            ]
+        ):
+            if params and (
+                any(
+                    keyword in params
+                    for keyword in [
+                        "placeholder",
+                        "cloudprovider",
+                        "connectorid",
+                        "controlid",
+                    ]
+                )
+            ):
                 url = url.format(
                     placeholder=str(params.pop("placeholder", None)),
                     cloudprovider=str(params.pop("cloudprovider", None)),
+                    connectorid=str(params.pop("connectorid", None)),
+                    controlid=str(params.pop("controlid", None)),
                 )
             elif payload and (
-                payload.get("placeholder") or payload.get("cloudprovider")
+                any(
+                    keyword in payload
+                    for keyword in [
+                        "placeholder",
+                        "cloudprovider",
+                        "connectorid",
+                        "controlid",
+                    ]
+                )
             ):
                 url = url.format(
                     placeholder=str(payload.pop("placeholder", None)),
                     cloudprovider=str(payload.pop("cloudprovider", None)),
+                    connectorid=str(payload.pop("connectorid", None)),
+                    controlid=str(payload.pop("controlid", None)),
                 )
             else:
                 raise ValueError(

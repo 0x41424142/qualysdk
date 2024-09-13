@@ -12,6 +12,7 @@ demo.html
 profile.html
 profile.json
 *.db
+*.json
 
 # VSCode:
 .vscode/

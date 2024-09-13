@@ -116,6 +116,6 @@ class BasicAuth(BaseAuthentication):
 
     def get_ratelimit(self) -> dict:
         """
-        "Return ratelimit details for the API.
+        Return ratelimit details for the API.
         """
         return self.test_login(return_ratelimit=True)

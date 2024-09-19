@@ -48,9 +48,9 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 | TC (TotalCloud) | In Progress. See TotalCloud [documentation page](https://qualysdk.jakelindsay.uk/totalcloud/) for supported calls. |
 |Connectors | Not Started |
 |Cloud Agent | In Progress. See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloudagent/) for supported calls |
-|CS (Container Security) | Not Started
-|ADMIN (Administration) | Not Started
-|Tagging| Not Started
+|CS (Container Security) | In Progress. See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
+|ADMIN (Administration) | Not Started |
+|Tagging| Not Started |
 
 
 # Documentation/Get Started

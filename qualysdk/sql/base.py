@@ -94,6 +94,12 @@ def upload_data(
     )
     dtype["import_datetime"] = types.DateTime()
 
+    # Change any timezone-aware datetime columns to timezone-naive.
+    # This is needed because some DBs (especially MSSQL) don't
+    # play well with SQLALchemy/Pandas timezone-aware datetimes.
+    for col in df.select_dtypes(include=["datetime64[ns, UTC]"]).columns:
+        df[col] = df[col].dt.tz_localize(None)
+
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table}...")
     df.to_sql(table, cnxn, if_exists="append", index=False, dtype=dtype, chunksize=4000)

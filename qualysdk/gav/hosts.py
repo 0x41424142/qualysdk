@@ -263,7 +263,9 @@ class Host:
                         setattr(self, f"operatingSystem_{field}", None)
                     else:
                         setattr(
-                            self, f"operatingSystem_{field}", self.operatingSystem[field]
+                            self,
+                            f"operatingSystem_{field}",
+                            self.operatingSystem[field],
                         )
             # we will deal with installDate separately:
             if self.operatingSystem.get("installDate"):
@@ -295,7 +297,7 @@ class Host:
                     else:
                         setattr(self, f"hardware_{field}", self.hardware[field])
 
-            #for field in ["introDate", "gaDate", "eosDate", "obsoleteDate"]:
+            # for field in ["introDate", "gaDate", "eosDate", "obsoleteDate"]:
             #    if self.hardware.get(field):
             #        setattr(
             #            self,
@@ -306,14 +308,20 @@ class Host:
             if self.hardware.get("lifecycle"):
                 for field in ["introDate", "gaDate", "eosDate", "obsoleteDate"]:
                     if self.hardware["lifecycle"].get(field):
-                        if self.hardware["lifecycle"].get(field) in [",", ",,", "Not Announced"]:
+                        if self.hardware["lifecycle"].get(field) in [
+                            ",",
+                            ",,",
+                            "Not Announced",
+                        ]:
                             setattr(self, f"hardware_lifecycle_{field}", None)
-                        
+
                         else:
                             setattr(
                                 self,
                                 f"hardware_lifecycle_{field}",
-                                datetime.fromisoformat(self.hardware["lifecycle"][field]),
+                                datetime.fromisoformat(
+                                    self.hardware["lifecycle"][field]
+                                ),
                             )
                 for field in ["stage", "lifeCycleConfidence"]:
                     if self.hardware["lifecycle"].get(field):
@@ -650,7 +658,12 @@ class Host:
                 "eosSupportStage",
             ]:
                 if self.operatingSystem_lifecycle.get(field):
-                    if self.operatingSystem_lifecycle.get(field) in [",", ",,", "Not Announced", " "]:
+                    if self.operatingSystem_lifecycle.get(field) in [
+                        ",",
+                        ",,",
+                        "Not Announced",
+                        " ",
+                    ]:
                         setattr(self, f"operatingSystem_lifecycle_{field}", None)
                     setattr(
                         self,

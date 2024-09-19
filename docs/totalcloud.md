@@ -17,17 +17,18 @@ You can use any of the endpoints currently supported:
 | ```get_aws_base_account``` | Get the base account for an AWS connector. |
 | ```get_control_metadata``` | Get details on controls Qualys checks for in your cloud provider. |
 | ```get_inventory``` | Get your inventory for a specific resource type on a specific cloud provider. |
+| ```get_control_stats_by_resource``` | Get statistics for a specific control on a specific resource ID |
 
 
 
 ## List Connectors API
 
-```get_connectors``` returns a list of AWS/Azure/GCP connectors in the subscription.
+```get_connectors``` returns a list of AWS/Azure connectors in the subscription.
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
-| ```provider``` | ```Literal["aws", "azure", "gcp"]``` | The cloud provider to get connectors for | ✅ |
+| ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get connectors for | ✅ |
 | ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to pull | ❌ |
 | ```pageNo``` | ```int``` | Page number to start pulling from, or page to pull if ```page_count``` is set to 1 | ❌ |
 | ```pageSize``` | ```int``` | Number of records to pull per page | ❌ |
@@ -59,12 +60,12 @@ get_connectors(auth, "aws", filter='state:SUCCESS')
 
 ## Connector Details API
 
-```get_connector_details``` returns details about a specific connector in AWS/Azure/GCP.
+```get_connector_details``` returns details about a specific connector in AWS/Azure.
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
-| ```provider``` | ```Literal["aws", "azure", "gcp"]``` | The cloud provider to get connectors for | ✅ |
+| ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get connectors for | ✅ |
 | ```connectorId``` | ```str``` | The ID of the connector to get details for | ✅ |
 
 ```py
@@ -116,6 +117,8 @@ print(dumps(get_aws_base_account(auth), indent=2))
 
 #### ```filter``` Search Tokens
 
+>>**Head's Up!:** When using ```resource.type``` as the filter, you must use the API-expected name. See **```resourceType``` Values** table under ```get_inventory``` for expected names.
+
 |Token| Description |
 |--|--|
 | ```control.name``` | Filter by control name. Ex: ```filter="control.name:MFA"``` |
@@ -153,12 +156,26 @@ get_control_metadata(auth, filter='resource.type:BUCKET')
 
 This function takes advantage of multithreading to pull down data faster. You can specify the number of threads with the ```thread_count``` argument, which defaults to 5.
 
->>**Head's Up!:** At maximum, this API will return up to the 200 pages of data. The SDK is configured to pull 50 records per page, so you can expect a maximum of 10,000 records to be pulled. This is not user-configurable. If you have more than 50K records under a single ```resourceType```, you will need to use the ```filter``` argument to narrow down the results and make repeated calls to get all the data.
+>>**Head's Up!:** At maximum, this API endpoint returns 10,000 records. This is a hard limit imposed by Qualys. If you have more than 10K records under a single ```resourceType```, you will need to use the ```filter``` argument to narrow down the results and make repeated calls to get all the data. An easy way to do this is to use ```totalcloud.get_connectors()```, then use the connector's account ID (```subscriptionId``` for Azure) attribute in this API call's ```filter``` argument, storing the results in a ```BaseList```. For example: 
+
+```py
+from qualysdk import BaseList
+
+# Pull ALL EC2s, not just the first 10K:
+all_results = BaseList()
+aws_connectors = get_connectors(auth, provider='aws')
+aws_account_ids = [c.awsAccountId for c in aws_connectors]
+if aws_account_ids:
+    for account_id in aws_account_ids:
+        data = get_inventory(auth, provider='aws', resourceType='ec2', filter=f"account.id:{account_id}")
+        all_results.extend(data)
+```
+
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
-| ```provider``` | ```Literal["aws", "azure", "gcp"]``` | The cloud provider to get inventory for | ✅ |
+| ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get inventory for | ✅ |
 | ```resourceType``` | ```str``` | The resource type to get inventory for. See below for acceptable values by cloud provider. | ✅ |
 | ```page_count``` | ```Union[int>=1, 'all'] = 'all'``` | Number of pages to pull | ❌ |
 | ```thread_count``` | ```int >=1``` | Number of threads to use for pulling data | ❌ |
@@ -168,7 +185,7 @@ This function takes advantage of multithreading to pull down data faster. You ca
 
 ### ```resourceType``` Values
 
-```resourceType``` is case-insensitive. Values are translated to their expected API names.
+```resourceType``` is case-insensitive. Values are translated to their expected API names. You can also just use the expected names directly, for example when feeding an API call based on data from a prior call using an object's ```resourceType``` value.
 
 #### AWS ```resourceType``` Values
 
@@ -177,7 +194,7 @@ This function takes advantage of multithreading to pull down data faster. You ca
 | AWS | RDS | ```"RDS"``` |
 | AWS | NETWORK_ACL | ```"NETWORK ACL"```, ```"ACL"``` |
 | AWS | BUCKET | ```"BUCKET"```, ```"S3 BUCKET"```, ```"S3"``` |
-| AWS | IAM_USER | ```"IAM USER"```, ```"IAM"``` |
+| AWS | IAM_USER | ```"IAM USER"```, ```"IAM"```, ```"IAMUSER"``` |
 | AWS | VPC | ```"VPC"``` |
 | AWS | VPC_SECURITY_GROUP | ```"VPC SECURITY GROUP"```, ```"SECURITY GROUP"```, ```"SG"``` |
 | AWS | LAMBDA | ```"LAMBDA"```, ```"LAMBDA FUNCTION"``` |
@@ -198,6 +215,25 @@ This function takes advantage of multithreading to pull down data faster. You ca
 | AWS | IAM_ROLE | ```"IAM ROLE"```, ```"IAMROLE"``` |
 | AWS | SAGEMAKER_NOTEBOOK | ```"SAGEMAKER NOTEBOOK"```, ```"NOTEBOOK"```, ```"SAGEMAKER"``` |
 | AWS | CLOUDFRONT_DISTRIBUTION | ```"CLOUDFRONT DISTRIBUTION"```, ```"CLOUDFRONT"```|
+| AZURE | SQL_SERVER | ```"SQL SERVER"```, ```"MSSQL"``` |
+| AZURE | FUNCTION_APP | ```"FUNCTION APP"```, ```"FUNCTION"``` |
+| AZURE | SQL_SERVER_DATABASE | ```"SQL SERVER DATABASE"```, ```"MSSQL DATABASE"```, ```"MSSQLDB"```, ```"MSSQL DB"```|
+| AZURE | RESOURCE_GROUP | ```"RESOURCE GROUP"```, ```"RG"``` |
+| AZURE | VIRTUAL_NETWORK | ```"VIRTUAL NETWORK"```, ```"VNET"``` |
+| AZURE | VIRTUAL_MACHINE | ```"VIRTUAL MACHINE"```, ```"VM"``` |
+| AZURE | NETWORK_SECURITY_GROUP | ```"NETWORK SECURITY GROUP"```, ```"NSG"```, ```"SECURITY GROUP"``` |
+| AZURE | WEB_APP | ```"WEB APP"```, ```"WEBAPP"``` |
+| AZURE | NETWORK_INTERFACES | ```"NETWORK INTERFACES"```, ```"NIC"``` |
+| AZURE | POSTGRE_SINGLE_SERVER | ```"POSTGRES"```, ```"POSTGRE"```, ```"POSTGRESQL"``` |
+| AZURE | LOAD_BALANCER | ```"LOAD BALANCER"```, ```"LB"``` |
+| AZURE | FIREWALL | ```"FIREWALL"```, ```"FW"``` |
+| AZURE | MYSQL | ```"MYSQL"```, ```"MYSQL_DB"```, ```"MYSQLDB"``` |
+| AZURE | STORAGE_ACCOUNT | ```"STORAGE ACCOUNT"```, ```"STORAGE"``` |
+| AZURE | APPLICATION_GATEWAYS | ```"APPLICATION GATEWAYS"```, ```"AG"``` |
+| AZURE | SECRETS | ```"SECRETS"```, ```"SECRET"``` |
+| AZURE | MARIADB | ```"MARIADB"```, ```"MARIA_DB"```, ```"MARIA"``` |
+| AZURE | COSMODB | ```"COSMOS DB"```, ```"COSMOSDB"```, ```"COSMODB"``` |
+| AZURE | NAT_GATEWAYS | ```"NAT GATEWAYS"```, ```"NAT"``` |
 
 ```py
 from qualysdk.auth import BasicAuth
@@ -213,3 +249,36 @@ vulnerable_ec2s = get_inventory(
 )
 >>>[AWSEC2Instance(instanceId="i-1234567890abcdef0", ...), ...]
 ```
+
+## Get Evaluation Results for a Control ID on a Single Resource
+
+```get_evaluation``` returns datetime statistics for a specific control on a specific resource ID. You can see when the control was first and last checked on the resource, as well as if the control has been fixed, re-opened, or is still open.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get control statistics for | ✅ |
+| ```controlId``` | ```Union[str, int]``` | The control ID to get statistics for | ✅ |
+| ```connectorId``` | ```str``` | The connector ID to get statistics for | ✅ |
+| ```resourceId``` | ```str``` | The resource ID to get statistics for | ✅ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_evaluation
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+# Get statistics for control 123 on EC2 instance
+# i-1234567890abcdef0:
+get_evaluation(
+    auth,
+    provider='aws',
+    controlId=123,
+    connectorId='12345678-1234-1234-1234-123456789012', #ec2.connectorUuid
+    resourceId='i-1234567890abcdef0' #ec2.resourceId
+)
+>>>Evaluation(
+    firstEvaluated=datetime.datetime(2024, 5, 10),
+    lastEvaluated=datetime.datetime(2024, 5, 20),
+    dateReopened=None,
+    dateFixed=datetime.datetime(2024, 5, 15),
+)

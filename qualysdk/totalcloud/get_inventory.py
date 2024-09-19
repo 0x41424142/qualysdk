@@ -2,8 +2,7 @@
 Pull resources from a cloud provider account.
 """
 
-from threading import Lock, Thread
-from threading import current_thread
+from threading import Lock, Thread, current_thread
 from queue import Queue
 from typing import Literal, Union
 
@@ -61,13 +60,6 @@ VALID_RESOURCETYPES = {
         "COSMODB",
         "NAT_GATEWAYS",
     ],
-    "gcp": [
-        "VM_INSTANCES",
-        "NETWORKS",
-        "FIREWALL_RULES",
-        "SUBNETWORKS",
-        "CLOUD_FUNCTIONS",
-    ],
 }
 
 # Common names for resources to substitute for the user's convenience
@@ -75,7 +67,7 @@ COMMON_NAMES = {
     "aws": {
         "NETWORK_ACL": ["ACL"],
         "BUCKET": ["S3_BUCKET", "S3"],
-        "IAM_USER": ["IAM"],
+        "IAM_USER": ["IAM", "IAMUSER"],
         "VPC_SECURITY_GROUP": ["SECURITY_GROUP", "SG"],
         "LAMBDA": ["LAMBDA_FUNCTION"],
         "INTERNET_GATEWAY": ["IG", "IGW", "GATEWAY"],
@@ -94,8 +86,27 @@ COMMON_NAMES = {
         "SAGEMAKER_NOTEBOOK": ["NOTEBOOK", "SAGEMAKER"],
         "CLOUDFRONT_DISTRIBUTION": ["CLOUDFRONT"],
     },
-    "azure": {},
-    "gcp": {},
+    "azure": {
+        "SQL_SERVER": ["MSSQL"],
+        "FUNCTION_APP": ["FUNCTION"],
+        "SQL_SERVER_DATABASE": ["MSSQL_DATABASE", "MSSQL_DB", "MSSQLDB"],
+        "RESOURCE_GROUP": ["RG"],
+        "VIRTUAL_NETWORK": ["VNET"],
+        "VIRTUAL_MACHINE": ["VM"],
+        "NETWORK_SECURITY_GROUP": ["NSG", "SECURITY_GROUP"],
+        "WEB_APP": ["WEBAPP"],
+        "NETWORK_INTERFACES": ["NIC", "INTERFACE"],
+        "POSTGRE_SINGLE_SERVER": ["POSTGRE", "POSTGRES", "POSTGRESQL"],
+        "LOAD_BALANCER": ["LB"],
+        "FIREWALL": ["FW"],
+        "MYSQL": ["MYSQL_DB", "MYSQLDB"],
+        "STORAGE_ACCOUNT": ["STORAGE"],
+        "APPLICATION_GATEWAYS": ["AG"],
+        "SECRETS": ["SECRET"],
+        "MARIADB": ["MARIA_DB", "MARIA"],
+        "COSMODB": ["COSMOS", "COSMOS_DB"],
+        "NAT_GATEWAYS": ["NAT"],
+    },
 }
 
 # For dynamically creating the resource object based on the resource type
@@ -135,7 +146,6 @@ def fetch_page(
     resourceType: str,
     pageNo: int,
     results: BaseList,
-    queue: Queue,
     lock: Lock,
     page_count: Union[int, "all"],
     **kwargs,
@@ -147,7 +157,16 @@ def fetch_page(
         global termination_flag
 
         kwargs["placeholder"] = resourceType
-        kwargs["cloudprovider"] = provider.upper()
+        kwargs["cloudprovider"] = provider
+
+        match kwargs["cloudprovider"].upper():
+            case "AWS":
+                kwargs["cloudprovider"] = "AWS"
+            case "AZURE":
+                kwargs["cloudprovider"] = "Azure"
+            case _:
+                raise ValueError("Invalid provider. Must be 'aws' or 'azure'.")
+
         kwargs["pageNo"] = pageNo
 
         response = call_api(
@@ -177,7 +196,7 @@ def fetch_page(
 
         j = response.json()
 
-        if len(j["content"]) == 0:
+        if j.get("empty", True):
             with lock:
                 termination_flag = True
             return
@@ -195,7 +214,7 @@ def fetch_page(
                     )
                 results.append(i)
 
-            if (pageNo + 1) % 50 == 0:
+            if (pageNo + 1) % 20 == 0:
                 print(
                     f"({current_thread().name}) Page {pageNo+1} of {provider}-{resourceType} retrieved successfully."
                 )
@@ -234,7 +253,6 @@ def worker(
             resourceType,
             pageNo,
             results,
-            queue,
             lock,
             page_count,
             **kwargs,
@@ -248,7 +266,7 @@ def check_termination_or_empty(queue):
 
 def get_inventory(
     auth: BasicAuth,
-    provider: Literal["aws", "azure", "gcp"],
+    provider: Literal["aws", "azure"],
     resourceType: str,
     page_count: Union[int, "all"] = "all",
     thread_count: int = 5,
@@ -259,7 +277,7 @@ def get_inventory(
 
     Args:
         auth (BasicAuth): The authentication object.
-        provider (Literal["aws", "azure", "gcp", "oci"]): The cloud provider to get resources from.
+        provider (Literal["aws", "azure"]): The cloud provider to get resources from.
         resourceType (str): The type of resource to get.
         page_count (Union[int, "all"]): The number of pages to return. MAX VALUE IS 200. If 'all', return all pages. Default is 'all'.
         thread_count (int): The number of threads to use for fetching data.
@@ -268,7 +286,7 @@ def get_inventory(
 
          sort (Literal['lastSyncedOn:asc', 'lastSyncedOn:desc']): Sort the resources by lastSyncedOn in ascending or descending order.
          updated (str): Filter resources by the last updated date. Format is Qualys QQL, like [2024-01-01 ... 2024-12-31], [2024-01-01 ... now-1m] (month), 2024-01-01, etc.
-         filter (str): Filter resources by providing a query.
+         filter (str): Filter resources by providing a Qualys QQL query.
 
 
     Returns:
@@ -284,8 +302,8 @@ def get_inventory(
 
     kwargs["pageSize"] = 50
 
-    if provider not in ["aws", "azure", "gcp"]:
-        raise ValueError("Invalid provider. Must be 'aws', 'azure', 'gcp', or 'oci'.")
+    if provider not in ["aws", "azure"]:
+        raise ValueError("Invalid provider. Must be 'aws' or 'azure'.")
 
     # Handle common names
     resourceType = resourceType.replace(" ", "_")
@@ -329,10 +347,6 @@ def get_inventory(
         )
         threads.append(t)
 
-    print(
-        f"Starting get_inventory for {provider}-{resourceType} with {thread_count} {'threads' if thread_count > 1 else 'thread'}..."
-    )
-
     for t in threads:
         t.start()
 
@@ -346,5 +360,5 @@ def get_inventory(
     for t in threads:
         t.join()
 
-    print(f"{str(len(results))} {provider} {resourceType} records retrieved.")
+    # print(f"{str(len(results))} {provider} {resourceType} records retrieved.")
     return results

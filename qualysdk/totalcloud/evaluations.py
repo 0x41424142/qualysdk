@@ -12,9 +12,9 @@ from ..exceptions.Exceptions import *
 from .data_classes.Evaluation import Evaluation
 
 
-def get_control_stats_by_resouce(
+def get_evaluation(
     auth: BasicAuth,
-    provider: Literal["aws", "azure", "gcp"],
+    provider: Literal["aws", "azure"],
     controlId: Union[str, int],
     connectorId: str,
     resourceId: str,
@@ -35,8 +35,8 @@ def get_control_stats_by_resouce(
 
     # Check if the provider is valid
     provider = provider.lower()
-    if provider not in ["aws", "azure", "gcp"]:
-        raise ValueError("Invalid provider. Must be 'aws', 'azure', or 'gcp'.")
+    if provider not in ["aws", "azure"]:
+        raise ValueError("Invalid provider. Must be 'aws' or 'azure'.")
 
     # Make the API call
     response = call_api(

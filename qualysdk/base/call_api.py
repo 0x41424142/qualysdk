@@ -136,29 +136,6 @@ def call_api(
         # If the URL of an endpoint has the substring
         # {placeholder}, .pop() from the params/payload
         # and format the url with the value:
-        """
-        if "{placeholder}" in url:
-            if params and params.get("placeholder"):
-                url = url.format(placeholder=str(params.pop("placeholder")))
-            elif payload and payload.get("placeholder"):
-                url = url.format(placeholder=str(payload.pop("placeholder")))
-            else:
-                raise ValueError(
-                    f"Endpoint {module}-{endpoint} requires a placeholder value in the URL however none was found in params/POST data."
-                )
-            
-        # If the URL of an endpoint has the substring {cloudprovider},
-        # .pop() from the params/payload and format the url with the value:
-        if "{cloudprovider}" in url:
-            if params and params.get("cloudprovider"):
-                url = url.format(cloudprovider=str(params.pop("cloudprovider")))
-            elif payload and payload.get("cloudprovider"):
-                url = url.format(cloudprovider=str(payload.pop("cloudprovider")))
-            else:
-                raise ValueError(
-                    f"Endpoint {module}-{endpoint} requires a cloudprovider value in the URL however none was found in params/POST data."
-                )
-        """
         if any(
             keyword in url
             for keyword in [

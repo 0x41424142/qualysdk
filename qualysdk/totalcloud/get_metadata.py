@@ -2,7 +2,7 @@
 Contains function to pull details on all cloud controls Qualys checks for.
 """
 
-from typing import Literal, Union
+from typing import Union
 
 from ..base.call_api import call_api
 from ..base.base_list import BaseList
@@ -15,7 +15,7 @@ def get_control_metadata(
     auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
 ):
     """
-    Get QFLOW-compatable controls Qualys checks a cloud provider for.
+    Get controls Qualys checks a cloud provider for.
 
     Args:
         auth (BasicAuth): The authentication object.
@@ -82,9 +82,9 @@ def get_control_metadata(
             or "service.type" in kwargs["filter"]
             or "control.type" in kwargs["filter"]
         ):
-            kwargs[
-                "filter"
-            ] = f"{kwargs['filter'].split(':')[0]}:{kwargs['filter'].split(':')[1].upper()}"
+            kwargs["filter"] = (
+                f"{kwargs['filter'].split(':')[0]}:{kwargs['filter'].split(':')[1].upper()}"
+            )
 
     while True:
         # Set the current page number and page size in kwargs
@@ -120,7 +120,7 @@ def get_control_metadata(
 
         # Break the loop if all pages are retrieved or the requested number of pages are retrieved
         if (
-            page_count != "all" and currentPage + 1 > page_count
+            page_count != "all" and (currentPage + 1 > page_count)
         ) or "warning" not in j.keys():
             break
 

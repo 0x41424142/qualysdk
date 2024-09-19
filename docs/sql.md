@@ -99,8 +99,31 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_cloud_agents``` | Cloud Agent | ```cloud_agent.list_agents()``` | ```cloud_agent_agents``` |
 | ```upload_totalcloud_aws_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_aws_connectors``` |
 | ```upload_totalcloud_azure_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_azure_connectors``` |
-| ```upload_totalcloud_gcp_connectors``` | TotalCloud | ```totalcloud.get_connectors()``` | ```totalcloud_gcp_connectors``` |
 | ```upload_totalcloud_control_metadata``` | TotalCloud | ```totalcloud.get_control_metadata()``` | ```totalcloud_control_metadata``` |
+| ```upload_totalcloud_aws_s3``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='s3')``` | ```totalcloud_aws_s3_inventory``` |
+| ```upload_totalcloud_aws_ec2``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='ec2')``` | ```totalcloud_aws_ec2_inventory``` |
+| ```upload_totalcloud_aws_acl``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='acl')``` | ```totalcloud_aws_acl_inventory``` |
+| ```upload_totalcloud_aws_rds``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='rds')``` | ```totalcloud_aws_rds_inventory``` |
+| ```upload_totalcloud_aws_iamuser``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='iamuser')``` | ```totalcloud_aws_iamuser_inventory``` |
+| ```upload_totalcloud_aws_vpc``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='vpc')``` | ```totalcloud_aws_vpc_inventory``` |
+| ```upload_totalcloud_aws_securitygroup``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='sg')``` | ```totalcloud_aws_securitygroup_inventory``` |
+| ```upload_totalcloud_aws_lambda``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='lambda')``` | ```totalcloud_aws_lambda_inventory``` |
+| ```upload_totalcloud_aws_subnet``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='subnet')``` | ```totalcloud_aws_subnet_inventory``` |
+| ```upload_totalcloud_aws_internetgateway``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='internet gateway')``` | ```totalcloud_aws_internetgateway_inventory``` |
+| ```upload_totalcloud_aws_loadbalancer``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='load balancer')``` | ```totalcloud_aws_loadbalancer_inventory``` |
+| ```upload_totalcloud_aws_routetable``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='route table')``` | ```totalcloud_aws_routetable_inventory``` |
+| ```upload_totalcloud_aws_ebsvolume``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='ebs volume')``` | ```totalcloud_aws_ebsvolume_inventory``` |
+| ```upload_totalcloud_aws_autoscalinggroup``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='auto scaling group')``` | ```totalcloud_aws_autoscalinggroup_inventory``` |
+| ```upload_totalcloud_aws_ekscluster``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='eks cluster')``` | ```totalcloud_aws_ekscluster_inventory``` |
+| ```upload_totalcloud_aws_eksnodegroup``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='eks nodegroup')``` | ```totalcloud_aws_eksnodegroup_inventory``` |
+| ```upload_totalcloud_aws_fargateprofile``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='eks fargate profile')``` | ```totalcloud_aws_fargateprofile_inventory``` |
+| ```upload_totalcloud_aws_vpcendpoint``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='vpc endpoint')``` | ```totalcloud_aws_vpcendpoint_inventory``` |
+| ```upload_totalcloud_aws_vpcendpointservice``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='vpc endpoint service')``` | ```totalcloud_aws_vpcendpointservice_inventory``` |
+| ```upload_totalcloud_aws_iamgroup``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='iam group')``` | ```totalcloud_aws_iamgroup_inventory``` |
+| ```upload_totalcloud_aws_iampolicy``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='iam policy')``` | ```totalcloud_aws_iampolicy_inventory``` |
+| ```upload_totalcloud_aws_iamrole``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='iam role')``` | ```totalcloud_aws_iamrole_inventory``` |
+| ```upload_totalcloud_aws_sagemakernotebook``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='sagemaker notebook')``` | ```totalcloud_aws_sagemakernotebook_inventory``` |
+| ```upload_totalcloud_aws_cloudfrontdistribution``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='cloudfront distribution')``` | ```totalcloud_aws_cloudfrontdistribution_inventory``` |
 
 ```py
 from qualysdk.sql import *

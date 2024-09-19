@@ -8,21 +8,21 @@ from ..base.call_api import call_api
 from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
-from .data_classes.Connectors import AWSConnector, GCPConnector, AzureConnector
+from .data_classes.Connectors import AWSConnector, AzureConnector
 
 
 def get_connectors(
     auth: BasicAuth,
-    provider: Literal["aws", "azure", "gcp"],
+    provider: Literal["aws", "azure"],
     page_count: Union[int, "all"] = "all",
     **kwargs,
-) -> BaseList[Union[AWSConnector, GCPConnector, AzureConnector]]:
+) -> BaseList[Union[AWSConnector, AzureConnector]]:
     """
     Get all Connector definitions from the Qualys CloudView API
 
     Params:
         auth (BasicAuth): The authentication object.
-        provider (Literal['aws', 'azure', 'gcp']): The cloud provider to get connectors for.
+        provider (Literal['aws', 'azure']): The cloud provider to get connectors for.
         page_count (int): The number of pages to return. If 'all', return all pages. Default is 'all'.
 
     ## Kwargs:
@@ -38,9 +38,9 @@ def get_connectors(
 
     # Check cloud provider is valid
     provider = provider.lower()
-    if provider not in ["aws", "gcp", "azure"]:
+    if provider not in ["aws", "azure"]:
         raise QualysAPIError(
-            f"Invalid provider {provider}. Valid providers: aws, gcp, azure"
+            f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
         )
 
     responses = BaseList()
@@ -60,9 +60,9 @@ def get_connectors(
             )
         # If using state, make sure value is UPPERCASE:
         if kwargs["filter"].split(":")[0] == "state":
-            kwargs[
-                "filter"
-            ] = f"{kwargs['filter'].split(':')[0]}:{kwargs['filter'].split(':')[1].upper()}"
+            kwargs["filter"] = (
+                f"{kwargs['filter'].split(':')[0]}:{kwargs['filter'].split(':')[1].upper()}"
+            )
 
     while True:
         # Set the current page number and page size in kwargs
@@ -91,8 +91,6 @@ def get_connectors(
             match provider:
                 case "aws":
                     responses.append(AWSConnector(**record))
-                case "gcp":
-                    responses.append(GCPConnector(**record))
                 case "azure":
                     responses.append(AzureConnector(**record))
 
@@ -113,14 +111,14 @@ def get_connectors(
 
 
 def get_connector_details(
-    auth: BasicAuth, provider: Literal["aws", "azure", "gcp"], connectorId: str
-) -> Union[AWSConnector, GCPConnector, AzureConnector]:
+    auth: BasicAuth, provider: Literal["aws", "azure"], connectorId: str
+) -> Union[AWSConnector, AzureConnector]:
     """
     Get details for a single connector by connectorId
 
     Params:
         auth (BasicAuth): The authentication object.
-        provider (Literal['aws', 'azure', 'gcp']): The cloud provider to get connectors for.
+        provider (Literal['aws', 'azure']): The cloud provider to get connectors for.
         connectorId (str): The connectorId of the connector to get details for.
 
     Returns:
@@ -129,9 +127,9 @@ def get_connector_details(
 
     # Check cloud provider is valid
     provider = provider.lower()
-    if provider not in ["aws", "gcp", "azure"]:
+    if provider not in ["aws", "azure"]:
         raise QualysAPIError(
-            f"Invalid provider {provider}. Valid providers: aws, gcp, azure"
+            f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
         )
 
     response = call_api(
@@ -154,10 +152,12 @@ def get_connector_details(
     match provider:
         case "aws":
             return AWSConnector(**j)
-        case "gcp":
-            return GCPConnector(**j)
         case "azure":
             return AzureConnector(**j)
+        case _:
+            raise QualysAPIError(
+                f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
+            )
 
 
 # BEGIN PLATFORM SPECIFIC FUNCTIONS:

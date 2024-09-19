@@ -11,5 +11,5 @@ from .get_connectors import (
 )
 
 from .get_metadata import get_control_metadata
-from .evaluations import get_control_stats_by_resouce
+from .evaluations import get_evaluation
 from .get_inventory import get_inventory

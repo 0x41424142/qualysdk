@@ -72,7 +72,17 @@ class Host:
     operatingSystem_version: Optional[str] = None
     operatingSystem_update: Optional[str] = None
     operatingSystem_architecture: Optional[str] = None
-    operatingSystem_lifecycle: Optional[str] = None
+    operatingSystem_lifecycle: Optional[None] = None
+    #OperatingSystem_lifecycle is parsed into the following fields:
+    operatingSystem_lifecycle_gaDate: Optional[datetime] = None
+    operatingSystem_lifecycle_eolDate: Optional[datetime] = None
+    operatingSystem_lifecycle_eosDate: Optional[datetime] = None
+    operatingSystem_lifecycle_stage: Optional[str] = None
+    operatingSystem_lifecycle_lifeCycleConfidence: Optional[str] = None
+    operatingSystem_lifecycle_eolSupportStage: Optional[str] = None
+    operatingSystem_lifecycle_eosSupportStage: Optional[str] = None
+    operatingSystem_lifecycle_detectionScore: Optional[int] = None
+    # End of lifecycle fields
     operatingSystem_productUrl: Optional[str] = None
     operatingSystem_productFamily: Optional[str] = None
     operatingSystem_release: Optional[str] = None
@@ -81,7 +91,15 @@ class Host:
     operatingSystem_cpeType: Optional[str] = None
     operatingSystem_installDate: Optional[datetime] = None
     hardwareVendor: Optional[str] = None
-    hardware: Optional[dict] = None
+    hardware: Optional[None] = None
+    # Hardware is parsed into the following fields:
+    hardware_introDate: Optional[datetime] = None
+    hardware_gaDate: Optional[datetime] = None
+    hardware_eosDate: Optional[datetime] = None
+    hardware_obsoleteDate: Optional[datetime] = None
+    hardware_stage: Optional[str] = None
+    hardware_lifeCycleConfidence: Optional[str] = None
+    # End of hardware fields
     hardware_fullName: Optional[str] = None
     hardware_category: Optional[str] = None
     hardware_category1: Optional[str] = None
@@ -268,9 +286,20 @@ class Host:
                 "lifecycle",
                 "productUrl",
                 "productFamily",
+                "stage",
+                "lifeCycleConfidence",
             ]:
                 if self.hardware.get(field):
                     setattr(self, f"hardware_{field}", self.hardware[field])
+
+            for field in ["introDate", "gaDate", "eosDate", "obsoleteDate"]:
+                if self.hardware.get(field):
+                    setattr(
+                        self,
+                        f"hardware_{field}",
+                        datetime.fromisoformat(self.hardware[field]),
+                    )
+
             # Set the hardware field to None
             setattr(self, "hardware", None)
 
@@ -567,17 +596,48 @@ class Host:
                 setattr(self, "missingSoftware", None)
 
         if self.easmTags:
-            # EXPERIMENTAL! I DO NOT HAVE ACCESS TO EASM!
-            data = handle_dict_or_list(self.tagList["tag"])
+            data = handle_dict_or_list(self.tagList)
             bl = BaseList()
-            bl.extend([tag.get("tagName") for tag in data])
-            setattr(self, "tagList", bl)
+            bl.extend([tag for tag in data])
+            setattr(self, "easmTags", bl)
 
         if self.customAttributes:
             print(self.customAttributes)
 
         if self.processor and not isinstance(self.processor, str):
             setattr(self, "processor", self.processor.get("description"))
+
+        if self.operatingSystem_lifecycle:
+            for field in [
+                "gaDate",
+                "eolDate",
+                "eosDate",
+            ]:
+                if self.operatingSystem_lifecycle.get(field):
+                    setattr(
+                        self,
+                        f"operatingSystem_lifecycle_{field}",
+                        datetime.fromisoformat(
+                            self.operatingSystem_lifecycle[field]
+                        ),
+                    )
+
+            for field in ["stage", "lifeCycleConfidence", "eolSupportStage", "eosSupportStage"]:
+                if self.operatingSystem_lifecycle.get(field):
+                    setattr(
+                        self,
+                        f"operatingSystem_lifecycle_{field}",
+                        self.operatingSystem_lifecycle[field],
+                    )
+
+            if self.operatingSystem_lifecycle.get("detectionScore"):
+                setattr(
+                    self,
+                    "operatingSystem_lifecycle_detectionScore",
+                    self.operatingSystem_lifecycle["detectionScore"],
+                )
+
+            setattr(self, "operatingSystem_lifecycle", None)
 
     def is_cloud_host(self) -> bool:
         """

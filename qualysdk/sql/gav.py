@@ -117,9 +117,24 @@ def upload_gav_hosts(
         "operatingSystem_architecture": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "operatingSystem_lifecycle": types.String().with_variant(
+        "operatingSystem_lifecycle_gaDate": types.DateTime(),
+        "operatingSystem_lifecycle_eolDate": types.DateTime(),
+        "operatingSystem_lifecycle_eosDate": types.DateTime(),
+        "operatingSystem_lifecycle_stage": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
+        "operatingSystem_lifecycle_lifeCycleConfidence": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_lifecycle_eolSupportStage": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "operatingSystem_lifecycle_eosSupportStage": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        
+        "operatingSystem_lifecycle_detectionScore": types.Integer(),
+
         "operatingSystem_productUrl": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -170,6 +185,16 @@ def upload_gav_hosts(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "hardware_productFamily": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_introDate": types.DateTime(),
+        "hardware_gaDate": types.DateTime(),
+        "hardware_eosDate": types.DateTime(),
+        "hardware_obsoleteDate": types.DateTime(),
+        "hardware_stage": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_lifeCycleConfidence": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "userAccountListData": types.String().with_variant(
@@ -398,6 +423,7 @@ def upload_gav_hosts(
             "container",
             "inventory",
             "activity",
+            "operatingSystem_lifecycle"
         ],
         inplace=True,
     )

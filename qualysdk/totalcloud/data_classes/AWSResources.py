@@ -123,7 +123,6 @@ class AWSBucket(BaseResource):
     bucketCreationDateStr: Union[str, datetime] = None
     s3GrantList: BaseList[str] = None
     ownerName: str = None
-    # name: str = None
     bucketPolicy: str = None
     bucketOwnerId: str = None
 
@@ -428,6 +427,7 @@ class AWSIAMUser(BaseResource):
                     continue
                 else:
                     setattr(self, f"userDto_{key}", value)
+            setattr(self, "userDto", None)
 
         if self.userGroups:
             data = self.userGroups
@@ -1763,9 +1763,7 @@ class AWSIAMRole(BaseResource):
     # end of PermissionsBoundary fields
     path: str = None
     classifications: BaseList[str] = None  # list of strs
-    AssumeRolePolicyDocument: None = (
-        None  # needs parsed with json.loads into below fields
-    )
+    AssumeRolePolicyDocument: None = None
     # AssumeRolePolicyDocument is parsed out to below fields
     AssumeRolePolicyDocument_Version: str = None
     AssumeRolePolicyDocument_Statement: BaseList[str] = None
@@ -1989,6 +1987,7 @@ class AWSCloudfrontDistribution(BaseResource):
     geoRestriction: None = None  # parse out to below fields
     geoRestriction_RestrictionType: str = None  # parsed out of georestriction dict
     geoRestriction_Quantity: int = None  # ^^^
+    # end of geoRestriction fields
     enabled: bool = None
     webAclId: str = None
     minimumProtocolVersion: str = None

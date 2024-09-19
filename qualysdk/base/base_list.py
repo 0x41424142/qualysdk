@@ -1,5 +1,5 @@
 """
-base_list.py - contains the BaseList class for the qualysdk package.
+Contains the BaseList class for the qualysdk package.
 
 The BaseList class is used to contain custom class objects in a list.
 """

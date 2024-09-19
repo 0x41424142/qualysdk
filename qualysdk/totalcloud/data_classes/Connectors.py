@@ -1,6 +1,6 @@
 """
 Contains the dataclasses for a Qualys AWS Connector 
-and subclasses for AWS/Azure/GCP connectors.
+and subclasses for AWS/Azure connectors.
 """
 
 from dataclasses import dataclass, asdict
@@ -16,7 +16,7 @@ class Connector:
     Connector - represents a Qualys Connector resource record.
 
     NOTE: You should not use this class directly. Use one of the
-    AWS/Azure/GCP-specific subclasses.
+    AWS/Azure-specific subclasses.
     """
 
     name: Optional[str] = None
@@ -148,18 +148,6 @@ class AzureConnector(Connector):
     applicationId: Optional[str] = None
     subscriptionName: Optional[str] = None
     directoryId: Optional[str] = None
-
-    def __post_init__(self):
-        super().__post_init__()
-
-
-@dataclass
-class GCPConnector(Connector):
-    """
-    GCP-specific subclass of the Connector dataclass
-    """
-
-    projectId: Optional[str] = None
 
     def __post_init__(self):
         super().__post_init__()

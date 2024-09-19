@@ -73,7 +73,7 @@ class Host:
     operatingSystem_update: Optional[str] = None
     operatingSystem_architecture: Optional[str] = None
     operatingSystem_lifecycle: Optional[None] = None
-    #OperatingSystem_lifecycle is parsed into the following fields:
+    # OperatingSystem_lifecycle is parsed into the following fields:
     operatingSystem_lifecycle_gaDate: Optional[datetime] = None
     operatingSystem_lifecycle_eolDate: Optional[datetime] = None
     operatingSystem_lifecycle_eosDate: Optional[datetime] = None
@@ -617,12 +617,15 @@ class Host:
                     setattr(
                         self,
                         f"operatingSystem_lifecycle_{field}",
-                        datetime.fromisoformat(
-                            self.operatingSystem_lifecycle[field]
-                        ),
+                        datetime.fromisoformat(self.operatingSystem_lifecycle[field]),
                     )
 
-            for field in ["stage", "lifeCycleConfidence", "eolSupportStage", "eosSupportStage"]:
+            for field in [
+                "stage",
+                "lifeCycleConfidence",
+                "eolSupportStage",
+                "eosSupportStage",
+            ]:
                 if self.operatingSystem_lifecycle.get(field):
                     setattr(
                         self,

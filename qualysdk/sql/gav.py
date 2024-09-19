@@ -132,9 +132,7 @@ def upload_gav_hosts(
         "operatingSystem_lifecycle_eosSupportStage": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        
         "operatingSystem_lifecycle_detectionScore": types.Integer(),
-
         "operatingSystem_productUrl": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -423,7 +421,7 @@ def upload_gav_hosts(
             "container",
             "inventory",
             "activity",
-            "operatingSystem_lifecycle"
+            "operatingSystem_lifecycle",
         ],
         inplace=True,
     )

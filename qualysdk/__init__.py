@@ -16,6 +16,7 @@ from . import vmdr
 
 from . import cloud_agent
 from . import totalcloud
+from . import cs
 
 from .sql import db_connect
 

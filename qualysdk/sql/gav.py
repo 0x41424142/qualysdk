@@ -1,5 +1,5 @@
 """
-gav.py - Contains the functions to upload supported GAV API pulls to SQL DBs.
+Contains the functions to upload supported GAV API pulls to SQL DBs.
 """
 
 from datetime import datetime

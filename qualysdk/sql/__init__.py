@@ -55,3 +55,4 @@ from .totalcloud import (
 )
 
 from .cloud_agent import upload_cloud_agents
+from .cs import upload_cs_containers

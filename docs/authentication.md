@@ -22,7 +22,7 @@ with BasicAuth(<username>,<password>, platform='qg1') as auth:
 
 Both authentication objects also support automatic rate limit respecting. The SDK will warn you as you get close to an API endpoint's limit and automatically sleep until the limit is lifted, continuing the call afterwards:
 
-```
+```text
 Warning: This endpoint will accept 3 more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0.
 Warning: This endpoint will accept 2 more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0.
 Warning: This endpoint will accept 1 more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0.

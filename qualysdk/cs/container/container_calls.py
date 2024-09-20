@@ -41,7 +41,6 @@ def list_containers(
     pages_pulled = 0
 
     while True:
-
         # Pull the data:
         response = call_api(auth, "containersecurity", "list_containers", params=kwargs)
 

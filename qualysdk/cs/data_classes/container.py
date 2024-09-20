@@ -10,6 +10,7 @@ from ipaddress import ip_address
 from ...base.base_list import BaseList
 from ...exceptions.Exceptions import *
 
+
 @dataclass
 class Container:
     """
@@ -33,7 +34,7 @@ class Container:
     ipv6: ip_address = None
     name: str = None
     host: dict = None
-    #host is parsed into below fields:
+    # host is parsed into below fields:
     host_sensorUuid: str = None
     host_hostname: str = None
     host_ipAddress: ip_address = None
@@ -65,13 +66,17 @@ class Container:
         """
 
         # Convert any datetime strings to datetime objects using fromtimestamp:
-        DT_FIELDS = ['created', 'updated', 'stateChanged', 'lastScanned']
+        DT_FIELDS = ["created", "updated", "stateChanged", "lastScanned"]
         for field in DT_FIELDS:
             if isinstance(getattr(self, field), str):
-                setattr(self, field, datetime.fromtimestamp(int(getattr(self, field))/1000))
+                setattr(
+                    self,
+                    field,
+                    datetime.fromtimestamp(int(getattr(self, field)) / 1000),
+                )
 
         # Convert any IP address strings to ip_address objects:
-        IP_FIELDS = ['ipv4', 'ipv6']
+        IP_FIELDS = ["ipv4", "ipv6"]
         for field in IP_FIELDS:
             if isinstance(getattr(self, field), str):
                 setattr(self, field, ip_address(getattr(self, field)))
@@ -92,25 +97,29 @@ class Container:
             pass
 
         if self.host:
-            host_dt_fields = ['lastUpdated']
+            host_dt_fields = ["lastUpdated"]
             for field in host_dt_fields:
                 if isinstance(self.host.get(field), str):
-                    setattr(self.host, f"host_{field}", datetime.fromtimestamp(int(self.host[field])/1000))
+                    setattr(
+                        self.host,
+                        f"host_{field}",
+                        datetime.fromtimestamp(int(self.host[field]) / 1000),
+                    )
 
-            if self.host.get('ipAddress'):
-                setattr(self, 'host_ipAddress', ip_address(self.host['ipAddress']))
+            if self.host.get("ipAddress"):
+                setattr(self, "host_ipAddress", ip_address(self.host["ipAddress"]))
 
-            host_fields = ['sensorUuid', 'hostname', 'uuid']
+            host_fields = ["sensorUuid", "hostname", "uuid"]
             for field in host_fields:
                 if self.host.get(field):
                     setattr(self, f"host_{field}", self.host[field])
 
             # Set the original host field to None:
-            setattr(self, 'host', None)
+            setattr(self, "host", None)
 
         # NOTE: I have yet to see any of the commented
         # out fields below. I will update this as needed.
-        '''
+        """
         if self.hostArchitecture:
             pass
 
@@ -146,7 +155,7 @@ class Container:
 
         if self.cluster:
             pass
-        '''
+        """
 
         if self.portMapping:
             data = self.portMapping
@@ -155,8 +164,7 @@ class Container:
                 data = [data]
             for item in data:
                 bl.append(item)
-            setattr(self, 'portMapping', bl)
-
+            setattr(self, "portMapping", bl)
 
     def has_drift(self) -> bool:
         """
@@ -166,7 +174,7 @@ class Container:
             bool: True if the container has drift, False otherwise.
         """
         return self.isDrift
-    
+
     def is_root(self) -> bool:
         """
         Check if the container is running as root.
@@ -175,7 +183,7 @@ class Container:
             bool: True if the container is running as root, False otherwise.
         """
         return self.isRoot
-    
+
     def __dict__(self) -> dict:
         """
         Return the object as a dictionary.
@@ -184,7 +192,7 @@ class Container:
             dict: The object as a dictionary.
         """
         return asdict(self)
-    
+
     def to_dict(self) -> dict:
         """
         Return the object as a dictionary.
@@ -193,7 +201,7 @@ class Container:
             dict: The object as a dictionary.
         """
         return asdict(self)
-    
+
     def keys(self) -> list[str]:
         """
         Return the keys of the object.
@@ -202,7 +210,7 @@ class Container:
             list[str]: The keys of the object.
         """
         return self.to_dict().keys()
-    
+
     def values(self) -> list:
         """
         Return the values of the object.
@@ -211,7 +219,7 @@ class Container:
             list: The values of the object.
         """
         return self.to_dict().values()
-    
+
     def items(self) -> list[tuple]:
         """
         Return the items of the object.

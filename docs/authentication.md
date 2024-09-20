@@ -20,7 +20,14 @@ with BasicAuth(<username>,<password>, platform='qg1') as auth:
 >>>qualysdk.exceptions.Exceptions.AuthTypeMismatchError: Auth type mismatch. Expected token but got basic.
  ```
 
-Both authentication objects also support automatic rate limit respecting. The SDK will warn you as you get close to an API endpoint's limit and automatically sleep until the limit is lifted, continuing the call afterwards (See below for an example with ```TokenAuth```)
+Both authentication objects also support automatic rate limit respecting. The SDK will warn you as you get close to an API endpoint's limit and automatically sleep until the limit is lifted, continuing the call afterwards:
+
+```
+Warning: This endpoint will accept 3 more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0.
+Warning: This endpoint will accept 2 more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0.
+Warning: This endpoint will accept 1 more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0.
+WARNING: You have reached the rate limit for this endpoint. qualysdk will automatically sleep for 51 seconds and try again at approximately 2024-01-01 19:59:49.500542.
+```
 
 ## ```TokenAuth```-specific Notes
 
@@ -29,11 +36,8 @@ Qualys configures JWT tokens to expire 4 hours after they are created. When you 
 ```py
 # Example of being rate limited and qualysdk refreshing the token automatically:
 >>>Warning: This endpoint will accept 2 more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0.
-
 ...
-
 >>>WARNING: You have reached the rate limit for this endpoint. qualysdk will automatically sleep for <int> seconds and try again at approximately <datetime stamp>.
-
 ...
 # After throttle is lifted:
 >>>Token is 4+ hours old. Refreshing token...

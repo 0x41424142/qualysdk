@@ -980,6 +980,6 @@ CALL_SCHEMA = frozendict(
                 "pagination": True,
                 "auth_type": "token",
             },
-        }
+        },
     }
 )

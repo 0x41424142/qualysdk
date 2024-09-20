@@ -9,6 +9,7 @@ nav:
   - VMDR: vmdr.md
   - TotalCloud: totalcloud.md
   - Cloud Agent: cloud_agent.md
+  - Container Security: containersecurity.md
   - SQL Uploads: sql.md
   - The Call Schema: callschema.md
 

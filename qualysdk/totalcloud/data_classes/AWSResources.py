@@ -9,6 +9,7 @@ from json import loads
 from urllib.parse import unquote
 
 from ...base.base_list import BaseList
+from .QID import QID
 
 
 @dataclass
@@ -955,7 +956,7 @@ class AWSEC2Instance(BaseResource):
     securityGroups: BaseList[str] = None  # list of dicts
     privateDnsName: str = None
     criticalityScore: int = None
-    vulnerabilities: BaseList[str] = None  # empty list?
+    vulnerabilities: BaseList[str] = None  # empty list unless resource details API is called
 
     def __post_init__(self):
         DICT_BL_FIELDS = ["networkInterfaceAddresses", "securityGroups"]
@@ -1017,12 +1018,13 @@ class AWSEC2Instance(BaseResource):
             if not isinstance(self.launchTime, datetime):
                 setattr(self, "launchTime", datetime.fromisoformat(self.launchTime))
 
-        if self.vulnerabilities:  # BUG IN QUALYS API, RETURNS EMPTY LIST
+        if self.vulnerabilities:
             data = self.vulnerabilities
+            if isinstance(data, dict):
+                data = [data]
             bl = BaseList()
             for vuln in data:
-                qid = vuln.get("qid", None)
-                bl.append(f"(qid: {qid}, severity: {severity})")
+                bl.append(QID(**vuln))
             setattr(self, "vulnerabilities", bl)
 
         super().__post_init__()

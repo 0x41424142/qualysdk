@@ -13,3 +13,4 @@ from .get_connectors import (
 from .get_metadata import get_control_metadata
 from .evaluations import get_evaluation
 from .get_inventory import get_inventory
+from .get_resource_details import get_resource_details

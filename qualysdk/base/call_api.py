@@ -161,6 +161,7 @@ def call_api(
                     cloudprovider=str(params.pop("cloudprovider", None)),
                     connectorid=str(params.pop("connectorid", None)),
                     controlid=str(params.pop("controlid", None)),
+                    resourceid=str(params.pop("resourceid", None)),
                 )
             elif payload and (
                 any(
@@ -170,6 +171,7 @@ def call_api(
                         "cloudprovider",
                         "connectorid",
                         "controlid",
+                        "resourceid",
                     ]
                 )
             ):
@@ -178,6 +180,7 @@ def call_api(
                     cloudprovider=str(payload.pop("cloudprovider", None)),
                     connectorid=str(payload.pop("connectorid", None)),
                     controlid=str(payload.pop("controlid", None)),
+                    resourceid=str(payload.pop("resourceid", None)),
                 )
             else:
                 raise ValueError(

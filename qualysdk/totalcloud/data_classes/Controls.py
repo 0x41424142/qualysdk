@@ -123,3 +123,60 @@ class Control:
         from_dict - create a Control object from a dictionary
         """
         return cls(**data)
+
+
+@dataclass
+class AccountLevelControl:
+    """
+    Represents control on the
+    cloud provider account level.
+    """
+
+    controlName: str = None
+    controlId: int = None
+    policyNames: BaseList[str] = None
+    criticality: str = None
+    service: str = None
+    result: str = None
+    passedResources: int = None
+    failedResources: int = None
+    passWithExceptionResources: int = None
+
+    def __post_init__(self):
+        if getattr(self, "controlId") and not isinstance(
+            getattr(self, "controlId"), int
+        ):
+            setattr(self, "controlId", int(getattr(self, "controlId")))
+
+        if self.policyNames:
+            data = self.policyNames
+            bl = BaseList()
+            if isinstance(data, dict):
+                data = [data]
+            for name in data:
+                bl.append(name)
+
+    def __int__(self):
+        return self.controlId
+
+    def __dict__(self):
+        return self.to_dict()
+
+    def to_dict(self):
+        return asdict(self)
+
+    def keys(self):
+        return self.to_dict().keys()
+
+    def values(self):
+        return self.to_dict().values()
+
+    def items(self):
+        return self.to_dict().items()
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """
+        from_dict - create an AccountLevelControl object from a dictionary
+        """
+        return cls(**data)

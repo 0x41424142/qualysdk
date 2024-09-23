@@ -17,13 +17,15 @@ You can use any of the endpoints currently supported:
 | ```get_aws_base_account``` | Get the base account for an AWS connector. |
 | ```get_control_metadata``` | Get details on controls Qualys checks for in your cloud provider. |
 | ```get_inventory``` | Get your inventory for a specific resource type on a specific cloud provider. |
-| ```get_control_stats_by_resource``` | Get statistics for a specific control on a specific resource ID |
+| ```get_resource_details``` | Get details for a specific instance of a resource type. |
+| ```get_evaluation``` | Get statistics for a specific control on a specific resource ID. |
+| ```get_account_evaluation``` | Get statistics for a list of controls for a specific cloud account. |
 
 
 
 ## List Connectors API
 
-```get_connectors``` returns a list of AWS/Azure connectors in the subscription.
+```get_connectors``` returns a list of AWS connectors in the subscription.
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
@@ -113,11 +115,11 @@ print(dumps(get_aws_base_account(auth), indent=2))
 | ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to pull | ❌ |
 | ```pageNo``` | ```int``` | Page number to start pulling from, or page to pull if ```page_count``` is set to 1 | ❌ |
 | ```pageSize``` | ```int``` | Number of records to pull per page | ❌ |
-| ```filter``` | ```str``` | Filter the results. See below for acceptable search tokens | ❌ |
+| ```filter``` | ```str``` | Filter the results. | ❌ |
 
 #### ```filter``` Search Tokens
 
->>**Head's Up!:** When using ```resource.type``` as the filter, you must use the API-expected name. See **```resourceType``` Values** table under ```get_inventory``` for expected names.
+>>**Head's Up!:** When using ```resource.type``` as the filter, you must use the API-expected name. See **```resourceType``` Values** table for expected names.
 
 |Token| Description |
 |--|--|
@@ -176,18 +178,153 @@ if aws_account_ids:
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get inventory for | ✅ |
-| ```resourceType``` | ```str``` | The resource type to get inventory for. See below for acceptable values by cloud provider. | ✅ |
+| ```resourceType``` | ```str``` | The resource type to get inventory for. See **resourceType Values**. | ✅ |
 | ```page_count``` | ```Union[int>=1, 'all'] = 'all'``` | Number of pages to pull | ❌ |
 | ```thread_count``` | ```int >=1``` | Number of threads to use for pulling data | ❌ |
 | ```sort``` | ```Literal['lastSyncedOn:asc', 'lastSyncedOn:desc']``` | Sort last synced date in ascending or descending order | ❌ |
 | ```updated``` | ```str``` | Filter by updated date | ❌ |
 | ```filter``` | ```str``` | Filter the results using TotalCloud QQL | ❌ |
 
-### ```resourceType``` Values
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_inventory
+
+# Pull pull all EC2s with vulnerabilities
+# using 8 threads:
+vulnerable_ec2s = get_inventory(
+    auth,
+    provider='aws',
+    resourceType='ec2',
+    filter="vulnerability.typeDetected in (Confirmed, Potential) and NOT vulnerability.status:FIXED"
+)
+>>>[AWSEC2Instance(instanceId="i-1234567890abcdef0", ...), ...]
+```
+
+## Get Resource Details API
+
+```get_resource_details``` returns details for a specific instance of a resource type, identified by the resource's UUID (can be accessed via the ```uuid``` attribute on an object).
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get resource details for | ✅ |
+| ```resourceType``` | ```str``` | The resource type to get details for. See **resourceType Values** for acceptable values by cloud provider. | ✅ |
+| ```resourceId``` | ```str``` | The resource UUID to get details for | ✅ |
+| ```page_count``` | ```Union[int>=1, 'all'] = 'all'``` | Number of pages to pull | ❌ |
+| ```pageSize``` | ```int``` | Number of records to pull per page | ❌ |
+| ```pageNo``` | ```int``` | Page number to start pulling from, or page to pull if ```page_count``` is set to 1 | ❌ |
+| ```filter``` | ```str``` | Filter the results. See **resouceType Values** for acceptable search tokens | ❌ |
+| ```sort``` | ```Literal['lastSyncedOn:asc', 'lastSyncedOn:desc']``` | Sort last synced date in ascending or descending order | ❌ |
+| ```updated``` | ```str``` | Filter by updated date | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_resource_details, get_inventory
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+# Get some EC2s:
+ec2s = totalcloud.get_inventory(
+    auth, 
+    provider="aws", 
+    resourceType="ec2", 
+    page_count=1
+)
+# Get details for an EC2 instance:
+get_resource_details(
+    auth,
+    provider='aws',
+    resourceType='ec2',
+    resourceId=ec2s[0].uuid
+)
+>>>AWSEC2Instance(instanceId="i-1234567890abcdef0", ...)
+```
+
+
+## Get Evaluation Results for a Control ID on a Single Resource
+
+
+```get_evaluation``` returns datetime statistics for a specific control on a specific resource ID. You can see when the control was first and last checked on the resource, as well as if the control has been fixed, re-opened, or is still open.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get control statistics for | ✅ |
+| ```controlId``` | ```Union[str, int]``` | The control ID to get statistics for | ✅ |
+| ```connectorId``` | ```str``` | The connector ID to get statistics for | ✅ |
+| ```resourceId``` | ```str``` | The resource ID to get statistics for | ✅ |
+
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_evaluation
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+# Get statistics for control 123 on EC2 instance
+# i-1234567890abcdef0:
+get_evaluation(
+    auth,
+    provider='aws',
+    controlId=123,
+    connectorId='12345678-1234-1234-1234-123456789012', #ec2.connectorUuid
+    resourceId='i-1234567890abcdef0' #ec2.resourceId
+)
+>>>Evaluation(
+    firstEvaluated=datetime.datetime(2024, 5, 10),
+    lastEvaluated=datetime.datetime(2024, 5, 20),
+    dateReopened=None,
+    dateFixed=datetime.datetime(2024, 5, 15),
+)
+```
+
+## Get Control Evaluation List for a Cloud Account
+
+```get_account_evaluation``` returns statistics for a list of controls for a specific cloud account.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```provider``` | ```Literal['aws', 'azure']``` | Cloud Provider | ✅ |
+| ```accountId``` | ```str``` | The cloud account/subscription ID to get statistics for | ✅ |
+| ```filter``` | ```str``` | Filter results by Qualys Totalcloud ["Posture" QQL](https://docs.qualys.com/en/cloudview/latest/search_tips/search_ui_monitor.htm) | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_account_evaluation, get_connectors
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+# Get some accounts:
+aws_connectors = get_connectors(
+    auth, 
+    provider='aws', 
+    page_count=1
+)
+# Get evaluations for all controls for the account:
+account_evals = get_account_evaluation(
+    auth,
+    provider='aws',
+    accountId=aws_connectors[0].awsAccountId
+)
+# Check out the first evaluation:
+account_evals[0]
+>>>AccountLevelControl(
+    controlName='Ensure that custom IAM password policy requires minimum length of 14 or greater', 
+    controlId=11, 
+    policyNames=['CIS Amazon Web Services Foundations Benchmark'], 
+    criticality='HIGH', 
+    service='IAM', 
+    result='PASS', 
+    passedResources=10, 
+    failedResources=0, 
+    passWithExceptionResources=0
+)
+```
+
+## ```resourceType``` Values
 
 ```resourceType``` is case-insensitive. Values are translated to their expected API names. You can also just use the expected names directly, for example when feeding an API call based on data from a prior call using an object's ```resourceType``` value.
 
-#### AWS ```resourceType``` Values
+### AWS ```resourceType``` Values
 
 | Provider | Resource Type/Final API-Expected Name | Acceptable ```resourceType``` Values |
 |--|--|--|
@@ -234,51 +371,3 @@ if aws_account_ids:
 | AZURE | MARIADB | ```"MARIADB"```, ```"MARIA_DB"```, ```"MARIA"``` |
 | AZURE | COSMODB | ```"COSMOS DB"```, ```"COSMOSDB"```, ```"COSMODB"``` |
 | AZURE | NAT_GATEWAYS | ```"NAT GATEWAYS"```, ```"NAT"``` |
-
-```py
-from qualysdk.auth import BasicAuth
-from qualysdk.totalcloud import get_inventory
-
-# Pull pull all EC2s with vulnerabilities
-# using 8 threads:
-vulnerable_ec2s = get_inventory(
-    auth,
-    provider='aws',
-    resourceType='ec2',
-    filter="vulnerability.typeDetected in (Confirmed, Potential) and NOT vulnerability.status:FIXED"
-)
->>>[AWSEC2Instance(instanceId="i-1234567890abcdef0", ...), ...]
-```
-
-## Get Evaluation Results for a Control ID on a Single Resource
-
-```get_evaluation``` returns datetime statistics for a specific control on a specific resource ID. You can see when the control was first and last checked on the resource, as well as if the control has been fixed, re-opened, or is still open.
-
-|Parameter| Possible Values |Description| Required|
-|--|--|--|--|
-|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
-| ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get control statistics for | ✅ |
-| ```controlId``` | ```Union[str, int]``` | The control ID to get statistics for | ✅ |
-| ```connectorId``` | ```str``` | The connector ID to get statistics for | ✅ |
-| ```resourceId``` | ```str``` | The resource ID to get statistics for | ✅ |
-
-```py
-from qualysdk.auth import BasicAuth
-from qualysdk.totalcloud import get_evaluation
-
-auth = BasicAuth(<username>, <password>, platform='qg1')
-# Get statistics for control 123 on EC2 instance
-# i-1234567890abcdef0:
-get_evaluation(
-    auth,
-    provider='aws',
-    controlId=123,
-    connectorId='12345678-1234-1234-1234-123456789012', #ec2.connectorUuid
-    resourceId='i-1234567890abcdef0' #ec2.resourceId
-)
->>>Evaluation(
-    firstEvaluated=datetime.datetime(2024, 5, 10),
-    lastEvaluated=datetime.datetime(2024, 5, 20),
-    dateReopened=None,
-    dateFixed=datetime.datetime(2024, 5, 15),
-)

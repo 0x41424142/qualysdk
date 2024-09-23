@@ -37,7 +37,6 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 
 ## Current Supported Modules 
 
->**Head's Up!:** SQL DB uploading is currently in development! 🎉
 
 |Module| Status |
 |--|--|
@@ -51,6 +50,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |CS (Container Security) | In Progress. See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
 |ADMIN (Administration) | Not Started |
 |Tagging| Not Started |
+| SQL Data Uploads | ✅ Supported for most calls in qualysdk |
 
 
 # Documentation/Get Started

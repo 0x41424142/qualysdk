@@ -30,7 +30,6 @@ class QID:
     ignored: bool = None
 
     def __post_init__(self):
-
         DT_FIELDS = ["lastFound", "firstFound"]
         for field in DT_FIELDS:
             if isinstance(getattr(self, field), str):

@@ -11,13 +11,14 @@ from ..exceptions.Exceptions import *
 from .data_classes.AWSResources import *
 from .data_classes.resource_mappings import *
 
+
 def get_resource_details(
-        auth: BasicAuth,
-        provider: Literal["aws", "azure"],
-        resourceType: str,
-        resourceId: str,
-        page_count: Union[int, "all"] = "all",
-        **kwargs
+    auth: BasicAuth,
+    provider: Literal["aws", "azure"],
+    resourceType: str,
+    resourceId: str,
+    page_count: Union[int, "all"] = "all",
+    **kwargs,
 ) -> object:
     """
     Get details of a single resource by its ID
@@ -47,7 +48,7 @@ def get_resource_details(
         raise QualysAPIError(
             f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
         )
-    
+
     resourceType = resourceType.upper()
 
     # Handle common names
@@ -56,7 +57,7 @@ def get_resource_details(
         if resourceType in value:
             resourceType = key
             break
-    
+
     if resourceType not in VALID_RESOURCETYPES[provider]:
         raise ValueError(
             f"Invalid resource type for provider {provider}. Valid resource types are: {VALID_RESOURCETYPES[provider]}"

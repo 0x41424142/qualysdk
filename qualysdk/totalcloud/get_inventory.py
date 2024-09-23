@@ -100,6 +100,7 @@ def fetch_page(
             with lock:
                 termination_flag = True
 
+
 def worker(
     auth,
     provider,

@@ -10,6 +10,7 @@ from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.Evaluation import Evaluation
+from .data_classes.Controls import AccountLevelControl
 
 
 def get_evaluation(
@@ -55,3 +56,60 @@ def get_evaluation(
         raise QualysAPIError("No data found for the control on the resource.")
 
     return Evaluation.from_dict(response.json())
+
+
+def get_account_evaluation(
+    auth: BasicAuth,
+    provider: Literal["aws", "azure"],
+    accountId: Union[int, str],
+    **kwargs,
+) -> BaseList[Evaluation]:
+    """
+    Returns a list of control evaluations for a cloud account.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        provider (str): The cloud provider to get the control stats from.
+        accountId (str): The account/subscription ID to get stats for.
+
+    ## Kwargs:
+        filter (Optional[str]): Filter returned control evaluations based on Qualys ["Posture"](https://docs.qualys.com/en/cloudview/latest/search_tips/search_ui_monitor.htm) QQL.
+
+    Returns:
+        BaseList[Evaluation]: List of control evaluations for the account.
+    """
+
+    # Check if the provider is valid
+    provider = provider.lower()
+    if provider not in ["aws", "azure"]:
+        raise ValueError("Invalid provider. Must be 'aws' or 'azure'.")
+
+    params = {"cloudprovider": provider, "placeholder": accountId}
+
+    if kwargs and kwargs.get("filter"):
+        params["filter"] = kwargs.get("filter")
+
+    responses = BaseList()
+
+    # Make the API call
+    response = call_api(
+        auth=auth, module="cloudview", endpoint="get_account_evaluation", params=params
+    )
+
+    j = response.json()
+
+    if not j:
+        raise QualysAPIError("No data found for the requested account ID.")
+
+    if j.get("empty"):
+        print(f"No data found for account {accountId}")
+        return responses
+
+    # Normalize to list
+    if isinstance(j["content"], dict):
+        j["content"] = [j["content"]]
+
+    for resp in j["content"]:
+        responses.append(AccountLevelControl.from_dict(resp))
+
+    return responses

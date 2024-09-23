@@ -18,7 +18,8 @@ You can use any of the endpoints currently supported:
 | ```get_control_metadata``` | Get details on controls Qualys checks for in your cloud provider. |
 | ```get_inventory``` | Get your inventory for a specific resource type on a specific cloud provider. |
 | ```get_resource_details``` | Get details for a specific instance of a resource type. |
-| ```get_control_stats_by_resource``` | Get statistics for a specific control on a specific resource ID |
+| ```get_evaluation``` | Get statistics for a specific control on a specific resource ID. |
+| ```get_account_evaluation``` | Get statistics for a list of controls for a specific cloud account. |
 
 
 
@@ -273,6 +274,49 @@ get_evaluation(
     lastEvaluated=datetime.datetime(2024, 5, 20),
     dateReopened=None,
     dateFixed=datetime.datetime(2024, 5, 15),
+)
+```
+
+## Get Control Evaluation List for a Cloud Account
+
+```get_account_evaluation``` returns statistics for a list of controls for a specific cloud account.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```provider``` | ```Literal['aws', 'azure']``` | Cloud Provider | ✅ |
+| ```accountId``` | ```str``` | The cloud account/subscription ID to get statistics for | ✅ |
+| ```filter``` | ```str``` | Filter results by Qualys Totalcloud ["Posture" QQL](https://docs.qualys.com/en/cloudview/latest/search_tips/search_ui_monitor.htm) | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_account_evaluation, get_connectors
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+# Get some accounts:
+aws_connectors = get_connectors(
+    auth, 
+    provider='aws', 
+    page_count=1
+)
+# Get evaluations for all controls for the account:
+account_evals = get_account_evaluation(
+    auth,
+    provider='aws',
+    accountId=aws_connectors[0].awsAccountId
+)
+# Check out the first evaluation:
+account_evals[0]
+>>>AccountLevelControl(
+    controlName='Ensure that custom IAM password policy requires minimum length of 14 or greater', 
+    controlId=11, 
+    policyNames=['CIS Amazon Web Services Foundations Benchmark'], 
+    criticality='HIGH', 
+    service='IAM', 
+    result='PASS', 
+    passedResources=10, 
+    failedResources=0, 
+    passWithExceptionResources=0
 )
 ```
 

@@ -6,6 +6,7 @@ from dataclasses import dataclass, asdict
 from typing import Union
 from datetime import datetime
 
+
 @dataclass
 class QID:
     """
@@ -40,22 +41,22 @@ class QID:
 
     def __int__(self):
         return self.qid
-    
+
     def __dict__(self):
         return asdict(self)
-    
+
     def to_dict(self):
         return asdict(self)
-    
+
     def keys(self):
         return asdict(self).keys()
-    
+
     def values(self):
         return asdict(self).values()
-    
+
     def items(self):
         return asdict(self).items()
-    
+
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)

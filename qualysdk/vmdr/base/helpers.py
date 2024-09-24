@@ -159,9 +159,22 @@ def create_id_queue(
 
     singular_chunk = True if id_queue.qsize() == 1 else False
 
+    # If there is only 1 chunk, split it up where each new
+    # chunk only contains 1 ID. This is to ensure that each
+    # thread has something to pull.
+    if singular_chunk:
+        with LOCK:
+            print(
+                "Only 1 chunk of IDs. Splitting it up into chunks of 1 ID each to ensure threads have work to do."
+            )
+        new_queue = Queue()
+        for i in range(0, len(id_list)):
+            new_queue.put(id_list[i : i + 1])
+        id_queue = new_queue
+
     with LOCK:
         print(
-            f"Queue created with {id_queue.qsize()} {'chunks' if not singular_chunk else 'chunk'} of ~{chunk_size} IDs{' each.' if not singular_chunk else '.'}"
+            f"Queue created with {id_queue.qsize()} chunks of ~{chunk_size} IDs each."
         )
 
     return id_queue
@@ -397,7 +410,10 @@ def thread_worker(
                 print(f"{current_thread().name} - No IDs to pull. Terminating thread.")
             break
 
-        kwargs["ids"] = f"{ids[0]}-{ids[-1]}"
+        if len(ids) != 1:
+            kwargs["ids"] = f"{ids[0]}-{ids[-1]}"
+        else:
+            kwargs["ids"] = ids[0]
 
         if endpoint_called == "get_hld":
             responses.extend(hld_backend(auth, page_count=page_count, **kwargs))

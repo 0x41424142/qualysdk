@@ -59,6 +59,9 @@ class Container:
     isRoot: bool = None
     cluster: str = None
     users: list[dict] = None
+    lastComplianceScanned: Union[str, datetime] = None
+    cloudProvider: str = None
+    exceptions: BaseList[str] = None
 
     def __post_init__(self):
         """
@@ -66,7 +69,13 @@ class Container:
         """
 
         # Convert any datetime strings to datetime objects using fromtimestamp:
-        DT_FIELDS = ["created", "updated", "stateChanged", "lastScanned"]
+        DT_FIELDS = [
+            "created",
+            "updated",
+            "stateChanged",
+            "lastScanned",
+            "lastComplianceScanned",
+        ]
         for field in DT_FIELDS:
             if isinstance(getattr(self, field), str):
                 setattr(
@@ -82,19 +91,19 @@ class Container:
                 setattr(self, field, ip_address(getattr(self, field)))
 
         if self.label:
-            pass
+            print(
+                "The label attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.path:
-            pass
+            print(
+                "The path attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.macAddress:
-            pass
-
-        if self.ipv4:
-            pass
-
-        if self.ipv6:
-            pass
+            print(
+                "The macAddress attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.host:
             host_dt_fields = ["lastUpdated"]
@@ -119,43 +128,65 @@ class Container:
 
         # NOTE: I have yet to see any of the commented
         # out fields below. I will update this as needed.
-        """
         if self.hostArchitecture:
-            pass
+            print(
+                "The hostArchitecture attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.services:
-            pass
+            print(
+                "The services attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.users:
-            pass
+            print(
+                "The users attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.operatingSystem:
-            pass
+            print(
+                "The operatingSystem attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.lastScanned:
-            pass
+            print(
+                "The lastScanned attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.environment:
-            pass
+            print(
+                "The environment attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.arguments:
-            pass
+            print(
+                "The arguments attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.drift:
-            pass
+            print(
+                "The drift attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.vulnerabilities:
-            pass
+            print(
+                "The vulnerabilities attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.softwares:
-            pass
+            print(
+                "The softwares attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.isRoot:
-            pass
+            print(
+                "The isRoot attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.cluster:
-            pass
-        """
+            print(
+                "The cluster attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
         if self.portMapping:
             data = self.portMapping
@@ -165,6 +196,16 @@ class Container:
             for item in data:
                 bl.append(item)
             setattr(self, "portMapping", bl)
+
+        if self.cloudProvider:
+            print(
+                "The cloudProvider attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
+
+        if self.exceptions:
+            print(
+                "The exceptions attribute does not have a defined structure. Please submit a bug report if you see this message, or a PR with the attribute parsed out."
+            )
 
     def has_drift(self) -> bool:
         """
@@ -228,3 +269,7 @@ class Container:
             list[tuple]: The items of the object.
         """
         return self.to_dict().items()
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(**data)

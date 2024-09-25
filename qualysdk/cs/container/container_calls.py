@@ -84,3 +84,29 @@ def list_containers(
             kwargs["paginationQuery"] = pagination_query
 
     return results
+
+
+def get_container_details(auth: TokenAuth, containerSha: str) -> Container:
+    """
+    Get details of a single container instance.
+
+    Args:
+        auth (TokenAuth): The authentication token.
+        containerSha (str): The SHA hash of the container.
+
+    Returns:
+        Container: Container object with all attributes populated.
+    """
+
+    response = call_api(
+        auth,
+        module="containersecurity",
+        endpoint="get_container_details",
+        params={"placeholder": containerSha},
+    )
+
+    # Check for valid response:
+    if response.status_code != 200:
+        raise QualysAPIError(response.json())
+
+    return Container.from_dict(response.json())

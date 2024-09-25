@@ -913,8 +913,8 @@ class AWSEC2Instance(BaseResource):
     availabilityZone: str = None
     instanceId: str = None
     instanceState: str = None
-    networkInterfaceAddresses: BaseList[str] = None  # list of dicts
-    vulnerabilityStats: None = None  # parse out to below fields
+    networkInterfaceAddresses: BaseList[str] = None
+    vulnerabilityStats: None = None
     # vulnerabilityStats is parsed out to below fields
     vulnerabilityStats_severity_1: int = 0
     vulnerabilityStats_severity_2: int = 0
@@ -928,7 +928,7 @@ class AWSEC2Instance(BaseResource):
     # end of vulnerabilityStats fields
     vpcId: str = None
     events: BaseList[str] = None  # ???
-    iamInstanceProfileRoleDetails: None = None  # parse out to below fields
+    iamInstanceProfileRoleDetails: None = None
     # iamInstanceProfileRoleDetails is parsed out to below fields
     iamInstanceProfileRoleDetails_profileName: str = None
     iamInstanceProfileRoleDetails_profileArn: str = None
@@ -941,7 +941,7 @@ class AWSEC2Instance(BaseResource):
     ipAddress: str = None
     publicDnsName: str = None
     instanceStatus: str = None
-    iamInstanceProfile: None = None  # parse out to below fields
+    iamInstanceProfile: None = None
     # iamInstanceProfile is parsed out to below fields
     iamInstanceProfile_name: str = None
     iamInstanceProfile_id: str = None
@@ -949,11 +949,11 @@ class AWSEC2Instance(BaseResource):
     # end of iamInstanceProfile fields
     privateIpAddress: str = None
     launchTime: Union[str, datetime] = None
-    classifications: BaseList[str] = None  # ???
+    classifications: BaseList[str] = None
     spotInstanceRequestId: str = None
     elasticIpAddress: str = None
     secondaryPrivateIpAddress: str = None
-    securityGroups: BaseList[str] = None  # list of dicts
+    securityGroups: BaseList[str] = None
     privateDnsName: str = None
     criticalityScore: int = None
     vulnerabilities: BaseList[

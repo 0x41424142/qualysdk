@@ -163,10 +163,6 @@ def create_id_queue(
     # chunk only contains 1 ID. This is to ensure that each
     # thread has something to pull.
     if singular_chunk:
-        with LOCK:
-            print(
-                "Only 1 chunk of IDs. Splitting it up into chunks of 1 ID each to ensure threads have work to do."
-            )
         new_queue = Queue()
         for i in range(0, len(id_list)):
             new_queue.put(id_list[i : i + 1])
@@ -572,8 +568,10 @@ def get_host_list_backend(
 
         # If details is none, ID_SET will be returned instead of HOST_LIST
         if "ID_SET" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:
-            # check if ID_SET is a list of dicts or a single dict:
-            if isinstance(xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"], dict):
+            # check if ID_SET is a list of dicts/str or a single dict/str:
+            if isinstance(
+                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"], (dict, str)
+            ):
                 # if it's a single dict, convert it to a list of dicts:
                 xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"] = [
                     xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"]

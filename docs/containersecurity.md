@@ -13,6 +13,7 @@ You can use any of the endpoints currently supported:
 |API Call| Description |
 |--|--|
 | ```list_containers``` | Lists all containers in the subscription that match given kwargs. |
+| ```get_container_details``` | Returns detailed information about a single container instance. |
 
 
 ## List Containers API
@@ -35,4 +36,24 @@ auth = TokenAuth(<username>, <password>, platform='qg1')
 # Get 4 pages of running containers:
 containers = list_containers(auth, page_count=4, filter='state:`RUNNING`')
 >>>[Container(imageId=12345, ...), ...]
+```
+
+## Get Container Details API
+
+```get_container_details``` returns detailed information about a single container instance, specified by the ```containerSha``` argument. For containers pulled with qualysdk, the ```containerSha``` is accessible via the ```Container.sha``` dataclass attribute.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```containerSha``` | ```str``` | Sha hash of a container | ✅ |
+
+```py
+from qualysdk import TokenAuth
+from qualysdk.cs import get_container_details, list_containers
+
+auth = TokenAuth(<username>, <password>)
+# Get a BaseList of containers:
+containers = list_containers(auth, page_count=1)
+# Get the details of the first container:
+details = get_container_details(auth, containers[0].sha)
 ```

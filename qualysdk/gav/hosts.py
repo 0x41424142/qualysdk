@@ -12,24 +12,19 @@ from ..base.base_list import BaseList
 
 SOFTWARE_SCHEMA = frozendict(
     {
-        'software': {
-            'publisher':'',
-            'productName':'',
-            'version':'',
-            'softwareType':'',
-            'isIgnored': False,
-            'category':'',
-            'ignoredReason':'',
-            'lastUpdated':'',
-            'installPath':'',
-            'lifecycle':[
-                'eolDate',
-                'eosDate',
-                'stage',
-                'lifeCycleConfidence'
-            ],
-            'cpeId':'',
-            'cpe':''
+        "software": {
+            "publisher": "",
+            "productName": "",
+            "version": "",
+            "softwareType": "",
+            "isIgnored": False,
+            "category": "",
+            "ignoredReason": "",
+            "lastUpdated": "",
+            "installPath": "",
+            "lifecycle": ["eolDate", "eosDate", "stage", "lifeCycleConfidence"],
+            "cpeId": "",
+            "cpe": "",
         }
     }
 )
@@ -408,11 +403,11 @@ class Host:
             data = handle_dict_or_list(self.softwareListData["software"])
             bl = BaseList()
             for sw in data:
-#                bl.append(
-#                    f"{sw.get('fullName')} ({sw.get('category')}) ({sw.get('ignoredReason')})"
-#                )
+                #                bl.append(
+                #                    f"{sw.get('fullName')} ({sw.get('category')}) ({sw.get('ignoredReason')})"
+                #                )
                 sw_info = {}
-                for k, v in SOFTWARE_SCHEMA['software'].items():
+                for k, v in SOFTWARE_SCHEMA["software"].items():
                     # If the key doesn't exist, don't add.
                     # This helps with SQL inserts by not adding
                     # null values.

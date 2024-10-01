@@ -49,7 +49,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |Cloud Agent | In Progress. See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloudagent/) for supported calls |
 |CS (Container Security) | In Progress. See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
 |ADMIN (Administration) | Not Started |
-|Tagging| Not Started |
+|Asset Management & Tagging| Not Started |
 | SQL Data Uploads | ✅ Supported for most calls in qualysdk |
 
 

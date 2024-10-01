@@ -23,7 +23,8 @@ def query_assets(
         auth (TokenAuth): The authentication object.
         page_count (int): The number of pages to get. Defaults to 'all'.
 
-    :Kwargs:
+    ## Kwargs:
+    
         filter (str): The Qualys QQL filter to use.
         excludeFields (str): The fields to exclude.
         includeFields (str): The fields to include.

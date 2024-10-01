@@ -6,7 +6,33 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from typing import List, Optional, Union
 
+from frozendict import frozendict
+
 from ..base.base_list import BaseList
+
+SOFTWARE_SCHEMA = frozendict(
+    {
+        'software': {
+            'publisher':'',
+            'productName':'',
+            'version':'',
+            'softwareType':'',
+            'isIgnored': False,
+            'category':'',
+            'ignoredReason':'',
+            'lastUpdated':'',
+            'installPath':'',
+            'lifecycle':[
+                'eolDate',
+                'eosDate',
+                'stage',
+                'lifeCycleConfidence'
+            ],
+            'cpeId':'',
+            'cpe':''
+        }
+    }
+)
 
 
 def handle_dict_or_list(data: Union[dict, list[dict]]) -> list[dict]:
@@ -114,7 +140,7 @@ class Host:
     openPortListData: Optional[Union[list[dict], BaseList[str]]] = None
     volumeListData: Optional[Union[list[dict], BaseList[str]]] = None
     networkInterfaceListData: Optional[dict] = None
-    softwareListData: Optional[Union[list[dict], BaseList[str]]] = None
+    softwareListData: Optional[Union[list[dict], BaseList[dict]]] = None
     softwareComponent: Optional[str] = None
     provider: Optional[str] = None
     cloudProvider: Optional[dict] = None
@@ -382,9 +408,22 @@ class Host:
             data = handle_dict_or_list(self.softwareListData["software"])
             bl = BaseList()
             for sw in data:
-                bl.append(
-                    f"{sw.get('fullName')} ({sw.get('category')}) ({sw.get('ignoredReason')})"
-                )
+#                bl.append(
+#                    f"{sw.get('fullName')} ({sw.get('category')}) ({sw.get('ignoredReason')})"
+#                )
+                sw_info = {}
+                for k, v in SOFTWARE_SCHEMA['software'].items():
+                    # If the key doesn't exist, don't add.
+                    # This helps with SQL inserts by not adding
+                    # null values.
+                    if sw.get(k):
+                        if isinstance(v, list):
+                            for sub_k in v:
+                                if sw[k].get(sub_k):
+                                    sw_info[sub_k] = sw[k][sub_k]
+                        else:
+                            sw_info[k] = sw[k]
+                bl.append(sw_info)
             setattr(self, "softwareListData", bl)
 
         if self.softwareComponent:

@@ -11,12 +11,13 @@ from sqlalchemy.dialects.mysql import TEXT
 from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
 
+
 # For the softwareListData column, we need to parse build a string containing
 # certain fields from the softwareListData object:
 def parse_software_list_data(software_list_data):
     bl = BaseList()
     for sw in software_list_data:
-        if sw.get('productName') not in [None, "Unknown"]:
+        if sw.get("productName") not in [None, "Unknown"]:
             bl.append(
                 f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')})"
             )
@@ -25,6 +26,7 @@ def parse_software_list_data(software_list_data):
                 f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')}) ({sw.get('ignoredReason')})"
             )
     return bl
+
 
 def upload_gav_hosts(
     hosts: BaseList,
@@ -420,7 +422,7 @@ def upload_gav_hosts(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
     }
-    
+
     # Prepare the softwareListData column:
     for host in hosts:
         host.softwareListData = parse_software_list_data(host.softwareListData)

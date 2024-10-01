@@ -24,7 +24,7 @@ def query_assets(
         page_count (int): The number of pages to get. Defaults to 'all'.
 
     ## Kwargs:
-    
+
         filter (str): The Qualys QQL filter to use.
         excludeFields (str): The fields to exclude.
         includeFields (str): The fields to include.

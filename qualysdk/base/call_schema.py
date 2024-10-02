@@ -1036,5 +1036,32 @@ CALL_SCHEMA = frozendict(
                 "auth_type": "token",
             },
         },
+        "was": {
+            "url_type": "api",
+            "count_webapps": {
+                "endpoint": "/qps/rest/3.0/count/was/webapp",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": [                    
+                    "id",
+                    "name",
+                    "url",
+                    "tags.name",
+                    "tags.id",
+                    "createdDate",
+                    "updatedDate",
+                    "isScheduled",
+                    "isScanned",
+                    "lastScan.status",
+                    "lastScan.date",
+                    "_xml_data",
+                ],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+                "_xml_data": True,
+            },
+        },
     }
 )

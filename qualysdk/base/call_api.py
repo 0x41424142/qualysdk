@@ -212,7 +212,7 @@ def call_api(
         if (
             response.status_code in range(400, 599)
             and response.status_code not in [429, 414]
-            and module not in ["cloud_agent", "cloudview", "containersecurity"]
+            and module not in ["cloud_agent", "cloudview", "containersecurity", "was"]
             and (
                 response.status_code != 409
                 and "This API cannot be run again for another"

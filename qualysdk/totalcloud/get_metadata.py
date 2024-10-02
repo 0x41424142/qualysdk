@@ -82,9 +82,9 @@ def get_control_metadata(
             or "service.type" in kwargs["filter"]
             or "control.type" in kwargs["filter"]
         ):
-            kwargs["filter"] = (
-                f"{kwargs['filter'].split(':')[0]}:{kwargs['filter'].split(':')[1].upper()}"
-            )
+            kwargs[
+                "filter"
+            ] = f"{kwargs['filter'].split(':')[0]}:{kwargs['filter'].split(':')[1].upper()}"
 
     while True:
         # Set the current page number and page size in kwargs

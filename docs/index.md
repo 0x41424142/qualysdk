@@ -43,7 +43,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 | GAV (Global AssetView) |✅|
 | VMDR | In Progress. See VMDR [documentation page](https://qualysdk.jakelindsay.uk/vmdr/) for supported calls |
 | PM (Patch Management) | Not Started |
-| WAS | In Planning |
+| WAS | In Progress. See WAS [documentation page](https://qualysdk.jakelindsay.uk/was/) for supported calls |
 | TC (TotalCloud) | In Progress. See TotalCloud [documentation page](https://qualysdk.jakelindsay.uk/totalcloud/) for supported calls. |
 |Connectors | Not Started |
 |Cloud Agent | In Progress. See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloudagent/) for supported calls |

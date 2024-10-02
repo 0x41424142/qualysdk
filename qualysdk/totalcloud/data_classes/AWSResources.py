@@ -956,9 +956,9 @@ class AWSEC2Instance(BaseResource):
     securityGroups: BaseList[str] = None
     privateDnsName: str = None
     criticalityScore: int = None
-    vulnerabilities: BaseList[
-        str
-    ] = None  # empty list unless resource details API is called
+    vulnerabilities: BaseList[str] = (
+        None  # empty list unless resource details API is called
+    )
 
     def __post_init__(self):
         DICT_BL_FIELDS = ["networkInterfaceAddresses", "securityGroups"]

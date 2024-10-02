@@ -17,6 +17,20 @@ ENDPOINT_MAPPINGS = {
         "lastScan_status": "KEYWORD",
         "lastScan_date": "DATE",
     },
+    "get_webapps": {
+        "id": "INTEGER",
+        "name": "TEXT",
+        "url": "TEXT",
+        "tags_name": "TEXT",
+        "tags_id": "INTEGER",
+        "createdDate": "DATE",
+        "updatedDate": "DATE",
+        "isScheduled": "BOOLEAN",
+        "isScanned": "BOOLEAN",
+        "lastScan_status": "KEYWORD",
+        "lastScan_date": "DATE",
+        "verbose": "BOOLEAN",
+    },
 }
 
 FILTER_MAPPING = {

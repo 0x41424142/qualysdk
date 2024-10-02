@@ -1042,7 +1042,7 @@ CALL_SCHEMA = frozendict(
                 "endpoint": "/qps/rest/3.0/count/was/webapp",
                 "method": ["POST"],
                 "valid_params": [],
-                "valid_POST_data": [                    
+                "valid_POST_data": [
                     "id",
                     "name",
                     "url",

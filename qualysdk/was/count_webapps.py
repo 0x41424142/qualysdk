@@ -11,6 +11,7 @@ from ..base.xml_parser import xml_parser
 from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import QualysAPIError
 
+
 def count_webapps(auth: BasicAuth, **kwargs) -> int:
     """
     Return a count of web applications in the Qualys WAS module
@@ -43,7 +44,7 @@ def count_webapps(auth: BasicAuth, **kwargs) -> int:
         - lastScan_status_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the last scan status filter.
         - lastScan_date (str): Date of the last scan in UTC date/time format.
         - lastScan_date_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the last scan date filter.
-    
+
     Returns:
         int: The count of web applications that match the filters.
     """
@@ -53,14 +54,14 @@ def count_webapps(auth: BasicAuth, **kwargs) -> int:
     # If kwargs are provided, validate them:
     if kwargs:
         kwargs = validate_kwargs(endpoint="count_webapps", **kwargs)
-    
+
         """
         Build the XML request. Users pass in the filters as kwargs.
         there is the filter itself as well as a filter_operator kwarg.
         If the filter_operator is not provided, default to "EQUALS". 
         Do not create a Criteria tag for any _operator kwargs.
         """
-        xml = '<ServiceRequest><filters>{REPLACE}</filters></ServiceRequest>'
+        xml = "<ServiceRequest><filters>{REPLACE}</filters></ServiceRequest>"
         user_xml = ""
         for kwarg, value in kwargs.items():
             if kwarg.endswith("operator"):
@@ -71,23 +72,35 @@ def count_webapps(auth: BasicAuth, **kwargs) -> int:
         payload = {"_xml_data": xml}
 
     # Make the API call
-    response = call_api(auth=auth, module="was", endpoint="count_webapps", payload=payload, headers={'Content-Type': 'text/xml'})
+    response = call_api(
+        auth=auth,
+        module="was",
+        endpoint="count_webapps",
+        payload=payload,
+        headers={"Content-Type": "text/xml"},
+    )
 
     # Parse the XML response
     parsed = xml_parser(response.text)
 
     if response.status_code != 200:
-        errorMessage = parsed.get("ServiceResponse").get("responseErrorDetails").get("errorMessage")
+        errorMessage = (
+            parsed.get("ServiceResponse")
+            .get("responseErrorDetails")
+            .get("errorMessage")
+        )
         responseCode = parsed.get("ServiceResponse").get("responseCode")
-        raise QualysAPIError(f"Error retrieving web application count. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}")
+        raise QualysAPIError(
+            f"Error retrieving web application count. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
+        )
 
     serviceResponse = parsed.get("ServiceResponse")
     if not serviceResponse:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
-    
+
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
-    
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
     return int(serviceResponse.get("count"))
-    
-    

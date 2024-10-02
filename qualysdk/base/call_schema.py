@@ -996,6 +996,22 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_resources_evaluated_by_control": {
+                "endpoint": "/cloudview-api/rest/v1/{cloudprovider}/evaluations/{placeholder}/resources/{controlid}",
+                "method": ["GET"],
+                "valid_params": [
+                    "accountId",  # placeholder ⬇️
+                    "controlid",
+                    "filter",
+                    "placeholder",
+                    "cloudprovider",
+                ],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "basic",
+            },
         },
         "containersecurity": {
             "url_type": "gateway",

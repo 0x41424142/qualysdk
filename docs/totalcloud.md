@@ -20,6 +20,7 @@ You can use any of the endpoints currently supported:
 | ```get_resource_details``` | Get details for a specific instance of a resource type. |
 | ```get_evaluation``` | Get statistics for a specific control on a specific resource ID. |
 | ```get_account_evaluation``` | Get statistics for a list of controls for a specific cloud account. |
+| ```get_resources_evaluated_by_control``` | Get resources evaluated by a specific control. |
 
 
 
@@ -319,6 +320,60 @@ account_evals[0]
     passWithExceptionResources=0
 )
 ```
+
+## Get a List of Resources Evaluated by a Control by Account
+
+```get_resources_evaluated_by_control``` returns a list of resources evaluated by a specific control (identified by control ID) for a specific cloud account.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```provider``` | ```Literal['aws', 'azure']``` | Cloud Provider | ✅ |
+| ```accountId``` | ```Union[str, int]``` | The cloud account/subscription ID to get statistics for | ✅ |
+| ```controlId``` | ```Union[str, int]``` | The control ID to get statistics for | ✅ |
+| ```filter``` | ```str``` | Filter results by Qualys Totalcloud ["Posture" QQL](https://docs.qualys.com/en/cloudview/latest/search_tips/search_ui_monitor.htm) | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_resources_evaluated_by_control, get_connectors, get_control_metadata
+
+# Get some accounts:
+aws_connectors = get_connectors(
+    auth, 
+    provider='aws', 
+    page_count=1
+)
+
+# Get some controls:
+controls = get_control_metadata(auth, filter='provider:AWS')
+
+# Get resources evaluated by control 123 for the account:
+resources_evaluated = get_resources_evaluated_by_control(
+    auth,
+    provider='aws',
+    accountId=aws_connectors[0].awsAccountId,
+    controlId=123
+)
+# Check out the first resource evaluated:
+resources_evaluated[0]
+>>>AccountLevelEvaluation(
+    resourceId='123456789123', 
+    region=None, 
+    accountId='246802456', 
+    evaluatedOn=datetime.datetime(2024, 1, 1, 22, 54, 12, tzinfo=datetime.timezone.utc), 
+    evidences=[{'settingName': 'cn-north-1', 'actualValue': 'Access Analyzer disabled'}, ...], 
+    resourceType='IAM_ACCESS_ANALYZER', 
+    connectorId='aaaaaaaa-bbbb-cccc-dddd-1234567890', 
+    result='FAIL', 
+    evaluationDates=Evaluation(
+        firstEvaluated=datetime.datetime(2023, 1, 16, 16, 39, 58, tzinfo=datetime.timezone.utc), 
+        lastEvaluated=datetime.datetime(2024, 1, 1, 22, 54, 12, tzinfo=datetime.timezone.utc), 
+        dateReopen=None, 
+        dateFixed=None
+    )
+)
+```
+
 
 ## ```resourceType``` Values
 

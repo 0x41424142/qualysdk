@@ -683,7 +683,9 @@ class Host:
                         setattr(
                             self,
                             f"operatingSystem_lifecycle_{field}",
-                            datetime.fromisoformat(self.operatingSystem_lifecycle[field]),
+                            datetime.fromisoformat(
+                                self.operatingSystem_lifecycle[field]
+                            ),
                         )
                     else:
                         setattr(self, f"operatingSystem_lifecycle_{field}", None)

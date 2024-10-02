@@ -60,9 +60,8 @@ def get_connectors(
             )
         # If using state, make sure value is UPPERCASE:
         if kwargs["filter"].split(":")[0] == "state":
-            kwargs[
-                "filter"
-            ] = f"{kwargs['filter'].split(':')[0]}:{kwargs['filter'].split(':')[1].upper()}"
+            vals = kwargs["filter"].split(":")
+            kwargs["filter"] = f"{vals[0]}:{vals[1].upper()}"
 
     while True:
         # Set the current page number and page size in kwargs

@@ -1,10 +1,23 @@
 [tool.poetry]
 name = "qualysdk"
-version = "0.1.41"
-description = "SDK for interacting with Qualys APIs, across most of modules the platform offers."
+version = "0.1.42"
+description = "SDK for interacting with Qualys APIs, across most modules the platform offers."
 authors = ["0x41424142 <jake@jakelindsay.uk>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
+maintainers = ["Jake Lindsay <jake@jakelindsay.uk>"]
 readme = "README.md"
 license = "MIT License"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Developers",   
+    "Topic :: Security",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"

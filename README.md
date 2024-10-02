@@ -40,17 +40,17 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 
 |Module| Status |
 |--|--|
-| GAV (Global AssetView) |✅|
-| VMDR | In Progress. See VMDR [documentation page](https://qualysdk.jakelindsay.uk/vmdr/) for supported calls |
+| GAV (Global AssetView) |✅ See GAV [documentation page](https://qualysdk.jakelindsay.uk/gav/) for supported calls ||
+| VMDR | ✅ See VMDR [documentation page](https://qualysdk.jakelindsay.uk/vmdr/) for supported calls |
 | PM (Patch Management) | Not Started |
-| WAS | In Progress. See WAS [documentation page](https://qualysdk.jakelindsay.uk/was/) for supported calls |
-| TC (TotalCloud) | In Progress. See TotalCloud [documentation page](https://qualysdk.jakelindsay.uk/totalcloud/) for supported calls. |
+| WAS | ✅ See WAS [documentation page](https://qualysdk.jakelindsay.uk/was/) for supported calls |
+| TC (TotalCloud) | ✅ See TotalCloud [documentation page](https://qualysdk.jakelindsay.uk/totalcloud/) for supported calls. |
 |Connectors | Not Started |
-|Cloud Agent | In Progress. See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloudagent/) for supported calls |
-|CS (Container Security) | In Progress. See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
+|Cloud Agent | ✅ See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloudagent/) for supported calls |
+|CS (Container Security) | ✅ See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
 |ADMIN (Administration) | Not Started |
 |Asset Management & Tagging| Not Started |
-| SQL Data Uploads | ✅ Supported for most calls in qualysdk |
+| SQL Data Uploads | ✅ See SQL [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported uploads/DBs |
 
 
 # Documentation/Get Started

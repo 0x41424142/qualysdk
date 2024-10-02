@@ -161,6 +161,10 @@ def get_webapps(
                 f"API response returned error: {serviceResponse.get('responseCode')}"
             )
 
+        if serviceResponse.get("count") == "0":
+            print(f"No web applications found on page {pageNo}. Exiting.")
+            break
+
         data = serviceResponse.get("data")
 
         if data.get("WebApp"):

@@ -679,11 +679,14 @@ class Host:
                 "eosDate",
             ]:
                 if self.operatingSystem_lifecycle.get(field):
-                    setattr(
-                        self,
-                        f"operatingSystem_lifecycle_{field}",
-                        datetime.fromisoformat(self.operatingSystem_lifecycle[field]),
-                    )
+                    if self.operatingSystem_lifecycle.get(field) != "Not Announced":
+                        setattr(
+                            self,
+                            f"operatingSystem_lifecycle_{field}",
+                            datetime.fromisoformat(self.operatingSystem_lifecycle[field]),
+                        )
+                    else:
+                        setattr(self, f"operatingSystem_lifecycle_{field}", None)
 
             for field in [
                 "stage",

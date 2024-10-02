@@ -69,6 +69,35 @@ class WebApp:
     def items(self):
         return self.to_dict().items()
 
+    def risk_rating(self) -> str:
+        """
+        Categorized risk rating based on riskScore.
+        0-250: Low
+        251-500: Medium
+        501-750: High
+        751-1000: Critical
+
+        Returns:
+            str: The risk rating.
+        """
+
+        if not type(self.riskScore) in [int, float]:
+            raise ValueError(
+                f"riskScore must be an integer or float, not {type(self.riskScore)}"
+            )
+
+        if self.riskScore < 251:
+            return "Low"
+        elif self.riskScore < 501:
+            return "Medium"
+        elif self.riskScore < 751:
+            return "High"
+        elif self.riskScore > 750:
+            return "Critical"
+        # Not needed, but added for clarity:
+        else:
+            return "Unknown"
+
     @staticmethod
     def from_dict(data):
         return WebApp(**data)

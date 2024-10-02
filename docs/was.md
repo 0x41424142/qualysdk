@@ -60,7 +60,7 @@ webapps = count_webapps(auth, lastScan_status="RUNNING")
 webapps = count_webapps(auth, tags_id="12345,54321", tags_id_operator="IN")
 >>>20
 
-# Get the number of webapps that match a string for the name:
+# Get the number of webapps where the name contains "prod":
 webapps = count_webapps(auth, name="prod", name_operator="CONTAINS")
 >>>10
 ```

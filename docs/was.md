@@ -156,7 +156,9 @@ webapp = get_webapp_details(auth, webappId=webapp_id)
 
 ## Get Webapps Verbose API
 
-```get_webapps_verbose``` combines the functionality of ```get_webapps``` and ```get_webapp_details``` to return a list of web apps with all attributes. This method uses threading to speed up the process. Number of threads can be set with the ```thread_count``` parameter.
+```get_webapps_verbose``` combines the functionality of ```get_webapps``` and ```get_webapp_details``` to return a list of web apps with all attributes. 
+
+This method uses threading to speed up the process. Number of threads can be set with the ```thread_count``` parameter.
 
 
 |Parameter| Possible Values |Description| Required|
@@ -193,7 +195,7 @@ from qualysdk.was import get_webapps_verbose
 auth = BasicAuth(<username>, <password>)
 
 # Get all webapps with all attributes:
-webapps = get_webapps_verbose(auth, verbose=True)
+webapps = get_webapps_verbose(auth)
 >>>[
     WebApp(
         id=12345678, 
@@ -210,7 +212,12 @@ webapps = get_webapps_verbose(auth, verbose=True)
 
 # Get all webapps with all attributes 
 # that have "prod" in the name, using 10 threads:
-webapps = get_webapps_verbose(auth, name="prod", name_operator="CONTAINS", thread_count=10)
+webapps = get_webapps_verbose(
+    auth,
+    name="prod",
+    name_operator="CONTAINS",
+    thread_count=10
+)
 >>>[
     WebApp(
         id=12345678, 

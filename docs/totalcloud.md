@@ -120,7 +120,7 @@ print(dumps(get_aws_base_account(auth), indent=2))
 
 #### ```filter``` Search Tokens
 
->>**Head's Up!:** When using ```resource.type``` as the filter, you must use the API-expected name. See **```resourceType``` Values** table for expected names.
+>**Head's Up!:** When using ```resource.type``` as the filter, you must use the API-expected name. See **```resourceType``` Values** table for expected names.
 
 |Token| Description |
 |--|--|
@@ -159,7 +159,7 @@ get_control_metadata(auth, filter='resource.type:BUCKET')
 
 This function takes advantage of multithreading to pull down data faster. You can specify the number of threads with the ```thread_count``` argument, which defaults to 5.
 
->>**Head's Up!:** At maximum, this API endpoint returns 10,000 records. This is a hard limit imposed by Qualys. If you have more than 10K records under a single ```resourceType```, you will need to use the ```filter``` argument to narrow down the results and make repeated calls to get all the data. An easy way to do this is to use ```totalcloud.get_connectors()```, then use the connector's account ID (```subscriptionId``` for Azure) attribute in this API call's ```filter``` argument, storing the results in a ```BaseList```. For example: 
+>**Head's Up!:** At maximum, this API endpoint returns 10,000 records. This is a hard limit imposed by Qualys. If you have more than 10K records under a single ```resourceType```, you will need to use the ```filter``` argument to narrow down the results and make repeated calls to get all the data. An easy way to do this is to use ```totalcloud.get_connectors()```, then use the connector's account ID (```subscriptionId``` for Azure) attribute in this API call's ```filter``` argument, storing the results in a ```BaseList```. For example: 
 
 ```py
 from qualysdk import BaseList

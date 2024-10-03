@@ -68,6 +68,7 @@ Some important kwargs this API accepts:
 |```ids```|```None/hostIDs```|Filter API output to a specific set of host IDs. Can be a comma-separated string: ```1357,2468,8901```, a range: ```12345-54321```, or a single host ID: ```12345```.|
 
 >**Heads Up!**: For a full breakdown of acceptable kwargs, see Qualys' documentation [here](https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf).
+
 ```py
 from qualysdk import BasicAuth
 from qualysdk.vmdr import get_hld

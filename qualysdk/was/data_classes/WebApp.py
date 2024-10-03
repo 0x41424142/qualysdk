@@ -43,6 +43,10 @@ class WebApp:
     defaultProfile_name: str = None
     # end defaultProfile
     defaultScanner: None = None
+    # defaultScanner is parsed into below field:
+    defaultScanner_id: int = None
+    defaultScanner_name: str = None
+    # end defaultScanner
     defaultScannerTags: None = None
     # defaultScannerTags is parsed into below field:
     defaultScannerTags_count: int = None
@@ -110,6 +114,25 @@ class WebApp:
             "updatedBy_id",
             "maxRedundancyLinks",
         ]
+        BOOL_FIELDS = [
+            "scannerLocked",
+            "progressiveScanning",
+            "useSitemap",
+            "malwareMonitoring",
+            "malwareNotification",
+            "isScheduled",
+        ]
+
+        for field in BOOL_FIELDS:
+            value = getattr(self, field)
+            if value:
+                if isinstance(value, str):
+                    if value.lower() == "true":
+                        setattr(self, field, True)
+                    elif value.lower() == "false":
+                        setattr(self, field, False)
+                elif not isinstance(value, bool):
+                    raise ValueError(f"{field} must be a boolean, not {type(value)}")
 
         for field in DT_FIELDS:
             value = getattr(self, field)
@@ -120,6 +143,15 @@ class WebApp:
             value = getattr(self, field)
             if value and not isinstance(value, int):
                 setattr(self, field, int(value))
+
+        if self.attributes and "list" in self.attributes.keys():
+            bl = BaseList()
+            data = self.attributes.get("list").get("Attribute")
+            if isinstance(data, dict):
+                data = [data]
+            for attribute in data:
+                bl.append(f"{attribute.get('name')}:{attribute.get('value')}")
+            setattr(self, "attributes", bl)
 
         if self.postmanCollection:
             data = self.postmanCollection.get("collection")

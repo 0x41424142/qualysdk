@@ -22,6 +22,8 @@ You can use any of the endpoints currently supported:
 
 ```count_webapps``` returns the number of web apps in the subscription that match the given kwargs.
 
+>>**Head's Up!** This method is useful for quickly getting a count of webapps that match a certain criteria. It does NOT return the webapps themselves, or any attributes of the webapps.
+
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |

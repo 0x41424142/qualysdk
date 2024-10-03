@@ -360,7 +360,10 @@ def get_webapps_verbose(
                         )
 
             except Exception as e:
-                print(f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}")
+                with LOCK:
+                    print(
+                        f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}"
+                    )
                 q.task_done()
                 break
 

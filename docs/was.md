@@ -118,3 +118,34 @@ webapps = get_webapps(auth, lastScan_status="RUNNING", verbose=True)
     ...
 ]
 ```
+
+## Get Webapp Details API
+
+```get_webapp_details``` returns all attributes of a single web app.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```webappId``` | ```Union[str, int]``` | Web app ID | ✅ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_webapp_details, get_webapps
+
+# First, get the ID of the webapp you want to get details for:
+auth = BasicAuth(<username>, <password>)
+webapps = get_webapps(auth, name="My Awesome Site", id=12345678)
+webapp_id = webapps[0].id
+
+# Get the details for the webapp:
+webapp = get_webapp_details(auth, webappId=webapp_id)
+>>>WebApp(
+    id=12345678, 
+    name="My Awesome Site", 
+    url="https://example.com", 
+    riskScore=100,
+    owner_firstName="John",
+    owner_lastName="Doe",
+    ...
+)
+```

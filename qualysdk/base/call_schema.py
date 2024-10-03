@@ -1040,7 +1040,7 @@ CALL_SCHEMA = frozendict(
             "url_type": "api",
             "call_webapp_api": {
                 "endpoint": "/qps/rest/3.0/{placeholder}/was/webapp/{webappId}",
-                "method": ["POST"],
+                "method": ["POST", "GET"],
                 "valid_params": ["placeholder", "webappId", "_xml_data"],
                 "valid_POST_data": [
                     "_xml_data",

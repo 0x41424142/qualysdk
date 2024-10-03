@@ -35,11 +35,14 @@ def call_webapp_api(
             params = {"placeholder": "count", "webappId": ""}
         case "get_webapps":
             params = {"placeholder": "search", "webappId": ""}
+        case "get_webapp_details":
+            params = {"placeholder": "get", "webappId": payload.pop("webappId")}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
     response = call_api(
         auth=auth,
+        override_method="GET" if endpoint == "get_webapp_details" else "POST",
         module="was",
         endpoint="call_webapp_api",
         params=params,
@@ -218,3 +221,37 @@ def get_webapps(
             break
 
     return appList
+
+
+def get_webapp_details(
+    auth: BasicAuth, webappId: Union[int, str]
+) -> Union[WebApp, None]:
+    """
+    Get the details of a single web application in the Qualys WAS module.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        webappId (Union[int, str]): The ID of the web application.
+
+    Returns:
+        WebApp: The web application details.
+    """
+
+    # Make the API call:
+    parsed = call_webapp_api(auth, "get_webapp_details", {"webappId": webappId})
+
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    data = serviceResponse.get("data")
+    if data.get("WebApp"):
+        data = data.get("WebApp")
+        return WebApp.from_dict(data)
+    else:
+        print(f"No data found for web application ID {webappId}. Exiting.")

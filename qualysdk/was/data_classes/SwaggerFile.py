@@ -18,7 +18,6 @@ class SwaggerFile:
     fileSize: Union[str, int] = None
 
     def __post_init__(self):
-
         if self.id and isinstance(self.id, str):
             try:
                 self.id = int(self.id)

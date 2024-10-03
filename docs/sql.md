@@ -125,7 +125,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_totalcloud_aws_sagemakernotebook``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='sagemaker notebook')``` | ```totalcloud_aws_sagemakernotebook_inventory``` |
 | ```upload_totalcloud_aws_cloudfrontdistribution``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='cloudfront distribution')``` | ```totalcloud_aws_cloudfrontdistribution_inventory``` |
 | ```upload_cs_containers``` | Container Security | ```cs.list_containers()``` | ```cs_containers``` |
-| ```upload_was_webapps``` | WAS | ```was.get_webapps()``` | ```was_webapps``` |
+| ```upload_was_webapps``` | WAS | ```was.get_webapps()``` or ```was.get_webapps_verbose()``` (```get_webapps_verbose()``` is recommended!) | ```was_webapps``` |
 
 ```py
 from qualysdk.sql import *
@@ -152,4 +152,18 @@ vmdr_hosts = vmdr.get_host_list(
         auth, 
         all_details=True,
     )
+```
+
+For other calls, such as ```vmdr.get_hld()```, you should make your call look like the following:
+
+```py
+hosts_with_detections = vmdr.get_hld(
+    auth,
+    show_asset_id=True,
+    show_tags=True,
+    show_cloud_tags=True,
+    host_metadata='all',
+    show_qds=True,
+    show_qds_factors=True,
+)
 ```

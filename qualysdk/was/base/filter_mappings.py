@@ -31,6 +31,7 @@ ENDPOINT_MAPPINGS = {
         "lastScan_date": "DATE",
         "verbose": "BOOLEAN",
     },
+    "get_webapp_details": {},
 }
 
 FILTER_MAPPING = {

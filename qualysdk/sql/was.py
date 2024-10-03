@@ -20,6 +20,7 @@ def upload_was_webapps(
 ) -> int:
     """
     Upload results from ```was.get_webapps```
+    or ```was.get_webapps_verbose```
     to a SQL database.
 
     Args:
@@ -35,15 +36,142 @@ def upload_was_webapps(
         "id": types.Integer(),
         "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "url": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "uris": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "riskScore": types.Integer(),
-        "owner": types.Integer(),
+        "os": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "owner_id": types.Integer(),
+        "owner_username": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "owner_firstName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "owner_lastName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "scope": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "attributes": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "defaultProfile_id": types.Integer(),
+        "defaultProfile_name": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "defaultScanner_id": types.Integer(),
+        "defaultScanner_name": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "defaultScannerTags_count": types.Integer(),
+        "defaultScannerTags_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "scannerLocked": types.Boolean(),
+        "progressiveScanning": types.Boolean(),
+        "urlExcludelist": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "urlAllowlist": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "postDataExcludelist": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "logoutRegexList": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "authRecords": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "dnsOverrides": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "useRobots": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "useSitemap": types.Boolean(),
+        "malwareMonitoring": types.Boolean(),
+        "malwareNotifications": types.Boolean(),
         "tags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "comments": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "isScheduled": types.Boolean(),
+        "lastScan_id": types.Integer(),
+        "lastScan_name": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "lastScan_summary_resultsStatus": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "lastScan_summary_authStatus": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "createdBy_id": types.Integer(),
+        "createdBy_username": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "createdBy_firstName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "createdBy_lastName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "createdDate": types.DateTime(),
         "updatedDate": types.DateTime(),
+        "updatedBy_id": types.Integer(),
+        "updatedBy_username": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "updatedBy_firstName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "updatedBy_lastName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "screenshot": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "config": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "crawlingScripts": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "postmanCollection": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "headers": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "domains": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "subDomain": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "swaggerFile": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "redundancyLinks": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "maxRedundancyLinks": types.Integer(),
     }
 
     # Prepare the dataclass for insertion:
     df = DataFrame([prepare_dataclass(webapp) for webapp in webapps])
+
+    # Drop any columns that we parsed out:
+    df.drop(
+        columns=[
+            "owner",
+            "defaultProfile",
+            "defaultScanner",
+            "defaultScannerTags",
+            "lastScan",
+            "createdBy",
+            "updatedBy",
+        ],
+        inplace=True,
+    )
 
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)

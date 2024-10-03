@@ -14,11 +14,15 @@ You can use any of the endpoints currently supported:
 |--|--|
 | ```count_webapps``` | Returns the number of web apps in the subscription that match given kwargs. |
 | ```get_webapps``` | Returns a list of web apps in the subscription that match given kwargs. |
+| ```get_webapp_details``` | Returns all attributes of a single web app. |
+| ```get_webapps_verbose``` | Combines the functionality of ```get_webapps``` and ```get_webapp_details``` to return a list of web apps with all attributes. Great for SQL data uploads.|
 
 
 ## Count Webapps API
 
 ```count_webapps``` returns the number of web apps in the subscription that match the given kwargs.
+
+>>**Head's Up!** This method is useful for quickly getting a count of webapps that match a certain criteria. It does NOT return the webapps themselves, or any attributes of the webapps.
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
@@ -113,6 +117,110 @@ webapps = get_webapps(auth, lastScan_status="RUNNING", verbose=True)
     ), 
     WebApp(
         id=98765432, 
+        ...
+    ),
+    ...
+]
+```
+
+## Get Webapp Details API
+
+```get_webapp_details``` returns all attributes of a single web app.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```webappId``` | ```Union[str, int]``` | Web app ID | ✅ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_webapp_details, get_webapps
+
+# First, get the ID of the webapp you want to get details for:
+auth = BasicAuth(<username>, <password>)
+webapps = get_webapps(auth, name="My Awesome Site", id=12345678)
+webapp_id = webapps[0].id
+
+# Get the details for the webapp:
+webapp = get_webapp_details(auth, webappId=webapp_id)
+>>>WebApp(
+    id=12345678, 
+    name="My Awesome Site", 
+    url="https://example.com", 
+    riskScore=100,
+    owner_firstName="John",
+    owner_lastName="Doe",
+    ...
+)
+```
+
+## Get Webapps Verbose API
+
+```get_webapps_verbose``` combines the functionality of ```get_webapps``` and ```get_webapp_details``` to return a list of web apps with all attributes. This method uses threading to speed up the process. Number of threads can be set with the ```thread_count``` parameter.
+
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```thread_count``` | ```int``` | Number of threads to use for the request | ❌ |
+| ```id``` | ```Union[str, int]``` | Web app ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Web app name | ❌ |
+| ```name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the name filter | ❌ |
+| ```url``` | ```str``` | Web app URL | ❌ |
+| ```url_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the URL filter | ❌ |
+| ```tags_name``` | ```str``` | Tag name | ❌ |
+| ```tags_name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the tag name filter | ❌ |
+| ```tags_id``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tag ID filter | ❌ |
+| ```createdDate``` | ```str``` | Date created | ❌ |
+| ```createdDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the created date filter | ❌ |
+| ```updatedDate``` | ```str``` | Date updated | ❌ |
+| ```updatedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the updated date filter | ❌ |
+| ```isScheduled``` | ```bool``` | If the webapp has a scan scheduled | ❌ |
+| ```isScheduled_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScheduled filter | ❌ |
+| ```isScanned``` | ```bool``` | If the webapp has been scanned | ❌ |
+| ```isScanned_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScanned filter | ❌ |
+| ```lastScan_status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "ERROR", "CANCELLED"]``` | Status of the last scan | ❌ |
+| ```lastScan_status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the lastScan_status filter | ❌ |
+| ```lastScan_date``` | ```str``` | Date of the last scan in UTC date/time format | ❌ |
+| ```lastScan_date_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the lastScan_date filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_webapps_verbose
+
+auth = BasicAuth(<username>, <password>)
+
+# Get all webapps with all attributes:
+webapps = get_webapps_verbose(auth, verbose=True)
+>>>[
+    WebApp(
+        id=12345678, 
+        name="My Awesome Site", 
+        url="https://example.com", 
+        ...
+    ), 
+    WebApp(
+        id=98765432, 
+        ...
+    ),
+    ...
+]
+
+# Get all webapps with all attributes 
+# that have "prod" in the name, using 10 threads:
+webapps = get_webapps_verbose(auth, name="prod", name_operator="CONTAINS", thread_count=10)
+>>>[
+    WebApp(
+        id=12345678, 
+        name="My Awesome Site (prod)", 
+        url="https://example.com", 
+        ...
+    ), 
+    WebApp(
+        id=98765432, 
+        name="My Other Site (prod)",
         ...
     ),
     ...

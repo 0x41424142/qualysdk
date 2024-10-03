@@ -1,12 +1,12 @@
 """
-Contains the WASTag class for WAS
+Contains the AuthRecord class for WAS
 """
 
 from dataclasses import dataclass, asdict
 
 
 @dataclass
-class WASTag:
+class AuthRecord:
     """
     Represents a single tag in WAS
     """
@@ -44,4 +44,4 @@ class WASTag:
 
     @staticmethod
     def from_dict(data):
-        return WASTag(**data)
+        return AuthRecord(**data)

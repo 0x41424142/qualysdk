@@ -77,11 +77,11 @@ def validate_response(response: Response) -> dict:
     parsed = xml_parser(response.text)
 
     if response.status_code != 200:
-        errorMessage = (
-            parsed.get("ServiceResponse")
-            .get("responseErrorDetails")
-            .get("errorMessage")
-        )
+        errorMessage = parsed.get("ServiceResponse").get("responseErrorDetails")
+
+        if errorMessage:
+            errorMessage = errorMessage.get("errorMessage")
+
         responseCode = parsed.get("ServiceResponse").get("responseCode")
         raise QualysAPIError(
             f"Error retrieving web applications. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"

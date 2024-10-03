@@ -1,4 +1,4 @@
-﻿# qualysdk - A Python SDK for Interacting With Qualys APIs
+# qualysdk - A Python SDK for Interacting With Qualys APIs
 ![Logo](https://raw.githubusercontent.com/0x41424142/qualysdk/main/imgs/qualysdkLogo.png)
 
 [![Code Style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge)](https://github.com/psf/black) ![Development Status](https://img.shields.io/badge/in%20development-8A2BE2?style=for-the-badge)  ![PyPI - Latest Version](https://img.shields.io/pypi/v/qualysdk?style=for-the-badge&logo=pypi&logoColor=yellow) ![Python Versions](https://img.shields.io/pypi/pyversions/qualysdk?style=for-the-badge&logo=python&logoColor=yellow) ![GitHub Stars](https://img.shields.io/github/stars/0x41424142/qualysdk?style=for-the-badge) ![GitHub License](https://img.shields.io/github/license/0x41424142/qualysdk?style=for-the-badge)
@@ -50,7 +50,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |CS (Container Security) | ✅ See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
 |ADMIN (Administration) | Not Started |
 |Asset Management & Tagging| Not Started |
-| SQL Data Uploads | ✅ See SQL [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported uploads/DBs |
+| SQL Data Uploads | ✅ See SQL [documentation page](https://qualysdk.jakelindsay.uk/sql/) for supported uploads/DBs |
 
 # Documentation/Get Started
 

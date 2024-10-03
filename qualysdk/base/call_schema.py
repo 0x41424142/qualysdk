@@ -434,7 +434,8 @@ CALL_SCHEMA = frozendict(
                     "default_scanner",
                     "scanners_in_ag",
                     "scanners_in_network",  # set to 1 to use all scanners
-                    "target_from" "use_ip_nt_range_tags_include",  # must be tags
+                    "target_from",
+                    "use_ip_nt_range_tags_include",  # must be tags
                     "use_ip_nt_range_tags_exclude",
                     "use_ip_nt_range_tags",
                     "tag_include_selector",

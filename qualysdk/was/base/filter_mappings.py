@@ -31,6 +31,22 @@ ENDPOINT_MAPPINGS = {
         "lastScan_date": "DATE",
         "verbose": "BOOLEAN",
     },
+    # call_webapp_api combines the above two endpoints:
+    "call_webapp_api": {
+        "id": "INTEGER",
+        "name": "TEXT",
+        "url": "TEXT",
+        "tags_name": "TEXT",
+        "tags_id": "INTEGER",
+        "createdDate": "DATE",
+        "updatedDate": "DATE",
+        "isScheduled": "BOOLEAN",
+        "isScanned": "BOOLEAN",
+        "lastScan_status": "KEYWORD",
+        "lastScan_date": "DATE",
+        "verbose": "BOOLEAN",
+        "_xml_data": "TEXT",
+    },
 }
 
 FILTER_MAPPING = {

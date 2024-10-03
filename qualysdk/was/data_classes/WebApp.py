@@ -19,7 +19,7 @@ class WebApp:
     id: int = None
     name: str = None
     url: str = None
-    riskScore: int = None
+    riskScore: int = -1
     owner: Union[dict, int] = None
     tags: Union[list, BaseList] = None
     createdDate: Union[str, datetime] = None

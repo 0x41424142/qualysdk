@@ -14,6 +14,42 @@ from ..exceptions.Exceptions import QualysAPIError
 from ..base.base_list import BaseList
 
 
+def call_webapp_api(
+    auth: BasicAuth, endpoint: str, payload: dict
+) -> Union[int, WebApp]:
+    """
+    Call a Qualys WAS API endpoint and return the parsed response. This is
+    a backend function and should not be called directly.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        endpoint (str): The API endpoint to call.
+        payload (dict): The payload to send to the API.
+
+    Returns:
+        Union[int, WebApp]: The parsed response from the API.
+    """
+
+    match endpoint:
+        case "count_webapps":
+            params = {"placeholder": "count", "webappId": ""}
+        case "get_webapps":
+            params = {"placeholder": "search", "webappId": ""}
+        case _:
+            raise ValueError(f"Invalid endpoint: {endpoint}")
+
+    response = call_api(
+        auth=auth,
+        module="was",
+        endpoint="call_webapp_api",
+        params=params,
+        payload=payload,
+        headers={"Content-Type": "text/xml"},
+    )
+
+    return validate_response(response)
+
+
 def count_webapps(auth: BasicAuth, **kwargs) -> int:
     """
     Return a count of web applications in the Qualys WAS module
@@ -55,20 +91,12 @@ def count_webapps(auth: BasicAuth, **kwargs) -> int:
 
     # If kwargs are provided, validate them:
     if kwargs:
-        kwargs = validate_kwargs(endpoint="count_webapps", **kwargs)
+        # kwargs = validate_kwargs(endpoint="count_webapps", **kwargs)
+        kwargs = validate_kwargs(endpoint="call_webapp_api", **kwargs)
         payload = build_service_request(**kwargs)
 
-    # Make the API call
-    response = call_api(
-        auth=auth,
-        module="was",
-        endpoint="count_webapps",
-        payload=payload,
-        headers={"Content-Type": "text/xml"},
-    )
-
-    # Parse the XML response
-    parsed = validate_response(response)
+    # Make the API call:
+    parsed = call_webapp_api(auth, "count_webapps", payload)
 
     serviceResponse = parsed.get("ServiceResponse")
     if not serviceResponse:
@@ -140,16 +168,8 @@ def get_webapps(
     appList = BaseList()
 
     while True:
-        # Make the API call
-        response = call_api(
-            auth=auth,
-            module="was",
-            endpoint="get_webapps",
-            payload=payload,
-            headers={"Content-Type": "text/xml"},
-        )
-
-        parsed = validate_response(response)
+        # Make the API call:
+        parsed = call_webapp_api(auth, "get_webapps", payload)
 
         # Parse the XML response:
         serviceResponse = parsed.get("ServiceResponse")

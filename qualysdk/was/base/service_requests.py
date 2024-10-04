@@ -5,7 +5,6 @@ Code to generate XML service requests to Qualys WAS API
 from typing import Literal, Union
 from html import unescape
 
-from dicttoxml import dicttoxml
 import xmltodict
 from requests import Response
 

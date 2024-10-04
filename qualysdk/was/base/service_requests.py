@@ -68,6 +68,7 @@ def build_service_request(
     action: Literal["set", "add", "remove"] = "set",
     authRecord_id: int = None,
     _uris: Union[str, list[str]] = None,
+    tag_ids: Union[int, list[int]] = None,
     **kwargs,
 ) -> dict[str, str]:
     """
@@ -156,13 +157,37 @@ def build_service_request(
         # Update the request dictionary with the formatted URIs
         request_dict["ServiceRequest"]["data"]["WebApp"]["uris"] = {action: uriList}
 
+    if tag_ids:
+        if not isinstance(tag_ids, list):
+            tag_ids = [tag_ids]
+
+        # Make sure all tag_ids are integers:
+        if not all(isinstance(tag_id, int) for tag_id in tag_ids):
+            raise ValueError(
+                f"Tag IDs must be integers, not {tag_ids}. Please provide a list of integers."
+            )
+
+        if "data" not in request_dict["ServiceRequest"]:
+            request_dict["ServiceRequest"]["data"] = {}
+
+        if "WebApp" not in request_dict["ServiceRequest"]["data"]:
+            request_dict["ServiceRequest"]["data"]["WebApp"] = {}
+
+        # Generate XML formatted tag IDs and join them into a single string.
+        # Necessary due to how xmltodict handles lists and the format
+        # Qualys expects.
+        tagList = "".join(f"\n<Tag><id>{_id}</id></Tag>" for _id in tag_ids)
+
+        # Update the request dictionary with the formatted tags:
+        request_dict["ServiceRequest"]["data"]["WebApp"]["tags"] = {action: tagList}
+
     # Build the Criteria tags for the filters:
     filters = []
     for kwarg, value in kwargs.items():
         if kwarg.endswith(".operator"):
             continue
         # fields that go under WebApp:
-        if kwarg in ["authRecord.id", "uris"]:
+        if kwarg in ["authRecord.id", "uris", "tag.ids"]:
             continue
         criteria = {
             "@field": kwarg,

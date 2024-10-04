@@ -247,7 +247,8 @@ webapps = get_webapps_verbose(
 | ```name``` | ```str``` | Web app name | ✅ |
 | ```url``` | ```str``` | Web app URL | ✅ |
 | ```authRecord_id``` | ```Union[str, int]``` | Auth record ID | ❌ |
-| ```uris``` | ```Union[str, list[str]]``` | List of URIs | ❌ |
+| ```uris``` | ```Union[str, list[str]]``` | a single URI string or a list of URI strings | ❌ |
+| ```tag_ids``` | ```Union[int, list[int]]``` | a single tag ID or a list of tag IDs | ❌ |
 
 ```py
 from qualysdk import BasicAuth
@@ -264,19 +265,21 @@ new_webapp = create_webapp(
 )
 
 # Create a new webapp with
-# URIs and an auth record:
+# URIs, tags, and an auth record:
 new_webapp = create_webapp(
     auth,
     name="My New Site",
     url="https://newsite.com",
     uris=["https://newsite.com/admin", "https://newsite.com/blog", "https://newsite.com/contact"],
     authRecord_id=12345678 # Only one auth record be be specified in the API call
+    tags_id=[12345, 54321]
 )
 >>>WebApp(
     id=12345678, 
     name="My New Site", 
     url="https://newsite.com", 
     uris=["https://newsite.com/admin", "https://newsite.com/blog", "https://newsite.com/contact"],
+    tags=[WASTag(id=12345, name='Prod'), WASTag(id=54321, name='News')],
     ...
 )
 ```

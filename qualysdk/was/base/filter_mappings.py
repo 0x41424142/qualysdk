@@ -37,6 +37,7 @@ ENDPOINT_MAPPINGS = {
         "url": "TEXT",
         "authRecord_id": "INTEGER",
         "uris": "TEXT",
+        "tag_ids": "TEXT",
     },
 }
 

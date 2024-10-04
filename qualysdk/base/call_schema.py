@@ -1012,6 +1012,16 @@ CALL_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
             },
+            "get_remediation_activities": {
+                "endpoint": "/cloudview-api/rest/v1/remediation/activity",
+                "method": ["GET"],
+                "valid_params": ["pageNo", "pageSize", "filter", "cloudType"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": True,
+                "auth_type": "basic",
+            },
         },
         "containersecurity": {
             "url_type": "gateway",

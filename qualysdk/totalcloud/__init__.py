@@ -18,3 +18,4 @@ from .evaluations import (
 )
 from .get_inventory import get_inventory
 from .get_resource_details import get_resource_details
+from .remediation_log import get_remediation_activities

@@ -2282,3 +2282,78 @@ def upload_totalcloud_aws_cloudfrontdistribution(
         dtype=COLS,
         override_import_dt=override_import_dt,
     )
+
+
+def upload_totalcloud_remediation_activities(
+    remediation_activities: BaseList,
+    cnxn: Connection,
+    table_name: str = "totalcloud_remediation_activities",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload data from totalcloud.get_remediation_activities() to SQL.
+
+    Args:
+        remediation_activities (BaseList): The BaseList of Remediation Activities to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'totalcloud_remediation_activities'.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "resourceId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "controlId": types.Integer(),
+        "cloudType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "accountId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "region": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "resourceType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "remediationAction": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "connectorName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "policyNames": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "controlName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "triggeredOn": types.DateTime(),
+        "Errors": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "triggeredBy": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "remediationReason": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame(
+        [
+            prepare_dataclass(remediation_activity)
+            for remediation_activity in remediation_activities
+        ]
+    )
+
+    # Upload the data:
+    return upload_data(
+        df,
+        table_name,
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )

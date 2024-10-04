@@ -124,6 +124,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_totalcloud_aws_iamrole``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='iam role')``` | ```totalcloud_aws_iamrole_inventory``` |
 | ```upload_totalcloud_aws_sagemakernotebook``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='sagemaker notebook')``` | ```totalcloud_aws_sagemakernotebook_inventory``` |
 | ```upload_totalcloud_aws_cloudfrontdistribution``` | TotalCloud | ```totalcloud.get_inventory(provider='aws', resourceType='cloudfront distribution')``` | ```totalcloud_aws_cloudfrontdistribution_inventory``` |
+| ```upload_totalcloud_remediation_activities``` | TotalCloud | ```totalcloud.get_remediation_activities()``` | ```totalcloud_remediation_activities``` |
 | ```upload_cs_containers``` | Container Security | ```cs.list_containers()``` | ```cs_containers``` |
 | ```upload_was_webapps``` | WAS | ```was.get_webapps()``` or ```was.get_webapps_verbose()``` (```get_webapps_verbose()``` is recommended!) | ```was_webapps``` |
 

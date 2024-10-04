@@ -21,6 +21,7 @@ You can use any of the endpoints currently supported:
 | ```get_evaluation``` | Get statistics for a specific control on a specific resource ID. |
 | ```get_account_evaluation``` | Get statistics for a list of controls for a specific cloud account. |
 | ```get_resources_evaluated_by_control``` | Get resources evaluated by a specific control. |
+| ```get_remediation_activities``` | Get a list of remediation activities for a specific cloud provider. |
 
 
 
@@ -372,6 +373,36 @@ resources_evaluated[0]
         dateFixed=None
     )
 )
+```
+
+## Get Remediation Activities API
+
+```get_remediation_activities``` returns a list of remediation activities for a specific cloud provider.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```provider``` | ```Literal['aws', 'azure']``` | Cloud Provider | ✅ |
+| ```page_count``` | ```Union[int>=1, 'all'] = 'all'``` | Number of pages to pull | ❌ |
+| ```filter``` | ```str``` | Filter results by Qualys Totalcloud [QQL](https://docs.qualys.com/en/cloudview/latest/search_tips/search_remediation_activity.htm?rhhlterm=search%20remediation%20activity%20activities&rhsearch=Search%20for%20Remediation%20Activity) | ❌ |
+| ```pageNo``` | ```int``` | Page number to start pulling from, or page to pull if ```page_count``` is set to 1 | ❌ |
+| ```pageSize``` | ```int``` | Number of records to pull per page | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.totalcloud import get_remediation_activities
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+# Get all remediation activities for AWS:
+get_remediation_activities(auth, provider='aws')
+>>>[RemediationActivity(
+    resourceId='123456789123', 
+    region=None, 
+    accountId='246802456', 
+    remediationAction='Disable Access Analyzer',
+    connectorName='myConnector',
+    ...), ...
+]
 ```
 
 

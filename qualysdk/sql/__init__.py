@@ -52,6 +52,7 @@ from .totalcloud import (
     upload_totalcloud_aws_iamrole,
     upload_totalcloud_aws_sagemakernotebook,
     upload_totalcloud_aws_cloudfrontdistribution,
+    upload_totalcloud_remediation_activities,
 )
 
 from .cloud_agent import upload_cloud_agents

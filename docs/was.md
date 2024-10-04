@@ -272,7 +272,7 @@ new_webapp = create_webapp(
     url="https://newsite.com",
     uris=["https://newsite.com/admin", "https://newsite.com/blog", "https://newsite.com/contact"],
     authRecord_id=12345678 # Only one auth record be be specified in the API call
-    tags_id=[12345, 54321]
+    tag_ids=[12345, 54321]
 )
 >>>WebApp(
     id=12345678, 

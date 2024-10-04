@@ -37,6 +37,8 @@ def call_webapp_api(
             params = {"placeholder": "search", "webappId": ""}
         case "get_webapp_details":
             params = {"placeholder": "get", "webappId": payload.pop("webappId")}
+        case "create_webapp":
+            params = {"placeholder": "create", "webappId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -95,7 +97,7 @@ def count_webapps(auth: BasicAuth, **kwargs) -> int:
     # If kwargs are provided, validate them:
     if kwargs:
         # kwargs = validate_kwargs(endpoint="count_webapps", **kwargs)
-        kwargs = validate_kwargs(endpoint="call_webapp_api", **kwargs)
+        kwargs = validate_kwargs(endpoint="count_webapps", **kwargs)
         payload = build_service_request(**kwargs)
 
     # Make the API call:
@@ -379,3 +381,57 @@ def get_webapps_verbose(
 
     print(f"Pulled {len(appList)} webapp details.")
     return appList
+
+
+def create_webapp(auth: BasicAuth, name: str, url: str, **kwargs) -> WebApp:
+    """
+    Create a new WAS web application.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        name (str): The name of the web application.
+        url (str): The URL of the web application.
+
+    ## Kwargs:
+
+            - authRecord_id (Union[str, int]): A single authentication record ID to associate with the web application.
+            - uris (Union[str, list[str]]): A list or comma-separated string of URIs to associate with the web application.
+            - tag_ids (Union[int, list[int]]): A single tag ID or a list of tag IDs to associate with the web application.
+
+    Returns:
+        WebApp: The new web application as a qualysdk WAS WebApp object.
+    """
+
+    kwargs["name"] = name
+    kwargs["url"] = url
+
+    # Validate the kwargs:
+    kwargs = validate_kwargs(endpoint="create_webapp", **kwargs)
+
+    # Build the XML payload:
+    payload = build_service_request(
+        _webapp_creation_or_edit=True,
+        authRecord_id=kwargs.get("authRecord.id"),
+        _uris=kwargs.get("uris"),
+        tag_ids=kwargs.get("tag.ids"),
+        **kwargs,
+    )
+
+    # Make the API call:
+    parsed = call_webapp_api(auth, "create_webapp", payload)
+
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    data = serviceResponse.get("data")
+    if data.get("WebApp"):
+        data = data.get("WebApp")
+        return WebApp.from_dict(data)
+    else:
+        print("No data found. Exiting.")

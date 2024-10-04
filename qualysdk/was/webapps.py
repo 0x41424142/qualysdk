@@ -397,6 +397,7 @@ def create_webapp(auth: BasicAuth, name: str, url: str, **kwargs) -> WebApp:
             - authRecord_id (Union[str, int]): A single authentication record ID to associate with the web application.
             - uris (Union[str, list[str]]): A list or comma-separated string of URIs to associate with the web application.
             - tag_ids (Union[int, list[int]]): A single tag ID or a list of tag IDs to associate with the web application.
+            - domains (Union[str, list[str]]): A single domain or a list of domains to associate with the web application.
 
     Returns:
         WebApp: The new web application as a qualysdk WAS WebApp object.
@@ -414,6 +415,7 @@ def create_webapp(auth: BasicAuth, name: str, url: str, **kwargs) -> WebApp:
         authRecord_id=kwargs.get("authRecord.id"),
         _uris=kwargs.get("uris"),
         tag_ids=kwargs.get("tag.ids"),
+        _domains=kwargs.get("domains"),
         **kwargs,
     )
 

@@ -249,6 +249,7 @@ webapps = get_webapps_verbose(
 | ```authRecord_id``` | ```Union[str, int]``` | Auth record ID | ❌ |
 | ```uris``` | ```Union[str, list[str]]``` | a single URI string or a list of URI strings | ❌ |
 | ```tag_ids``` | ```Union[int, list[int]]``` | a single tag ID or a list of tag IDs | ❌ |
+| ```domains``` | ```Union[str, list[str]]``` | a single domain string or a list of domain strings | ❌ |
 
 ```py
 from qualysdk import BasicAuth

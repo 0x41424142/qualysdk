@@ -16,6 +16,7 @@ You can use any of the endpoints currently supported:
 | ```get_webapps``` | Returns a list of web apps in the subscription that match given kwargs. |
 | ```get_webapp_details``` | Returns all attributes of a single web app. |
 | ```get_webapps_verbose``` | Combines the functionality of ```get_webapps``` and ```get_webapp_details``` to return a list of web apps with all attributes. Great for SQL data uploads.|
+| ```create_webapp``` | Creates a new web app in the subscription. |
 
 
 ## Count Webapps API
@@ -232,4 +233,50 @@ webapps = get_webapps_verbose(
     ),
     ...
 ]
+```
+
+## Create Webapp API
+
+```create_webapp``` creates a new web app in the subscription.
+
+>**Head's Up!:** More optional attributes will be supported in the future.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```name``` | ```str``` | Web app name | ✅ |
+| ```url``` | ```str``` | Web app URL | ✅ |
+| ```authRecord_id``` | ```Union[str, int]``` | Auth record ID | ❌ |
+| ```uris``` | ```Union[str, list[str]]``` | List of URIs | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import create_webapp
+
+auth = BasicAuth(<username>, <password>)
+
+# Create a new webapp with 
+# minimal attributes:
+new_webapp = create_webapp(
+    auth,
+    name="My New Site",
+    url="https://newsite.com"
+)
+
+# Create a new webapp with
+# URIs and an auth record:
+new_webapp = create_webapp(
+    auth,
+    name="My New Site",
+    url="https://newsite.com",
+    uris=["https://newsite.com/admin", "https://newsite.com/blog", "https://newsite.com/contact"],
+    authRecord_id=12345678 # Only one auth record be be specified in the API call
+)
+>>>WebApp(
+    id=12345678, 
+    name="My New Site", 
+    url="https://newsite.com", 
+    uris=["https://newsite.com/admin", "https://newsite.com/blog", "https://newsite.com/contact"],
+    ...
+)
 ```

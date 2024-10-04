@@ -32,6 +32,12 @@ ENDPOINT_MAPPINGS = {
         "verbose": "BOOLEAN",
     },
     "get_webapp_details": {},
+    "create_webapp": {
+        "name": "TEXT",
+        "url": "TEXT",
+        "authRecord_id": "INTEGER",
+        "uris": "TEXT",
+    },
 }
 
 FILTER_MAPPING = {

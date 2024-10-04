@@ -40,7 +40,7 @@ def validate_kwargs(endpoint: str, **kwargs):
     for key, value in kwargs.items():
         if "_operator" not in key and key not in endpoint_dtypes:
             raise ValueError(
-                f"Invalid filter key: {key}. Acceptable keys: {endpoint_dtypes.keys()}"
+                f"Invalid key: {key}. Acceptable keys: {endpoint_dtypes.keys()}"
             )
 
         if key.endswith("_operator"):
@@ -49,7 +49,8 @@ def validate_kwargs(endpoint: str, **kwargs):
                     f"Invalid operator for {key[:-9]}: {value}. Valid operators for {key[:-9]}: {FILTER_MAPPING[endpoint_dtypes[key[:-9]]]}"
                 )
 
-    # Lastly, convert any _s to .s in the keys, but preserve '_operator' in the str:
+    # Lastly, convert any _s to .s in the keys:
+    # Yikes...
     return {
         key.replace("_", ".") if key != "_operator" else key: value
         for key, value in kwargs.items()

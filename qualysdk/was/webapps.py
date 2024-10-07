@@ -45,6 +45,8 @@ def call_webapp_api(
             params = {"placeholder": "delete", "webappId": ""}
             if payload.pop("removeFromSubscription", None):
                 params["action"] = "removeFromSubscription"
+        case "get_selenium_script":
+            params = {"placeholder": "downloadSeleniumScript", "webappId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -123,7 +125,7 @@ def count_webapps(auth: BasicAuth, **kwargs) -> int:
 
 def get_webapps(
     auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
-) -> object:
+) -> WebApp:
     """
     Get a list of web applications in the Qualys WAS module
     according to the provided filters.
@@ -156,10 +158,10 @@ def get_webapps(
         - lastScan_status_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the last scan status filter.
         - lastScan_date (str): Date of the last scan in UTC date/time format.
         - lastScan_date_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the last scan date filter.
-        - verbose (bool): Whether to return verbose output.
+        - verbose (bool): If True, returns tag information in the response.
 
     Returns:
-        object: The web applications that match the filters.
+        WebApp: The web applications that match the filters.
     """
 
     # Ensure that page_count is either the string 'all' or an integer >= 1:
@@ -667,7 +669,7 @@ def purge_webapp(auth: BasicAuth, **kwargs) -> list[str]:
         if key in kwargs:
             kwargs[key] = str(kwargs[key])
 
-    # Validate the kwargs:
+    # Validate the kwargs. purge uses the same kwargs as delete:
     kwargs = validate_kwargs(endpoint="delete_webapp", **kwargs)
 
     # Build the XML payload:
@@ -699,3 +701,55 @@ def purge_webapp(auth: BasicAuth, **kwargs) -> list[str]:
             deleted.append(webapp)
 
     return deleted
+
+
+def get_selenium_script(
+    auth: BasicAuth, id: Union[int, str], crawlingScripts_id: Union[int, str]
+) -> object:
+    """
+    Download the associated Selenium script for a web application, identified by 1+ web app IDs.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        id (Union[int, str]): The ID of the web application.
+        crawlingScripts_id (Union[int, str]): The ID of the crawling script.
+
+    Returns:
+        object: The Selenium script.
+    """
+
+    # Validate the kwargs:
+    validate_kwargs(
+        endpoint="get_selenium_script",
+        id=id,
+        crawlingScripts_id=str(crawlingScripts_id),
+    )
+
+    # Format crawlingScripts ID:
+    kwargs = {"id": str(id), "crawlingScripts.id": str(crawlingScripts_id)}
+
+    # Build the XML payload:
+    payload = build_service_request(**kwargs)
+
+    # Make the API call:
+    parsed = call_webapp_api(auth, "get_selenium_script", payload)
+
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    data = serviceResponse.get("data")
+    print(
+        "[WARNING] Code to parse data from this endpoint is not yet implemented. Please submit a PR. Returning raw data..."
+    )
+    return data
+    # if data.get("SeleniumScript"):
+    #    data = data.get("SeleniumScript")
+    #    return data
+    # else:
+    #    print("No data found. Exiting.")

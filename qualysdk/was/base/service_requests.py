@@ -280,6 +280,10 @@ def build_service_request(
 
     if filters:
         request_dict["ServiceRequest"]["filters"]["Criteria"] = filters
+        # If any filters snuck in that have a None #text value, remove them
+        for criteria in request_dict["ServiceRequest"]["filters"]["Criteria"]:
+            if criteria["#text"] is None:
+                request_dict["ServiceRequest"]["filters"]["Criteria"].remove(criteria)
     else:
         del request_dict["ServiceRequest"]["filters"]
 

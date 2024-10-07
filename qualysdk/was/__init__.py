@@ -11,4 +11,10 @@ from .webapps import (
     update_webapp,
     delete_webapp,
     purge_webapp,
+    get_selenium_script,
+)
+
+from .authentication_records import (
+    count_authentication_records,
+    get_authentication_records,
 )

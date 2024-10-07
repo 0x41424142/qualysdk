@@ -39,6 +39,7 @@ psycopg2-binary = [
     {version = "^2.9.9", platform = "darwin"},
 ]
 xmltodict = "^0.13.0"
+defusedxml = "^0.7.1"
 
 
 [tool.poetry.urls]

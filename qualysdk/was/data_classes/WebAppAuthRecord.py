@@ -31,7 +31,6 @@ class WebAppAuthRecord:
     updatedDate: Union[str, datetime] = None
 
     def __post_init__(self):
-
         setattr(self, "id", int(self.id))
 
         DT_FIELDS = ["createdDate", "updatedDate"]

@@ -19,6 +19,7 @@ You can use any of the endpoints currently supported:
 | ```create_webapp``` | Creates a new web app in the subscription. |
 | ```update_webapp``` | Updates a web app in the subscription. |
 | ```delete_webapp``` | Deletes a web app in the subscription. |
+| ```purge_webapp``` | Purges scan data for a web app in the subscription. |
 
 
 ## Count Webapps API
@@ -367,6 +368,8 @@ updated_webapp = update_webapp(
 
 Returns a list of webapp IDs that were deleted as a dictionary: ```{"id": <id>}```
 
+>**Head's Up!:** Using this API may only remove the WAS-specific asset in the subscription. It may still be active in other Qualys modules, such as Global AssetView's web application view.
+
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
@@ -408,5 +411,56 @@ delete_webapp(auth, id="12345678,98765432", id_operator="IN")
 
 # Delete all webapps that have the "deprecated" tag:
 delete_webapp(auth, tags_name="deprecated", tags_name_operator="EQUALS")
+>>>[{"id": 12345678}, {"id": 98765432}, ...]
+```
+
+## Purge Webapp Scan Data API
+
+```purge_webapp``` purges scan data for a web app in the subscription.
+
+Returns a list of webapp IDs that were purged as a dictionary: ```{"id": <id>}```
+
+>**Head's Up!:** Using this API may de-activate the WAS-specific asset in the subscription. It may still be active in other Qualys modules.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```id``` | ```Union[str, int]``` | Web app ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Web app name | ❌ |
+| ```name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the name filter | ❌ |
+| ```url``` | ```str``` | Web app URL | ❌ |
+| ```url_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the URL filter | ❌ |
+| ```tags_name``` | ```str``` | Tag name | ❌ |
+| ```tags_name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the tag name filter | ❌ |
+| ```tags_id``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tag ID filter | ❌ |
+| ```createdDate``` | ```str``` | Date created | ❌ |
+| ```createdDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the created date filter | ❌ |
+| ```updatedDate``` | ```str``` | Date updated | ❌ |
+| ```updatedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the updated date filter | ❌ |
+| ```isScheduled``` | ```bool``` | If the webapp has a scan scheduled | ❌ |
+| ```isScheduled_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScheduled filter | ❌ |
+| ```isScanned``` | ```bool``` | If the webapp has been scanned | ❌ |
+| ```isScanned_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScanned filter | ❌ |
+| ```lastScan_status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "ERROR", "CANCELLED"]``` | Status of the last scan | ❌ |
+| ```lastScan_status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the lastScan_status filter | ❌ |
+| ```lastScan_date``` | ```str``` | Date of the last scan in UTC date/time format | ❌ |
+| ```lastScan_date_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the lastScan_date filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import purge_webapp
+
+auth = BasicAuth(<username>, <password>)
+
+# Purge scan data for a webapp by ID:
+purge_webapp(auth, id=12345678)
+
+# Purge scan data for multiple webapps by ID:
+purge_webapp(auth, id="12345678,98765432", id_operator="IN")
+
+# Purge scan data for all webapps that have the "deprecated" tag:
+purge_webapp(auth, tags_name="deprecated", tags_name_operator="EQUALS")
 >>>[{"id": 12345678}, {"id": 98765432}, ...]
 ```

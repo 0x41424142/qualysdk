@@ -10,4 +10,5 @@ from .webapps import (
     create_webapp,
     update_webapp,
     delete_webapp,
+    purge_webapp,
 )

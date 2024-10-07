@@ -9,4 +9,5 @@ from .webapps import (
     get_webapps_verbose,
     create_webapp,
     update_webapp,
+    delete_webapp,
 )

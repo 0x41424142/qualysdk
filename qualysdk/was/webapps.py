@@ -41,6 +41,10 @@ def call_webapp_api(
             params = {"placeholder": "create", "webappId": ""}
         case "update_webapp":
             params = {"placeholder": "update", "webappId": payload.pop("webappId")}
+        case "delete_webapp":
+            params = {"placeholder": "delete", "webappId": ""}
+            if payload.pop("removeFromSubscription", None):
+                params["action"] = "removeFromSubscription"
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -505,3 +509,100 @@ def update_webapp(auth: BasicAuth, webappId: Union[int, str], **kwargs) -> str:
         return f"WebaApp {data} updated successfully."
     else:
         print("No data found. Exiting.")
+
+
+def delete_webapp(
+    auth: BasicAuth, removeFromSubscription: bool = True, **kwargs
+) -> list[str]:
+    """
+    Delete webapps out of Qualys WAS.
+
+    To delete a single asset, use kwarg 'id' set to
+    a single int/str.
+
+    To delete multiple assets,
+    set 'id' to a list of int/str, or use the other
+    kwargs/operators listed below.
+
+    If both 'id' and other kwargs are provided, the 'id'
+    kwarg will take precedence.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        removeFromSubscription (bool): Whether to remove the webapp from the subscription (True) or just WAS (False). Default is True.
+
+    ## Kwargs:
+
+        - id (Union[str, int]): Web application ID.
+        - id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the ID filter.
+        - name (str): Web application name.
+        - name_operator (Literal["CONTAINS", "EQUALS", "NOT EQUALS"]): Operator for the name filter.
+        - url (str): Web application URL.
+        - url_operator (Literal["CONTAINS", "EQUALS", "NOT EQUALS"]): Operator for the URL filter.
+        - tags_name (str): Tag name.
+        - tags_name_operator (Literal["CONTAINS", "EQUALS", "NOT EQUALS"]): Operator for the tag name filter.
+        - tags_id (Union[str, int]): Tag ID.
+        - tags_id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the tag ID filter.
+        - createdDate (str): Date the web application was created in UTC date/time format.
+        - createdDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the created date filter.
+        - updatedDate (str): Date the web application was last updated in UTC date/time format.
+        - updatedDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the updated date filter.
+        - isScheduled (bool): Whether the web application has a scan scheduled.
+        - isScheduled_operator (Literal["EQUALS", "NOT EQUALS"]): Operator for the isScheduled filter.
+        - isScanned (bool): Whether the web application has been scanned.
+        - isScanned_operator (Literal["EQUALS", "NOT EQUALS"]): Operator for the isScanned filter.
+        - lastScan_status (Literal["SUBMITTED", "RUNNING", "FINISHED", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "ERROR", "CANCELLED"]): Status of the last scan.
+        - lastScan_status_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the last scan status filter.
+        - lastScan_date (str): Date of the last scan in UTC date/time format.
+        - lastScan_date_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the last scan date filter.
+
+    Returns:
+        list[str]: A list of IDs that were successfully deleted.
+    """
+
+    # Make sure user passed in a kwarg:
+    if not kwargs:
+        raise ValueError("No kwargs provided. Please provide at least one kwarg.")
+
+    TO_STR = [
+        "id",
+        "tags_id",
+    ]
+
+    for key in TO_STR:
+        if key in kwargs:
+            kwargs[key] = str(kwargs[key])
+
+    # Validate the kwargs:
+    kwargs = validate_kwargs(endpoint="delete_webapp", **kwargs)
+
+    # Build the XML payload:
+    payload = build_service_request(**kwargs)
+    payload["removeFromSubscription"] = removeFromSubscription
+
+    # Make the API call:
+    parsed = call_webapp_api(auth, "delete_webapp", payload)
+
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    if serviceResponse.get("count") == "0":
+        print(f"No applicable web apps found. Exiting.")
+        return []
+
+    deleted = []
+    data = serviceResponse.get("data")
+    if data.get("WebApp"):
+        data = data.get("WebApp")
+        if isinstance(data, dict):
+            data = [data]
+        for webapp in data:
+            deleted.append(webapp)
+
+    return deleted

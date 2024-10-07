@@ -1051,7 +1051,7 @@ CALL_SCHEMA = frozendict(
             "call_webapp_api": {
                 "endpoint": "/qps/rest/3.0/{placeholder}/was/webapp/{webappId}",
                 "method": ["POST", "GET"],
-                "valid_params": ["placeholder", "webappId", "_xml_data"],
+                "valid_params": ["placeholder", "webappId", "_xml_data", "action"],
                 "valid_POST_data": [
                     "_xml_data",
                     "id",
@@ -1073,35 +1073,6 @@ CALL_SCHEMA = frozendict(
                 "auth_type": "basic",
                 "_xml_data": True,
             },
-            # "create_webapp": {
-            #    "endpoint": "/qps/rest/3.0/{placeholder}/was/webapp/",
-            #    "method": ["POST"],
-            #    "valid_params": ["placeholder", "_xml_data"],
-            #    "valid_POST_data": [
-            #        "_xml_data",
-            #        "name",
-            #        "url",
-            #    ],
-            #    "use_requests_json_data": False,
-            #    "return_type": "xml",
-            #    "pagination": False,
-            #    "auth_type": "basic",
-            #    "_xml_data": True,
-            # },
-            # "update_webapp": {
-            #    "endpoint": "/qps/rest/3.0/{placeholder}/was/webapp/{webappId}",
-            #    "method": ["POST"],
-            #    "valid_params": ["placeholder", "webappId", "_xml_data"],
-            #    "valid_POST_data": [
-            #        "_xml_data",
-            #        "id",
-            #    ],
-            #    "use_requests_json_data": False,
-            #    "return_type": "xml",
-            #    "pagination": False,
-            #    "auth_type": "basic",
-            #    "_xml_data": True,
-            # },
         },
     }
 )

@@ -18,6 +18,7 @@ You can use any of the endpoints currently supported:
 | ```get_webapps_verbose``` | Combines the functionality of ```get_webapps``` and ```get_webapp_details``` to return a list of web apps with all attributes. Great for SQL data uploads.|
 | ```create_webapp``` | Creates a new web app in the subscription. |
 | ```update_webapp``` | Updates a web app in the subscription. |
+| ```delete_webapp``` | Deletes a web app in the subscription. |
 
 
 ## Count Webapps API
@@ -358,4 +359,54 @@ updated_webapp = update_webapp(
     webappId=webapp_id,
     urlExcludelist=["https://example.com/admin", "https://example.com/blog"]
 )
+```
+
+## Delete Webapp API
+
+```delete_webapp``` deletes a web app in the subscription.
+
+Returns a list of webapp IDs that were deleted as a dictionary: ```{"id": <id>}```
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```removeFromSubscription``` | ```bool=True``` | If ```True```, removes the webapp from the subscription. If ```False```, removes webapp from WAS only | ❌ |
+| ```id``` | ```Union[str, int]``` | Web app ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Web app name | ❌ |
+| ```name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the name filter | ❌ |
+| ```url``` | ```str``` | Web app URL | ❌ |
+| ```url_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the URL filter | ❌ |
+| ```tags_name``` | ```str``` | Tag name | ❌ |
+| ```tags_name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the tag name filter | ❌ |
+| ```tags_id``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tag ID filter | ❌ |
+| ```createdDate``` | ```str``` | Date created | ❌ |
+| ```createdDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the created date filter | ❌ |
+| ```updatedDate``` | ```str``` | Date updated | ❌ |
+| ```updatedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the updated date filter | ❌ |
+| ```isScheduled``` | ```bool``` | If the webapp has a scan scheduled | ❌ |
+| ```isScheduled_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScheduled filter | ❌ |
+| ```isScanned``` | ```bool``` | If the webapp has been scanned | ❌ |
+| ```isScanned_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScanned filter | ❌ |
+| ```lastScan_status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "ERROR", "CANCELLED"]``` | Status of the last scan | ❌ |
+| ```lastScan_status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the lastScan_status filter | ❌ |
+| ```lastScan_date``` | ```str``` | Date of the last scan in UTC date/time format | ❌ |
+| ```lastScan_date_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the lastScan_date filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import delete_webapp
+
+auth = BasicAuth(<username>, <password>)
+
+# Delete a webapp by ID:
+delete_webapp(auth, id=12345678)
+
+# Delete multiple webapps by ID:
+delete_webapp(auth, id="12345678,98765432", id_operator="IN")
+
+# Delete all webapps that have the "deprecated" tag:
+delete_webapp(auth, tags_name="deprecated", tags_name_operator="EQUALS")
+>>>[{"id": 12345678}, {"id": 98765432}, ...]
 ```

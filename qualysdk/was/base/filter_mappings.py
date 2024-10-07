@@ -44,7 +44,20 @@ ENDPOINT_MAPPINGS = {
         "domains": "TEXT",
         "scannerTag_ids": "TEXT",
     },
-    # update_webapp is almost the same as create_webapp. See below
+    "delete_webapp": {
+        "id": "INTEGER",
+        "name": "TEXT",
+        "url": "TEXT",
+        "tags_name": "TEXT",
+        "tags_id": "INTEGER",
+        "createdDate": "DATE",
+        "updatedDate": "DATE",
+        "isScheduled": "BOOLEAN",
+        "isScanned": "BOOLEAN",
+        "lastScan_status": "KEYWORD",
+        "lastScan_date": "DATE",
+        "removeFromSubscription": "BOOLEAN",
+    },
 }
 
 ENDPOINT_MAPPINGS["update_webapp"] = ENDPOINT_MAPPINGS["create_webapp"]

@@ -262,7 +262,14 @@ def build_service_request(
         if kwarg.endswith(".operator"):
             continue
         # fields that go under WebApp:
-        if kwarg in ["authRecord.id", "uris", "tag.ids", "domains", "scannerTag.ids"]:
+        if kwarg in [
+            "authRecord.id",
+            "uris",
+            "tag.ids",
+            "domains",
+            "scannerTag.ids",
+            "removeFromSubscription",
+        ]:
             continue
         criteria = {
             "@field": kwarg,

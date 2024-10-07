@@ -30,7 +30,7 @@ class Evaluation:
                 try:
                     setattr(self, field, datetime.fromisoformat(value))
                 except:
-                    pass
+                    setattr(self, field, None)
 
     def to_dict(self):
         return asdict(self)

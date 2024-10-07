@@ -2,7 +2,8 @@
 xml_parser.py - contains the xml_parser function that parses an XML string into a dictionary.
 """
 
-from lxml import etree
+from lxml.etree import _Comment
+from defusedxml.lxml import fromstring
 
 
 def xml_parser(xml_string, attr_prefix="@", cdata_key="#text"):
@@ -28,7 +29,7 @@ def xml_parser(xml_string, attr_prefix="@", cdata_key="#text"):
             parsed_dict[attr_prefix + key] = value
         # Parse child elements
         for child in element:
-            if isinstance(child, etree._Comment):
+            if isinstance(child, _Comment):
                 continue  # Skip comments
             child_dict = parse_element(child)
             if child.tag in parsed_dict:
@@ -46,5 +47,5 @@ def xml_parser(xml_string, attr_prefix="@", cdata_key="#text"):
                 parsed_dict = text
         return parsed_dict
 
-    root = etree.fromstring(xml_string)
+    root = fromstring(xml_string)
     return {root.tag: parse_element(root)}

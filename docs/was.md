@@ -247,9 +247,10 @@ webapps = get_webapps_verbose(
 | ```name``` | ```str``` | Web app name | ✅ |
 | ```url``` | ```str``` | Web app URL | ✅ |
 | ```authRecord_id``` | ```Union[str, int]``` | Auth record ID | ❌ |
-| ```uris``` | ```Union[str, list[str]]``` | a single URI string or a list of URI strings | ❌ |
-| ```tag_ids``` | ```Union[int, list[int]]``` | a single tag ID or a list of tag IDs | ❌ |
-| ```domains``` | ```Union[str, list[str]]``` | a single domain string or a list of domain strings | ❌ |
+| ```uris``` | ```Union[str, list[str]]``` | Single URI string or a list of URI strings | ❌ |
+| ```tag_ids``` | ```Union[int, list[int]]``` | Single tag ID or a list of tag IDs | ❌ |
+| ```domains``` | ```Union[str, list[str]]``` | Single domain string or a list of domain strings | ❌ |
+| ```scannerTag_ids``` | ```Union[int, list[int]]``` | Single tag ID or a list of tag IDs associated with scanner appliances to assign | ❌ |
 
 ```py
 from qualysdk import BasicAuth
@@ -272,8 +273,9 @@ new_webapp = create_webapp(
     name="My New Site",
     url="https://newsite.com",
     uris=["https://newsite.com/admin", "https://newsite.com/blog", "https://newsite.com/contact"],
-    authRecord_id=12345678 # Only one auth record be be specified in the API call
-    tag_ids=[12345, 54321]
+    authRecord_id=12345678 # Only one auth record can be specified in the API call
+    tag_ids=[12345, 54321],
+    ...
 )
 >>>WebApp(
     id=12345678, 
@@ -281,6 +283,16 @@ new_webapp = create_webapp(
     url="https://newsite.com", 
     uris=["https://newsite.com/admin", "https://newsite.com/blog", "https://newsite.com/contact"],
     tags=[WASTag(id=12345, name='Prod'), WASTag(id=54321, name='News')],
+    ...
+)
+
+# Create a new webapp with
+# 2 default scanner tags:
+new_webapp = create_webapp(
+    auth,
+    name="My New Site",
+    url="https://newsite.com",
+    scannerTag_ids=[12345, 54321],
     ...
 )
 ```

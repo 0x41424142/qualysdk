@@ -39,6 +39,7 @@ ENDPOINT_MAPPINGS = {
         "uris": "TEXT",
         "tag_ids": "TEXT",
         "domains": "TEXT",
+        "scannerTag_ids": "TEXT",
     },
 }
 

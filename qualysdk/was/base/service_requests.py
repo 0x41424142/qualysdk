@@ -146,6 +146,7 @@ def build_service_request(
     _uris: Union[str, list[str]] = None,
     tag_ids: Union[int, list[int]] = None,
     _domains: Union[str, list[str]] = None,
+    _scannerTag_ids: Union[int, list[int]] = None,
     **kwargs,
 ) -> dict[str, str]:
     """
@@ -161,6 +162,7 @@ def build_service_request(
         _uris (Union[str, list[str]], optional): The URIs to be added to the WebApp. Can be a comma-separated string or a list of strings.
         tag_ids (Union[int, list[int]], optional): The tag IDs to be added to the WebApp. Can be a single integer or a list of integers.
         domains (Union[str, list[str]], optional): The domains to be added to the WebApp. Can be a single string or a list of strings.
+        _scannerTag_ids (Union[int, list[int]], optional): A tag ID associated with 1+ scanners to assign to the WebApp.
 
     Returns:
         dict: The XML payload to be sent to the Qualys API.
@@ -221,13 +223,18 @@ def build_service_request(
         domainList = format_xml_list(domains, "Domain")
         update_request_dict(request_dict, "domains", domainList)
 
+    if _scannerTag_ids:
+        scannerTag_ids = validate_list(_scannerTag_ids, int, "Scanner Tag IDs")
+        scannerTagList = format_xml_list(scannerTag_ids, "Tag")
+        update_request_dict(request_dict, "defaultScannerTags", scannerTagList)
+
     # Build the Criteria tags for the filters:
     filters = []
     for kwarg, value in kwargs.items():
         if kwarg.endswith(".operator"):
             continue
         # fields that go under WebApp:
-        if kwarg in ["authRecord.id", "uris", "tag.ids", "domains"]:
+        if kwarg in ["authRecord.id", "uris", "tag.ids", "domains", "scannerTag.ids"]:
             continue
         criteria = {
             "@field": kwarg,
@@ -242,8 +249,10 @@ def build_service_request(
         del request_dict["ServiceRequest"]["filters"]
 
     # Unescape any HTML. Necessary due to xmltodict's behavior.
-    # This is especially relevant for URIs.
-    xml = unescape(xmltodict.unparse(request_dict, pretty=True))
-    payload = {"_xml_data": xml}
+    try:
+        xml = unescape(xmltodict.unparse(request_dict, pretty=True))
+        payload = {"_xml_data": xml}
+    except Exception as e:
+        raise ValueError(f"Error unescaping XML: {e}")
 
     return payload

@@ -165,6 +165,7 @@ def call_api(
                     controlid=str(params.pop("controlid", None)),
                     resourceid=str(params.pop("resourceid", None)),
                     webappId=str(params.pop("webappId", None)),
+                    webappAuthRecordId=str(params.pop("webappAuthRecordId", None)),
                 )
             elif payload and (
                 any(

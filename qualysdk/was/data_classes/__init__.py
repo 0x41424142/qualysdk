@@ -10,3 +10,4 @@ from .PostmanCollection import PostmanCollection
 from .SwaggerFile import SwaggerFile
 from .UrlEntry import UrlEntry
 from .Comment import Comment
+from .WebAppAuthRecord import WebAppAuthRecord

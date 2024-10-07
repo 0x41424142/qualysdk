@@ -8,4 +8,13 @@ from .webapps import (
     get_webapp_details,
     get_webapps_verbose,
     create_webapp,
+    update_webapp,
+    delete_webapp,
+    purge_webapp,
+    get_selenium_script,
+)
+
+from .authentication_records import (
+    count_authentication_records,
+    get_authentication_records,
 )

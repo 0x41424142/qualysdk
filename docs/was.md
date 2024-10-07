@@ -17,13 +17,18 @@ You can use any of the endpoints currently supported:
 | ```get_webapp_details``` | Returns all attributes of a single web app. |
 | ```get_webapps_verbose``` | Combines the functionality of ```get_webapps``` and ```get_webapp_details``` to return a list of web apps with all attributes. Great for SQL data uploads.|
 | ```create_webapp``` | Creates a new web app in the subscription. |
-
+| ```update_webapp``` | Updates a web app in the subscription. |
+| ```delete_webapp``` | Deletes a web app in the subscription. |
+| ```purge_webapp``` | Purges scan data for a web app in the subscription. |
+| ```get_selenium_script``` | Returns the Selenium script associated with a web app |
+| ```count_authentication_records``` | Returns the number of authentication records in the subscription that match given kwargs. |
+| ```get_authentication_records``` | Returns a list of authentication records in the subscription that match given kwargs. |
 
 ## Count Webapps API
 
 ```count_webapps``` returns the number of web apps in the subscription that match the given kwargs.
 
->**Head's Up!** This method is useful for quickly getting a count of webapps that match a certain criteria. It does NOT return the webapps themselves, or any attributes of the webapps.
+>**Head's Up!** This method is useful for quickly getting a count of webapps that match certain criteria. It does NOT return the webapps themselves, or any attributes of the webapps.
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
@@ -247,9 +252,10 @@ webapps = get_webapps_verbose(
 | ```name``` | ```str``` | Web app name | ✅ |
 | ```url``` | ```str``` | Web app URL | ✅ |
 | ```authRecord_id``` | ```Union[str, int]``` | Auth record ID | ❌ |
-| ```uris``` | ```Union[str, list[str]]``` | a single URI string or a list of URI strings | ❌ |
-| ```tag_ids``` | ```Union[int, list[int]]``` | a single tag ID or a list of tag IDs | ❌ |
-| ```domains``` | ```Union[str, list[str]]``` | a single domain string or a list of domain strings | ❌ |
+| ```uris``` | ```Union[str, list[str]]``` | Single URI string or a list of URI strings | ❌ |
+| ```tag_ids``` | ```Union[int, list[int]]``` | Single tag ID or a list of tag IDs | ❌ |
+| ```domains``` | ```Union[str, list[str]]``` | Single domain string or a list of domain strings | ❌ |
+| ```scannerTag_ids``` | ```Union[int, list[int]]``` | Single tag ID or a list of tag IDs associated with scanner appliances to assign | ❌ |
 
 ```py
 from qualysdk import BasicAuth
@@ -272,8 +278,9 @@ new_webapp = create_webapp(
     name="My New Site",
     url="https://newsite.com",
     uris=["https://newsite.com/admin", "https://newsite.com/blog", "https://newsite.com/contact"],
-    authRecord_id=12345678 # Only one auth record be be specified in the API call
-    tag_ids=[12345, 54321]
+    authRecord_id=12345678 # Only one auth record can be specified in the API call
+    tag_ids=[12345, 54321],
+    ...
 )
 >>>WebApp(
     id=12345678, 
@@ -283,4 +290,324 @@ new_webapp = create_webapp(
     tags=[WASTag(id=12345, name='Prod'), WASTag(id=54321, name='News')],
     ...
 )
+
+# Create a new webapp with
+# 2 default scanner tags:
+new_webapp = create_webapp(
+    auth,
+    name="My New Site",
+    url="https://newsite.com",
+    scannerTag_ids=[12345, 54321],
+    ...
+)
+```
+
+## Update Webapp API
+
+```update_webapp``` updates a web app in the subscription. 
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```webappId``` | ```Union[str, int]``` | Web app ID | ✅ |
+| ```name``` | ```str``` | Web app name | ❌ |
+| ```url``` | ```str``` | Web app URL | ❌ |
+| ```attributes``` | ```dict["add": {key: value}, "remove": list[str]]``` | Attributes to add or remove. | ❌ |
+| ```defaultProfile_id``` | ```int``` | Default profile ID | ❌ |
+| ```urlExcludelist``` | ```list[str]``` | List of URLs to exclude | ❌ |
+| ```urlAllowlist``` | ```list[str]``` | List of URLs to allow | ❌ |
+| ```postDataExcludelist``` | ```list[str]``` | List of post data paths to exclude | ❌ |
+| ```useSitemap``` | ```bool``` | If True, use the sitemap | ❌ |
+| ```headers``` | ```list["Header_name: Header_value"]``` | List of headers | ❌ |
+| ```authRecord_id``` | ```dict["add": int, "remove": int]``` | Auth record ID to add or remove | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import update_webapp
+
+auth = BasicAuth(<username>, <password>)
+webapp_id = 12345678
+
+# Update the name of a webapp:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    name="My Updated Site"
+)
+
+# Remove current auth record and add a new one:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    authRecord_id={"add": 98765432, "remove": 12345678}
+)
+
+# Add new headers:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    headers=["X-Frame-Options: DENY", "Content-Security-Policy: default-src 'self'"]
+)
+
+# Add/remove custom attributes:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    attributes={"add": {"custom_attribute": "custom_value"}, "remove": ["old_custom_attribute1", "old_custom_attribute2"]}
+)
+
+# add URLs to the exclude list:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    urlExcludelist=["https://example.com/admin", "https://example.com/blog"]
+)
+```
+
+## Delete Webapp API
+
+```delete_webapp``` deletes a web app in the subscription.
+
+Returns a list of webapp IDs that were deleted as a dictionary: ```{"id": <id>}```
+
+>**Head's Up!:** Using this API may only remove the WAS-specific asset in the subscription. It may still be active in other Qualys modules, such as Global AssetView's web application view.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```removeFromSubscription``` | ```bool=True``` | If ```True```, removes the webapp from the subscription. If ```False```, removes webapp from WAS only | ❌ |
+| ```id``` | ```Union[str, int]``` | Web app ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Web app name | ❌ |
+| ```name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the name filter | ❌ |
+| ```url``` | ```str``` | Web app URL | ❌ |
+| ```url_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the URL filter | ❌ |
+| ```tags_name``` | ```str``` | Tag name | ❌ |
+| ```tags_name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the tag name filter | ❌ |
+| ```tags_id``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tag ID filter | ❌ |
+| ```createdDate``` | ```str``` | Date created | ❌ |
+| ```createdDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the created date filter | ❌ |
+| ```updatedDate``` | ```str``` | Date updated | ❌ |
+| ```updatedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the updated date filter | ❌ |
+| ```isScheduled``` | ```bool``` | If the webapp has a scan scheduled | ❌ |
+| ```isScheduled_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScheduled filter | ❌ |
+| ```isScanned``` | ```bool``` | If the webapp has been scanned | ❌ |
+| ```isScanned_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScanned filter | ❌ |
+| ```lastScan_status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "ERROR", "CANCELLED"]``` | Status of the last scan | ❌ |
+| ```lastScan_status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the lastScan_status filter | ❌ |
+| ```lastScan_date``` | ```str``` | Date of the last scan in UTC date/time format | ❌ |
+| ```lastScan_date_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the lastScan_date filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import delete_webapp
+
+auth = BasicAuth(<username>, <password>)
+
+# Delete a webapp by ID:
+delete_webapp(auth, id=12345678)
+
+# Delete multiple webapps by ID:
+delete_webapp(auth, id="12345678,98765432", id_operator="IN")
+
+# Delete all webapps that have the "deprecated" tag:
+delete_webapp(auth, tags_name="deprecated", tags_name_operator="EQUALS")
+>>>[{"id": 12345678}, {"id": 98765432}, ...]
+```
+
+## Purge Webapp Scan Data API
+
+```purge_webapp``` purges scan data for a web app in the subscription.
+
+Returns a list of webapp IDs that were purged as a dictionary: ```{"id": <id>}```
+
+>**Head's Up!:** Using this API may de-activate the WAS-specific asset in the subscription. It may still be active in other Qualys modules.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```id``` | ```Union[str, int]``` | Web app ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Web app name | ❌ |
+| ```name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the name filter | ❌ |
+| ```url``` | ```str``` | Web app URL | ❌ |
+| ```url_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the URL filter | ❌ |
+| ```tags_name``` | ```str``` | Tag name | ❌ |
+| ```tags_name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the tag name filter | ❌ |
+| ```tags_id``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tag ID filter | ❌ |
+| ```createdDate``` | ```str``` | Date created | ❌ |
+| ```createdDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the created date filter | ❌ |
+| ```updatedDate``` | ```str``` | Date updated | ❌ |
+| ```updatedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the updated date filter | ❌ |
+| ```isScheduled``` | ```bool``` | If the webapp has a scan scheduled | ❌ |
+| ```isScheduled_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScheduled filter | ❌ |
+| ```isScanned``` | ```bool``` | If the webapp has been scanned | ❌ |
+| ```isScanned_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isScanned filter | ❌ |
+| ```lastScan_status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "ERROR", "CANCELLED"]``` | Status of the last scan | ❌ |
+| ```lastScan_status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the lastScan_status filter | ❌ |
+| ```lastScan_date``` | ```str``` | Date of the last scan in UTC date/time format | ❌ |
+| ```lastScan_date_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the lastScan_date filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import purge_webapp
+
+auth = BasicAuth(<username>, <password>)
+
+# Purge scan data for a webapp by ID:
+purge_webapp(auth, id=12345678)
+
+# Purge scan data for multiple webapps by ID:
+purge_webapp(auth, id="12345678,98765432", id_operator="IN")
+
+# Purge scan data for all webapps that have the "deprecated" tag:
+purge_webapp(auth, tags_name="deprecated", tags_name_operator="EQUALS")
+>>>[{"id": 12345678}, {"id": 98765432}, ...]
+```
+
+## Download a Web App's Associated Selenium Script API
+
+```get_selenium_script``` returns the Selenium script associated with a web app.
+
+>**Head's Up!** Currently, code to create a dataclass object out of the response to this API has not been written. This is a stub. If you have written the code yourself, please submit a [pull request!](https://github.com/0x41424142/qualysdk/pulls) This method will still return data, but it will be the raw data underneath the API response's ```data``` XML tag.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```id``` | ```Union[str, int]``` | Web app ID | ✅ |
+| ```crawlingScripts_id``` | ```Union[str, int]``` | Crawling script ID | ✅ |
+
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_selenium_script
+
+auth = BasicAuth(<username>, <password>)
+
+# STUB!
+```
+
+## Count Authentication Records API
+
+```count_authentication_records``` returns the number of authentication records in the subscription that match the given kwargs.
+
+>**Head's Up!** This method is useful for quickly getting a count of authentication records that match certain criteria. It does NOT return the authentication records themselves, or any attributes of the authentication records.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```id``` | ```Union[str, int]``` | Auth record ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Auth record name | ❌ |
+| ```name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the name filter | ❌ |
+| ```tags``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tags filter | ❌ |
+| ```tags_name``` | ```str``` | Tag name | ❌ |
+| ```tags_name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the tag name filter | ❌ |
+| ```tags_id``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tag ID filter | ❌ |
+| ```createdDate``` | ```str``` | Date created | ❌ |
+| ```createdDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the created date filter | ❌ |
+| ```updatedDate``` | ```str``` | Date updated | ❌ |
+| ```updatedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the updated date filter | ❌ |
+| ```isUsed``` | ```bool``` | If the auth record is in use | ❌ |
+| ```isUsed_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isUsed filter | ❌ |
+| ```lastScan_authStatus``` | ```Literal["NONE", "NOT_USED", "PARTIAL", "FAILED", "SUCCESSFUL"]``` | Status of the last scan | ❌ |
+| ```lastScan_authStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the lastScan_authStatus filter | ❌ |
+| ```lastScan_date``` | ```str``` | Date of the last scan in UTC date/time format | ❌ |
+| ```lastScan_date_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the lastScan_date filter | ❌ |
+| ```contents``` | ```Literal["FORM_STANDARD", "FORM_CUSTOM", "FORM_SELENIUM", "SERVER_BASIC", "SERVER_DIGEST", "SERVER_NTLM", "CERTIFICATE", "OAUTH2_AUTH_CODE", "OAUTH2_IMPLICIT", "OAUTH2_PASSWORD", "OAUTH2_CLIENT_CREDS"]``` | Auth record contents | ❌ |
+| ```contents_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the contents filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import count_authentication_records
+
+auth = BasicAuth(<username>, <password>)
+
+# Get the number of Selenium auth records that have a lastScan.authStatus of "FAILED":
+failed_selenium = count_authentication_records(
+    auth,
+    lastScan_authStatus="FAILED",
+    contents="FORM_SELENIUM"
+)
+>>>5
+
+# Get all OAuth2 auth records:
+oauth2 = count_authentication_records(
+    auth,
+    contents="OAUTH2_AUTH_CODE,OAUTH2_IMPLICIT,OAUTH2_PASSWORD,OAUTH2_CLIENT_CREDS",
+    contents_operator="IN"
+)
+>>>50
+```
+
+## List Authentication Records API
+
+```get_authentication_records``` returns a list of authentication records in the subscription that match the given kwargs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to return. If 'all', returns all pages | ❌ |
+| ```id``` | ```Union[str, int]``` | Auth record ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Auth record name | ❌ |
+| ```name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the name filter | ❌ |
+| ```tags``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tags filter | ❌ |
+| ```tags_name``` | ```str``` | Tag name | ❌ |
+| ```tags_name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the tag name filter | ❌ |
+| ```tags_id``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tag ID filter | ❌ |
+| ```createdDate``` | ```str``` | Date created | ❌ |
+| ```createdDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the created date filter | ❌ |
+| ```updatedDate``` | ```str``` | Date updated | ❌ |
+| ```updatedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the updated date filter | ❌ |
+| ```isUsed``` | ```bool``` | If the auth record is in use | ❌ |
+| ```isUsed_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isUsed filter | ❌ |
+| ```lastScan_authStatus``` | ```Literal["NONE", "NOT_USED", "PARTIAL", "FAILED", "SUCCESSFUL"]``` | Status of the last scan | ❌ |
+| ```lastScan_authStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the lastScan_authStatus filter | ❌ |
+| ```lastScan_date``` | ```str``` | Date of the last scan in UTC date/time format | ❌ |
+| ```lastScan_date_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the lastScan_date filter | ❌ |
+| ```contents``` | ```Literal["FORM_STANDARD", "FORM_CUSTOM", "FORM_SELENIUM", "SERVER_BASIC", "SERVER_DIGEST", "SERVER_NTLM", "CERTIFICATE", "OAUTH2_AUTH_CODE", "OAUTH2_IMPLICIT", "OAUTH2_PASSWORD", "OAUTH2_CLIENT_CREDS"]``` | Auth record type | ❌ |
+| ```contents_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the contents filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_authentication_records
+
+auth = BasicAuth(<username>, <password>)
+
+# Get all authentication records:
+auth_records = get_authentication_records(auth)
+>>>[
+    WebAppAuthRecord(
+        id=12345678,
+        name="My Auth Record",
+        owner_id=98765432,
+        owner_firstName="John",
+        owner_lastName="Doe",
+        createdDate=datetime.datetime(2022, 1, 1, 0, 0, tzinfo=datetime.timezone.utc),
+        updatedDate=datetime.datetime(2022, 2, 1, 0, 0, tzinfo=datetime.timezone.utc),
+    ),
+    ...
+]
+
+# Get all authentication records that have a lastScan.authStatus of "FAILED":
+failed_auth_records = get_authentication_records(auth, lastScan_authStatus="FAILED")
+>>>[
+    WebAppAuthRecord(
+        id=12345678,
+        name="My Failed Auth Record",
+        owner_id=98765432,
+        owner_firstName="John",
+        owner_lastName="Doe",
+        createdDate=datetime.datetime(2022, 1, 1, 0, 0, tzinfo=datetime.timezone.utc),
+        updatedDate=datetime.datetime(2022, 2, 1, 0, 0, tzinfo=datetime.timezone.utc),
+    ),
+    ...
+]
 ```

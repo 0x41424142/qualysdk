@@ -8,4 +8,5 @@ from .webapps import (
     get_webapp_details,
     get_webapps_verbose,
     create_webapp,
+    update_webapp,
 )

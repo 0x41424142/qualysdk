@@ -5,7 +5,7 @@ Contains functions to interact with Web applications in the Qualys WAS module.
 from typing import Union
 
 from .data_classes.WebApp import WebApp
-from .base.service_requests import build_service_request
+from .base.service_requests import build_service_request, build_update_request
 from .base.parse_kwargs import validate_kwargs
 from .base.service_requests import validate_response
 from ..base.call_api import call_api
@@ -39,6 +39,8 @@ def call_webapp_api(
             params = {"placeholder": "get", "webappId": payload.pop("webappId")}
         case "create_webapp":
             params = {"placeholder": "create", "webappId": ""}
+        case "update_webapp":
+            params = {"placeholder": "update", "webappId": payload.pop("webappId")}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -437,5 +439,69 @@ def create_webapp(auth: BasicAuth, name: str, url: str, **kwargs) -> WebApp:
     if data.get("WebApp"):
         data = data.get("WebApp")
         return WebApp.from_dict(data)
+    else:
+        print("No data found. Exiting.")
+
+
+def update_webapp(auth: BasicAuth, webappId: Union[int, str], **kwargs) -> str:
+    """
+    Update a WAS web application.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        webappId (Union[int, str]): The ID of the web application.
+
+    ## Kwargs:
+
+            - name (str): The name of the web application.
+            - url (str): The URL of the web application.
+            - attributes (dict["add": {"attr_name": "attr_value"}, "remove": ["attr_name"]]): Dictionary containing a list of attributes to add or remove.)
+            - defaultProfile_id (Union[str, int]): The ID of the default profile to associate with the web application.
+            - urlExcludelist (list[str]): A list of URLs to exclude from the scan.
+            - urlAllowlist (list[str]): A list of URLs to allow in the scan.
+            - postDataExcludelist (list[str]): A list of post data to exclude from the scan.
+            - useSitemap (bool): Whether to use the sitemap.
+            - headers (list[str]): A list of headers to include in the scan.
+            - authRecord_id (dict["add": [int], "remove": [int]]): A dictionary containing a list of authentication record IDs to add or remove.
+
+    Returns:
+        str: A status message indicating the result of the update.
+    """
+
+    # Validate the kwargs:
+    kwargs = validate_kwargs(endpoint="update_webapp", **kwargs)
+
+    # Build the XML payload:
+    payload = build_update_request(
+        _authRecord_id=kwargs.get("authRecord.id"),
+        tag_ids=kwargs.get("tag.ids"),
+        _domains=kwargs.get("domains"),
+        _scannerTag_ids=kwargs.get("scannerTag.ids"),
+        defaultProfile_id=kwargs.get("defaultProfile.id"),
+        _urlExcludelist=kwargs.get("urlExcludelist"),
+        _urlAllowlist=kwargs.get("urlAllowlist"),
+        _postDataExcludelist=kwargs.get("postDataExcludelist"),
+        _useSitemap=kwargs.get("useSitemap"),
+        _headers=kwargs.get("headers"),
+        **kwargs,
+    )
+
+    # Make the API call:
+    payload["webappId"] = webappId
+    parsed = call_webapp_api(auth, "update_webapp", payload)
+
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    data = serviceResponse.get("data")
+    if data.get("WebApp"):
+        data = data.get("WebApp")
+        return f"WebaApp {data} updated successfully."
     else:
         print("No data found. Exiting.")

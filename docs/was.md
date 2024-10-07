@@ -17,6 +17,7 @@ You can use any of the endpoints currently supported:
 | ```get_webapp_details``` | Returns all attributes of a single web app. |
 | ```get_webapps_verbose``` | Combines the functionality of ```get_webapps``` and ```get_webapp_details``` to return a list of web apps with all attributes. Great for SQL data uploads.|
 | ```create_webapp``` | Creates a new web app in the subscription. |
+| ```update_webapp``` | Updates a web app in the subscription. |
 
 
 ## Count Webapps API
@@ -294,5 +295,67 @@ new_webapp = create_webapp(
     url="https://newsite.com",
     scannerTag_ids=[12345, 54321],
     ...
+)
+```
+
+## Update Webapp API
+
+```update_webapp``` updates a web app in the subscription. 
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```webappId``` | ```Union[str, int]``` | Web app ID | ✅ |
+| ```name``` | ```str``` | Web app name | ❌ |
+| ```url``` | ```str``` | Web app URL | ❌ |
+| ```attributes``` | ```dict["add": {key: value}, "remove": list[str]]``` | Attributes to add or remove. | ❌ |
+| ```defaultProfile_id``` | ```int``` | Default profile ID | ❌ |
+| ```urlExcludelist``` | ```list[str]``` | List of URLs to exclude | ❌ |
+| ```urlAllowlist``` | ```list[str]``` | List of URLs to allow | ❌ |
+| ```postDataExcludelist``` | ```list[str]``` | List of post data paths to exclude | ❌ |
+| ```useSitemap``` | ```bool``` | If True, use the sitemap | ❌ |
+| ```headers``` | ```list["Header_name: Header_value"]``` | List of headers | ❌ |
+| ```authRecord_id``` | ```dict["add": int, "remove": int]``` | Auth record ID to add or remove | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import update_webapp
+
+auth = BasicAuth(<username>, <password>)
+webapp_id = 12345678
+
+# Update the name of a webapp:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    name="My Updated Site"
+)
+
+# Remove current auth record and add a new one:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    authRecord_id={"add": 98765432, "remove": 12345678}
+)
+
+# Add new headers:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    headers=["X-Frame-Options: DENY", "Content-Security-Policy: default-src 'self'"]
+)
+
+# Add/remove custom attributes:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    attributes={"add": {"custom_attribute": "custom_value"}, "remove": ["old_custom_attribute1", "old_custom_attribute2"]}
+)
+
+# add URLs to the exclude list:
+updated_webapp = update_webapp(
+    auth,
+    webappId=webapp_id,
+    urlExcludelist=["https://example.com/admin", "https://example.com/blog"]
 )
 ```

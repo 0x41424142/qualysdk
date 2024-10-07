@@ -4,12 +4,40 @@ Code to generate XML service requests to Qualys WAS API
 
 from typing import Literal, Union, Dict, Any, List
 from html import unescape
+from re import compile
 
 import xmltodict
 from requests import Response
 
 from ...base.xml_parser import xml_parser
 from ...exceptions.Exceptions import QualysAPIError
+
+
+def is_valid_regex(s: str) -> bool:
+    """
+    Attempts to use re.compile to test
+    if a string is a valid regex.
+
+    Args:
+        s (str): The string to test.
+
+    Returns:
+        bool: Whether the string is a valid regex.
+    """
+    try:
+        # Attempt to compile the string as a regex.
+        compile(s)
+
+        # If it contains common URL elements or non-regex patterns, return False
+        # Examples: '://', '=', '&', 'www.', '.com', etc.
+        if any(
+            substring in s for substring in ["://", "=", "&", "www.", ".com", ".org"]
+        ):
+            return False
+
+        return True
+    except Exception as e:
+        return False
 
 
 def ensure_data_structure(request_dict: Dict[str, Any]) -> None:
@@ -247,6 +275,210 @@ def build_service_request(
         request_dict["ServiceRequest"]["filters"]["Criteria"] = filters
     else:
         del request_dict["ServiceRequest"]["filters"]
+
+    # Unescape any HTML. Necessary due to xmltodict's behavior.
+    try:
+        xml = unescape(xmltodict.unparse(request_dict, pretty=True))
+        payload = {"_xml_data": xml}
+    except Exception as e:
+        raise ValueError(f"Error unescaping XML: {e}")
+
+    return payload
+
+
+def build_update_request(
+    name: str = None,
+    url: str = None,
+    attributes: Dict[
+        Literal["add"] : [{"key", "value"}], Literal["remove"] : [str]
+    ] = None,
+    defaultProfile_id: int = None,
+    _urlExcludelist: List[str] = None,
+    _urlAllowlist: List[str] = None,
+    _postDataExcludelist: List[str] = None,
+    _useSitemap: bool = None,
+    _headers: List[str] = None,
+    _authRecord_id: Dict[Literal["add"] : [], Literal["remove"] : []] = None,
+    **kwargs,
+) -> dict[str, str]:
+    """
+    Build the XML update request. Users pass in the filters as kwargs.
+    there is the filter itself as well as a filter_operator kwarg.
+    If the filter_operator is not provided, default to "EQUALS".
+
+    Args:
+        name (str, optional): The name of the web application.
+        url (str, optional): The URL of the web application.
+        attributes (Dict[Literal['add']: List[Dict[str, str]], Literal['remove']: List[str]], optional): The attributes to add or remove from the web application.
+        defaultProfile_id (int, optional): The ID of the default profile to assign to the web application.
+        _urlExcludelist (List[str], optional): The list of URLs to exclude from the web application.
+        _urlAllowlist (List[str], optional): The list of URLs to allow in the web application.
+        _postDataExcludelist (List[str], optional): The list of post data to exclude from the web application.
+        _useSitemap (bool, optional): Whether to use the sitemap for the web application.
+        _headers (List[str], optional): The headers to add to the web application.
+        _authRecord_id (Dict[Literal['add']: List[int], Literal['remove']: List[int]], optional): The authentication record IDs to add or remove from the web application.
+        kwargs (dict): Additional filters to be passed to the Qualys API.
+
+    Returns:
+        dict: The XML payload to be sent to the Qualys API.
+    """
+
+    request_dict = {"ServiceRequest": {"data": {"WebApp": {}}}}
+
+    if name:
+        request_dict["ServiceRequest"]["data"]["WebApp"]["name"] = name
+
+    if url:
+        request_dict["ServiceRequest"]["data"]["WebApp"]["url"] = url
+
+    if defaultProfile_id:
+        request_dict["ServiceRequest"]["data"]["WebApp"]["defaultProfile"] = {
+            "id": defaultProfile_id
+        }
+
+    if attributes:
+        add_data = attributes.get("add")
+        remove_data = attributes.get("remove")
+        if add_data and not isinstance(add_data, list):
+            add_data = [add_data]
+        # Ensure that everything in the list is a dictionary
+        for item in add_data:
+            if not isinstance(item, dict):
+                raise ValueError(
+                    f"Attributes must be passed as a list of dictionaries. Key-value pairs are expected to add attributes. Received: {add_data}"
+                )
+        if remove_data and not isinstance(remove_data, list):
+            remove_data = [remove_data]
+        if add_data:
+            for itm in add_data:
+                for k, v in itm.items():
+                    request_dict["ServiceRequest"]["data"]["WebApp"]["attributes"] = {
+                        "update": {"Attribute": {"name": k, "value": v}}
+                    }
+        if remove_data:
+            request_dict["ServiceRequest"]["data"]["WebApp"]["attributes"] = {
+                "remove": {"Attribute": {"name": remove_data}}
+            }
+
+    if _authRecord_id:
+        add_data = _authRecord_id.get("add")
+        remove_data = _authRecord_id.get("remove")
+        if add_data and not isinstance(add_data, list):
+            add_data = [add_data]
+        if remove_data and not isinstance(remove_data, list):
+            remove_data = [remove_data]
+        if add_data:
+            request_dict["ServiceRequest"]["data"]["WebApp"]["authRecords"] = {
+                "add": {"WebAppAuthRecord": {"id": add_data}}
+            }
+        if remove_data:
+            request_dict["ServiceRequest"]["data"]["WebApp"]["authRecords"] = {
+                "remove": {"WebAppAuthRecord": {"id": remove_data}}
+            }
+
+    if _urlExcludelist:
+        urlExcludelist = _urlExcludelist
+        if not isinstance(urlExcludelist, list):
+            raise ValueError(
+                f"urlExcludelist must be passed as a list of strings. Received: {urlExcludelist}"
+            )
+
+        l = []
+        for entry in urlExcludelist:
+            # Check for any regex characters in the entry.
+            # If found, set the regex attribute to true.
+            if is_valid_regex(entry):
+                l.append(
+                    xmltodict.unparse(
+                        {"UrlEntry": {"@regex": "true", "#text": entry}},
+                        full_document=False,
+                    )
+                )
+            else:
+                l.append(
+                    xmltodict.unparse(
+                        {"UrlEntry": {"@regex": "false", "#text": entry}},
+                        full_document=False,
+                    )
+                )
+
+        request_dict["ServiceRequest"]["data"]["WebApp"]["urlExcludelist"] = {
+            "set": "\n".join(l)
+        }
+
+    if _urlAllowlist:
+        if not isinstance(_urlAllowlist, list):
+            raise ValueError(
+                f"urlAllowlist must be passed as a list of strings. Received: {_urlAllowlist}"
+            )
+        l = []
+        for entry in _urlAllowlist:
+            # Check for any regex characters in the entry.
+            # If found, set the regex attribute to true.
+            if is_valid_regex(entry):
+                l.append(
+                    xmltodict.unparse(
+                        {"UrlEntry": {"@regex": "true", "#text": entry}},
+                        full_document=False,
+                    )
+                )
+            else:
+                l.append(
+                    xmltodict.unparse(
+                        {"UrlEntry": {"@regex": "false", "#text": entry}},
+                        full_document=False,
+                    )
+                )
+
+        request_dict["ServiceRequest"]["data"]["WebApp"]["urlAllowlist"] = {
+            "set": "\n".join(l)
+        }
+
+    if _postDataExcludelist:
+        if not isinstance(_postDataExcludelist, list):
+            raise ValueError(
+                f"postDataExcludelist must be passed as a list of strings. Received: {_postDataExcludelist}"
+            )
+
+        l = []
+        for entry in _postDataExcludelist:
+            # Check for any regex characters in the entry.
+            # If found, set the regex attribute to true.
+            if is_valid_regex(entry):
+                l.append(
+                    xmltodict.unparse(
+                        {"UrlEntry": {"@regex": "true", "#text": entry}},
+                        full_document=False,
+                    )
+                )
+            else:
+                l.append(
+                    xmltodict.unparse(
+                        {"UrlEntry": {"@regex": "false", "#text": entry}},
+                        full_document=False,
+                    )
+                )
+
+        request_dict["ServiceRequest"]["data"]["WebApp"]["postDataExcludelist"] = {
+            "set": "\n".join(l)
+        }
+
+    if _useSitemap is not None:
+        request_dict["ServiceRequest"]["data"]["WebApp"]["useSitemap"] = str(
+            _useSitemap
+        ).lower()
+
+    if _headers:
+        if not isinstance(_headers, list):
+            raise ValueError(
+                f"headers must be passed as a list of strings. Received: {_headers}"
+            )
+        l = []
+        for header in _headers:
+            l.append(xmltodict.unparse({"WebAppHeader": header}, full_document=False))
+        request_dict["ServiceRequest"]["data"]["WebApp"]["headers"] = {
+            "set": "\n".join(l)
+        }
 
     # Unescape any HTML. Necessary due to xmltodict's behavior.
     try:

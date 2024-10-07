@@ -3,6 +3,9 @@ Contains the datatype filter mappings for
 operators
 """
 
+from tkinter import END
+
+
 ENDPOINT_MAPPINGS = {
     "count_webapps": {
         "id": "INTEGER",
@@ -41,7 +44,17 @@ ENDPOINT_MAPPINGS = {
         "domains": "TEXT",
         "scannerTag_ids": "TEXT",
     },
+    # update_webapp is almost the same as create_webapp. See below
 }
+
+ENDPOINT_MAPPINGS["update_webapp"] = ENDPOINT_MAPPINGS["create_webapp"]
+ENDPOINT_MAPPINGS["update_webapp"]["webappId"] = "INTEGER"
+ENDPOINT_MAPPINGS["update_webapp"]["attributes"] = "TEXT"
+ENDPOINT_MAPPINGS["update_webapp"]["urlExcludelist"] = "TEXT"
+ENDPOINT_MAPPINGS["update_webapp"]["urlAllowlist"] = "TEXT"
+ENDPOINT_MAPPINGS["update_webapp"]["postDataExcludelist"] = "TEXT"
+ENDPOINT_MAPPINGS["update_webapp"]["useSitemap"] = "BOOLEAN"
+ENDPOINT_MAPPINGS["update_webapp"]["headers"] = "TEXT"
 
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],

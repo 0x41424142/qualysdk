@@ -23,6 +23,7 @@ You can use any of the endpoints currently supported:
 | ```get_selenium_script``` | Returns the Selenium script associated with a web app |
 | ```count_authentication_records``` | Returns the number of authentication records in the subscription that match given kwargs. |
 | ```get_authentication_records``` | Returns a list of authentication records in the subscription that match given kwargs. |
+| ```get_authentication_record_details``` | Returns all attributes of a single authentication record. |
 
 ## Count Webapps API
 
@@ -610,4 +611,59 @@ failed_auth_records = get_authentication_records(auth, lastScan_authStatus="FAIL
     ),
     ...
 ]
+```
+
+## Get Authentication Record Details API
+
+```get_authentication_record_details``` returns all attributes of a single auth record.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```recordId``` | ```Union[str, int]``` | Auth record ID | ✅ |
+
+>**Head's Up!:** Server, Form, and OAuth2 passwords are automatically redacted when calling ```sql.upload_was_authentication_records``` and the record's ```secured``` attribute is set to ```True``` or the record's ```name``` attribute equals ```"password"```.
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_authentication_record_details, get_authentication_records
+
+# First, get some IDs of the auth records you want to get details for:
+auth = BasicAuth(<username>, <password>)
+authrecords = get_authentication_records(auth)
+authrecord_id = webapps[0].id
+
+# Get the details for the webapp. Some fields have been removed for space:
+webapp = get_authentication_record_details(auth, authrecord_id)
+>>>WebAppAuthRecord(
+    id=12345678, 
+    name='My site', 
+    owner_id=987654321, 
+    owner_username='username',
+    owner_firstName='Eddie', 
+    owner_lastName='Van Halen', 
+    formRecord_type='STANDARD', 
+    formRecord_sslOnly=False, 
+    formRecord_authVault=False, 
+    formRecord_seleniumCreds=False, 
+    formRecord_fields_count=2, 
+    formRecord_fields_list=[
+        WebAppAuthFormRecord(id=12345678, name='username', secured=False, value='username'), 
+        WebAppAuthFormRecord(id=12345678, name='password', secured=False, value='Some Password')
+    ], 
+    tags_count=1, 
+    tags_list=[WASTag(id=12345678, name='Main websites')], 
+    comments_count=0, 
+    comments_list=[], 
+    createdDate=datetime.datetime(2024, 1, 1, 1, 10, 0, tzinfo=datetime.timezone.utc), 
+    updatedDate=datetime.datetime(2024, 1, 1, 1, 30, 0, tzinfo=datetime.timezone.utc), 
+    createdBy_id=12345678, 
+    createdBy_username='username', 
+    createdBy_firstName='Layne', 
+    createdBy_lastName='Staley', 
+    updatedBy_id=88888888, 
+    updatedBy_username='username', 
+    updatedBy_firstName='James', 
+    updatedBy_lastName='Hetfield'
+)
 ```

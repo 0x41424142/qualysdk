@@ -35,6 +35,11 @@ def call_auth_api(
             params = {"placeholder": "count", "webappAuthRecordId": ""}
         case "get_authentication_records":
             params = {"placeholder": "search", "webappAuthRecordId": ""}
+        case "get_authentication_record_details":
+            params = {
+                "placeholder": "get",
+                "webappAuthRecordId": payload.pop("recordId"),
+            }
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -219,3 +224,38 @@ def get_authentication_records(
             break
 
     return appList
+
+
+def get_authentication_record_details(
+    auth: BasicAuth, recordId: Union[int, str]
+) -> WebAppAuthRecord:
+    """
+    Pull a single authentication record with all attributes populated.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        recordId (Union[int, str]): The ID of the record to pull.
+
+    Returns:
+        WebAppAuthRecord: The authentication record.
+    """
+    # Make the API call:
+    parsed = call_auth_api(
+        auth, "get_authentication_record_details", {"recordId": recordId}
+    )
+
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    data = serviceResponse.get("data")
+    if data.get("WebAppAuthRecord"):
+        data = data.get("WebAppAuthRecord")
+        return WebAppAuthRecord.from_dict(data)
+    else:
+        print(f"No data found for web application ID {recordId}. Exiting.")

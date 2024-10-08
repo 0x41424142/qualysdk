@@ -622,7 +622,7 @@ failed_auth_records = get_authentication_records(auth, lastScan_authStatus="FAIL
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```recordId``` | ```Union[str, int]``` | Auth record ID | ✅ |
 
->**Head's Up!:** Any attributes containing clear-text passwords will be redacted when calling the SQL upload method ```sql.upload_was_authentication_records```.
+>**Head's Up!:** Server, Form, and OAuth2 passwords are automatically redacted when calling ```sql.upload_was_authentication_records``` and the record's ```secured``` attribute is set to ```True``` or the record's ```name``` attribute equals ```"password"```.
 
 ```py
 from qualysdk import BasicAuth

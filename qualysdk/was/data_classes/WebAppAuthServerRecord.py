@@ -4,7 +4,6 @@ Contains the WebAppAuthServerRecord class for the WAS
 
 from dataclasses import dataclass, asdict
 from typing import Union
-from hashlib import sha256
 
 
 @dataclass
@@ -44,14 +43,9 @@ class WebAppAuthServerRecord:
     def from_dict(cls, data: dict):
         return cls(**data)
 
-    def set_password_to_sha256(self):
+    def redact_password(self):
         """
-        Hashes the password using SHA256 and saves to instance
+        Obfuscates the password
         """
-        setattr(self, "password", sha256(self.password.encode()).hexdigest())
-
-    def sha256_password(self):
-        """
-        Returns the SHA256 hash of the password
-        """
-        return sha256(self.password.encode()).hexdigest()
+        if self.password:
+            setattr(self, "password", "REDACTED")

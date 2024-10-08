@@ -13,7 +13,7 @@ class Comment:
     Represents a comment on a WAS object
     """
 
-    contents: str = None
+    contents: str = ""
     author: None = None
     author_id: Union[str, int] = None
     author_username: str = None

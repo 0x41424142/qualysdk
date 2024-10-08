@@ -57,4 +57,4 @@ from .totalcloud import (
 
 from .cloud_agent import upload_cloud_agents
 from .cs import upload_cs_containers
-from .was import upload_was_webapps
+from .was import upload_was_webapps, upload_was_authentication_records

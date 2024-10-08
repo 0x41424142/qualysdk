@@ -43,3 +43,10 @@ class WebAppAuthFormRecord:
     @classmethod
     def from_dict(cls, data: dict):
         return cls(**data)
+
+    def redact_password(self):
+        """
+        Obfuscates the password
+        """
+        if self.name.lower() == "password" or self.secured:
+            setattr(self, "value", "REDACTED")

@@ -181,7 +181,7 @@ def main() -> int:
             show_update_info(pypi_data)
             if args.install:
                 if args.yes or prompt_for_install():
-                    print(f"⬆️ {YELLOW} Installing v{current_version}...{RESET}")
+                    print(f"⬆️ {YELLOW} Installing v{latest_version}...{RESET}")
                     try:
                         check_call(
                             [

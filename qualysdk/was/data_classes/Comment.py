@@ -14,8 +14,11 @@ class Comment:
     """
 
     contents: str = None
+    author: None = None
     author_id: Union[str, int] = None
     author_username: str = None
+    author_firstName: str = None
+    author_lastName: str = None
     createdDate: Union[str, datetime] = None
 
     def __post_init__(self):
@@ -32,6 +35,13 @@ class Comment:
                 self.author_id = int(self.author_id)
             except ValueError:
                 raise ValueError("author_id must be numeric")
+
+        if self.author:
+            setattr(self, "author_id", int(self.author.get("id")))
+            setattr(self, "author_username", self.author.get("username"))
+            setattr(self, "author_firstName", self.author.get("firstName"))
+            setattr(self, "author_lastName", self.author.get("lastName"))
+            setattr(self, "author", None)
 
     def __str__(self) -> str:
         return self.contents

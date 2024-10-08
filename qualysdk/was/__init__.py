@@ -17,4 +17,5 @@ from .webapps import (
 from .authentication_records import (
     count_authentication_records,
     get_authentication_records,
+    get_authentication_record_details,
 )

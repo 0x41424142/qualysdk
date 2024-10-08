@@ -11,3 +11,5 @@ from .SwaggerFile import SwaggerFile
 from .UrlEntry import UrlEntry
 from .Comment import Comment
 from .WebAppAuthRecord import WebAppAuthRecord
+from .WebAppAuthFormRecord import WebAppAuthFormRecord
+from .WebAppAuthServerRecord import WebAppAuthServerRecord

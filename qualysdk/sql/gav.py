@@ -16,15 +16,16 @@ from ..base.base_list import BaseList
 # certain fields from the softwareListData object:
 def parse_software_list_data(software_list_data):
     bl = BaseList()
-    for sw in software_list_data:
-        if sw.get("productName") not in [None, "Unknown"]:
-            bl.append(
-                f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')})"
-            )
-        else:
-            bl.append(
-                f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')}) ({sw.get('ignoredReason')})"
-            )
+    if software_list_data:
+        for sw in software_list_data:
+            if sw.get("productName") not in [None, "Unknown"]:
+                bl.append(
+                    f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')})"
+                )
+            else:
+                bl.append(
+                    f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')}) ({sw.get('ignoredReason')})"
+                )
     return bl
 
 

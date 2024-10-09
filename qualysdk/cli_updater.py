@@ -190,7 +190,7 @@ def main() -> int:
             show_update_info(pypi_data)
             if args.install:
                 if args.yes or prompt_for_install():
-                    print(f"⬆️ {YELLOW} Installing v{latest_version}...{RESET}")
+                    print(f"🟧 {YELLOW}Installing v{latest_version}...{RESET}")
                     try:
                         check_call(
                             [
@@ -203,10 +203,10 @@ def main() -> int:
                             ]
                         )
                         print(
-                            f"✅ {GREEN}qualysdk has been updated to v{latest_version}{RESET}"
+                            f"✅ {GREEN}Qualysdk has been updated to v{latest_version}{RESET}"
                         )
                     except Exception as e:
-                        print(f"{RED}qualysdk update failed: {type(e).__name__}{RESET}")
+                        print(f"{RED}Qualysdk update failed: {type(e).__name__}{RESET}")
                         return 1
                     return 0
                 else:
@@ -214,7 +214,7 @@ def main() -> int:
                     return 0
             return 0
         else:
-            print(f"✅ {GREEN}qualysdk is up to date (v{current_version}).{RESET}")
+            print(f"✅ {GREEN}Qualysdk is up to date (v{current_version}).{RESET}")
             return 0
 
 

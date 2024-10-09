@@ -259,3 +259,127 @@ def get_authentication_record_details(
         return WebAppAuthRecord.from_dict(data)
     else:
         print(f"No data found for web application ID {recordId}. Exiting.")
+
+
+def get_authentication_records_verbose(
+    auth: BasicAuth, thread_count: int = 5, **kwargs
+) -> BaseList[WebAppAuthRecord]:
+    """
+    Uses ```was.get_authentication_records()``` and ```was.get_authentication_record_details()``` to return a ```BaseList``` of ```WebAppAuthRecord```s with
+    all attributes populated.
+
+    This function is multi-threaded, placing all ```WebAppAuthRecords``` found
+    from ```was.get_authentication_records()``` into a queue and then spawning threads to pull the details one
+    by one.
+
+    The details threads wait for work to be added to the queue and then pull
+    the details for each ```WebAppAuthRecord.id```.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        thread_count (int): The number of threads to spawn. Defaults to 5.
+
+    ## Kwargs:
+
+        - id (Union[str, int]): Authentication object ID.
+        - id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the ID filter.
+        - name (str): Auth object name.
+        - name_operator (Literal["CONTAINS", "EQUALS", "NOT EQUALS"]): Operator for the name filter.
+        - tags (Union[str, int]): Tag ID.
+        - tags_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the tags filter.
+        - tags_name (str): Tag name.
+        - tags_name_operator (Literal["CONTAINS", "EQUALS", "NOT EQUALS"]): Operator for the tag name filter.
+        - tags_id (Union[str, int]): Tag ID.
+        - tags_id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the tag ID filter.
+        - createdDate (str): Date the Auth object was created in UTC date/time format.
+        - createdDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the created date filter.
+        - updatedDate (str): Date the Auth object was last updated in UTC date/time format.
+        - updatedDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the updated date filter.
+        - isUsed (bool): Whether the Auth object is in use.
+        - isUsed (Literal["EQUALS", "NOT EQUALS"]): Operator for the isUsed filter.
+        - lastScan_authStatus (Literal["NONE", "NOT_USED", "PARTIAL", "FAILED", "SUCCESSFUL"]): Status of the last scan.
+        - lastScan_authStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the last scan status filter.
+        - lastScan_date (str): Date of the last scan in UTC date/time format.
+        - lastScan_date_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the last scan date filter.
+        - contents (Literal["FORM_STANDARD", "FORM_CUSTOM", "FORM_SELENIUM", "SERVER_BASIC", "SERVER_DIGEST", "SERVER_NTLM", "CERTIFICATE", "OAUTH2_AUTH_CODE", "OAUTH2_IMPLICIT", "OAUTH2_PASSWORD", "OAUTH2_CLIENT_CREDS"]): Auth object contents.
+        - contents_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the contents filter.
+
+    Returns:
+        BaseList[WebAppAuthRecord]: The list of auth records.
+    """
+
+    # Check thread_count for a valid value:
+    if not isinstance(thread_count, int) or thread_count < 1:
+        raise ValueError("thread_count must be an integer >= 1.")
+
+    # Set up Queue and List, with some cheeky as-needed imports:
+    from queue import Queue
+    from threading import Thread, Lock, current_thread
+
+    q = Queue()
+    authList = BaseList()
+    LOCK = Lock()
+    threads = []
+
+    # Get the auth records:
+    print(f"({current_thread().name}) Getting base auth record list...")
+    authrecords = get_authentication_records(auth, page_count="all", **kwargs)
+
+    print(
+        f"({current_thread().name}) Pulled {len(authrecords)} auth records. Starting {thread_count} thread(s) for details pull.."
+    )
+
+    # Add the auth records to the queue:
+    for record in authrecords:
+        q.put(record)
+
+    def worker():
+        while True:
+            try:
+                # Exit condition 1: Queue is empty
+                if q.empty():
+                    with LOCK:
+                        print(
+                            f"({current_thread().name}) Queue is empty. Thread exiting."
+                        )
+                        break
+
+                authrecord = q.get()
+                # Exit condition 2: authrecord is None (because Queue is empty)
+                if not authrecord:
+                    with LOCK:
+                        print(
+                            f"({current_thread().name}) Queue is empty. Thread exiting."
+                        )
+                        q.task_done()
+                    break
+
+                details = get_authentication_record_details(auth, authrecord.id)
+                authList.append(details)
+                q.task_done()
+                with LOCK:
+                    if len(authList) % 10 == 0:
+                        print(
+                            f"({current_thread().name}) Pulled {len(authList)} auth record details so far..."
+                        )
+
+            except Exception as e:
+                with LOCK:
+                    print(
+                        f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}"
+                    )
+                q.task_done()
+                break
+
+    # Start the threads:
+    for i in range(thread_count):
+        t = Thread(target=worker)
+        threads.append(t)
+        t.start()
+
+    # Wait for the threads to finish:
+    for t in threads:
+        t.join()
+
+    print(f"Pulled {len(authList)} auth record details.")
+    return authList

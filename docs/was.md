@@ -667,3 +667,78 @@ webapp = get_authentication_record_details(auth, authrecord_id)
     updatedBy_lastName='Hetfield'
 )
 ```
+
+## Get Authentication Records Verbose API
+
+```get_authentication_records_verbose``` combines the functionality of ```get_authentication_records``` and ```get_authentication_record_details``` to return a list of auth records with all attributes. 
+
+This method uses threading to speed up the process. Number of threads can be set with the ```thread_count``` parameter.
+
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```thread_count``` | ```int``` | Number of threads to use for the request | ❌ |
+| ```id``` | ```Union[str, int]``` | Auth record ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Auth record name | ❌ |
+| ```name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the name filter | ❌ |
+| ```tags``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tags filter | ❌ |
+| ```tags_name``` | ```str``` | Tag name | ❌ |
+| ```tags_name_operator``` | ```Literal["CONTAINS", "EQUALS", "NOT EQUALS"]``` | Operator for the tag name filter | ❌ |
+| ```tags_id``` | ```Union[str, int]``` | Tag ID | ❌ |
+| ```tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the tag ID filter | ❌ |
+| ```createdDate``` | ```str``` | Date created | ❌ |
+| ```createdDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the created date filter | ❌ |
+| ```updatedDate``` | ```str``` | Date updated | ❌ |
+| ```updatedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the updated date filter | ❌ |
+| ```isUsed``` | ```bool``` | If the auth record is in use | ❌ |
+| ```isUsed_operator``` | ```Literal["EQUALS", "NOT EQUALS"]``` | Operator for the isUsed filter | ❌ |
+| ```lastScan_authStatus``` | ```Literal["NONE", "NOT_USED", "PARTIAL", "FAILED", "SUCCESSFUL"]``` | Status of the last scan | ❌ |
+| ```lastScan_authStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the lastScan_authStatus filter | ❌ |
+| ```lastScan_date``` | ```str``` | Date of the last scan in UTC date/time format | ❌ |
+| ```lastScan_date_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the lastScan_date filter | ❌ |
+| ```contents``` | ```Literal["FORM_STANDARD", "FORM_CUSTOM", "FORM_SELENIUM", "SERVER_BASIC", "SERVER_DIGEST", "SERVER_NTLM", "CERTIFICATE", "OAUTH2_AUTH_CODE", "OAUTH2_IMPLICIT", "OAUTH2_PASSWORD", "OAUTH2_CLIENT_CREDS"]``` | Auth record type | ❌ |
+| ```contents_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the contents filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_authentication_records_verbose
+
+auth = BasicAuth(<username>, <password>)
+
+# Get all auth records with all attributes:
+authrecords = get_authentication_records_verbose(auth)
+>>>[
+    WebAppAuthRecord(
+        id=12345678, 
+        name="some auth record", 
+        formRecord_type="SELENIUM",
+        ...
+    ), 
+    WebAppAuthRecord(
+        id=98765432, 
+        ...
+    ),
+    ...
+]
+
+# Get all auth records with all attributes 
+# that have "prod" in the name, using 10 threads:
+authrecords = get_authentication_records_verbose(
+    auth,
+    name="prod",
+    name_operator="CONTAINS",
+    thread_count=10
+)
+>>>[
+    WebAppAuthRecord(
+        id=12345678, 
+        name="some prod auth record",
+        ...
+    ), 
+    ...
+]
+```
+

@@ -18,4 +18,5 @@ from .authentication_records import (
     count_authentication_records,
     get_authentication_records,
     get_authentication_record_details,
+    get_authentication_records_verbose,
 )

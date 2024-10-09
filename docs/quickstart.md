@@ -51,16 +51,16 @@ qualysdk-updater -i -y
 ✅ SHA256: d069561f1f82537e858de32375c239c12cad4bb68ca996f9902f92d48aae490e
 🐈 GitHub Release Notes: https://github.com/0x41424142/qualysdk/releases/tag/vX.X.X
 🐍 PyPI Page: https://pypi.org/project/qualysdk/X.X.X/ 
-⬆️  Installing vX.X.X...
+🟧  Installing vX.X.X...
 ...
-✅ qualysdk has been updated to vX.X.X
+✅ Qualysdk has been updated to vX.X.X
 
 # Confirm with the version flag or check flag:
 qualysdk-updater -v
 >>>Qualysdk version currently installed: vX.X.X
 
 qualysdk-updater -c
->>>✅ qualysdk is up to date (vX.X.X)
+>>>✅ Qualysdk is up to date (vX.X.X)
 ```
 
 ## Installing From GitHub (Bleeding Edge)

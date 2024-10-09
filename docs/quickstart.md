@@ -41,6 +41,26 @@ To bypass the confirmation prompt when installing, use the `-y` flag.
 
 ```bash
 qualysdk-updater -i -y
+
+# Example output:
+🟧 An update is available!
+📅 Latest Version: vX.X.X
+📅 Release Date: 2024-10-09T12:00:00
+✅ MD5: e15ebb2b077d07eb9a646a5425aafef4
+✅ BLAKE2b_256: a6a21a9c9cb35fc8c8cad440b1e5873f82894b093dd5d0d2c532704b5e0b0ba6
+✅ SHA256: d069561f1f82537e858de32375c239c12cad4bb68ca996f9902f92d48aae490e
+🐈 GitHub Release Notes: https://github.com/0x41424142/qualysdk/releases/tag/vX.X.X
+🐍 PyPI Page: https://pypi.org/project/qualysdk/X.X.X/ 
+⬆️  Installing vX.X.X...
+...
+✅ qualysdk has been updated to vX.X.X
+
+# Confirm with the version flag or check flag:
+qualysdk-updater -v
+>>>Qualysdk version currently installed: vX.X.X
+
+qualysdk-updater -c
+>>>✅ qualysdk is up to date (vX.X.X)
 ```
 
 ## Installing From GitHub (Bleeding Edge)

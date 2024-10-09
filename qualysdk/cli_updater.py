@@ -15,6 +15,7 @@ from packaging import version
 RED = "\033[91m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
+BLUE = "\033[94m"
 RESET = "\033[0m"
 
 
@@ -73,16 +74,22 @@ def show_update_info(pypi_data: dict) -> None:
 
     vsn = pypi_data["info"].get("version")
     release_data = pypi_data["releases"].get(vsn)[0]
+    digests = release_data.get("digests")
+    if not digests:
+        digests = {"blake2_256": "N/A", "sha256": "N/A", "md5_digest": "N/A"}
 
-    print(f"⬆️ {YELLOW} An update is available!{RESET}")
-    print(f"Latest Version: {YELLOW}{vsn}{RESET}")
-    print(f"Release date: {YELLOW}{release_data.get('upload_time')}{RESET}")
-    print(f"MD5: {release_data.get('md5_digest')}")
+    print(f"🟧 {YELLOW}An update is available!{RESET}")
+    print(f"📅 Latest Version: {YELLOW}v{vsn}{RESET}")
+    print(f"📅 Release Date: {YELLOW}{release_data.get('upload_time')}{RESET}")
+    print(f"✅ MD5: {RED}{digests.get('md5')}{RESET}")
+    print(f"✅ BLAKE2b_256: {RED}{digests.get('blake2b_256')}{RESET}")
+    print(f"✅ SHA256: {RED}{digests.get('sha256')}{RESET}")
     print(
-        f"🐈 {GREEN} GitHub Release Notes:{RESET}",
-        "https://github.com/0x41424142/qualysdk/releases/tag/v" + vsn,
+        f"🐈 {GREEN}GitHub Release Notes:{RESET}{BLUE} https://github.com/0x41424142/qualysdk/releases/tag/v{vsn} {RESET}"
     )
-    print(f"🐍 {GREEN} PyPI Page:{RESET}", f"https://pypi.org/project/qualysdk/{vsn}/")
+    print(
+        f"🐍 {GREEN}PyPI Page:{RESET}{BLUE} https://pypi.org/project/qualysdk/{vsn}/ {RESET}"
+    )
 
 
 def check_installed_version() -> version.Version:
@@ -167,7 +174,9 @@ def main() -> int:
         return 1
 
     if args.version:
-        print(f"{YELLOW}Current installed version: {check_installed_version()}{RESET}")
+        print(
+            f"{YELLOW}Qualysdk version currently installed: v{check_installed_version()}{RESET}"
+        )
         return 0
 
     if args.check or args.install:
@@ -205,7 +214,7 @@ def main() -> int:
                     return 0
             return 0
         else:
-            print(f"✅ {GREEN}qualysdk is up to date ({current_version}).{RESET}")
+            print(f"✅ {GREEN}qualysdk is up to date (v{current_version}).{RESET}")
             return 0
 
 

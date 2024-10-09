@@ -3,9 +3,6 @@ Contains the datatype filter mappings for
 operators
 """
 
-from tkinter import END
-
-
 ENDPOINT_MAPPINGS = {
     "count_webapps": {
         "id": "INTEGER",

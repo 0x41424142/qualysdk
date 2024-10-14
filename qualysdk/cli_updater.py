@@ -5,7 +5,7 @@ PyPI.
 """
 
 from argparse import ArgumentParser
-from subprocess import run, check_call
+from subprocess import run, check_call, DEVNULL
 from sys import executable
 from os import devnull
 
@@ -202,7 +202,7 @@ def main() -> int:
                                 "--upgrade",
                                 "qualysdk",
                             ],
-                            stdout=open(devnull, "w"),
+                            stdout=DEVNULL,
                         )
                         print(
                             f"✅ {GREEN}Qualysdk has been updated to v{latest_version}{RESET}"

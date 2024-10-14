@@ -933,3 +933,89 @@ delete_authentication_record(auth, id=12345678)
 delete_authentication_record(auth, tags_name="PURGE", tags_name_operator="EQUALS")
 >>>[{"id": 12345678}, {"id": 98765432}, ...]
 ```
+
+## Count Findings API
+
+```count_findings``` returns the number of findings in the subscription that match the given kwargs.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```id``` | ```Union[str, int]``` | Finding ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```uniqueId``` | ```str``` | Unique ID of the finding | ❌ |
+| ```qid``` | ```int``` | Qualys ID of the finding | ❌ |
+| ```qid_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the QID filter | ❌ |
+| ```name``` | ```str``` | Name of the finding | ❌ |
+| ```name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the name filter | ❌ |
+| ```type``` | ```Literal["VULNERABILITY", "SENSITIVE_CONTENT", "INFORMATION_GATHERED"]``` | Type of the finding | ❌ |
+| ```type_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the type filter | ❌ |
+| ```url``` | ```str``` | URL of the finding's webapp | ❌ |
+| ```url_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the URL filter | ❌ |
+| ```webApp_tags_id``` | ```int``` | A tag ID on the webapp | ❌ |
+| ```webApp_tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_tags_id filter | ❌ |
+| ```webApp_tags_name``` | ```str``` | A tag name on the webapp | ❌ |
+| ```webApp_tags_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_tags_name filter | ❌ |
+| ```status``` | ```Literal["NEW", "ACTIVE", "REOPENED", "PROTECTED", "FIXED"]``` | Status of the finding | ❌ |
+| ```status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the status filter | ❌ |
+| ```patch``` | ```int``` | Patch ID for WAF module | ❌ |
+| ```patch_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the patch filter | ❌ |
+| ```webApp_id``` | ```int``` | Webapp ID | ❌ |
+| ```webApp_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_id filter | ❌ |
+| ```webApp_name``` | ```str``` | Webapp name | ❌ |
+| ```webApp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_name filter | ❌ |
+| ```severity``` | ```Literal[1, 2, 3, 4, 5]``` | Severity of the finding | ❌ |
+| ```severity_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the severity filter | ❌ |
+| ```externalRef``` | ```str``` | External reference of the finding | ❌ |
+| ```externalRef_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the externalRef filter | ❌ |
+| ```ignoredDate``` | ```str``` | Date the finding was ignored | ❌ |
+| ```ignoredDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ignoredDate filter | ❌ |
+| ```ignoredReason``` | ```Literal["FALSE_POSITIVE", "RISK_ACCEPTED", "NOT_APPLICABLE"]``` | Reason the finding was ignored | ❌ |
+| ```ignoredReason_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the ignoredReason filter | ❌ |
+| ```group``` | ```Literal["XSS", "SQL", "INFO", "PATH", "CC", "SSN_US", "CUSTOM"]``` | Group of the finding | ❌ |
+| ```group_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the group filter | ❌ |
+| ```owasp_name``` | ```str``` | OWASP name of the finding | ❌ |
+| ```owasp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the owasp_name filter | ❌ |
+| ```owasp_code``` | ```int``` | OWASP code of the finding | ❌ |
+| ```owasp_code_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the owasp_code filter | ❌ |
+| ```wasc_name``` | ```str``` | WASC name of the finding | ❌ |
+| ```wasc_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the wasc_name filter | ❌ |
+| ```wasc_code``` | ```int``` | WASC code of the finding | ❌ |
+| ```wasc_code_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the wasc_code filter | ❌ |
+| ```cwe_id``` | ```int``` | CWE ID of the finding | ❌ |
+| ```cwe_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the cwe_id filter | ❌ |
+| ```firstDetectedDate``` | ```str``` | Date the finding was first detected | ❌ |
+| ```firstDetectedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the firstDetectedDate filter | ❌ |
+| ```lastDetectedDate``` | ```str``` | Date the finding was last detected | ❌ |
+| ```lastDetectedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the lastDetectedDate filter | ❌ |
+| ```lastTestedDate``` | ```str``` | Date the finding was last tested | ❌ |
+| ```lastTestedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the lastTestedDate filter | ❌ |
+| ```timesDetected``` | ```int``` | Number of times the finding was detected | ❌ |
+| ```timesDetected_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the timesDetected filter | ❌ |
+| ```fixedDate``` | ```str``` | Date the finding was fixed | ❌ |
+| ```fixedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the fixedDate filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import count_findings
+
+auth = BasicAuth(<username>, <password>)
+
+# Get the number of findings with a severity of 5:
+count = count_findings(auth, severity=5)
+
+# Get XSS findings that are severity 4 or 5,
+# and have been detected 5+ times
+# on assets with the PROD tag:
+
+count = count_findings(
+    auth,
+    group="XSS",
+    severity="4,5",
+    severity_operator="IN",
+    timesDetected=4,
+    timesDetected_operator="GREATER",
+    webApp_tags_name="PROD",
+)
+>>> 5
+```

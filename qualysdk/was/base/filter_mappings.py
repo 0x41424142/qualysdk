@@ -89,6 +89,20 @@ ENDPOINT_MAPPINGS["get_authentication_records"] = ENDPOINT_MAPPINGS[
     "count_authentication_records"
 ]
 
+ENDPOINT_MAPPINGS["delete_authentication_record"] = {
+    "id": "INTEGER",
+    "name": "TEXT",
+    "tags": "INTEGER",
+    "tags_name": "TEXT",
+    "tags_id": "INTEGER",
+    "createdDate": "DATE",
+    "updatedDate": "DATE",
+    "lastScan_date": "DATE",
+    "lastScan_authStatus": "KEYWORD",
+    "isUsed": "BOOLEAN",
+    "contents": "KEYWORD",
+}
+
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],
     "TEXT": ["CONTAINS", "EQUALS", "NOT EQUALS"],

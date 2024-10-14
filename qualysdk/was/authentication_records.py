@@ -46,6 +46,8 @@ def call_auth_api(
             }
         case "create_authentication_record":
             params = {"placeholder": "create", "webappAuthRecordId": ""}
+        case "delete_authentication_record":
+            params = {"placeholder": "delete", "webappAuthRecordId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -538,3 +540,96 @@ def create_authentication_record(
         return WebAppAuthRecord.from_dict(data)
     else:
         print("No data found. Exiting.")
+
+
+def delete_authentication_record(auth: BasicAuth, **kwargs) -> list[str]:
+    """
+    Delete authentication records out of Qualys WAS.
+
+    To delete a single record, use kwarg 'id' set to
+    a single int/str.
+
+    To delete multiple assets,
+    set 'id' to a list of int/str, or use the other
+    kwargs/operators listed below.
+
+    If both 'id' and other kwargs are provided, the 'id'
+    kwarg will take precedence.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+
+    ## Kwargs:
+
+        - id (Union[str, int]): Web application ID.
+        - id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the ID filter.
+        - name (str): Web application name.
+        - name_operator (Literal["CONTAINS", "EQUALS", "NOT EQUALS"]): Operator for the name filter.
+        - tags (Union[str, int]): Tag ID.
+        - tags_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the tags filter.
+        - tags_name (str): Tag name.
+        - tags_name_operator (Literal["CONTAINS", "EQUALS", "NOT EQUALS"]): Operator for the tag name filter.
+        - tags_id (Union[str, int]): Tag ID.
+        - tags_id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the tag ID filter.
+        - createdDate (str): Date the web application was created in UTC date/time format.
+        - createdDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the created date filter.
+        - updatedDate (str): Date the web application was last updated in UTC date/time format.
+        - updatedDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the updated date filter.
+        - lastScan_authStatus (Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]): Status of the last scan.
+        - lastScan_authStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the last scan status filter.
+        - lastScan_date (str): Date of the last scan in UTC date/time format.
+        - lastScan_date_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the last scan date filter.
+        - isUsed (bool): Whether the web application is in use.
+        - isUsed_operator (Literal["EQUALS", "NOT EQUALS"]): Operator for the isUsed filter.
+        - contents (Literal["FORM_STANDARD", "FORM_CUSTOM", "FORM_SELENIUM", "SERVER_BASIC", "SERVER_DIGEST", "SERVER_NTLM", "CERTIFICATE", "OAUTH2_AUTH_CODE", "OAUTH2_IMPLICIT", "OAUTH2_PASSWORD", "OAUTH2_CLIENT_CREDS"]): Web application contents.
+        - contents_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the contents filter.
+
+    Returns:
+        list[str]: A list of IDs that were successfully deleted.
+    """
+
+    # Make sure user passed in a kwarg:
+    if not kwargs:
+        raise ValueError("No kwargs provided. Please provide at least one kwarg.")
+
+    TO_STR = [
+        "id",
+        "tags_id",
+    ]
+
+    for key in TO_STR:
+        if key in kwargs:
+            kwargs[key] = str(kwargs[key])
+
+    # Validate the kwargs:
+    kwargs = validate_kwargs(endpoint="delete_authentication_record", **kwargs)
+
+    # Build the XML payload:
+    payload = build_service_request(**kwargs)
+
+    # Make the API call:
+    parsed = call_auth_api(auth, "delete_authentication_record", payload)
+
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    if serviceResponse.get("count") == "0":
+        print(f"No auth records found. Exiting.")
+        return []
+
+    deleted = []
+    data = serviceResponse.get("data")
+    if data.get("WebAppAuthRecord"):
+        data = data.get("WebAppAuthRecord")
+        if isinstance(data, dict):
+            data = [data]
+        for record in data:
+            deleted.append(record)
+
+    return deleted

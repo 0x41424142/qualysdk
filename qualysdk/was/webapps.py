@@ -5,9 +5,9 @@ Contains functions to interact with Web applications in the Qualys WAS module.
 from typing import Union
 
 from .data_classes.WebApp import WebApp
-from .base.service_requests import build_service_request, build_update_request
+from .base.web_app_service_requests import build_service_request, build_update_request
 from .base.parse_kwargs import validate_kwargs
-from .base.service_requests import validate_response
+from .base.web_app_service_requests import validate_response
 from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import QualysAPIError

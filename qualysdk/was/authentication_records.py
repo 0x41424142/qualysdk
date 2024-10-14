@@ -2,12 +2,16 @@
 Contains user-facing functions for interacting with authentication records in WAS
 """
 
-from typing import Union
+from typing import Union, Literal, List, Dict, Optional
 
 from .data_classes.WebAppAuthRecord import WebAppAuthRecord
-from .base.service_requests import build_service_request, build_update_request
+from .base.auth_record_service_requests import (
+    create_service_request,
+    unparse_to_xml_str,
+)
+from .base.web_app_service_requests import build_service_request
 from .base.parse_kwargs import validate_kwargs
-from .base.service_requests import validate_response
+from .base.web_app_service_requests import validate_response
 from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import QualysAPIError
@@ -40,6 +44,8 @@ def call_auth_api(
                 "placeholder": "get",
                 "webappAuthRecordId": payload.pop("recordId"),
             }
+        case "create_authentication_record":
+            params = {"placeholder": "create", "webappAuthRecordId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -383,3 +389,152 @@ def get_authentication_records_verbose(
 
     print(f"Pulled {len(authList)} auth record details.")
     return authList
+
+
+"""
+format_tag_list takes in a list of ints 
+and returns a properly structured list 
+of dicts for the API payload.
+"""
+format_tag_list = lambda tags: [{"id": tag} for tag in tags]
+
+
+def create_authentication_record(
+    auth: BasicAuth,
+    name: str,
+    recordType: Literal["formRecord", "serverRecord", "oauth2Record"],
+    fields: List[Dict[str, Union[str, bool]]] = None,
+    subType: Optional[
+        Literal[
+            "STANDARD",
+            "CUSTOM",
+            "SELENIUM",
+            "BASIC",
+            "DIGEST",
+            "NTLM",
+            "AUTH_CODE",
+            "IMPLICIT",
+            "PASSWORD",
+            "CLIENT_CREDS",
+        ]
+    ] = None,
+    **kwargs,
+) -> WebAppAuthRecord:
+    """
+    Create a new authentication record in WAS
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        name (str): The name of the authentication record.
+        recordType (Literal["formRecord", "serverRecord", "oauth2Record"]): The type of authentication record to create.
+        subType (Optional[Literal["STANDARD", "CUSTOM", "SELENIUM", "BASIC", "DIGEST", "NTLM", "AUTH_CODE", "IMPLICIT", "PASSWORD", "CLIENT_CREDS"]]): The subtype of the authentication record to create.
+        fields (List[Dict[str, Union[str, bool]]]): The fields to include in the authentication record. Each field should be a dictionary with the keys 'name', 'value', and optionally 'secured'.
+
+    ## Kwargs:
+
+        - tags (List[int]): The tag ID numbers to associate with the authentication record as a list. Default is an empty list.
+        - comments (Union[List[str], str]): Comments to associate with the authentication record. Default is an empty list.
+        - sslOnly (bool): Whether the authentication record should only be used over encrypted connections. Default is False.
+        - authVault (bool): Whether the authentication record should be stored in the Qualys Vault. Default is False.
+        - certificate (Dict[str, str]): A dictionary containing the certificate information for the authentication record. Valid for serverRecord records. Example: certificate={"name": "certname", "contents": "certcontents", "passphrase": "certpassphrase"}}.
+        - grantType (Literal["AUTH_CODE", "IMPLICIT", "PASSWORD", "CLIENT_CREDS"]): The grant type for the OAuth2 record. Default is None.
+        - accessTokenUrl (str): The access token URL for OAuth2 records.
+        - redirectUrl (str): The redirect URL for OAuth2 records.
+        - username (str): The username for OAuth2/Server records.
+        - password (str): The password for OAuth2/Server records.
+        - clientId (str): The client ID for OAuth2 records.
+        - clientSecret (str): The client secret for OAuth2 records.
+        - scope (str): The scope for OAuth2 records.
+        - accessTokenExpiredMsgPattern (str): The access token expired message pattern for OAuth2 records.
+        - seleniumScript (Dict[str, str]): The Selenium script details for formRecord and OAuth2 records. Example: {"name": "ImplicitScript", "data": "implicit script data", "regex": "implicit regex pattern"}.
+        - seleniumCreds (bool): Whether Selenium credentials are used. Default is None.
+
+    Returns:
+        WebAppAuthRecord: The created authentication record.
+    """
+
+    # Check validity of recordType:
+    if recordType not in ["formRecord", "serverRecord", "oauth2Record"]:
+        raise ValueError(
+            "recordType must be one of 'formRecord', 'serverRecord', or 'oauth2Record'."
+        )
+
+    # Check validity of subType:
+    acceptable_subtypes_by_recordType = {
+        "formRecord": ["STANDARD", "CUSTOM", "SELENIUM"],
+        "serverRecord": ["BASIC", "DIGEST", "NTLM", None],
+        "oauth2Record": ["AUTH_CODE", "IMPLICIT", "PASSWORD", "CLIENT_CREDS"],
+    }
+    if subType and subType.upper() not in acceptable_subtypes_by_recordType[recordType]:
+        raise ValueError(
+            f"subType must be one of {acceptable_subtypes_by_recordType[recordType]} for a {recordType}, not {subType}."
+        )
+
+    # Ensure tags is a list
+    if not isinstance(kwargs.get("tags", []), list):
+        kwargs["tags"] = [kwargs["tags"]]
+
+    # Ensure comments is a list
+    if isinstance(kwargs.get("comments", []), str):
+        kwargs["comments"] = [kwargs["comments"]]
+
+    # Build the payload:
+    payload = {
+        "name": name,
+        recordType: {
+            "type" if recordType != "oauth2Record" else "grantType": subType,
+            "sslOnly": kwargs.get("sslOnly"),
+            "authVault": kwargs.get("authVault"),
+            "fields": {"set": fields},
+        },
+        "tags": {"set": format_tag_list(kwargs.get("tags", []))},
+        "comments": {"set": kwargs.get("comments", [])},
+    }
+
+    # Add optional fields based on recordType
+    if recordType == "serverRecord" and "certificate" in kwargs:
+        payload[recordType]["certificate"] = kwargs["certificate"]
+
+    if recordType == "oauth2Record":
+        oauth2_fields = [
+            "grantType",
+            "accessTokenUrl",
+            "redirectUrl",
+            "username",
+            "password",
+            "clientId",
+            "clientSecret",
+            "scope",
+            "accessTokenExpiredMsgPattern",
+            "seleniumScript",
+            "seleniumCreds",
+        ]
+        for field in oauth2_fields:
+            if field in kwargs:
+                payload[recordType][field] = kwargs[field]
+
+    # Create the service request
+    xml_payload = unparse_to_xml_str(
+        create_service_request(data={"WebAppAuthRecord": payload})
+    )
+
+    # Make the API call:
+    parsed = call_auth_api(
+        auth, "create_authentication_record", {"_xml_data": xml_payload}
+    )
+
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    data = serviceResponse.get("data")
+    if data.get("WebAppAuthRecord"):
+        data = data.get("WebAppAuthRecord")
+        return WebAppAuthRecord.from_dict(data)
+    else:
+        print("No data found. Exiting.")

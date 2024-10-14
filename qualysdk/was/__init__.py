@@ -19,4 +19,5 @@ from .authentication_records import (
     get_authentication_records,
     get_authentication_record_details,
     get_authentication_records_verbose,
+    create_authentication_record,
 )

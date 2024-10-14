@@ -24,6 +24,7 @@ You can use any of the endpoints currently supported:
 | ```count_authentication_records``` | Returns the number of authentication records in the subscription that match given kwargs. |
 | ```get_authentication_records``` | Returns a list of authentication records in the subscription that match given kwargs. |
 | ```get_authentication_record_details``` | Returns all attributes of a single authentication record. |
+| ```create_authentication_record``` | Creates a new authentication record in the subscription. |
 
 ## Count Webapps API
 
@@ -742,3 +743,147 @@ authrecords = get_authentication_records_verbose(
 ]
 ```
 
+## Create Authentication Record API
+
+```create_authentication_record``` creates a new authentication record in the subscription. You can create ```formRecord```, ```serverRecord```, and ```oauth2Record``` types. Each type requires different attributes, which are detailed below. 
+
+>**Head's Up!:** The options for this API endpoint are quite complex. When in doubt, refer to the error messages the SDK raises. It may take a few tries to get the right combination of arguments.
+
+### Form Record
+
+Below are the possible arguments for creating a form record:
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```name``` | ```str``` | Auth record name | ✅ |
+| ```recordType``` | ```str``` = ```formRecord``` | Record type | ✅ |
+| ```subType``` | ```Literal["STANDARD", "CUSTOM", "SELENIUM"]``` | Record sub-type | ✅ |
+| ```fields``` | ```list[dict["name": str, "value": str]]``` | List of fields | ✅ |
+| ```sslOnly``` | ```bool``` | If the authentication record should only be sent on a secure connection | ❌ |
+| ```authVault``` | ```bool``` | If the authentication record should be stored in the auth vault | ❌ |
+| ```seleniumCreds``` | ```bool``` | If the authentication record is for a Selenium script | ❌ |
+| ```seleniumScript``` | ```dict[str, str]```, like: ```{"name": "my_script", "data": <script_as_XML_string>}``` | Selenium script data | ❌ |
+| ```tags``` | ```list[Union[str, int]]``` | List of tag IDs | ❌ |
+| ```comments``` | ```list[str]``` | List of comments | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import create_authentication_record
+
+auth = BasicAuth(<username>, <password>)
+
+# EXAMPLE formRecord with basic username/password fields:
+
+new_auth_record = create_authentication_record(
+    auth,
+    name="My New Auth Record",
+    recordType="formRecord",
+    subType="STANDARD",
+    fields=[
+        {"name": "username", "value": "my_username"},
+        {"name": "password", "value": "my_password"},
+    ],
+    tags=[12345, 54321],
+    comments=["This is my new auth record"],
+    sslOnly=True,
+)
+
+# SELENIUM EXAMPLE:
+new_auth_record = create_authentication_record(
+    auth,
+    name="My Selenium Auth Record",
+    recordType="formRecord",
+    subType="SELENIUM",
+    fields=[
+        {"name": "username", "value": "my_username"},
+        {"name": "password", "value": "my_password"},
+    ],
+    seleniumCreds=True,
+    seleniumScript={"name": "my_script", "data": """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="https://community.qualys.com/" />
+<title>seleniumScriptOK</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">..."""},
+)
+```
+
+### Server Record
+
+Below are the possible arguments for creating a server record:
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```name``` | ```str``` | Auth record name | ✅ |
+| ```recordType``` | ```str``` = ```serverRecord``` | Record type | ✅ |
+| ```sslOnly``` | ```bool``` | If the authentication record should only be sent on a secure connection | ❌ |
+| ```certificate``` | ```dict["name": str, "contents": str, "passphrase": str]``` | Certificate data | ❌ |
+| ```tags``` | ```list[Union[str, int]]``` | List of tag IDs | ❌ |
+| ```comments``` | ```list[str]``` | List of comments | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import create_authentication_record
+
+auth = BasicAuth(<username>, <password>)
+
+# EXAMPLE serverRecord with a certificate:
+new_auth_record = create_authentication_record(
+    auth,
+    name="My New Server Auth Record",
+    recordType="serverRecord",
+    certificate={"name": "my_cert", "contents": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----", "passphrase": "my_passphrase"},
+    tags=[12345, 54321],
+    comments=["This is my new server auth record"],
+    sslOnly=True,
+)
+```
+
+### OAuth2 Record
+
+Below are the possible arguments for creating an OAuth2 record:
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```name``` | ```str``` | Auth record name | ✅ |
+| ```recordType``` | ```str``` = ```oauth2Record``` | Record type | ✅ |
+| ```subType``` | ```Literal["AUTH_CODE", "IMPLICIT", "PASSWORD", "CLIENT_CREDS"]``` | Record sub-type | ✅ |
+| ```clientId``` | ```str``` | OAuth2 client ID | ✅ |
+| ```clientSecret``` | ```str``` | OAuth2 client secret | ✅ |
+| ```accessTokenUrl``` | ```str``` | OAuth2 access token URL | ✅ |
+| ```scope``` | ```str``` | OAuth2 scope | ❌ |
+| ```accessTokenExpiredMsgPattern``` | ```str``` | OAuth2 access token expired message pattern | ❌ |
+| ```seleniumCreds``` | ```bool``` | If the authentication record is for a Selenium script | ❌ |
+| ```seleniumScript``` | ```dict[str, str]```, like: ```{"name": "my_script", "data": <script_as_XML_string>}``` | Selenium script data | ❌ |
+| ```tags``` | ```list[Union[str, int]]``` | List of tag IDs | ❌ |
+| ```comments``` | ```list[str]``` | List of comments | ❌ |
+
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import create_authentication_record
+
+auth = BasicAuth(<username>, <password>)
+
+# EXAMPLE OAuth2 record:
+new_auth_record = create_authentication_record(
+    auth,
+    name="My New OAuth2 Auth Record",
+    recordType="oauth2Record",
+    subType="CLIENT_CREDS",
+    clientId="my_client_id",
+    clientSecret="my_client_secret",
+    accessTokenUrl="https://example.com/token",
+    scope="scope",
+    tags=[12345, 54321],
+    comments=["This is my new OAuth2 auth record"],
+)
+```

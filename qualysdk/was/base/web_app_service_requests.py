@@ -146,7 +146,7 @@ def validate_response(response: Response) -> dict:
 
         responseCode = parsed.get("ServiceResponse").get("responseCode")
         raise QualysAPIError(
-            f"Error retrieving web applications. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
+            f"WAS API Error. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
         )
 
     serviceResponse = parsed.get("ServiceResponse")
@@ -161,7 +161,7 @@ def validate_response(response: Response) -> dict:
         )
         responseCode = parsed.get("ServiceResponse").get("responseCode")
         raise QualysAPIError(
-            f"Error retrieving web applications. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
+            f"WAS API Error. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
         )
 
     return parsed

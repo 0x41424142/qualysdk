@@ -132,6 +132,9 @@ ENDPOINT_MAPPINGS["delete_authentication_record"] = {
     "contents": "KEYWORD",
 }
 
+ENDPOINT_MAPPINGS["get_findings"] = ENDPOINT_MAPPINGS["count_findings"]
+ENDPOINT_MAPPINGS["get_findings"]["verbose"] = "BOOLEAN"
+
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],
     "TEXT": ["CONTAINS", "EQUALS", "NOT EQUALS"],

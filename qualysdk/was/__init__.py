@@ -25,4 +25,5 @@ from .authentication_records import (
 
 from .findings import (
     count_findings,
+    get_findings,
 )

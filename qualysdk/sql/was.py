@@ -305,3 +305,100 @@ def upload_was_authentication_records(
 
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)
+
+
+def upload_was_findings(
+    findings: BaseList,
+    cnxn: Connection,
+    table_name: str = "was_findings",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload results from ```was.get_findings```
+    or ```was.get_findings_verbose``` to a SQL database.
+
+    Args:
+        findings (BaseList): A BaseList of WebAppFinding objects.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "id": types.Integer(),
+        "uniqueId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "qid": types.Integer(),
+        "detectionScore": types.Integer(),
+        "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "potential": types.Boolean(),
+        "findingType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "severity": types.SmallInteger(),
+        "url": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "firstDetectedDate": types.DateTime(),
+        "lastDetectedDate": types.DateTime(),
+        "lastTestedDate": types.DateTime(),
+        "fixedDate": types.DateTime(),
+        "timesDetected": types.Integer(),
+        "webApp_id": types.Integer(),
+        "webApp_name": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "webApp_url": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "isIgnored": types.Boolean(),
+        "param": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "cwe_count": types.Integer(),
+        "cwe_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "owasp_count": types.Integer(),
+        "owasp_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "resultList_count": types.Integer(),
+        "resultList_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cvssV3_base": types.Float(),
+        "cvssV3_impact": types.Float(),
+        "cvssV3_attackVector": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "history_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "wasc_count": types.Integer(),
+        "wasc_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "updatedDate": types.DateTime(),
+    }
+
+    # Prepare the dataclass for insertion:
+    df = DataFrame([prepare_dataclass(finding) for finding in findings])
+
+    # Drop any columns that we parsed out:
+    df.drop(
+        columns=[
+            "webApp",
+            "cwe",
+            "owasp",
+            "resultList",
+            "cvssV3",
+            "history",
+            "wasc",
+        ],
+        inplace=True,
+    )
+
+    # Upload the data:
+    return upload_data(df, table_name, cnxn, COLS, override_import_dt)

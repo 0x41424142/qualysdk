@@ -11,36 +11,6 @@ from base64 import b64decode
 from ...base.base_list import BaseList
 
 
-def parse_count_and_list(data: Dict, list_key: str) -> BaseList:
-    """
-    Parse the count/list dictionaries into a BaseList.
-
-    Args:
-        data (Dict): The data to parse.
-        list_key (str): The key to the list.
-
-    Returns:
-        BaseList: The parsed list.
-    """
-
-    count = int(data.get("count"))
-    bl = BaseList()
-    if count > 0:
-        for itm in data["list"].get(list_key):
-            if isinstance(itm, list):
-                for i in itm:
-                    bl.append(i)
-            elif not isinstance(itm, dict):
-                bl.append(itm)
-            else:
-                if list_key == "OWASP":
-                    owaspstr = (
-                        f"{itm.get('name')} - {itm.get('url')} - code={itm.get('code')}"
-                    )
-                    bl.append(owaspstr)
-    return count, bl
-
-
 @dataclass
 class PayloadRequest:
     """

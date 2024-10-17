@@ -161,6 +161,7 @@ class FindingItem:
     accessPath_list: BaseList[str] = None
     # end of accessPath
     ajax: bool = False
+    ajaxRequestId: str = None
     payloads: dict = None
     # payloads is parsed into below:
     payloads_count: int = None

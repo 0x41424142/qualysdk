@@ -379,6 +379,10 @@ class Host:
             bl = BaseList()
             for vol in data:
                 try:
+                    if vol.get("size") == 0:
+                        bl.append(f"{vol.get('name')}: 0.0% filled")
+                        continue
+
                     percent_filled = (
                         (vol.get("size") - vol.get("free")) / vol.get("size") * 100
                     )

@@ -274,7 +274,7 @@ def build_service_request(
         criteria = {
             "@field": kwarg,
             "@operator": kwargs.get(f"{kwarg}.operator", "EQUALS"),
-            "#text": str(value).lower() if isinstance(value, bool) else value,
+            "#text": str(value).lower() if isinstance(value, bool) else str(value),
         }
         filters.append(criteria)
 
@@ -401,14 +401,14 @@ def build_update_request(
             if is_valid_regex(entry):
                 l.append(
                     xmltodict.unparse(
-                        {"UrlEntry": {"@regex": "true", "#text": entry}},
+                        {"UrlEntry": {"@regex": "true", "#text": str(entry)}},
                         full_document=False,
                     )
                 )
             else:
                 l.append(
                     xmltodict.unparse(
-                        {"UrlEntry": {"@regex": "false", "#text": entry}},
+                        {"UrlEntry": {"@regex": "false", "#text": str(entry)}},
                         full_document=False,
                     )
                 )
@@ -429,14 +429,14 @@ def build_update_request(
             if is_valid_regex(entry):
                 l.append(
                     xmltodict.unparse(
-                        {"UrlEntry": {"@regex": "true", "#text": entry}},
+                        {"UrlEntry": {"@regex": "true", "#text": str(entry)}},
                         full_document=False,
                     )
                 )
             else:
                 l.append(
                     xmltodict.unparse(
-                        {"UrlEntry": {"@regex": "false", "#text": entry}},
+                        {"UrlEntry": {"@regex": "false", "#text": str(entry)}},
                         full_document=False,
                     )
                 )
@@ -458,14 +458,14 @@ def build_update_request(
             if is_valid_regex(entry):
                 l.append(
                     xmltodict.unparse(
-                        {"UrlEntry": {"@regex": "true", "#text": entry}},
+                        {"UrlEntry": {"@regex": "true", "#text": str(entry)}},
                         full_document=False,
                     )
                 )
             else:
                 l.append(
                     xmltodict.unparse(
-                        {"UrlEntry": {"@regex": "false", "#text": entry}},
+                        {"UrlEntry": {"@regex": "false", "#text": str(entry)}},
                         full_document=False,
                     )
                 )

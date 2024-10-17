@@ -22,3 +22,8 @@ from .authentication_records import (
     create_authentication_record,
     delete_authentication_record,
 )
+
+from .findings import (
+    count_findings,
+    get_findings,
+)

@@ -128,6 +128,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_cs_containers``` | Container Security | ```cs.list_containers()``` | ```cs_containers``` |
 | ```upload_was_webapps``` | WAS | ```was.get_webapps()``` or ```was.get_webapps_verbose()``` (```get_webapps_verbose()``` is recommended!) | ```was_webapps``` |
 | ```upload_was_authentication_records``` | WAS | ```was.get_authentication_records()``` or ```was.get_authentication_records_verbose()``` (```get_webapps_verbose()``` is recommended!) | ```was_authentication_records``` |
+| ```upload_was_findings``` | WAS | ```was.get_findings()``` or ```was.get_findings_verbose()``` (```get_findings_verbose()``` is recommended!) | ```was_findings``` |
 
 
 ```py

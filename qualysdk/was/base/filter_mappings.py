@@ -72,6 +72,35 @@ ENDPOINT_MAPPINGS = {
         "isUsed": "BOOLEAN",
         "contents": "KEYWORD",
     },
+    "count_findings": {
+        "id": "INTEGER",
+        "uniqueId": "TEXT",
+        "qid": "INTEGER",
+        "name": "TEXT",
+        "type": "KEYWORD",
+        "url": "TEXT",
+        "webApp_tags_id": "INTEGER",
+        "webApp_tags_name": "TEXT",
+        "status": "KEYWORD",
+        "patch": "INTEGER",
+        "webApp_id": "INTEGER",
+        "webApp_name": "TEXT",
+        "severity": "INTEGER",
+        "externalRef": "TEXT",
+        "ignoredDate": "DATE",
+        "ignoredReason": "KEYWORD",
+        "group": "KEYWORD",
+        "owasp_name": "TEXT",
+        "owasp_code": "INTEGER",
+        "wasc_name": "TEXT",
+        "wasc_code": "INTEGER",
+        "cwe_id": "INTEGER",
+        "firstDetectedDate": "DATE",
+        "lastDetectedDate": "DATE",
+        "lastTestedDate": "DATE",
+        "timesDetected": "INTEGER",
+        "severity_level": "INTEGER",
+    },
 }
 
 # Build update_webapp with create_webapp as a base:
@@ -102,6 +131,9 @@ ENDPOINT_MAPPINGS["delete_authentication_record"] = {
     "isUsed": "BOOLEAN",
     "contents": "KEYWORD",
 }
+
+ENDPOINT_MAPPINGS["get_findings"] = ENDPOINT_MAPPINGS["count_findings"]
+ENDPOINT_MAPPINGS["get_findings"]["verbose"] = "BOOLEAN"
 
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],

@@ -604,7 +604,7 @@ def get_host_list_backend(
 
         if page_count != "all" and pulled >= page_count:
             with LOCK:
-                print(f"{current_thread.name()} Page count reached.")
+                print(f"{current_thread().name} Page count reached.")
             break
 
         if "WARNING" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:

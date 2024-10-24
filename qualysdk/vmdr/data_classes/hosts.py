@@ -348,6 +348,14 @@ class VMDRHost:
                     self, DATE_FIELD, datetime.fromisoformat(getattr(self, DATE_FIELD))
                 )
 
+        if self.TRURISK_SCORE_FACTORS:
+            s = ""
+            for sev_level in self.TRURISK_SCORE_FACTORS.get("VULN_COUNT"):
+                s += f"sev_{sev_level.get('@qds_severity')}: {sev_level.get('#text')}, "
+            # Pinch off the trailing comma and space:
+            s = s[:-2]
+            self.TRURISK_SCORE_FACTORS = s
+
         if self.TAGS:
             # if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
             if isinstance(self.TAGS["TAG"], list):

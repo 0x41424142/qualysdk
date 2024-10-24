@@ -7,6 +7,7 @@ This package aims to make it easier to interact with the Qualys API across all o
 from .help import schema_query
 from .auth import BasicAuth, TokenAuth
 from .base.base_list import BaseList
+from .base.csv_export import write_csv, write_excel
 
 from .gav.uber import GAVUber
 from . import gav

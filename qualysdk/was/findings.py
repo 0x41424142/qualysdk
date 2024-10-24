@@ -241,7 +241,7 @@ def get_findings(
             )
 
         if serviceResponse.get("count") == "0":
-            print(f"No web applications found on page {pageNo}. Exiting.")
+            print(f"No findings found on page {pageNo}. Exiting.")
             break
 
         data = serviceResponse.get("data")

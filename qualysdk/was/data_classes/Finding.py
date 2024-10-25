@@ -2,7 +2,7 @@
 Contains the WASFinding class, representing a vulnerability on a web application.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from typing import Dict, Literal
 from datetime import datetime
 from urllib.parse import unquote_plus
@@ -25,10 +25,16 @@ class PayloadRequest:
 
     def __post_init__(self):
         if self.headers:
-            self.headers = b64decode(self.headers).decode("utf-8")
+            try:
+                self.headers = b64decode(self.headers).decode("utf-8")
+            except UnicodeDecodeError:
+                self.headers = self.headers
 
         if self.body:
-            self.body = b64decode(self.body).decode("utf-8")
+            try:
+                self.body = b64decode(self.body).decode("utf-8")
+            except UnicodeDecodeError:
+                self.body = self.body
 
     def to_dict(self) -> Dict:
         """
@@ -125,7 +131,7 @@ class WASPayload:
         return asdict(self)
 
     def __str__(self) -> str:
-        return f"{self.method}={self.link}"
+        return f"{self.payload}"
 
     def __dict__(self) -> Dict:
         return self.to_dict()
@@ -367,8 +373,15 @@ class WASFinding:
     # end of owasp
     resultList: dict = None
     # resultList is parsed into below:
-    resultList_count: int = None
+    resultList_count: int = 0
     resultList_list: BaseList[str] = None
+    # accessPath_count/list is an aggregate of each
+    # object in resultList_list. As is
+    # payloads_count/list
+    accessPath_count: int = 0
+    accessPath_list: BaseList[str] = field(default_factory=BaseList)
+    payloads_count: int = 0
+    payloads_list: BaseList[WASPayload] = field(default_factory=BaseList)
     # end of resultList
     cvssV3: dict = None
     # cvssV3 is parsed into below:
@@ -465,7 +478,10 @@ class WASFinding:
             setattr(self, "owasp_list", bl)
             setattr(self, "owasp", None)
 
-        if self.resultList:
+        if (
+            self.resultList
+        ):  # Maybe i need to ditch the resultList_list and resultList_count, break it out
+            # into payload list, request list, responce list, etc?
             setattr(self, "resultList_count", int(self.resultList.get("count")))
             bl = BaseList()
             data = self.resultList.get("list").get("Result")
@@ -474,6 +490,17 @@ class WASFinding:
                     data = [data]
                 for itm in data:
                     bl.append(FindingItem.from_dict(itm))
+
+            if bl:
+                # Parse out accessPath_count/list, payloads_count/list
+                for itm in bl:
+                    if itm.accessPath_list:
+                        self.accessPath_count += itm.accessPath_count
+                        self.accessPath_list += itm.accessPath_list
+                    if itm.payloads_list:
+                        self.payloads_count += itm.payloads_count
+                        self.payloads_list += itm.payloads_list
+
             setattr(self, "resultList_list", bl)
             setattr(self, "resultList", None)
 

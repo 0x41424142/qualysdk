@@ -7,7 +7,6 @@ PyPI.
 from argparse import ArgumentParser
 from subprocess import run, check_call, DEVNULL
 from sys import executable
-from os import devnull
 
 from requests import Response, get
 from packaging import version

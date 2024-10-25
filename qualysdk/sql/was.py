@@ -26,6 +26,7 @@ def upload_was_webapps(
     Args:
         webapps (BaseList): A BaseList of WebApp objects.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to.
         override_import_dt (datetime): If provided, will override the import_datetime column with this value.
 
     Returns:
@@ -190,6 +191,7 @@ def upload_was_authentication_records(
     Args:
         authRecords (BaseList): A BaseList of WebAppAuthRecord objects.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to.
         override_import_dt (datetime): If provided, will override the import_datetime column with this value.
 
     Returns:
@@ -320,6 +322,7 @@ def upload_was_findings(
     Args:
         findings (BaseList): A BaseList of WebAppFinding objects.
         cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to.
         override_import_dt (datetime): If provided, will override the import_datetime column with this value.
 
     Returns:
@@ -362,6 +365,14 @@ def upload_was_findings(
         ),
         "owasp_count": types.Integer(),
         "owasp_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "accessPath_count": types.Integer(),
+        "accessPath_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "payloads_count": types.Integer(),
+        "payloads_list": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "resultList_count": types.Integer(),

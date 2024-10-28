@@ -1227,7 +1227,7 @@ findings = get_findings_verbose(auth, severity=5)
 
 ## ```qualysdk-was``` CLI tool
 
-The ```qualysdk-was``` CLI tool is a command-line interface for the WAS portion of the SDK. It allows you to quickly pull down results from WAS APIs and save them to a CSV file.
+The ```qualysdk-was``` CLI tool is a command-line interface for the WAS portion of the SDK. It allows you to quickly pull down results from WAS APIs and save them to an XLSX file.
 
 ### Usage
 
@@ -1258,10 +1258,10 @@ usage: qualysdk-was get_findings [-h] [-o OUTPUT] [--kwarg key value]
 options:
   -h, --help            show this help message and exit
   -o OUTPUT, --output OUTPUT
-                        Output CSV file to write results to
+                        Output xlsx file to write results to
   --kwarg key value     Specify a keyword argument to pass to the get_findings function. Can be used multiple times
 
 # Example with a few kwargs:
-qualysdk-was -u <username> -p <password> -P qg1 get_findings --kwarg verbose true --kwarg group XSS --output xss_findings.csv
->>>Data written to xss_findings.csv.
+qualysdk-was -u <username> -p <password> -P qg1 get_findings --kwarg verbose true --kwarg group XSS --output xss_findings.xlsx
+>>>Data written to xss_findings.xlsx.
 ```

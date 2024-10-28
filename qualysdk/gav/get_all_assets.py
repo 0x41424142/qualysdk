@@ -26,7 +26,7 @@ def get_all_assets(
         includeFields (str): The fields to include.
         lastSeenAssetId (int): The last seen asset ID. Used for automatic pagination.
         lastModifiedDate (str): The last modified date.
-        pageSize (int): The number of assets to get per page.
+        pageSize (int): The number of assets to get per page. Max of 300.
 
     Returns:
         BaseList[Hosts]: The response from the API as a BaseList of Hosts objects.
@@ -41,6 +41,10 @@ def get_all_assets(
             auth=auth, module="gav", endpoint="get_all_assets", params=kwargs
         )
         j = response.json()
+
+        if j["responseCode"] == "FAILED":
+            raise QualysAPIError(j["responseMessage"])
+
         for record in j["assetListData"]["asset"]:
             responses.append(Host(**record))
         (

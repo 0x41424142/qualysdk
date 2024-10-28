@@ -36,7 +36,7 @@ def get_asset(auth: TokenAuth, **kwargs) -> Host:
     # parse the response:
     j = response.json()
 
-    if j["status"] != 200:
+    if response.status_code != 200:
         raise QualysAPIError(j)
 
     return Host(**j["assetListData"]["asset"][0])

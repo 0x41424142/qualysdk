@@ -13,6 +13,8 @@ profile.html
 profile.json
 *.db
 *.json
+*.csv
+*.xlsx
 
 # VSCode:
 .vscode/

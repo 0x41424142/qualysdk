@@ -299,3 +299,34 @@ When results are received from a GAV API, each host record is stored in a ```Hos
 'volumeListData'
 'whois'
 ```
+
+## ```qualysdk-gav``` CLI tool
+
+The ```qualysdk-gav``` CLI tool is a command-line interface for the GAV portion of the SDK. It allows you to quickly pull down results from GAV APIs and save them to a XLSX file.
+
+>**Heads Up!**: If using PowerShell, you may need to use the ```--%``` flag to pass arguments to the script due to how PowerShell handles backticks. For example: ```qualysdk-gav --% -u <username> -p <password> query_assets --kwarg filter operatingSystem.category1:`Windows` ```
+
+### Usage
+
+```bash
+usage: qualysdk-gav [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_assets,get_all_assets,get_asset,query_assets} ...
+
+CLI script to quickly perform Global AssetView (GAV) operations using qualysdk
+
+positional arguments:
+  {count_assets,get_all_assets,get_asset,query_assets}
+                        Action to perform
+    count_assets        Count how many assets match a GAV QQL filter & save to a JSON file.
+    get_all_assets      Pull a list of all assets in the GAV API.
+    get_asset           Get a specific asset by asset ID (not host ID) & save to a JSON file.
+    query_assets        Query assets based on a GAV QQL filter.
+
+options:
+  -h, --help            show this help message and exit
+  -u USERNAME, --username USERNAME
+                        Qualys username
+  -p PASSWORD, --password PASSWORD
+                        Qualys password
+  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
+                        Qualys platform
+```

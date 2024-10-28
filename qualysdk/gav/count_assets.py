@@ -31,4 +31,9 @@ def count_assets(auth: TokenAuth, **kwargs) -> dict:
     response = call_api(auth=auth, module="gav", endpoint="count_assets", params=kwargs)
 
     # parse the response:
-    return response.json()
+    j = response.json()
+
+    if j["responseCode"] == "FAILED":
+        raise QualysAPIError(j["responseMessage"])
+
+    return j

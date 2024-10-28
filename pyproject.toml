@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qualysdk"
-version = "0.1.62"
+version = "0.1.63"
 description = "SDK for interacting with Qualys APIs, across most modules the platform offers."
 authors = ["0x41424142 <jake@jakelindsay.uk>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
 maintainers = ["Jake Lindsay <jake@jakelindsay.uk>"]
@@ -41,6 +41,7 @@ psycopg2-binary = [
 xmltodict = "^0.13.0"
 defusedxml = "^0.7.1"
 packaging = "^24.1"
+xlsxwriter = "^3.0.5"
 
 
 [tool.poetry.urls]

@@ -598,8 +598,6 @@ class WASFinding:
                                         string = f"{prop.get('name')}: {prop.get('value')} ({prop.get('protocol')})"
                                         bl.append(string) if string not in bl else None
                             case "certificateFingerprint":
-                                # Needed in two places due to Qualys returning it in two places
-                                # depending on data structure.
                                 self.sslData_certificateFingerprint.append(val)
 
                 self.sslData_list = bl

@@ -91,4 +91,14 @@ def backend_write(
     if not isinstance(data, DataFrame):
         data = DataFrame(data)
 
+    # Make any datetime cols timezone unaware:
+    for col in data.columns:
+        if data[col].dtype in [
+            "datetime64[ns]",
+            "datetime64[ns, tz]",
+            "datetime64[ns, UTC]",
+            "timedelta64[ns]",
+        ]:
+            data[col] = data[col].dt.tz_localize(None)
+
     return data

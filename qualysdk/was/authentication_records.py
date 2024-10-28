@@ -331,7 +331,7 @@ def get_authentication_records_verbose(
 
     # Get the auth records:
     print(f"({current_thread().name}) Getting base auth record list...")
-    authrecords = get_authentication_records(auth, page_count="all", **kwargs)
+    authrecords = get_authentication_records(auth, **kwargs)
 
     print(
         f"({current_thread().name}) Pulled {len(authrecords)} auth records. Starting {thread_count} thread(s) for details pull.."

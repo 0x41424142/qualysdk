@@ -342,6 +342,7 @@ def upload_was_findings(
         "findingType": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
+        "group": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "severity": types.SmallInteger(),
         "url": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
@@ -358,6 +359,18 @@ def upload_was_findings(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "isIgnored": types.Boolean(),
+        "ignoredReason": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "ignoredBy": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "ignoredDate": types.DateTime(),
+        "ignoredComment": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "reactivatedDate": types.DateTime(),
+        "reactivateIn": types.Integer(),
         "param": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "cwe_count": types.Integer(),
         "cwe_list": types.String().with_variant(
@@ -379,9 +392,16 @@ def upload_was_findings(
         "resultList_list": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
+        "patch": types.Integer(),
         "cvssV3_base": types.Float(),
         "cvssV3_impact": types.Float(),
         "cvssV3_attackVector": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "severityComment": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "editedSeverityUser": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "history_list": types.String().with_variant(
@@ -389,6 +409,28 @@ def upload_was_findings(
         ),
         "wasc_count": types.Integer(),
         "wasc_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "sslData_protocol": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "sslData_virtualhost": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "sslData_ip": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "sslData_port": types.Integer(),
+        "sslData_result": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "sslData_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "sslData_certificateFingerprint": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "sslData_flags": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "updatedDate": types.DateTime(),
@@ -407,6 +449,7 @@ def upload_was_findings(
             "cvssV3",
             "history",
             "wasc",
+            "sslData",
         ],
         inplace=True,
     )

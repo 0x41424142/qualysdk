@@ -329,7 +329,7 @@ def get_webapps_verbose(
 
     # Get the webapps:
     print(f"({current_thread().name}) Getting base Webapp list...")
-    webapps = get_webapps(auth, page_count="all", **kwargs)
+    webapps = get_webapps(auth, **kwargs)
 
     print(
         f"({current_thread().name}) Pulled {len(webapps)} webapps. Starting {thread_count} thread(s) for details pull.."

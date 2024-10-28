@@ -28,6 +28,8 @@ You can use any of the endpoints currently supported:
 | ```delete_authentication_record``` | Deletes an authentication record in the subscription. |
 | ```count_findings``` | Returns the number of findings in the subscription that match given kwargs. |
 | ```get_findings``` | Returns a list of findings in the subscription that match given kwargs. |
+| ```get_finding_details``` | Returns all attributes of a single finding. |
+| ```get_findings_verbose``` | Combines the functionality of ```get_findings``` and ```get_finding_details``` to return a list of findings with all attributes. Great for SQL data uploads. |
 
 ## Count Webapps API
 
@@ -176,6 +178,7 @@ This method uses threading to speed up the process. Number of threads can be set
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```thread_count``` | ```int``` | Number of threads to use for the request | ❌ |
+| ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to return. If 'all', returns all pages | ❌ |
 | ```id``` | ```Union[str, int]``` | Web app ID | ❌ |
 | ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
 | ```name``` | ```str``` | Web app name | ❌ |
@@ -683,6 +686,7 @@ This method uses threading to speed up the process. Number of threads can be set
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```thread_count``` | ```int``` | Number of threads to use for the request | ❌ |
+| ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to return. If 'all', returns all pages | ❌ |
 | ```id``` | ```Union[str, int]``` | Auth record ID | ❌ |
 | ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
 | ```name``` | ```str``` | Auth record name | ❌ |
@@ -1126,6 +1130,100 @@ findings = get_findings(
     webApp_tags_name="PROD",
 )
 ```
+
+## Get Finding Details API
+
+```get_finding_details``` returns the details of a single finding in the subscription.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```findingId``` | ```Union[str, int]``` | Finding # or unique ID | ✅ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_finding_details
+
+auth = BasicAuth(<username>, <password>)
+finding = get_finding_details(auth, findingId=123456789)
+finding2 = get_finding_details(auth, findingId="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
+```
+
+## Get Findings Verbose API
+
+```get_findings_verbose``` returns a list of findings in the subscription with all attributes. This method uses threading to speed up the process. Number of threads can be set with the ```thread_count``` parameter.
+
+>**Head's Up!:** Unlike the other ```get_<thing>_verbose``` methods, this method is not always faster than the non-verbose version. It is recommended to use the non-verbose version unless you need data specifically related to SSL/TLS certificates.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```thread_count``` | ```int``` | Number of threads to use for the request | ❌ |
+| ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to return. If 'all', returns all pages | ❌ |
+| ```verbose``` | ```bool``` | Whether to return verbose output | ❌ |
+| ```id``` | ```Union[str, int]``` | Finding ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```uniqueId``` | ```str``` | Unique ID of the finding | ❌ |
+| ```qid``` | ```int``` | Qualys ID of the finding | ❌ |
+| ```qid_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the QID filter | ❌ |
+| ```name``` | ```str``` | Name of the finding | ❌ |
+| ```name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the name filter | ❌ |
+| ```type``` | ```Literal["VULNERABILITY", "SENSITIVE_CONTENT", "INFORMATION_GATHERED"]``` | Type of the finding | ❌ |
+| ```type_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the type filter | ❌ |
+| ```url``` | ```str``` | URL of the finding's webapp | ❌ |
+| ```url_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the URL filter | ❌ |
+| ```webApp_tags_id``` | ```int``` | A tag ID on the webapp | ❌ |
+| ```webApp_tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_tags_id filter | ❌ |
+| ```webApp_tags_name``` | ```str``` | A tag name on the webapp | ❌ |
+| ```webApp_tags_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_tags_name filter | ❌ |
+| ```status``` | ```Literal["NEW", "ACTIVE", "REOPENED", "PROTECTED", "FIXED"]``` | Status of the finding | ❌ |
+| ```status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the status filter | ❌ |
+| ```patch``` | ```int``` | Patch ID for WAF module | ❌ |
+| ```patch_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the patch filter | ❌ |
+| ```webApp_id``` | ```int``` | Webapp ID | ❌ |
+| ```webApp_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_id filter | ❌ |
+| ```webApp_name``` | ```str``` | Webapp name | ❌ |
+| ```webApp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_name filter | ❌ |
+| ```severity``` | ```Literal[1, 2, 3, 4, 5]``` | Severity of the finding | ❌ |
+| ```severity_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the severity filter | ❌ |
+| ```externalRef``` | ```str``` | External reference of the finding | ❌ |
+| ```externalRef_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the externalRef filter | ❌ |
+| ```ignoredDate``` | ```str``` | Date the finding was ignored | ❌ |
+| ```ignoredDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ignoredDate filter | ❌ |
+| ```ignoredReason``` | ```Literal["FALSE_POSITIVE", "RISK_ACCEPTED", "NOT_APPLICABLE"]``` | Reason the finding was ignored | ❌ |
+| ```ignoredReason_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the ignoredReason filter | ❌ |
+| ```group``` | ```Literal["XSS", "SQL", "INFO", "PATH", "CC", "SSN_US", "CUSTOM"]``` | Group of the finding | ❌ |
+| ```group_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the group filter | ❌ |
+| ```owasp_name``` | ```str``` | OWASP name of the finding | ❌ |
+| ```owasp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the owasp_name filter | ❌ |
+| ```owasp_code``` | ```int``` | OWASP code of the finding | ❌ |
+| ```owasp_code_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the owasp_code filter | ❌ |
+| ```wasc_name``` | ```str``` | WASC name of the finding | ❌ |
+| ```wasc_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the wasc_name filter | ❌ |
+| ```wasc_code``` | ```int``` | WASC code of the finding | ❌ |
+| ```wasc_code_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the wasc_code filter | ❌ |
+| ```cwe_id``` | ```int``` | CWE ID of the finding | ❌ |
+| ```cwe_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the cwe_id filter | ❌ |
+| ```firstDetectedDate``` | ```str``` | Date the finding was first detected | ❌ |
+| ```firstDetectedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the firstDetectedDate filter | ❌ |
+| ```lastDetectedDate``` | ```str``` | Date the finding was last detected | ❌ |
+| ```lastDetectedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the lastDetectedDate filter | ❌ |
+| ```lastTestedDate``` | ```str``` | Date the finding was last tested | ❌ |
+| ```lastTestedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the lastTestedDate filter | ❌ |
+| ```timesDetected``` | ```int``` | Number of times the finding was detected | ❌ |
+| ```timesDetected_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the timesDetected filter | ❌ |
+| ```fixedDate``` | ```str``` | Date the finding was fixed | ❌ |
+| ```fixedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the fixedDate filter | ❌ |
+
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_findings_verbose
+
+auth = BasicAuth(<username>, <password>)
+findings = get_findings_verbose(auth, severity=5)
+```
+
 
 ## ```qualysdk-was``` CLI tool
 

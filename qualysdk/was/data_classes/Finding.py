@@ -345,6 +345,7 @@ class WASFinding:
     type: Literal["VULNERABILITY", "SENSITIVE_CONTENT", "INFORMATION_GATHERED"] = None
     potential: bool = None
     findingType: Literal["QUALYS", "CUSTOM"] = None
+    group: str = None
     severity: Literal[1, 2, 3, 4, 5] = None
     url: str = None
     status: Literal["NEW", "ACTIVE", "REOPENED", "FIXED", "PROTECTED"] = None
@@ -360,6 +361,12 @@ class WASFinding:
     webApp_url: str = None
     # end of webApp
     isIgnored: bool = None
+    ignoredReason: str = None
+    ignoredBy: str = None
+    ignoredDate: datetime = None
+    ignoredComment: str = None
+    reactivateDate: datetime = None
+    reactivateIn: int = None
     param: str = None
     cwe: dict = None
     # cwe is parsed into below:
@@ -375,6 +382,7 @@ class WASFinding:
     # resultList is parsed into below:
     resultList_count: int = 0
     resultList_list: BaseList[str] = None
+    patch: int = None
     # accessPath_count/list is an aggregate of each
     # object in resultList_list. As is
     # payloads_count/list
@@ -388,6 +396,8 @@ class WASFinding:
     cvssV3_base: float = None
     cvssV3_impact: float = None
     cvssV3_attackVector: str = None
+    severityComment: str = None
+    editedSeverityUser: str = None
     # end of cvssV3
     history: dict = None
     # history is parsed into below:
@@ -397,6 +407,16 @@ class WASFinding:
     # wasc is parsed into below:
     wasc_count: int = None
     wasc_list: BaseList[WASCItem] = None
+    sslData: dict = None
+    # sslData is parsed into below:
+    sslData_protocol: str = None
+    sslData_virtualhost: str = None
+    sslData_ip: str = None
+    sslData_port: int = None
+    sslData_result: str = None
+    sslData_list: BaseList[str] = None
+    sslData_certificateFingerprint: BaseList[str] = None
+    sslData_flags: str = None
     updatedDate: datetime = None
 
     def __post_init__(self):
@@ -406,6 +426,8 @@ class WASFinding:
             "lastTestedDate",
             "fixedDate",
             "updatedDate",
+            "ignoredDate",
+            "reactivateDate",
         ]
         INT_FIELDS = [
             "id",
@@ -414,6 +436,8 @@ class WASFinding:
             "severity",
             "timesDetected",
             "webApp_id",
+            "patch",
+            "reactivateIn",
         ]
         BOOL_FIELDS = ["potential", "isIgnored"]
 
@@ -428,6 +452,12 @@ class WASFinding:
 
         if self.type:
             setattr(self, "type", self.type.upper())
+
+        if self.ignoredBy:
+            setattr(self, "ignoredBy", self.ignoredBy.get("id"))
+
+        if self.editedSeverityUser:
+            setattr(self, "editedSeverityUser", self.editedSeverityUser.get("id"))
 
         if self.findingType:
             setattr(self, "findingType", self.findingType.upper())
@@ -478,10 +508,7 @@ class WASFinding:
             setattr(self, "owasp_list", bl)
             setattr(self, "owasp", None)
 
-        if (
-            self.resultList
-        ):  # Maybe i need to ditch the resultList_list and resultList_count, break it out
-            # into payload list, request list, responce list, etc?
+        if self.resultList:
             setattr(self, "resultList_count", int(self.resultList.get("count")))
             bl = BaseList()
             data = self.resultList.get("list").get("Result")
@@ -532,6 +559,51 @@ class WASFinding:
                     bl.append(WASCItem.from_dict(itm))
             setattr(self, "wasc_list", bl)
             setattr(self, "wasc", None)
+
+        if self.sslData:
+            self.sslData_certificateFingerprint = BaseList()
+            self.sslData_protocol = self.sslData.get("protocol")
+            self.sslData_virtualhost = self.sslData.get("virtualhost")
+            self.sslData_ip = self.sslData.get("ip")
+            self.sslData_flags = self.sslData.get("flags")
+            try:
+                self.sslData_port = int(self.sslData.get("port"))
+            except TypeError:
+                self.sslData_port = None
+
+            self.sslData_result = self.sslData.get("result")
+            data = self.sslData.get("sslDataInfoList")
+            if data:
+                data = data["list"].get("SSLDataInfo")
+                bl = BaseList()
+                if not isinstance(data, list):
+                    data = [data]
+                for datapoint in data:
+                    for itm, val in datapoint.items():
+                        match itm:
+                            case "sslDataCipherList":
+                                if val:
+                                    for cipher in val.get("list").get("SSLDataCipher"):
+                                        # protocol, name, keyExchange, auth, mac, encryption, grade
+                                        string = f"{cipher.get('protocol')}: {cipher.get('name')} (keyExchange: {cipher.get('keyExchange')}; auth: {cipher.get('auth')}; mac: {cipher.get('mac')}; encryption: {cipher.get('encryption')}; grade: {cipher.get('grade')})"
+                                        bl.append(string) if string not in bl else None
+                            case "sslDataKexList":
+                                if val:
+                                    for kex in val.get("list").get("SSLDataKex"):
+                                        string = f"{kex.get('protocol')}: {kex.get('kex')} (keysize: {kex.get('keysize')}; fwdsec: {kex.get('fwdsec')}; classical: {kex.get('classical')}; quantum: {kex.get('quantum')})"
+                                        bl.append(string) if string not in bl else None
+                            case "sslDataPropList":
+                                if val:
+                                    for prop in val.get("list").get("SSLDataProp"):
+                                        string = f"{prop.get('name')}: {prop.get('value')} ({prop.get('protocol')})"
+                                        bl.append(string) if string not in bl else None
+                            case "certificateFingerprint":
+                                # Needed in two places due to Qualys returning it in two places
+                                # depending on data structure.
+                                self.sslData_certificateFingerprint.append(val)
+
+                self.sslData_list = bl
+            setattr(self, "sslData", None)
 
     def to_dict(self) -> Dict:
         """

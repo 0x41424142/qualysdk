@@ -2,20 +2,9 @@
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/"  # Path to where your pyproject.toml is located
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
-    commit-message:
-      prefix: "deps"
-      prefix-development: "chore"
-    ignore:
-      - dependency-name: "python"  # Avoid updates to the Python version itself
-    # Optional: Ensure Dependabot respects the minimum Python version
-    allowed:
-      - match:
-          dependency-name: "python"
-          version: ">= 3.11"

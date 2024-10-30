@@ -68,4 +68,7 @@ def purge_hosts(
 
     data = xml_parser(result.text)
 
+    if isinstance(data["BATCH_RETURN"]["RESPONSE"]["BATCH_LIST"].get("BATCH"), list):
+        return str(data["BATCH_RETURN"]["RESPONSE"]["BATCH_LIST"]["BATCH"])
+
     return data["BATCH_RETURN"]["RESPONSE"]["BATCH_LIST"]["BATCH"]["TEXT"]

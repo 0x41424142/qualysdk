@@ -12,7 +12,7 @@ from ..base.xml_parser import xml_parser
 
 
 def purge_hosts(
-    auth: BasicAuth, data_scope: Literal["vm", "pc", "vm/pc"] = "vm,pc", **kwargs
+    auth: BasicAuth, data_scope: Literal["vm", "pc", "vm,pc"] = "vm,pc", **kwargs
 ) -> str:
     """Purge host data from VMDR/PC.
 
@@ -23,7 +23,7 @@ def purge_hosts(
 
     ## Kwargs:
 
-    - `host_ids` (str): The host IDs to purge as a comma-separated string.
+    - `ids` (str): The host IDs to purge as a comma-separated string.
     - `ips` (str): The IPs to purge as a comma-separated string. A range can be specified with a hyphen.
     - `ag_ids` (str): The asset group IDs to purge as a comma-separated string.
     - `ag_titles` (str): The asset group titles to purge as a comma-separated string.

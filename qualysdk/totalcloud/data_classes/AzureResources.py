@@ -206,7 +206,6 @@ class AzureWebApp(BaseResource):
     resourceType: str = "WEB_APP"
 
     def __post_init__(self):
-
         super().__post_init__()
 
         if self.enabledHosts:

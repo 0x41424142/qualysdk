@@ -212,8 +212,7 @@ vulnerable_ec2s = get_inventory(
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```provider``` | ```Literal["aws", "azure"]``` | The cloud provider to get resource details for | ✅ |
 | ```resourceType``` | ```str``` | The resource type to get details for. See **resourceType Values** for acceptable values by cloud provider. | ✅ |
-| ```resourceId``` | ```str``` | The resource UUID to get details for | ✅ |
-| ```page_count``` | ```Union[int>=1, 'all'] = 'all'``` | Number of pages to pull | ❌ |
+| ```resourceUuid``` | ```str``` | The resource UUID to get details for | ✅ |
 | ```pageSize``` | ```int``` | Number of records to pull per page | ❌ |
 | ```pageNo``` | ```int``` | Page number to start pulling from, or page to pull if ```page_count``` is set to 1 | ❌ |
 | ```filter``` | ```str``` | Filter the results. See **resouceType Values** for acceptable search tokens | ❌ |
@@ -237,7 +236,7 @@ get_resource_details(
     auth,
     provider='aws',
     resourceType='ec2',
-    resourceId=ec2s[0].uuid
+    resourceUuid=ec2s[0].uuid
 )
 >>>AWSEC2Instance(instanceId="i-1234567890abcdef0", ...)
 ```

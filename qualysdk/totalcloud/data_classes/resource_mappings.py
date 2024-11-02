@@ -3,6 +3,7 @@ Contains the resource name mappings and the class mappings for resources
 """
 
 from .AWSResources import *
+from .AzureResources import *
 
 VALID_RESOURCETYPES = {
     "aws": [
@@ -127,4 +128,6 @@ resource_map = {
     "IAM_ROLE": AWSIAMRole,
     "SAGEMAKER_NOTEBOOK": AWSSagemakerNotebook,
     "CLOUDFRONT_DISTRIBUTION": AWSCloudfrontDistribution,
+    "VIRTUAL_MACHINE": AzureVM,
+    "WEB_APP": AzureWebApp,
 }

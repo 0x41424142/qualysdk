@@ -53,6 +53,8 @@ from .totalcloud import (
     upload_totalcloud_aws_sagemakernotebook,
     upload_totalcloud_aws_cloudfrontdistribution,
     upload_totalcloud_remediation_activities,
+    upload_totalcloud_azure_vm,
+    upload_totalcloud_azure_webapp,
 )
 
 from .cloud_agent import upload_cloud_agents

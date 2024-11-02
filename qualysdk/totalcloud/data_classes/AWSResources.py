@@ -106,6 +106,12 @@ class BaseResource:
         """
         return self.to_dict().items()
 
+    def __dict__(self):
+        """
+        __dict__ - return the BaseResource as a dictionary
+        """
+        return self.to_dict()
+
     @staticmethod
     def from_dict(data):
         """

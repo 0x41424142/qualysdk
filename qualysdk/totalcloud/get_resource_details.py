@@ -16,8 +16,7 @@ def get_resource_details(
     auth: BasicAuth,
     provider: Literal["aws", "azure"],
     resourceType: str,
-    resourceId: str,
-    page_count: Union[int, "all"] = "all",
+    resourceUuid: str,
     **kwargs,
 ) -> object:
     """
@@ -64,8 +63,16 @@ def get_resource_details(
         )
 
     kwargs["placeholder"] = resourceType
-    kwargs["resourceid"] = resourceId
-    kwargs["cloudprovider"] = provider.upper()
+    kwargs["resourceid"] = resourceUuid
+    match provider.upper():
+        case "AWS":
+            kwargs["cloudprovider"] = "AWS"
+        case "AZURE":
+            kwargs["cloudprovider"] = "Azure"
+        case _:
+            raise ValueError(
+                f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
+            )
 
     response = call_api(
         auth=auth,

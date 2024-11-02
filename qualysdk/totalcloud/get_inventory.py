@@ -11,6 +11,7 @@ from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.AWSResources import *
+from .data_classes.AzureResources import *
 from .data_classes.resource_mappings import *
 
 

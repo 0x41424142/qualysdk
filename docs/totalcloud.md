@@ -407,7 +407,7 @@ get_remediation_activities(auth, provider='aws')
 
 ## ```resourceType``` Values
 
-```resourceType``` is case-insensitive. Values are translated to their expected API names. You can also just use the expected names directly, for example when feeding an API call based on data from a prior call using an object's ```resourceType``` value.
+```resourceType``` is case-insensitive. Values are translated to their expected API names. You can also just use the expected names directly, for example when feeding an API call based on data from a prior call using a dataclass's ```.resourceType``` attribute.
 
 ### AWS ```resourceType``` Values
 
@@ -437,6 +437,13 @@ get_remediation_activities(auth, provider='aws')
 | AWS | IAM_ROLE | ```"IAM ROLE"```, ```"IAMROLE"``` |
 | AWS | SAGEMAKER_NOTEBOOK | ```"SAGEMAKER NOTEBOOK"```, ```"NOTEBOOK"```, ```"SAGEMAKER"``` |
 | AWS | CLOUDFRONT_DISTRIBUTION | ```"CLOUDFRONT DISTRIBUTION"```, ```"CLOUDFRONT"```|
+
+
+### Azure ```resourceType``` Values
+
+
+| Provider | Resource Type/Final API-Expected Name | Acceptable ```resourceType``` Values |
+|--|--|--|
 | AZURE | SQL_SERVER | ```"SQL SERVER"```, ```"MSSQL"``` |
 | AZURE | FUNCTION_APP | ```"FUNCTION APP"```, ```"FUNCTION"``` |
 | AZURE | SQL_SERVER_DATABASE | ```"SQL SERVER DATABASE"```, ```"MSSQL DATABASE"```, ```"MSSQLDB"```, ```"MSSQL DB"```|

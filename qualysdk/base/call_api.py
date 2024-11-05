@@ -96,7 +96,7 @@ def call_api(
             # check that the time delta between now and the token generation time is less than ~4 hours:
             if (datetime.now() - auth.generated_on).seconds > 14395:
                 print("Token is 4+ hours old. Refreshing token...")
-                auth.get_token()
+                auth.token = auth.get_token()
 
         # check params:
         if params:

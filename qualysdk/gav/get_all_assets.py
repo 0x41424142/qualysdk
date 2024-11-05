@@ -42,7 +42,7 @@ def get_all_assets(
         )
         j = response.json()
 
-        if j["responseCode"] == "FAILED":
+        if "responseCode" not in j.keys() or j["responseCode"] == "FAILED":
             raise QualysAPIError(j["responseMessage"])
 
         for record in j["assetListData"]["asset"]:

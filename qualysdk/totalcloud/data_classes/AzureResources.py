@@ -5,11 +5,16 @@ Contains resource dataclasses for Azure, such as SQL, VMs, etc.
 from dataclasses import dataclass, asdict
 from typing import Union
 from datetime import datetime
-from json import loads
-from urllib.parse import unquote
 
 from ...base.base_list import BaseList
 from .QID import QID
+
+
+def process_file_or_blob(self, data, prefix):
+    dict_keys = ["lastEnabledTime", "keyType", "enabled"]
+    for field in dict_keys:
+        if data.get(field):
+            setattr(self, f"{prefix}_{field}", data.get(field))
 
 
 @dataclass
@@ -225,3 +230,117 @@ class AzureWebApp(BaseResource):
     @staticmethod
     def from_dict(data):
         return AzureWebApp(**data)
+
+
+@dataclass
+class AzureStorageAccount(BaseResource):
+    """
+    Represents an Azure storage account in TotalCloud
+    """
+
+    displayName: str = None
+    connectorId: str = None
+    scanId: str = None
+    skuTier: str = None
+    resourceIdentity: dict = None
+    # resourceIdentity is parsed into below fields:
+    resourceIdentity_type: str = None
+    # end of resourceIdentity fields
+    minimumTlsVersion: str = None
+    kind: str = None
+    firstDiscoveredOn: Union[str, datetime] = None
+    lastDiscoveredOn: Union[str, datetime] = None
+    skuName: str = None
+    file: dict = None
+    # file is parsed into below fields:
+    file_lastEnabledTime: Union[str, datetime] = None
+    file_keyType: str = None
+    file_enabled: bool = None
+    # end of file fields
+    blob: dict = None
+    # blob is parsed into below fields:
+    blob_lastEnabledTime: Union[str, datetime] = None
+    blob_keyType: str = None
+    blob_enabled: bool = None
+    # end of blob fields
+    primaryLocation: str = None
+    secondaryLocation: str = None
+    hnsEnabled: Union[str, bool] = None
+    resourceGroupId: str = None
+    supportsHttpsTrafficOnly: bool = None
+    statusOfPrimary: str = None
+    statusOfSecondary: str = None
+    location: str = None
+    networkAcls: dict = None
+    # networkAcls is parsed into below fields:
+    networkAcls_bypass: str = None
+    networkAcls_defaultAction: str = None
+    networkAcls_ipRules: BaseList[str] = None
+    networkAcls_virtualNetworkRules: BaseList[str] = None
+    # end of networkAcls fields
+
+    def __post_init__(self):
+        super().__post_init__()
+
+        DT_FIELDS = [
+            "firstDiscoveredOn",
+            "lastDiscoveredOn",
+            "file_lastEnabledTime",
+            "blob_lastEnabledTime",
+        ]
+
+        if self.resourceIdentity:
+            dict_keys = ["type"]
+            for field in dict_keys:
+                if self.resourceIdentity.get(field):
+                    setattr(
+                        self,
+                        f"resourceIdentity_{field}",
+                        self.resourceIdentity.get(field),
+                    )
+            setattr(self, "resourceIdentity", None)
+
+        if self.file:
+            process_file_or_blob(self, self.file, "file")
+            setattr(self, "file", None)
+
+        if self.blob:
+            process_file_or_blob(self, self.blob, "blob")
+            setattr(self, "blob", None)
+
+        if self.hnsEnabled:
+            if isinstance(self.hnsEnabled, str):
+                setattr(self, "hnsEnabled", self.hnsEnabled.lower() == "true")
+            else:
+                setattr(self, "hnsEnabled", self.hnsEnabled)
+
+        if self.networkAcls:
+            dict_keys = ["bypass", "defaultAction", "ipRules", "virtualNetworkRules"]
+            ipRules_list = BaseList()
+            virtualNetworkRules_list = BaseList()
+            for field in dict_keys:
+                if self.networkAcls.get(field):
+                    if field == "ipRules":
+                        for ipRule in self.networkAcls.get(field):
+                            ipRules_list.append(
+                                f"{ipRule.get('action')} {ipRule.get('value')}"
+                            )
+                    elif field == "virtualNetworkRules":
+                        for virtualNetworkRule in self.networkAcls.get(field):
+                            # TODO: parse virtualNetworkRule
+                            virtualNetworkRules_list.append(virtualNetworkRule)
+                    else:
+                        setattr(
+                            self, f"networkAcls_{field}", self.networkAcls.get(field)
+                        )
+            setattr(self, "networkAcls_ipRules", ipRules_list)
+            setattr(self, "networkAcls_virtualNetworkRules", virtualNetworkRules_list)
+            setattr(self, "networkAcls", None)
+
+        for field in DT_FIELDS:
+            if getattr(self, field) and not isinstance(getattr(self, field), datetime):
+                setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+
+    @staticmethod
+    def from_dict(data):
+        return AzureStorageAccount(**data)

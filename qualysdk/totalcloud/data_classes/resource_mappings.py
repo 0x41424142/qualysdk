@@ -130,4 +130,5 @@ resource_map = {
     "CLOUDFRONT_DISTRIBUTION": AWSCloudfrontDistribution,
     "VIRTUAL_MACHINE": AzureVM,
     "WEB_APP": AzureWebApp,
+    "STORAGE_ACCOUNT": AzureStorageAccount,
 }

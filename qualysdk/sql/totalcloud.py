@@ -2589,3 +2589,152 @@ def upload_totalcloud_azure_webapp(
     return upload_data(
         df, table_name, cnxn, dtype=COLS, override_import_dt=override_import_dt
     )
+
+
+def upload_totalcloud_azure_storageaccount(
+    storageaccounts: BaseList,
+    cnxn: Connection,
+    table_name: str = "totalcloud_azure_storageaccount_inventory",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload data from totalcloud.get_inventory(provider='azure', resource_type='storage account') to SQL.
+
+    Args:
+        storageaccounts (BaseList): The BaseList of StorageAccounts to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to 'totalcloud_azure_storageaccount_inventory'.
+        override_import_dt (datetime): Use the passed datetime instead of generating one to upload to the database.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "displayName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "connectorId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "scanId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "skuTier": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "resourceIdentity_type": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "minimumTlsVersion": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "kind": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "firstDiscoveredOn": types.DateTime(),
+        "lastDiscoveredOn": types.DateTime(),
+        "skuName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "file_lastEnabledTime": types.DateTime(),
+        "file_keyType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "file_enabled": types.Boolean(),
+        "blob_lastEnabledTime": types.DateTime(),
+        "blob_keyType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "blob_enabled": types.Boolean(),
+        "primaryLocation": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "secondaryLocation": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hnsEnabled": types.Boolean(),
+        "resourceGroupId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "supportsHttpsTrafficOnly": types.Boolean(),
+        "statusOfPrimary": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "statusOfSecondary": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "location": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "networkAcls_bypass": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "networkAcls_defaultAction": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "networkAcls_ipRules": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "networkAcls_virtualNetworkRules": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        # Base fields:
+        "resourceId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "connectorUuids": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "created": types.DateTime(),
+        "subscriptionName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "subscriptionId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "uuid": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "connectorUuid": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "tags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "qualysTags": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "remediationEnabled": types.Boolean(),
+        "updated": types.DateTime(),
+        "additionalDetails": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cloudType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "region": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "resourceType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "controlsFailed": types.Integer(),
+        "customerId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "customers": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "resourceGroupName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "scanUuid": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "_type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+    }
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame(
+        [prepare_dataclass(storageaccount) for storageaccount in storageaccounts]
+    )
+
+    # Drop the columns we parsed out:
+    df.drop(columns=["blob", "file", "resourceIdentity", "networkAcls"], inplace=True)
+
+    # Upload the data:
+    return upload_data(
+        df, table_name, cnxn, dtype=COLS, override_import_dt=override_import_dt
+    )

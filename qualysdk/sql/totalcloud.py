@@ -4,7 +4,7 @@ totalcloud.py - Contains the functions to upload supported GAV API pulls to SQL 
 
 from datetime import datetime
 
-from pandas import DataFrame, to_datetime
+from pandas import DataFrame
 from sqlalchemy import Connection, types
 from sqlalchemy.dialects.mysql import TEXT
 

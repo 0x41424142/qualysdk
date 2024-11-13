@@ -222,7 +222,7 @@ def call_api(
         # check for errors not related to rate limiting:
         if (
             module
-            not in ["gav", "cloud_agent", "cloudview", "containersecurity", "was"]
+            not in ["gav", "cloud_agent", "cloudview", "containersecurity", "was", "pm"]
             and response.status_code in range(400, 599)
             and response.status_code not in [429, 414]
             and (

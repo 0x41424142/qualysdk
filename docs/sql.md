@@ -38,7 +38,7 @@ cnxn = db_connect(
     host='10.0.0.1', 
     db='qualysdata', 
     username='Jane', 
-    password='SuperSecretPassword!', 
+    password=<password>, 
     db_type='postgresql', 
     port=5432
 )

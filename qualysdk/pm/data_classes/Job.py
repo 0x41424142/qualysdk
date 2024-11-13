@@ -134,6 +134,9 @@ class PMJob:
         ):
             setattr(self, "completionPercent", float(self.completionPercent))
 
+        if self.coAuthorUserIds:
+            setattr(self, "coAuthorUserIds", BaseList(self.coAuthorUserIds))
+
         if self.startDateTime:
             setattr(
                 self,

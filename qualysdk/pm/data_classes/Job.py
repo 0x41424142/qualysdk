@@ -85,7 +85,6 @@ class PMJob:
     remediationQids: BaseList[str] = None
 
     def __post_init__(self):
-
         # Define attributes that need to be converted
         # in a specific way
 

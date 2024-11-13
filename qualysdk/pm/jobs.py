@@ -64,7 +64,6 @@ def manage_jobs(
     )
 
     if call_data.status_code not in range(200, 299):
-
         err_data = loads(call_data.text)
 
         # Check for 2501 error code - indicating we have hit the

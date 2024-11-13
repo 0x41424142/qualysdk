@@ -9,21 +9,6 @@
 
 This SDK attempts to make it much easier to interact with Qualys's various API endpoints, across as many modules as I can find time to code.
 
-## Uber Class Example
-```py
-from qualysdk import TokenAuth, GAVUber
-
-auth = TokenAuth(<username>, <password>, platform='qg1')
-uber = GAVUber(auth)
-
-assets = uber.get(
-    "query_assets", 
-    filter='operatingSystem:"Linux"', 
-    lastModifiedDate="2024-06-21"
-    )
->>>[AssetID(012345678), ...]
-```
-## Non-Uber Class Example
 ```py
 from qualysdk.auth import BasicAuth
 from qualysdk.vmdr import get_host_list
@@ -42,7 +27,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |--|--|
 | GAV (Global AssetView) |✅ See GAV [documentation page](https://qualysdk.jakelindsay.uk/gav/) for supported calls ||
 | VMDR | ✅ See VMDR [documentation page](https://qualysdk.jakelindsay.uk/vmdr/) for supported calls |
-| PM (Patch Management) | Not Started |
+| PM (Patch Management) | See Patch Management [documentation page](https://qualysdk.jakelindsay.uk/patch/) for supported calls |
 | WAS | ✅ See WAS [documentation page](https://qualysdk.jakelindsay.uk/was/) for supported calls |
 | TC (TotalCloud) | ✅ See TotalCloud [documentation page](https://qualysdk.jakelindsay.uk/totalcloud/) for supported calls. |
 |Connectors | Not Started |

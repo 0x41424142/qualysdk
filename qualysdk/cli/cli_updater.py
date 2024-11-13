@@ -171,13 +171,13 @@ def main() -> int:
     #  print the help message and exit.
     if not any(vars(args).values()) or (args.yes and not args.install):
         parser.print_help()
-        return 1
+        exit(0)
 
     if args.version:
         print(
             f"{YELLOW}Qualysdk version currently installed: v{check_installed_version()}{RESET}"
         )
-        return 0
+        exit(0)
 
     if args.check or args.install:
         response = get_pypi_versions()
@@ -208,15 +208,15 @@ def main() -> int:
                         )
                     except Exception as e:
                         print(f"{RED}Qualysdk update failed: {type(e).__name__}{RESET}")
-                        return 1
-                    return 0
+                        exit(1)
+                    exit(0)
                 else:
                     print(f"{RED}Upgrade cancelled.{RESET}")
-                    return 0
-            return 0
+                    exit(0)
+            exit(0)
         else:
             print(f"✅ {GREEN}Qualysdk is up to date (v{current_version}).{RESET}")
-            return 0
+            exit(0)
 
 
 if __name__ == "__main__":

@@ -93,7 +93,6 @@ class PMAssetJobView:
     osIdentifier: str = None
 
     def __post_init__(self):
-
         TO_BL_FIELDS = [
             "installed",
             "failed",

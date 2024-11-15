@@ -16,6 +16,8 @@ profile.json
 *.csv
 *.xlsx
 
+.DS_Store
+
 # VSCode:
 .vscode/
 

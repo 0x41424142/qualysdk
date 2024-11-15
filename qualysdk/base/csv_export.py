@@ -33,7 +33,15 @@ def write_csv(data: BaseList, file_path: str, **kwargs) -> None:
         file_path += ".csv"
 
     # Write to CSV:
-    data.to_csv(file_path, index=False, sep=",", quoting=csv.QUOTE_ALL, **kwargs)
+    data.astype(str).to_csv(
+        file_path,
+        index=False,
+        sep=",",
+        quoting=csv.QUOTE_ALL,
+        escapechar="\\",
+        encoding="utf-8-sig",
+        **kwargs,
+    )
     print(f"Data written to {file_path}.")
 
 

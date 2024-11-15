@@ -28,6 +28,22 @@ PM_SCHEMA = frozendict(
                 "pagination": True,
                 "auth_type": "token",
             },
+            "deploymentjob": {
+                "endpoint": "/pm/v1/deploymentjob/{placeholder}",
+                "method": ["GET", "POST", "PATCH", "DELETE"],
+                "valid_params": [],
+                "valid_POST_data": [
+                    "placeholder",
+                    "deploymentJobId",
+                    "jobInstanceId",
+                    "pageSize",
+                    "sort",
+                ],
+                "use_requests_json_data": True,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
         },
     }
 )

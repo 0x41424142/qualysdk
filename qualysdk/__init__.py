@@ -8,6 +8,7 @@ from .help import schema_query
 from .auth import BasicAuth, TokenAuth
 from .base.base_list import BaseList
 from .base.csv_export import write_csv, write_excel
+from .base.json_export import write_json
 
 from .gav.uber import GAVUber
 from . import gav

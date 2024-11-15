@@ -4,11 +4,10 @@ CLI script to quickly perform Global AssetView
 """
 
 from argparse import ArgumentParser, Namespace
-from typing import Union
-from json import dump
 
 from qualysdk import TokenAuth, write_excel, BaseList
 from qualysdk.gav import *
+from qualysdk.base.json_export import write_json
 
 
 def parse_asset_id(value):
@@ -16,12 +15,6 @@ def parse_asset_id(value):
         return int(value)
     except ValueError:
         return value
-
-
-def write_json(data: dict, output: str) -> None:
-    with open(output, "w") as f:
-        dump(data, f, indent=2)
-    print(f"Data written to {output}.")
 
 
 def cli_findings(auth: TokenAuth, args: Namespace, endpoint: str) -> None:

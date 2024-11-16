@@ -134,15 +134,15 @@ The ```qualysdk-pm``` CLI tool is a command-line interface for the PM portion of
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results} ...
-
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs} ...
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
 positional arguments:
-  {list_jobs,get_job_results}
+  {list_jobs,get_job_results,get_job_runs}
                         Action to perform
     list_jobs           Get a list of PM jobs.
     get_job_results     Get results for a PM job.
+    get_job_runs        Get runs for a PM job.
 
 options:
   -h, --help            show this help message and exit
@@ -163,5 +163,29 @@ options:
   -h, --help           show this help message and exit
   -o, --output OUTPUT  Output xlsx file to write results to
   -j, --job-id JOB_ID  Specify the job ID to get results for
+  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
+```
+
+### Get Job Results
+
+```bash
+usage: qualysdk-pm get_job_results [-h] [-o OUTPUT] -j JOB_ID [--kwarg key value]
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output xlsx file to write results to
+  -j, --job-id JOB_ID  Specify the job ID to get results for
+  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
+```
+
+### Get Job Runs
+
+```bash
+usage: qualysdk-pm get_job_runs [-h] [-o OUTPUT] -j JOB_ID [--kwarg key value]
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output xlsx file to write results to
+  -j, --job-id JOB_ID  Specify the job ID to get runs for
   --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
 ```

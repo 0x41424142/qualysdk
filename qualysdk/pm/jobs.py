@@ -210,3 +210,22 @@ def get_job_results(auth: TokenAuth, jobId: str, **kwargs):
     result = manage_jobs(auth=auth, method="POST", _use_singular_in_url=True, **kwargs)
 
     return JobResultSummary.from_dict(**result.json())
+
+
+def get_job_runs(auth: TokenAuth, jobId: str) -> dict:
+    """
+    Get a list of job runs for a specific job.
+
+    Args:
+        auth (TokenAuth): The authentication object.
+        jobId (str): The ID of the job to get runs for.
+
+    Returns:
+        dict: The response from the API.
+    """
+
+    params = {"placeholder": f"{jobId}/runs"}
+
+    result = manage_jobs(auth=auth, _use_singular_in_url=True, **params)
+
+    return BaseList([PMRun.from_dict(**run) for run in result.json()])

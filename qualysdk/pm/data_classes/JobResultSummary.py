@@ -31,8 +31,6 @@ class JobResultSummary:
         if self.assets:
             bl = BaseList()
             for asset in self.assets:
-                # TODO: check if job with 1 asset has the same structure as job with multiple assets (asset{...} structure for multiple, like VMDR)
-                # Raise everything under 'asset' key to the top level:
                 asset_dict = dict()
                 for key, value in asset.items():
                     if key == "asset":

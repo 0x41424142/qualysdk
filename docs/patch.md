@@ -17,6 +17,7 @@ You can use any of the endpoints currently supported:
 |--|--|
 | ```list_jobs``` | Returns jobs that match given kwargs. |
 | ```get_job_results``` | Returns a summary of a job. |
+| ```get_job_runs``` | Returns a list of runs of a job. |
 
 ## List Jobs API
 
@@ -93,6 +94,36 @@ results = get_job_results(auth, job.id)
         )
     ]
 )
+```
+
+## Get Job Runs API
+
+```get_job_runs``` returns a list of runs of a patch management job.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```jobId``` | ```str``` | The ID of the job to get runs for | ✅ |
+
+```py
+
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import get_job_runs, list_jobs
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get some job:
+job = list_jobs(auth, 'linux')[0]
+
+# Get the runs for the job:
+runs = get_job_runs(auth, job.id)
+>>>[
+    PMRun(
+        jobInstanceId=1, 
+        scheduledDateTime=datetime.datetime(2020, 1, 1, 15, 32, 18, tzinfo=datetime.timezone.utc), 
+        timezoneType='SPECIFIC_TZ'
+    )
+]
 ```
 
 ## ```qualysdk-pm``` CLI tool

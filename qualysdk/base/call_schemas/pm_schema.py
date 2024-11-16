@@ -31,7 +31,7 @@ PM_SCHEMA = frozendict(
             "deploymentjob": {
                 "endpoint": "/pm/v1/deploymentjob/{placeholder}",
                 "method": ["GET", "POST", "PATCH", "DELETE"],
-                "valid_params": [],
+                "valid_params": ["placeholder"],
                 "valid_POST_data": [
                     "placeholder",
                     "deploymentJobId",

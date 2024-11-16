@@ -134,6 +134,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_was_findings``` | WAS | ```was.get_findings()``` or ```was.get_findings_verbose()``` (```get_findings_verbose()``` is recommended!) | ```was_findings``` |
 | ```upload_pm_jobs``` | Patch Management | ```pm.list_jobs()``` | ```pm_jobs``` |
 | ```upload_pm_job_results``` | Patch Management | ```pm.get_job_results()``` | ```pm_job_results_jobResults``` for job summaries and ```pm_job_results_assets``` for assets (key = jobResults.id -> assets.jobId)|
+| ```upload_pm_job_runs``` | Patch Management | ```pm.get_job_runs()``` | ```pm_job_runs``` |
 
 
 ```py

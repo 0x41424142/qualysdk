@@ -5,6 +5,8 @@ Management jobs in Qualys.
 
 from typing import Union, Literal
 from json import JSONDecodeError
+from threading import Thread, Lock, current_thread
+from queue import Queue
 
 from .data_classes import *
 from .base.page_limit import check_page_size_limit
@@ -77,7 +79,7 @@ def manage_jobs(
 
 def _list_jobs_backend(
     auth: TokenAuth,
-    platform: Literal["all", "windows", "linux"],
+    platform: Literal["Windows", "Linux"],
     page_count: Union[int, "all"] = "all",
     **kwargs,
 ) -> BaseList[PMJob]:
@@ -85,6 +87,8 @@ def _list_jobs_backend(
     Backend function for listing jobs.
 
     Not meant to be called directly.
+
+    **_result_bl is a shared resource for threads.
     """
     if page_count != "all":
         if not isinstance(page_count, int) or page_count < 1:
@@ -94,11 +98,17 @@ def _list_jobs_backend(
 
     kwargs["platform"] = platform
     pages_pulled = 0
-    responses = BaseList()
+    # If called from a thread, we need to use a shared resource
+    responses = (
+        BaseList()
+        if "_response_bl" not in kwargs.keys()
+        else kwargs.pop("_response_bl")
+    )
 
     # Set up URL format
     kwargs["placeholder"] = "summary"
     kwargs["pageNumber"] = pages_pulled
+    lock = Lock()
 
     while True:
         response = manage_jobs(auth=auth, **kwargs)
@@ -114,14 +124,16 @@ def _list_jobs_backend(
         if len(parsed) < 1:
             break
 
-        responses.extend([PMJob.from_dict(**job) for job in parsed])
+        # Protect BaseList if threads are used:
+        with lock:
+            responses.extend([PMJob.from_dict(**job) for job in parsed])
 
         if page_count != "all":
             pages_pulled += 1
             kwargs["pageNumber"] = pages_pulled
             if pages_pulled >= page_count:
                 print(
-                    f"Hit user-defined limit of {page_count} pages for platform={platform}."
+                    f"{current_thread().name} - Hit user-defined limit of {page_count} pages for platform={platform}."
                 )
                 break
         else:
@@ -163,13 +175,33 @@ def list_jobs(
 
     match platform.title():
         case "All":
-            results = BaseList()
-            for _platform in ["Windows", "Linux"]:
-                results.extend(
-                    _list_jobs_backend(
-                        auth=auth, platform=_platform, page_count=page_count, **kwargs
-                    )
-                )
+            # Shared resource for threads to return results
+            kwargs["_response_bl"] = BaseList()
+            threads = [
+                Thread(
+                    target=_list_jobs_backend,
+                    args=(auth, "Windows", page_count),
+                    kwargs=kwargs,
+                    name="WindowsJobThread",
+                ),
+                Thread(
+                    target=_list_jobs_backend,
+                    args=(auth, "Linux", page_count),
+                    kwargs=kwargs,
+                    name="LinuxJobThread",
+                ),
+            ]
+
+            print(f"Spawned threads for both Windows and Linux jobs...")
+
+            for thread in threads:
+                thread.start()
+
+            for thread in threads:
+                thread.join()
+
+            results = kwargs["_response_bl"]
+
         case "Windows":
             results = _list_jobs_backend(
                 auth=auth, platform="Windows", page_count=page_count, **kwargs
@@ -212,16 +244,18 @@ def get_job_results(auth: TokenAuth, jobId: str, **kwargs):
     return JobResultSummary.from_dict(**result.json())
 
 
-def get_job_runs(auth: TokenAuth, jobId: str) -> dict:
+def get_job_runs(
+    auth: TokenAuth, jobId: Union[str, BaseList[PMJob], list[PMJob]]
+) -> BaseList[PMRun]:
     """
     Get a list of job runs for a specific job.
 
     Args:
         auth (TokenAuth): The authentication object.
-        jobId (str): The ID of the job to get runs for.
+        jobId (str) The ID of the job to get runs for.
 
     Returns:
-        dict: The response from the API.
+        BaseList[PMRun]: The response from the API as a BaseList of PMRun objects.
     """
 
     params = {"placeholder": f"{jobId}/runs"}

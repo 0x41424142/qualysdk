@@ -21,7 +21,7 @@ You can use any of the endpoints currently supported:
 
 ## List Jobs API
 
-```list_jobs``` returns a ```BaseList``` of patch management jobs in the user's account that match the given kwargs.
+```list_jobs``` returns a ```BaseList``` of patch management jobs in the user's account that match the given kwargs. if ```platform='all'```, it uses threading to speed up the process.
 
 >**Head's Up!:** For the ```filter``` kwarg, see the linked documentation for the possible values: [Windows Jobs](https://docs.qualys.com/en/pm/3.1.0.0/search_tips/ui_jobs_list.htm), [Linux Jobs](https://docs.qualys.com/en/pm/3.1.0.0/search_tips/search_linux_jobs.htm)
 
@@ -103,7 +103,7 @@ results = get_job_results(auth, job.id)
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
-| ```jobId``` | ```str``` | The ID of the job to get runs for | ✅ |
+| ```jobId``` | ```str``` | The ID(s) of the job to get runs for | ✅ |
 
 ```py
 

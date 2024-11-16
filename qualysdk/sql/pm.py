@@ -304,3 +304,39 @@ def upload_pm_job_results(
     )
 
     return assets_uploaded
+
+
+def upload_pm_job_runs(
+    runs: BaseList,
+    cnxn: Connection,
+    table_name: str = "pm_job_runs",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload results from ```pm.get_job_runs```
+    to a SQL database.
+
+    Args:
+        runs (BaseList): A BaseList of PMJobRun objects.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to "pm_job_runs".
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "jobInstanceId": types.Integer(),
+        "jobId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "scheduledDateTime": types.DateTime(),
+        "timezoneType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+    }
+
+    # Prepare the dataclass for insertion:
+    df = DataFrame([prepare_dataclass(run) for run in runs])
+
+    # Upload the data:
+    return upload_data(df, table_name, cnxn, COLS, override_import_dt)

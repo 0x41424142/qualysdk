@@ -228,4 +228,9 @@ def get_job_runs(auth: TokenAuth, jobId: str) -> dict:
 
     result = manage_jobs(auth=auth, _use_singular_in_url=True, **params)
 
-    return BaseList([PMRun.from_dict(**run) for run in result.json()])
+    result = result.json()
+
+    for run in result:
+        run["jobId"] = jobId
+
+    return BaseList([PMRun.from_dict(**run) for run in result])

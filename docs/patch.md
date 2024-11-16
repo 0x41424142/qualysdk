@@ -120,6 +120,7 @@ runs = get_job_runs(auth, job.id)
 >>>[
     PMRun(
         jobInstanceId=1, 
+        jobId='11111111-2222-3333-4444-555555555555',
         scheduledDateTime=datetime.datetime(2020, 1, 1, 15, 32, 18, tzinfo=datetime.timezone.utc), 
         timezoneType='SPECIFIC_TZ'
     )

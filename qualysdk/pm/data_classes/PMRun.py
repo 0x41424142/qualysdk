@@ -15,6 +15,7 @@ class PMRun:
     """
 
     jobInstanceId: int = None
+    jobId: str = None
     scheduledDateTime: Union[str, datetime] = None
     timezoneType: str = None
 

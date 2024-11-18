@@ -38,7 +38,7 @@ psycopg2-binary = [
     {version = "^2.9.9", platform = "linux"},
     {version = "^2.9.9", platform = "darwin"},
 ]
-xmltodict = "^0.13.0"
+xmltodict = ">=0.13,<0.15"
 defusedxml = "^0.7.1"
 packaging = "^24.1"
 xlsxwriter = "^3.0.5"

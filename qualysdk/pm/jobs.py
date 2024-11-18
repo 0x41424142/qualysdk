@@ -3,7 +3,8 @@ Contains code to interact with Patch
 Management jobs in Qualys.
 """
 
-from typing import Union, Literal
+from __future__ import annotations
+from typing import Union, Literal, overload, Sequence
 from json import JSONDecodeError
 from threading import Thread, Lock, current_thread
 from queue import Queue
@@ -218,14 +219,27 @@ def list_jobs(
     return results
 
 
-def get_job_results(auth: TokenAuth, jobId: str, **kwargs):
+# Overload 1 for str jobId
+@overload
+def get_job_results(auth: TokenAuth, jobId: str, **kwargs) -> JobResultSummary: ...
+
+
+# Overload 2 for list/BaseList of PMJob
+@overload
+def get_job_results(
+    auth: TokenAuth, jobId: Union[list[PMJob], BaseList[PMJob]], **kwargs
+) -> BaseList[JobResultSummary]: ...
+
+
+def get_job_results(auth: TokenAuth, jobId: Union[str, Sequence[PMJob]], **kwargs):
     """
     Returns the results of a Patch Management job, or
     a specific instance of a job.
 
     Args:
         auth (TokenAuth): The authentication object.
-        jobId (str): The ID of the job to get results for.
+        jobId (Union[str, BaseList[PMJob]]): The ID of the job to get results for.
+        If a list of PMJob objects is passed, the function will thread the requests.
 
     ## Kwargs:
 
@@ -234,14 +248,71 @@ def get_job_results(auth: TokenAuth, jobId: str, **kwargs):
         - sort (str): The field to sort results by.
 
     Returns:
-        dict: The response from the API.
+        Union[JobResultSummary, BaseList[JobResultSummary]]: The response from the
+        API as a JobResultSummary object or a BaseList of JobResultSummary objects.
     """
+    lock = Lock()
+    if isinstance(jobId, str):
+        kwargs["placeholder"] = f"{jobId}/deploymentjobresult/summary"
+        kwargs_no_bl = kwargs.copy()
+        kwargs_no_bl.pop("_response_bl", None)
+        result = manage_jobs(
+            auth=auth, method="POST", _use_singular_in_url=True, **kwargs_no_bl
+        )
+        if not kwargs.get("_response_bl") and kwargs.get("_response_bl") != BaseList():
+            return JobResultSummary.from_dict(**result.json())
+        else:
+            with lock:
+                kwargs["_response_bl"].extend(
+                    [JobResultSummary.from_dict(**result.json())]
+                )
+            return
 
-    kwargs["placeholder"] = f"{jobId}/deploymentjobresult/summary"
+    elif isinstance(jobId, (list, BaseList)) and all(
+        isinstance(job, (PMJob, str)) for job in jobId
+    ):
+        # Shared resource for threads to return results
+        kwargs["_response_bl"] = BaseList()
+        threads = []
+        print(f"Spawning threads for {len(jobId)} jobs...")
+        q = Queue()
+        for job in jobId:
+            if isinstance(job, PMJob):
+                q.put(job.id)
+            else:
+                q.put(job)
 
-    result = manage_jobs(auth=auth, method="POST", _use_singular_in_url=True, **kwargs)
+        # Each thread will pop a job from the queue and process it.
+        # at no point should the threads list have a len > 5.
+        while not q.empty():
+            if len(threads) < 5:
+                job = q.get()
+                thread = Thread(
+                    target=get_job_results,
+                    args=(auth, job),
+                    kwargs=kwargs,
+                    name=f"JobResultThread-{job}",
+                )
+                thread.start()
+                threads.append(thread)
+            else:
+                for thread in threads:
+                    thread.join()
+                threads = []
 
-    return JobResultSummary.from_dict(**result.json())
+            with lock:
+                if q.qsize() % 25 == 0:
+                    print(f"Requests left in queue: {q.qsize()}")
+
+        for thread in threads:
+            thread.join()
+
+        return kwargs["_response_bl"]
+
+    else:
+        raise ValueError(
+            "jobId must be a string, or a list/BaseList of PMJob objects or strings."
+        )
 
 
 def get_job_runs(

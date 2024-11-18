@@ -90,9 +90,10 @@ def main():
     job_results_parser.add_argument(
         "-j",
         "--job-id",
-        help="Specify the job ID to get results for",
+        help="Specify the job ID to get results for. Can be used multiple times",
         type=str,
         required=True,
+        action="append",
     )
     job_results_parser.add_argument(
         "--kwarg",
@@ -136,7 +137,10 @@ def main():
         case "list_jobs":
             cli_fn(auth=auth, args=args, endpoint="list_jobs")
         case "get_job_results":
-            args.output = args.output.replace("{JOB_ID}", args.job_id)
+            if len(args.job_id) > 1:
+                args.output = args.output.replace("{JOB_ID}", "multiple_jobs")
+            else:
+                args.output = args.output.replace("{JOB_ID}", args.job_id[0])
             cli_fn(auth=auth, args=args, endpoint="get_job_results")
         case "get_job_runs":
             args.output = args.output.replace("{JOB_ID}", args.job_id)

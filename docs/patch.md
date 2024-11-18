@@ -63,7 +63,7 @@ win_jobs = list_jobs(auth, 'windows')
 |--|--|--|--|
 |```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
 | ```jobId``` | ```str``` | The ID of the job to get results for | ✅ |
-| ```jobInstanceId``` | ```str``` | The ID of the job instance to get results for. | ❌ |
+| ```jobInstanceId``` | ```Union[str, BaseList[PMJob, str]]``` | The ID(s) of the job instance to get results for. If a ```BaseList``` of ```PMJob``` objects is passed, the function will use threading. | ❌ |
 | ```pageSize``` | ```int=10``` | The number of results to return per page | ❌ |
 | ```sort``` | ```str``` | The field to sort the results by | ❌ |
 
@@ -94,6 +94,10 @@ results = get_job_results(auth, job.id)
         )
     ]
 )
+
+# Threading example:
+jobs = list_jobs(auth)
+results = get_job_results(auth, jobs)
 ```
 
 ## Get Job Runs API
@@ -157,12 +161,11 @@ options:
 ### List Jobs
 
 ```bash
-usage: qualysdk-pm get_job_results [-h] [-o OUTPUT] -j JOB_ID [--kwarg key value]
+usage: qualysdk-pm list_jobs [-h] [-o OUTPUT] [--kwarg key value]
 
 options:
   -h, --help           show this help message and exit
   -o, --output OUTPUT  Output xlsx file to write results to
-  -j, --job-id JOB_ID  Specify the job ID to get results for
   --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
 ```
 
@@ -174,7 +177,7 @@ usage: qualysdk-pm get_job_results [-h] [-o OUTPUT] -j JOB_ID [--kwarg key value
 options:
   -h, --help           show this help message and exit
   -o, --output OUTPUT  Output xlsx file to write results to
-  -j, --job-id JOB_ID  Specify the job ID to get results for
+  -j, --job-id JOB_ID  Specify the job ID to get results for. Can be used multiple times
   --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
 ```
 

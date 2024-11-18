@@ -62,8 +62,8 @@ win_jobs = list_jobs(auth, 'windows')
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
-| ```jobId``` | ```str``` | The ID of the job to get results for | ✅ |
-| ```jobInstanceId``` | ```Union[str, BaseList[PMJob, str]]``` | The ID(s) of the job instance to get results for. If a ```BaseList``` of ```PMJob``` objects is passed, the function will use threading. | ❌ |
+| ```jobId``` | ```Union[str, BaseList[PMJob, str]]``` | The ID(s) of the job to get results for. If a ```BaseList``` of ```PMJob``` objects is passed, the function will use threading. | ✅ |
+| ```jobInstanceId``` | ```str``` | The ID of the job instance to get results for. Should not be used with threading. | ❌ |
 | ```pageSize``` | ```int=10``` | The number of results to return per page | ❌ |
 | ```sort``` | ```str``` | The field to sort the results by | ❌ |
 

@@ -20,6 +20,7 @@ from . import cloud_agent
 from . import totalcloud
 from . import cs
 from . import was
+from . import pm
 
 from .sql import db_connect
 

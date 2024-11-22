@@ -21,6 +21,7 @@ from . import totalcloud
 from . import cs
 from . import was
 from . import pm
+from . import cert
 
 from .sql import db_connect
 

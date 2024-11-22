@@ -10,6 +10,7 @@ nav:
   - TotalCloud: totalcloud.md
   - Cloud Agent: cloud_agent.md
   - Container Security: containersecurity.md
+  - Certificate View: cert.md
   - Web Application Scanning: was.md
   - Patch Management: patch.md
   - SQL Uploads: sql.md

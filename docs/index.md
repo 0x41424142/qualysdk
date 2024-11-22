@@ -33,6 +33,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |Connectors | Not Started |
 |Cloud Agent | ✅ See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloudagent/) for supported calls |
 |CS (Container Security) | ✅ See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
+|CERT (Certificate View) | ✅ See CERT [documentation page](https://qualysdk.jakelindsay.uk/cert/) for supported calls |
 |ADMIN (Administration) | Not Started |
 |Asset Management & Tagging| Not Started |
 | SQL Data Uploads | ✅ See SQL [documentation page](https://qualysdk.jakelindsay.uk/sql/) for supported uploads/DBs |

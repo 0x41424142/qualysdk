@@ -68,7 +68,6 @@ class Certificate:
     # end of rootissuer fields
 
     def __post_init__(self):
-
         INT_TO_DT_FIELDS = ["validTo", "validFrom", "lastFound"]
         STR_TO_DT_FIELDS = ["validToDate", "validFromDate", "createdDate", "updateDate"]
         DT_FIELDS = INT_TO_DT_FIELDS + STR_TO_DT_FIELDS

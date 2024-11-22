@@ -20,6 +20,7 @@ schemas = [
     TOTALCLOUD_SCHEMA,
     VMDR_SCHEMA,
     WAS_SCHEMA,
+    CERTVIEW_SCHEMA,
 ]
 
 CALL_SCHEMA = dict()

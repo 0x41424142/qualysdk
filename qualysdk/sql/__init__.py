@@ -66,3 +66,4 @@ from .was import (
     upload_was_findings,
 )
 from .pm import upload_pm_jobs, upload_pm_job_results, upload_pm_job_runs
+from .cert import upload_cert_certs

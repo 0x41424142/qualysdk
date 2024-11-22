@@ -135,6 +135,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_pm_jobs``` | Patch Management | ```pm.list_jobs()``` | ```pm_jobs``` |
 | ```upload_pm_job_results``` | Patch Management | ```pm.get_job_results()``` | ```pm_job_results_jobResults``` for job summaries and ```pm_job_results_assets``` for assets (key = jobResults.id -> assets.jobId)|
 | ```upload_pm_job_runs``` | Patch Management | ```pm.get_job_runs()``` | ```pm_job_runs``` |
+| ```upload_cert_certs``` | Certificate View | ```cert.list_certs()``` | ```cert_certs``` for certificates and ```cert_assets``` for assets (key = certs.id -> assets.certId) |
 
 
 ```py

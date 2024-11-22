@@ -221,16 +221,14 @@ def list_jobs(
 
 # Overload 1 for str jobId
 @overload
-def get_job_results(auth: TokenAuth, jobId: str, **kwargs) -> JobResultSummary:
-    ...
+def get_job_results(auth: TokenAuth, jobId: str, **kwargs) -> JobResultSummary: ...
 
 
 # Overload 2 for list/BaseList of PMJob
 @overload
 def get_job_results(
     auth: TokenAuth, jobId: Union[list[PMJob], BaseList[PMJob]], **kwargs
-) -> BaseList[JobResultSummary]:
-    ...
+) -> BaseList[JobResultSummary]: ...
 
 
 def get_job_results(auth: TokenAuth, jobId: Union[str, Sequence[PMJob]], **kwargs):

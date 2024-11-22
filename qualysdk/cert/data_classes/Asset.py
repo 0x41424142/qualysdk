@@ -91,7 +91,6 @@ class Asset(BaseCls):
     primaryIp: str = None
 
     def __post_init__(self):
-
         if self.hostInstances:
             setattr(
                 self,

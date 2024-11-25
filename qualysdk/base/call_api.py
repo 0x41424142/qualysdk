@@ -128,10 +128,11 @@ def call_api(
             auth_tuple = (auth.username, auth.password)
 
         # Make certain payloads/params requests-friendly:
-        if payload:
-            payload = convert_bools_and_nones(payload)
-        if params:
-            params = convert_bools_and_nones(params)
+        if module != "pm":
+            if payload:
+                payload = convert_bools_and_nones(payload)
+            if params:
+                params = convert_bools_and_nones(params)
 
         # If the URL of an endpoint has the substring
         # {placeholder}, .pop() from the params/payload

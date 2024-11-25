@@ -18,6 +18,7 @@ You can use any of the endpoints currently supported:
 | ```list_jobs``` | Returns jobs that match given kwargs. |
 | ```get_job_results``` | Returns a summary of a job. |
 | ```get_job_runs``` | Returns a list of runs of a job. |
+| ```create_job```| Creates a new job. |
 
 ## List Jobs API
 
@@ -129,6 +130,137 @@ runs = get_job_runs(auth, job.id)
         timezoneType='SPECIFIC_TZ'
     )
 ]
+```
+
+## Create Job API
+
+```create_job``` creates a new patch management job.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```name``` | ```str``` | The name of the job | ✅ |
+| ```platform``` | ```Literal["Windows", "Linux"]``` | The platform of the job | ✅ |
+| ```jobType``` | ```Literal["Install", "Rollback"]``` | The type of job to create. ```Rollback``` is Windows-only. | ✅ |
+| ```scheduleType``` | ```Literal["On-demand", "Once", "Daily", "Weekly", "Monthly"]``` | The type of schedule to use | ✅ |
+|```approvedPatches```|```List[str]```|An explicit list of patche GUIDs to add to the job|❌|
+| ```assetIds``` | ```List[str]``` | The IDs of the assets to target | ❌ |
+| ```assetTagIds``` | ```List[str]``` | The IDs of the asset tags to target | ❌ |
+| ```filterType``` | ```Literal["all", "any"] = "any"``` | The type of filter to use | ❌ |
+| ```exclusionTagIds``` | ```List[str]``` | The IDs of the asset tags to exclude | ❌ |
+| ```exclusionAssetIds``` | ```List[str]``` | The IDs of the assets to exclude | ❌ |
+| ```description``` | ```str``` | The description of the job | ❌ |
+| ```coAuthorUserIds``` | ```List[str]``` | The IDs of the co-authors to add to the job | ❌ |
+| ```exclusionFilterType``` | ```Literal["all", "any"] = "any"``` | The type of exclusion filter to use | ❌ |
+| ```startDateTime``` | ```str``` | The start date and time of the job | ❌ for ```On-demand```, ✅ for others |
+| ```recurring``` | ```bool=False``` | Whether the job is recurring | ❌ |
+| ```dayOfMonth``` | ```int, 0 <= x <= 31``` | The day of the month to run the job | ❌ |
+| ```matchAllTagIds``` | ```list[str]``` | The IDs of the asset tags to match | ❌ |
+| ```recurringLastDayOfMonth``` | ```bool=False``` | Whether the job runs on the last day of the month | ❌ |
+| ```monthlyRecurringType``` | ```Literal[0, 1, "0", "1"]``` | If 1, run on Patch Tuesday | ❌ |
+| ```patchTuesdayPlusXDays``` | ```int, -27 <= x <= 27``` | The number of days before or after Patch Tuesday to run the job | ❌ |
+| ```recurringDayOfMonth``` | ```int, 1 <= x <= 5``` | Run the job on a specific weekday of the month | ❌ |
+| ```recurringWeekDayOfMonth``` | ```int, 0 <= x <= 6``` | The day of the week to run the job | ❌ |
+| ```recurringWeekDays``` | ```str``` like ```"0,0,0,0,0,0,0"```| Similar to cron. Replace a 0 with a 1 to run on that day. str[0] = Sunday | ❌ |
+| ```dynamicQQLType``` | ```Literal[0,1,2]``` | 0 = Do not use QQL, 1 = use patch QQL, 2 = use vulnerability QQL | ❌ |
+| ```isDynamicPatchesQQL``` | ```bool=False``` | Whether to use dynamic patches QQL | ❌ |
+| ```dynamicPatchesQQL``` | ```str``` | The QQL to use for dynamic patches | ❌ |
+| ```continueOnPatchFailure``` | ```bool=True``` | (Linux only) Whether to continue the job if a patch fails | ❌ |
+| ```preDeployment``` | ```str``` | Specify a message to display before deployment starts | ❌ |
+| ```duringDeployment``` | ```str``` | Specify a message to display during deployment | ❌ |
+| ```postDeployment``` | ```str``` | Specify a message to display after deployment | ❌ |
+| ```onComplete``` | ```str``` | Specify a message to display when the job completes | ❌ |
+| ```rebootCountdown``` | ```str``` | Specify a message to display before a reboot | ❌ |
+| ```rebootOption``` | ```str``` | Specify a message for after a reboot | ❌ |
+| ```suppressReboots``` | ```bool=False``` | Allow users to suppress reboots | ❌ |
+| ```minimizeWindow``` | ```bool=False``` | Allow users to minimize the deployment window | ❌ |
+| ```status``` | ```Literal["Disabled", "Enabled"] = "Disabled"``` | The status of the job | ❌ |
+| ```timeout``` | ```int 1 <= x <= 168``` for hours, ```int 1 <= x <= 10080``` for minutes | The timeout for the job in hours or minutes (specified by timeoutUnit) | ❌ |
+| ```timeoutUnit``` | Literal["HOURS", "MINUTES"] | The unit of the timeout | ❌ |
+| ```timezoneType``` | ```Literal["AGENT_TZ", "SPECIFIC_TZ"]``` | The timezone type to use | ❌ |
+| ```timezone``` | ```str``` | The (timezone)[https://docs.qualys.com/en/pm/api/deployment_job_resource/time_zones.htm] to use. For example: ```"America/New_York"``` | ❌ |
+| ```opportunisticDownloads``` | ```bool=False``` | Whether to use opportunistic downloads. Only available for Windows | ❌ |
+| ```linkedJobId``` | ```str``` | The ID of the job to link to | ❌ |
+| ```notificationType``` | ```bool``` | If true, email notifications are sent | ❌ |
+| ```notificationConfigRecipientEmail``` | ```str``` | The email to send notifications to | ❌ |
+| ```notificationConfigCompletedPercentage``` | ```int 1 <= x <= 100``` | The percentage of completion to send notifications at | ❌ |
+| ```notificationEvents``` | ```bool``` | If true, send notifications when ```onJobStart``` or ```onJobComplete``` are triggered | ❌ |
+| ```downloadRandomizeTime``` | ```str``` | Provide the job randomize time in hours or minutes. Max is 2 hours or 120 minutes and must be less than the timeout/timeoutUnit | ❌ |
+| ```downloadRandomizeTimeUnit``` | ```Literal["HOURS", "MINUTES"]``` | The unit of the randomize time | ❌ |
+| ```additionalDynamicQQLType``` | ```Literal[1,2]``` | 1 = Use patch QQL, 2 = Use vulnerability QQL | ❌ |
+
+
+### Example 1 with GAV Query
+
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import create_job
+from qualysdk.gav import query_assets
+
+# There are a few ways to pass in certain assets. If you have
+# very particular assets in mind, you can make a GAV API
+# call to get the agentIds of the assets you want to target:
+
+windows_assets = query_assets(
+  auth, 
+  filter="operatingSystem.category: `Windows / Server`",
+  includeFields="agentId",  
+)
+
+# PM uses GUIDs for almost everything, so we need 
+# to extract the GUIDs from the assets:
+windows_assets_ids = [asset.agentId for asset in windows_assets]
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Create a new job for Windows servers. Let's
+# focus on critical patches only:
+job = create_job(
+    auth, 
+    platform='Windows', 
+    jobType='Install', 
+    scheduleType='On-demand', 
+    assetIds=windows_assets_ids,
+    name='My Job',
+    dynamicPatchesQQL="vendorSeverity:`Critical`",
+    dynamicQQLType=1,
+    isDynamicPatchesQQL=True,
+    status="Enabled", # Immediately enable the job. By default, the job is disabled!
+)
+>>>"Job 11111111-2222-3333-4444-555555555555 (My Job) created successfully."
+```
+
+### Example 2 with Tag GUIDs
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import create_job
+
+# Using PM tag GUIDs is a bit more cumbersome since
+# Qualys does not provide an easy way to look up tag GUIDs, 
+# but this method is much more flexible since new assets are
+# picked up automatically by the job:
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Create a new job for Windows servers. Let's
+# assume we have a tag for all Windows servers
+# with GUID 22222222-3333-4444-5555-666666666666:
+
+job = create_job(
+    auth, 
+    platform='Windows', 
+    jobType='Install', 
+    scheduleType='On-demand', 
+    assetTagIds=['22222222-3333-4444-5555-666666666666'],
+    name='My Job',
+    dynamicPatchesQQL="vendorSeverity:`Critical`",
+    dynamicQQLType=1,
+    isDynamicPatchesQQL=True,
+    status="Enabled", # Immediately enable the job. By default, the job is disabled!
+)
+>>>"Job 11111111-2222-3333-4444-555555555555 (My Job) created successfully."
 ```
 
 ## ```qualysdk-pm``` CLI tool

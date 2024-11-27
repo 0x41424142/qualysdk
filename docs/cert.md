@@ -58,3 +58,39 @@ certs = list_certs(auth, hash='1234', hash_operator='CONTAINS', validFromDate='2
     ...
 ]
 ```
+
+## ```qualysdk-cert``` CLI tool
+
+The ```qualysdk-cert``` CLI tool is a command-line interface for the Certificate View portion of the SDK. It allows you to quickly pull down results from Certificate View APIs and save them to an XLSX file.
+
+### Usage
+
+```bash
+usage: qualysdk-cert [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_certs} ...
+
+CLI script to quickly perform Certificate View (CERT) operations using qualysdk
+
+positional arguments:
+  {list_certs}          Action to perform
+    list_certs          Get a list of certificates according to kwargs.
+
+options:
+  -h, --help            show this help message and exit
+  -u, --username USERNAME
+                        Qualys username
+  -p, --password PASSWORD
+                        Qualys password
+  -P, --platform {qg1,qg2,qg3,qg4}
+                        Qualys platform
+```
+
+### List Certificates
+
+```bash
+usage: qualysdk-cert list_certs [-h] [-o OUTPUT] [--kwarg key value]
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output xlsx file to write results to
+  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
+```

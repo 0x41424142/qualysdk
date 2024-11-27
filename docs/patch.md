@@ -190,6 +190,8 @@ runs = get_job_runs(auth, job.id)
 | ```additionalDynamicQQLType``` | ```Literal[1,2]``` | 1 = Use patch QQL, 2 = Use vulnerability QQL | ❌ |
 
 
+There are a few ways to pass in certain assets. If you have very particular assets in mind, you can make a GAV API call to get the agentIds of the assets you want to target:
+
 ### Example 1 with GAV Query
 
 
@@ -198,9 +200,7 @@ from qualysdk.auth import TokenAuth
 from qualysdk.pm import create_job
 from qualysdk.gav import query_assets
 
-# There are a few ways to pass in certain assets. If you have
-# very particular assets in mind, you can make a GAV API
-# call to get the agentIds of the assets you want to target:
+auth = TokenAuth(<username>, <password>, platform='qg1')
 
 windows_assets = query_assets(
   auth, 
@@ -211,8 +211,6 @@ windows_assets = query_assets(
 # PM uses GUIDs for almost everything, so we need 
 # to extract the GUIDs from the assets:
 windows_assets_ids = [asset.agentId for asset in windows_assets]
-
-auth = TokenAuth(<username>, <password>, platform='qg1')
 
 # Create a new job for Windows servers. Let's
 # focus on critical patches only:
@@ -231,16 +229,15 @@ job = create_job(
 >>>"Job 11111111-2222-3333-4444-555555555555 (My Job) created successfully."
 ```
 
+Or you can use asset tags to dynamically target assets. 
+
+Using PM tag GUIDs is a bit more cumbersome since Qualys does not provide an easy way to look up tag GUIDs, but this method is much more flexible since new assets are picked up automatically by the job:
+
 ### Example 2 with Tag GUIDs
 
 ```py
 from qualysdk.auth import TokenAuth
 from qualysdk.pm import create_job
-
-# Using PM tag GUIDs is a bit more cumbersome since
-# Qualys does not provide an easy way to look up tag GUIDs, 
-# but this method is much more flexible since new assets are
-# picked up automatically by the job:
 
 auth = TokenAuth(<username>, <password>, platform='qg1')
 

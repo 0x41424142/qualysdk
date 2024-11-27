@@ -5,7 +5,7 @@ CLI script to quickly perform Patch Management
 
 from argparse import ArgumentParser, Namespace
 
-from qualysdk import TokenAuth, write_excel, BaseList, write_json
+from qualysdk import TokenAuth, write_excel, BaseList
 from qualysdk.pm import *
 
 

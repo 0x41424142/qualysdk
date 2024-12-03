@@ -19,6 +19,7 @@ You can use any of the endpoints currently supported:
 | ```get_job_results``` | Returns a summary of a job. |
 | ```get_job_runs``` | Returns a list of runs of a job. |
 | ```create_job```| Creates a new job. |
+| ```delete_job``` | Deletes a job or a list of jobs. |
 
 ## List Jobs API
 
@@ -226,7 +227,7 @@ job = create_job(
     isDynamicPatchesQQL=True,
     status="Enabled", # Immediately enable the job. By default, the job is disabled!
 )
->>>"Job 11111111-2222-3333-4444-555555555555 (My Job) created successfully."
+>>>"11111111-2222-3333-4444-555555555555"
 ```
 
 Or you can use asset tags to dynamically target assets. 
@@ -257,7 +258,51 @@ job = create_job(
     isDynamicPatchesQQL=True,
     status="Enabled", # Immediately enable the job. By default, the job is disabled!
 )
->>>"Job 11111111-2222-3333-4444-555555555555 (My Job) created successfully."
+>>>"11111111-2222-3333-4444-555555555555"
+```
+
+## Delete Job API
+
+```delete_job``` deletes a patch management job or a list of jobs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```jobId``` | ```Union[str, BaseList[str]]``` | The ID(s) of the job to delete | ✅ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import delete_job, list_jobs
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Delete a single job:
+job = list_jobs(auth, 'linux')[0]
+delete_job(auth, job.id)
+>>>[
+  {
+    "id":"11111111-2222-3333-4444-555555555555",
+    "name":"My job",
+    "status":"success"
+  }
+]
+
+# Delete multiple jobs:
+jobs = list_jobs(auth)
+delete_job(auth, [job.id for job in jobs])
+>>>[
+  {
+    "id":"11111111-2222-3333-4444-555555555555",
+    "name":"My job",
+    "status":"success"
+  },
+  {
+    "id":"22222222-3333-4444-5555-666666666666",
+    "name":"My other job",
+    "status":"success"
+  },
+  ...
+]
 ```
 
 ## ```qualysdk-pm``` CLI tool

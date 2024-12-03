@@ -226,16 +226,14 @@ def list_jobs(
 
 # Overload 1 for str jobId
 @overload
-def get_job_results(auth: TokenAuth, jobId: str, **kwargs) -> JobResultSummary:
-    ...
+def get_job_results(auth: TokenAuth, jobId: str, **kwargs) -> JobResultSummary: ...
 
 
 # Overload 2 for list/BaseList of PMJob
 @overload
 def get_job_results(
     auth: TokenAuth, jobId: Union[list[PMJob], BaseList[PMJob]], **kwargs
-) -> BaseList[JobResultSummary]:
-    ...
+) -> BaseList[JobResultSummary]: ...
 
 
 def get_job_results(
@@ -424,7 +422,7 @@ def create_job(
         - additionalDynamicPatchesQQL (str): The additional dynamic patches QQL for the job.
 
     Returns:
-        str: The response from the API.
+        str: job ID for the created job
     """
 
     platform, jobType, scheduleType, status = (
@@ -575,5 +573,50 @@ def create_job(
         raise QualysAPIError(result.json())
 
     j = result.json()
-    print(s := f"Job {j['id']} ({j['name']}) created successfully.")
-    return s
+    return j["id"]
+
+
+@overload
+def delete_job(auth: TokenAuth, jobId: str) -> list[dict[str, str]]: ...
+
+
+@overload
+def delete_job(
+    auth: TokenAuth, jobId: Union[list[str], BaseList[str]]
+) -> list[dict[str, str]]: ...
+
+
+def delete_job(
+    auth: TokenAuth, jobId: Union[str, Sequence[str]]
+) -> list[dict[str, str]]:
+    """
+    Deletes a job or jobs in Patch Management.
+
+    Args:
+        auth (TokenAuth): The authentication object.
+        jobId (Union[str, list[str]]): The ID of the job to delete, or a list of job IDs.
+
+    Returns:
+        list[dict[str, str]]: The response from the API structured as: [{"id": "jobId", "name": "jobName", "status": "statusMessage"}]
+    """
+
+    jsonbody = {"ids": []}
+
+    # URL construction:
+    payload = {"placeholder": ""}
+
+    if isinstance(jobId, str):
+        jsonbody["ids"].append(jobId)
+        result = manage_jobs(auth=auth, method="DELETE", _jsonbody=jsonbody, **payload)
+        return result.json()
+
+    elif isinstance(jobId, (list, BaseList)) and all(
+        isinstance(job, str) for job in jobId
+    ):
+        jsonbody.update({"ids": jobId})
+        return manage_jobs(
+            auth=auth, method="DELETE", _jsonbody=jsonbody, **payload
+        ).json()
+
+    else:
+        raise ValueError("jobId must be a string or a list/BaseList of strings.")

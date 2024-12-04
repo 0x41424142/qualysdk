@@ -20,6 +20,7 @@ You can use any of the endpoints currently supported:
 | ```get_job_runs``` | Returns a list of runs of a job. |
 | ```create_job```| Creates a new job. |
 | ```delete_job``` | Deletes a job or a list of jobs. |
+| ```change_job_status``` | Enable/disable a job or a list of jobs. |
 
 ## List Jobs API
 
@@ -290,6 +291,51 @@ delete_job(auth, job.id)
 # Delete multiple jobs:
 jobs = list_jobs(auth)
 delete_job(auth, [job.id for job in jobs])
+>>>[
+  {
+    "id":"11111111-2222-3333-4444-555555555555",
+    "name":"My job",
+    "status":"success"
+  },
+  {
+    "id":"22222222-3333-4444-5555-666666666666",
+    "name":"My other job",
+    "status":"success"
+  },
+  ...
+]
+```
+
+## Change Job Status API
+
+```change_job_status``` enables or disables a patch management job or a list of jobs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```action``` | ```Literal["enable", "disable"]``` | The action to perform | ✅ |
+| ```jobId``` | ```Union[str, BaseList[str]]``` | The ID(s) of the job to change the status of | ✅ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import change_job_status, list_jobs
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Disable a single job:
+job = list_jobs(auth, 'linux')[0]
+change_job_status(auth, 'disable', job.id)
+>>>[
+  {
+    "id":"11111111-2222-3333-4444-555555555555",
+    "name":"My job",
+    "status":"success"
+  }
+]
+
+# Disable multiple jobs:
+jobs = list_jobs(auth)
+change_job_status(auth, 'disable', [job.id for job in jobs])
 >>>[
   {
     "id":"11111111-2222-3333-4444-555555555555",

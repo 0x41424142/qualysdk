@@ -620,3 +620,59 @@ def delete_job(
 
     else:
         raise ValueError("jobId must be a string or a list/BaseList of strings.")
+
+
+@overload
+def change_job_status(
+    auth: TokenAuth, action: Literal["Enabled", "Disabled"], jobId: str
+) -> dict: ...
+
+
+@overload
+def change_job_status(
+    auth: TokenAuth,
+    action: Literal["Enabled", "Disabled"],
+    jobId: Union[list[str], BaseList[str]],
+) -> dict: ...
+
+
+def change_job_status(
+    auth: TokenAuth,
+    action: Literal["Enabled", "Disabled"],
+    jobId: Union[str, list[str], BaseList[str]],
+) -> dict:
+    """
+    Enable or disable a job(s) in Patch Management.
+
+    Args:
+        auth (TokenAuth): The authentication object.
+        action (Literal['Enabled', 'Disabled']): The status to set the job(s) to.
+        jobId (Union[str, list[str]]): The ID of the job to enable/disable, or a list of job IDs.
+
+    Returns:
+        dict: The response from the API.
+    """
+
+    jsonbody = {"ids": []}
+
+    # URL construction:
+    payload = {"placeholder": f"/update/status/{action.title()}"}
+
+    if isinstance(jobId, str):
+        jsonbody["ids"].append(jobId)
+        result = manage_jobs(auth=auth, method="POST", _jsonbody=jsonbody, **payload)
+        j = result.json()
+
+    elif isinstance(jobId, (list, BaseList)) and all(
+        isinstance(job, str) for job in jobId
+    ):
+        jsonbody.update({"ids": jobId})
+        j = manage_jobs(auth=auth, method="POST", _jsonbody=jsonbody, **payload).json()
+
+    else:
+        raise ValueError("jobId must be a string or a list/BaseList of strings.")
+
+    if not isinstance(j, list) and j.get("status") == "failure":
+        raise QualysAPIError(j)
+
+    return j

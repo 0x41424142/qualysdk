@@ -416,23 +416,25 @@ The ```qualysdk-pm``` CLI tool is a command-line interface for the PM portion of
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs} ...
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves} ...
+
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
 positional arguments:
-  {list_jobs,get_job_results,get_job_runs}
+  {list_jobs,get_job_results,get_job_runs,lookup_cves}
                         Action to perform
     list_jobs           Get a list of PM jobs.
     get_job_results     Get results for a PM job.
     get_job_runs        Get runs for a PM job.
+    lookup_cves         Look up CVEs for a given QID(s).
 
 options:
   -h, --help            show this help message and exit
-  -u, --username USERNAME
+  -u USERNAME, --username USERNAME
                         Qualys username
-  -p, --password PASSWORD
+  -p PASSWORD, --password PASSWORD
                         Qualys password
-  -P, --platform {qg1,qg2,qg3,qg4}
+  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
                         Qualys platform
 ```
 
@@ -469,4 +471,25 @@ options:
   -o, --output OUTPUT  Output xlsx file to write results to
   -j, --job-id JOB_ID  Specify the job ID to get runs for
   --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
+```
+
+### Lookup CVEs
+
+```bash
+usage: qualysdk-pm lookup_cves [-h] -q QIDS [-t THREADS] [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -q QIDS, --qids QIDS  Specify the QID(s) to look up. Can be used multiple times
+  -t THREADS, --threads THREADS
+                        Specify the number of threads to use. Default is 5
+  -o OUTPUT, --output OUTPUT
+                        Output xlsx file to write results to
+```
+
+#### Example Usage
+
+```bash
+qualysdk-pm -u <username> -p <password> -P qg1 lookup_cves -q 6,11,10069 -o cves.xlsx
+>>>Data written to cves.xlsx
 ```

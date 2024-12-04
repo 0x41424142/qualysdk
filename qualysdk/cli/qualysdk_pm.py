@@ -26,6 +26,8 @@ def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
             result = get_job_results(auth, args.job_id, **kwargs)
         case "get_job_runs":
             result = get_job_runs(auth, args.job_id, **kwargs)
+        case "lookup_cves":
+            result = lookup_cves(auth, args.qids, args.threads)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
@@ -128,6 +130,36 @@ def main():
         metavar=("key", "value"),
     )
 
+    # lookup_cves action:
+    lookup_cves_parser = subparsers.add_parser(
+        "lookup_cves", help="Look up CVEs for a given QID(s)."
+    )
+
+    lookup_cves_parser.add_argument(
+        "-q",
+        "--qids",
+        help="Specify the QID(s) to look up. Can be used multiple times",
+        type=str,
+        required=True,
+        action="append",
+    )
+
+    lookup_cves_parser.add_argument(
+        "-t",
+        "--threads",
+        help="Specify the number of threads to use. Default is 5",
+        type=int,
+        default=5,
+    )
+
+    lookup_cves_parser.add_argument(
+        "-o",
+        "--output",
+        help="Output xlsx file to write results to",
+        type=str,
+        default="pm_cves.xlsx",
+    )
+
     args = parser.parse_args()
 
     # create TokenAuth object
@@ -145,6 +177,18 @@ def main():
         case "get_job_runs":
             args.output = args.output.replace("{JOB_ID}", args.job_id)
             cli_fn(auth=auth, args=args, endpoint="get_job_runs")
+        case "lookup_cves":
+            args.kwarg = {}  # No kwargs for this endpoint
+            # look for a string of QIDs separated by commas.
+            # if found, split it into a list of QIDs:
+            for i, qid in enumerate(args.qids):
+                if "," in qid:
+                    args.qids.pop(i)
+                    args.qids.extend(qid.split(","))
+            # Check for any non-numeric chars. If found, remove them:
+            for i, qid in enumerate(args.qids):
+                args.qids[i] = "".join([c for c in qid if c in "1234567890"])
+            cli_fn(auth=auth, args=args, endpoint="lookup_cves")
         case _:
             parser.print_help()
             exit(1)

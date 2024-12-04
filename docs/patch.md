@@ -19,6 +19,9 @@ You can use any of the endpoints currently supported:
 | ```get_job_results``` | Returns a summary of a job. |
 | ```get_job_runs``` | Returns a list of runs of a job. |
 | ```create_job```| Creates a new job. |
+| ```delete_job``` | Deletes a job or a list of jobs. |
+| ```change_job_status``` | Enable/disable a job or a list of jobs. |
+| ```lookup_cves``` | Returns a list of CVEs and other details associated with a QID. |
 
 ## List Jobs API
 
@@ -226,7 +229,7 @@ job = create_job(
     isDynamicPatchesQQL=True,
     status="Enabled", # Immediately enable the job. By default, the job is disabled!
 )
->>>"Job 11111111-2222-3333-4444-555555555555 (My Job) created successfully."
+>>>"11111111-2222-3333-4444-555555555555"
 ```
 
 Or you can use asset tags to dynamically target assets. 
@@ -257,7 +260,153 @@ job = create_job(
     isDynamicPatchesQQL=True,
     status="Enabled", # Immediately enable the job. By default, the job is disabled!
 )
->>>"Job 11111111-2222-3333-4444-555555555555 (My Job) created successfully."
+>>>"11111111-2222-3333-4444-555555555555"
+```
+
+## Delete Job API
+
+```delete_job``` deletes a patch management job or a list of jobs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```jobId``` | ```Union[str, BaseList[str]]``` | The ID(s) of the job to delete | ✅ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import delete_job, list_jobs
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Delete a single job:
+job = list_jobs(auth, 'linux')[0]
+delete_job(auth, job.id)
+>>>[
+  {
+    "id":"11111111-2222-3333-4444-555555555555",
+    "name":"My job",
+    "status":"success"
+  }
+]
+
+# Delete multiple jobs:
+jobs = list_jobs(auth)
+delete_job(auth, [job.id for job in jobs])
+>>>[
+  {
+    "id":"11111111-2222-3333-4444-555555555555",
+    "name":"My job",
+    "status":"success"
+  },
+  {
+    "id":"22222222-3333-4444-5555-666666666666",
+    "name":"My other job",
+    "status":"success"
+  },
+  ...
+]
+```
+
+## Change Job Status API
+
+```change_job_status``` enables or disables a patch management job or a list of jobs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```action``` | ```Literal["enable", "disable"]``` | The action to perform | ✅ |
+| ```jobId``` | ```Union[str, BaseList[str]]``` | The ID(s) of the job to change the status of | ✅ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import change_job_status, list_jobs
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Disable a single job:
+job = list_jobs(auth, 'linux')[0]
+change_job_status(auth, 'disable', job.id)
+>>>[
+  {
+    "id":"11111111-2222-3333-4444-555555555555",
+    "name":"My job",
+    "status":"success"
+  }
+]
+
+# Disable multiple jobs:
+jobs = list_jobs(auth)
+change_job_status(auth, 'disable', [job.id for job in jobs])
+>>>[
+  {
+    "id":"11111111-2222-3333-4444-555555555555",
+    "name":"My job",
+    "status":"success"
+  },
+  {
+    "id":"22222222-3333-4444-5555-666666666666",
+    "name":"My other job",
+    "status":"success"
+  },
+  ...
+]
+```
+
+## Lookup CVEs for QIDs API
+
+```lookup_cves``` returns a list of CVEs and other details associated with specified QIDs as a ```BaseList``` of ```PMVulnerability``` objects.
+
+This function accepts either a single QID as a string or integer, a list/BaseList of strings/integers, or a comma-separated string of QIDs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```qids``` | ```Union[str, int, BaseList/list[str, int]]``` | The QID(s) to look up. Can be a list of strings/ints, a single int/string, or a comma-separated string | ✅ |
+| ```threads``` | ```int=5``` | The number of threads to use for the lookup. ⚠️ Thread mode is only used if 1K+ ```qids``` are passed | ❌ |
+
+```py
+from qualysdk.auth import TokenAuth, BasicAuth
+from qualysdk.vmdr import query_kb
+from qualysdk.pm import lookup_cves
+
+token = TokenAuth(<username>, <password>, platform='qg1')
+basic = BasicAuth(<username>, <password>, platform='qg1')
+
+# Get some QIDs:
+qids = query_kb(basic, page_count=1, ids='10000-11000')
+
+# Get the PM details/CVEs:
+cves = lookup_cves(token, [qid.QID for qid in qids])
+>>>[
+  PMVulnerability(
+    id=10230, 
+    title='Viralator CGI Input Validation Remote Shell Command Vulnerability', 
+    cves=['CVE-2001-0849'], 
+    detectedDate=datetime.datetime(2001, 11, 7, 16, 15, 57), 
+    severity=5, 
+    vulnType='VULNERABILITY'
+  ), 
+  PMVulnerability(
+    id=10310, 
+    title='Suspicious file register.idc', 
+    cves=None, # Sometimes there are no CVEs!
+    detectedDate=datetime.datetime(2001, 4, 3, 4, 12, 9), 
+    severity=1, 
+    vulnType='POTENTIAL'
+  ),
+  ...
+]
+
+# Or you can pass in a single QID:
+cve = lookup_cves(token, 10230)
+>>>PMVulnerability(
+  id=10230, 
+  title='Viralator CGI Input Validation Remote Shell Command Vulnerability', 
+  cves=['CVE-2001-0849'], 
+  detectedDate=datetime.datetime(2001, 11, 7, 16, 15, 57), 
+  severity=5, 
+  vulnType='VULNERABILITY'
+)
 ```
 
 ## ```qualysdk-pm``` CLI tool
@@ -267,23 +416,25 @@ The ```qualysdk-pm``` CLI tool is a command-line interface for the PM portion of
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs} ...
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves} ...
+
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
 positional arguments:
-  {list_jobs,get_job_results,get_job_runs}
+  {list_jobs,get_job_results,get_job_runs,lookup_cves}
                         Action to perform
     list_jobs           Get a list of PM jobs.
     get_job_results     Get results for a PM job.
     get_job_runs        Get runs for a PM job.
+    lookup_cves         Look up CVEs for a given QID(s).
 
 options:
   -h, --help            show this help message and exit
-  -u, --username USERNAME
+  -u USERNAME, --username USERNAME
                         Qualys username
-  -p, --password PASSWORD
+  -p PASSWORD, --password PASSWORD
                         Qualys password
-  -P, --platform {qg1,qg2,qg3,qg4}
+  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
                         Qualys platform
 ```
 
@@ -320,4 +471,25 @@ options:
   -o, --output OUTPUT  Output xlsx file to write results to
   -j, --job-id JOB_ID  Specify the job ID to get runs for
   --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
+```
+
+### Lookup CVEs
+
+```bash
+usage: qualysdk-pm lookup_cves [-h] -q QIDS [-t THREADS] [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -q QIDS, --qids QIDS  Specify the QID(s) to look up. Can be used multiple times
+  -t THREADS, --threads THREADS
+                        Specify the number of threads to use. Default is 5
+  -o OUTPUT, --output OUTPUT
+                        Output xlsx file to write results to
+```
+
+#### Example Usage
+
+```bash
+qualysdk-pm -u <username> -p <password> -P qg1 lookup_cves -q 6,11,10069 -o cves.xlsx
+>>>Data written to cves.xlsx
 ```

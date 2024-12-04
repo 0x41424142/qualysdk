@@ -59,6 +59,8 @@ def db_connect(
             conn_str = f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{db}"
         case "sqlite":
             conn_str = f"sqlite:///{db}"
+        case "sqlite3":
+            conn_str = f"sqlite:///{db}"
         case _:
             raise ValueError("Database type not supported.")
 

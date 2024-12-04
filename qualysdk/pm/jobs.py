@@ -661,18 +661,16 @@ def change_job_status(
     if isinstance(jobId, str):
         jsonbody["ids"].append(jobId)
         result = manage_jobs(auth=auth, method="POST", _jsonbody=jsonbody, **payload)
-        j = result.json()
 
     elif isinstance(jobId, (list, BaseList)) and all(
         isinstance(job, str) for job in jobId
     ):
         jsonbody.update({"ids": jobId})
-        j = manage_jobs(auth=auth, method="POST", _jsonbody=jsonbody, **payload).json()
+        result = manage_jobs(auth=auth, method="POST", _jsonbody=jsonbody, **payload)
 
     else:
         raise ValueError("jobId must be a string or a list/BaseList of strings.")
 
-    if not isinstance(j, list) and j.get("status") == "failure":
-        raise QualysAPIError(j)
-
-    return j
+    if result.status_code not in range(200, 299):
+        raise QualysAPIError(result.json())
+    return result.json()

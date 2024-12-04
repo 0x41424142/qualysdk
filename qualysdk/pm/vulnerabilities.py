@@ -60,13 +60,15 @@ def _thread_worker(
 @overload
 def lookup_cves(
     auth: TokenAuth, qids: list[Union[str, int]], threads: int = 5
-) -> BaseList[PMVulnerability]: ...
+) -> BaseList[PMVulnerability]:
+    ...
 
 
 @overload
 def lookup_cves(
     auth: TokenAuth, qids: Union[str, int], threads: int = 5
-) -> BaseList[PMVulnerability]: ...
+) -> BaseList[PMVulnerability]:
+    ...
 
 
 def lookup_cves(
@@ -88,7 +90,6 @@ def lookup_cves(
     if not isinstance(qids, (list, BaseList)):
         # If the user passed a comma-separated string, split it:
         if isinstance(qids, str) and "," in qids:
-
             qids = qids.replace(" ", "").split(",")
         else:
             qids = [qids]

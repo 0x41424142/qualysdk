@@ -21,6 +21,7 @@ You can use any of the endpoints currently supported:
 | ```create_job```| Creates a new job. |
 | ```delete_job``` | Deletes a job or a list of jobs. |
 | ```change_job_status``` | Enable/disable a job or a list of jobs. |
+| ```lookup_cves``` | Returns a list of CVEs and other details associated with a QID. |
 
 ## List Jobs API
 
@@ -349,6 +350,63 @@ change_job_status(auth, 'disable', [job.id for job in jobs])
   },
   ...
 ]
+```
+
+## Lookup CVEs for QIDs API
+
+```lookup_cves``` returns a list of CVEs and other details associated with specified QIDs as a ```BaseList``` of ```PMVulnerability``` objects.
+
+This function accepts either a single QID as a string or integer, a list/BaseList of strings/integers, or a comma-separated string of QIDs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```qids``` | ```Union[str, int, BaseList/list[str, int]]``` | The QID(s) to look up. Can be a list of strings/ints, a single int/string, or a comma-separated string | ✅ |
+| ```threads``` | ```int=5``` | The number of threads to use for the lookup. ⚠️ Thread mode is only used if 1K+ ```qids``` are passed | ❌ |
+
+```py
+from qualysdk.auth import TokenAuth, BasicAuth
+from qualysdk.vmdr import query_kb
+from qualysdk.pm import lookup_cves
+
+token = TokenAuth(<username>, <password>, platform='qg1')
+basic = BasicAuth(<username>, <password>, platform='qg1')
+
+# Get some QIDs:
+qids = query_kb(basic, page_count=1, ids='10000-11000')
+
+# Get the PM details/CVEs:
+cves = lookup_cves(token, [qid.QID for qid in qids])
+>>>[
+  PMVulnerability(
+    id=10230, 
+    title='Viralator CGI Input Validation Remote Shell Command Vulnerability', 
+    cves=['CVE-2001-0849'], 
+    detectedDate=datetime.datetime(2001, 11, 7, 16, 15, 57), 
+    severity=5, 
+    vulnType='VULNERABILITY'
+  ), 
+  PMVulnerability(
+    id=10310, 
+    title='Suspicious file register.idc', 
+    cves=None, # Sometimes there are no CVEs!
+    detectedDate=datetime.datetime(2001, 4, 3, 4, 12, 9), 
+    severity=1, 
+    vulnType='POTENTIAL'
+  ),
+  ...
+]
+
+# Or you can pass in a single QID:
+cve = lookup_cves(token, 10230)
+>>>PMVulnerability(
+  id=10230, 
+  title='Viralator CGI Input Validation Remote Shell Command Vulnerability', 
+  cves=['CVE-2001-0849'], 
+  detectedDate=datetime.datetime(2001, 11, 7, 16, 15, 57), 
+  severity=5, 
+  vulnType='VULNERABILITY'
+)
 ```
 
 ## ```qualysdk-pm``` CLI tool

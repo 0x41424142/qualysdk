@@ -11,3 +11,5 @@ from .jobs import (
     delete_job,
     change_job_status,
 )
+
+from .vulnerabilities import lookup_cves

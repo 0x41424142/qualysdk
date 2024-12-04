@@ -92,6 +92,16 @@ PM_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "token",
             },
+            "vulnerabilities": {
+                "endpoint": "/pm/v1/vulnerabilities",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": ["qids"],
+                "use_requests_json_data": True,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
         },
     }
 )

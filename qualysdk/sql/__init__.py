@@ -70,5 +70,6 @@ from .pm import (
     upload_pm_job_results,
     upload_pm_job_runs,
     upload_pm_cves,
+    upload_pm_patches,
 )
 from .cert import upload_cert_certs

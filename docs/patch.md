@@ -23,6 +23,7 @@ You can use any of the endpoints currently supported:
 | ```delete_job``` | Deletes a job or a list of jobs. |
 | ```change_job_status``` | Enable/disable a job or a list of jobs. |
 | ```lookup_cves``` | Returns a list of CVEs and other details associated with a QID. |
+| ```get_patches``` | Returns a list of patches. |
 
 ## Get PM Version API
 
@@ -426,6 +427,62 @@ cve = lookup_cves(token, 10230)
   vulnType='VULNERABILITY'
 )
 ```
+
+## Get Patches API
+
+```get_patches``` returns a ```BaseList``` of ```Patch``` objects that match the given kwargs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```page_count``` | ```Union[int, "all"] = "all"``` | The number of pages to return | ❌ |
+| ```pageSize``` | ```int=1000``` | The number of patches to return per page | ❌ |
+| ```platform``` | ```Literal["all", "windows", "linux"] = "all"``` | The platform of the patches to return | ❌ |
+| ```query``` | ```str="patchStatus:[Missing,Installed] and isSuperseded:false``` FOR WINDOWS | A patch QQL query to filter with. By default returns all of the latest patches if ```platform=windows``` | ❌ |
+| ```havingQuery``` | ```str``` | A PM host QQL query to filter with | ❌ |
+| ```attributes``` | ```str``` | The attributes to return in the response as a comma-separated string | ❌ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import get_patches
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get all patches that are severity 5
+# and only return their titles & IDs:
+patches = get_patches(auth, query="vendorSeverity:5", attributes="id,title")
+>>>[
+  Patch(
+    id='11111111-2222-3333-4444-555555555555', 
+    title='My Patch',
+    ...
+  ),
+  Patch(
+    id='22222222-3333-4444-5555-666666666666', 
+    title='My Other Patch',
+    ...
+  ),
+  ...
+]
+
+# Just get windows patches:
+windows_patches = get_patches(auth, platform='windows')
+>>>[
+  Patch(
+    id='11111111-2222-3333-4444-555555555555', 
+    title='My Patch',
+    platform='Windows',
+    ...
+  ),
+  Patch(
+    id='22222222-3333-4444-5555-666666666666', 
+    title='My Other Patch',
+    ...
+  ),
+  ...
+]
+```
+
 
 ## ```qualysdk-pm``` CLI tool
 

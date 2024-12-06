@@ -378,3 +378,61 @@ def upload_pm_cves(
 
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)
+
+def upload_pm_patches(
+    patches: BaseList,
+    cnxn: Connection,
+    table_name: str = "pm_patches",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload results from ```pm.get_patches```
+    to a SQL database.
+
+    Args:
+        patches (BaseList): A BaseList of Patch objects.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to "pm_patches".
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "title": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "platform": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "architecture": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "bulletin": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "category": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "cve": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "kb": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "modifiedDate": types.DateTime(),
+        "appFamily": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "product": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "publishedDate": types.DateTime(),
+        "qid": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "rebootRequired": types.Boolean(),
+        "supersededBy": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "supersedes": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "vendor": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "vendorSeverity": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "vendorlink": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "missingCount": types.Integer(),
+        "installedCount": types.Integer(),
+        "advisory": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "enabled": types.Boolean(),
+        "packageDetails": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "isSecurity": types.Boolean(),
+        "isSuperseded": types.Boolean(),
+        "isRollback": types.Boolean(),
+        "isCustomizedDownloadUrl": types.Boolean(),
+    }
+    
+    # Prepare the dataclass for insertion:
+    df = DataFrame([prepare_dataclass(patch) for patch in patches])
+    
+    # Upload the data:
+    return upload_data(df, table_name, cnxn, COLS, override_import_dt)

@@ -112,6 +112,23 @@ PM_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "token",
             },
+            "get_patches": {
+                "endpoint": "/pm/v2/patches",   
+                "method": ["POST"],
+                "valid_params": [
+                    "pageSize",
+                    "platform",
+                ],
+                "valid_POST_data": [
+                    "query",
+                    "havingQuery",
+                    "attributes",  
+                ],
+                "use_requests_json_data": True,
+                "return_type": "json",
+                "pagination": True,
+                "auth_type": "token",
+            },
         },
     }
 )

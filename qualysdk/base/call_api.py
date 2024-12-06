@@ -122,7 +122,10 @@ def call_api(
 
         # set up JWT auth header if needed:
         if auth.auth_type == "token":
-            headers = auth.as_header()
+            if not headers:
+                headers = auth.as_header()
+            else:
+                headers['Authorization'] = auth.as_header()['Authorization']
         # or set up the tuple for basic auth:
         elif auth.auth_type == "basic":
             auth_tuple = (auth.username, auth.password)

@@ -102,6 +102,16 @@ PM_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "token",
             },
+            "get_version": {
+                "endpoint": "/pm/v1/details",
+                "method": ["GET"],
+                "valid_params": [],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
         },
     }
 )

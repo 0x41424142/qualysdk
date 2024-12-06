@@ -15,6 +15,7 @@ You can use any of the endpoints currently supported:
 
 |API Call| Description |
 |--|--|
+| ```get_version``` | Returns the version of the PM API. |
 | ```list_jobs``` | Returns jobs that match given kwargs. |
 | ```get_job_results``` | Returns a summary of a job. |
 | ```get_job_runs``` | Returns a list of runs of a job. |
@@ -22,6 +23,23 @@ You can use any of the endpoints currently supported:
 | ```delete_job``` | Deletes a job or a list of jobs. |
 | ```change_job_status``` | Enable/disable a job or a list of jobs. |
 | ```lookup_cves``` | Returns a list of CVEs and other details associated with a QID. |
+
+## Get PM Version API
+
+```get_version``` returns the version of the PM API.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import get_version
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+get_version(auth)
+>>>"3.1.0.0-29"
+```
 
 ## List Jobs API
 

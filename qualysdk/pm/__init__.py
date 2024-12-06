@@ -13,3 +13,4 @@ from .jobs import (
 )
 
 from .vulnerabilities import lookup_cves
+from .version import get_version

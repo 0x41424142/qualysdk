@@ -491,25 +491,26 @@ The ```qualysdk-pm``` CLI tool is a command-line interface for the PM portion of
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves} ...
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches} ...
 
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
 positional arguments:
-  {list_jobs,get_job_results,get_job_runs,lookup_cves}
+  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches}
                         Action to perform
     list_jobs           Get a list of PM jobs.
     get_job_results     Get results for a PM job.
     get_job_runs        Get runs for a PM job.
     lookup_cves         Look up CVEs for a given QID(s).
+    get_patches         Get patches for a given platform.
 
 options:
   -h, --help            show this help message and exit
-  -u USERNAME, --username USERNAME
+  -u, --username USERNAME
                         Qualys username
-  -p PASSWORD, --password PASSWORD
+  -p, --password PASSWORD
                         Qualys password
-  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
+  -P, --platform {qg1,qg2,qg3,qg4}
                         Qualys platform
 ```
 
@@ -567,4 +568,17 @@ options:
 ```bash
 qualysdk-pm -u <username> -p <password> -P qg1 lookup_cves -q 6,11,10069 -o cves.xlsx
 >>>Data written to cves.xlsx
+```
+
+### Get Patches
+
+```bash
+usage: qualysdk-pm get_patches [-h] [--os {all,windows,linux}] [-o OUTPUT] [--kwarg key value]
+
+options:
+  -h, --help            show this help message and exit
+  --os {all,windows,linux}
+                        Specify the platform to get patches for. Default is 'all'
+  -o, --output OUTPUT   Output xlsx file to write results to
+  --kwarg key value     Specify a keyword argument to pass to the action. Can be used multiple times
 ```

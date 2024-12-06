@@ -113,7 +113,7 @@ PM_SCHEMA = frozendict(
                 "auth_type": "token",
             },
             "get_patches": {
-                "endpoint": "/pm/v2/patches",   
+                "endpoint": "/pm/v2/patches",
                 "method": ["POST"],
                 "valid_params": [
                     "pageSize",
@@ -122,7 +122,7 @@ PM_SCHEMA = frozendict(
                 "valid_POST_data": [
                     "query",
                     "havingQuery",
-                    "attributes",  
+                    "attributes",
                 ],
                 "use_requests_json_data": True,
                 "return_type": "json",

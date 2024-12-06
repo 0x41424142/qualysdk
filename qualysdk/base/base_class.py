@@ -1,5 +1,6 @@
 from dataclasses import dataclass, asdict
 
+
 @dataclass
 class BaseClass:
     """

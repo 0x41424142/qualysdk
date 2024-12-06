@@ -9,24 +9,26 @@ from dataclasses import dataclass
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
 
+
 @dataclass
 class PackageDetail(BaseClass):
     """
     A package detail object in Qualys Patch Management
     """
-    
+
     packageName: str = None
     architecture: str = None
-    
+
     def __str__(self):
         return self.packageName
+
 
 @dataclass
 class Patch(BaseClass):
     """
     A patch object in Qualys Patch Management
     """
-    
+
     id: str = None
     title: str = None
     type: str = None
@@ -57,12 +59,18 @@ class Patch(BaseClass):
     isSuperseded: bool = None
     isRollback: bool = None
     isCustomizedDownloadUrl: bool = None
-    
 
     def __post_init__(self):
         DT_FIELDS = ["modifiedDate", "publishedDate"]
-        BL_FIELDS = ["architecture", "product", "cve", "supersedes", "supersededBy", "qid"]
-        
+        BL_FIELDS = [
+            "architecture",
+            "product",
+            "cve",
+            "supersedes",
+            "supersededBy",
+            "qid",
+        ]
+
         for field in DT_FIELDS:
             if getattr(self, field):
                 try:
@@ -73,16 +81,17 @@ class Patch(BaseClass):
                     )
                 except (TypeError, OSError):
                     setattr(self, field, None)
-                    
+
         for field in BL_FIELDS:
             if field != "qid" and getattr(self, field):
                 setattr(self, field, BaseList(getattr(self, field)))
             elif field == "qid" and getattr(self, field):
-                setattr(self, field, BaseList([int(qid) for qid in getattr(self, field)]))
-                
+                setattr(
+                    self, field, BaseList([int(qid) for qid in getattr(self, field)])
+                )
+
         if getattr(self, "packageDetails"):
             bl = BaseList()
             for package in self.packageDetails:
                 bl.append(PackageDetail(**package))
             setattr(self, "packageDetails", bl)
-        

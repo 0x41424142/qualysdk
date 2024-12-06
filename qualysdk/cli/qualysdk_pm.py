@@ -28,6 +28,8 @@ def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
             result = get_job_runs(auth, args.job_id, **kwargs)
         case "lookup_cves":
             result = lookup_cves(auth, args.qids, args.threads)
+        case "get_patches":
+            result = get_patches(auth, args.platform, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
@@ -159,6 +161,34 @@ def main():
         type=str,
         default="pm_cves.xlsx",
     )
+    
+    get_patches_parser = subparsers.add_parser(
+        "get_patches", help="Get patches for a given platform."
+    )
+    
+    get_patches_parser.add_argument(
+        "--os",
+        help="Specify the platform to get patches for. Default is 'all'",
+        type=str,
+        default="all",
+        choices=["all", "windows", "linux"],
+    )
+    
+    get_patches_parser.add_argument(
+        "-o",
+        "--output",
+        help="Output xlsx file to write results to",
+        type=str,
+        default="pm_patches.xlsx",
+    )
+    
+    get_patches_parser.add_argument(
+        "--kwarg",
+        help="Specify a keyword argument to pass to the action. Can be used multiple times",
+        action="append",
+        nargs=2,
+        metavar=("key", "value"),
+    )
 
     args = parser.parse_args()
 
@@ -189,6 +219,9 @@ def main():
             for i, qid in enumerate(args.qids):
                 args.qids[i] = "".join([c for c in qid if c in "1234567890"])
             cli_fn(auth=auth, args=args, endpoint="lookup_cves")
+        case "get_patches":
+            args.platform = args.os
+            cli_fn(auth=auth, args=args, endpoint="get_patches")
         case _:
             parser.print_help()
             exit(1)

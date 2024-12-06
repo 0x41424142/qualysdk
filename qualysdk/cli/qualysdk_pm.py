@@ -161,11 +161,11 @@ def main():
         type=str,
         default="pm_cves.xlsx",
     )
-    
+
     get_patches_parser = subparsers.add_parser(
         "get_patches", help="Get patches for a given platform."
     )
-    
+
     get_patches_parser.add_argument(
         "--os",
         help="Specify the platform to get patches for. Default is 'all'",
@@ -173,7 +173,7 @@ def main():
         default="all",
         choices=["all", "windows", "linux"],
     )
-    
+
     get_patches_parser.add_argument(
         "-o",
         "--output",
@@ -181,7 +181,7 @@ def main():
         type=str,
         default="pm_patches.xlsx",
     )
-    
+
     get_patches_parser.add_argument(
         "--kwarg",
         help="Specify a keyword argument to pass to the action. Can be used multiple times",

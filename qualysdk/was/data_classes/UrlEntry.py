@@ -2,12 +2,14 @@
 Contains the UrlEntry class for WAS
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class UrlEntry:
+class UrlEntry(BaseClass):
     """
     Represents a single URL entry in WAS
     """
@@ -29,22 +31,3 @@ class UrlEntry:
 
     def __str__(self):
         return self.text
-
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @staticmethod
-    def from_dict(data):
-        return UrlEntry(**data)

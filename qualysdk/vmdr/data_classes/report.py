@@ -2,13 +2,15 @@
 report.py - contains the VMDRReport dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import Union, Dict
 from datetime import datetime
 
+from ...base.base_class import BaseClass
+
 
 @dataclass(order=True)
-class VMDRReport:
+class VMDRReport(BaseClass):
     """
     Represents a VMDR report.
     """
@@ -96,33 +98,11 @@ class VMDRReport:
             # Convert bytes to MB
             self.SIZE = size_in_bytes / 1024**2
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - creates a VMDRReport object from a dictionary.
-        """
-        return cls(**data)
-
-    def __dict__(self):
-        return asdict(self)
-
     def __int__(self):
         return self.ID
 
     def __str__(self):
         return f"{self.ID}: {self.TITLE}"
-
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
-
-    def to_dict(self):
-        return asdict(self)
 
     def valid_values(self):
         """
@@ -132,7 +112,7 @@ class VMDRReport:
 
 
 @dataclass(order=True)
-class VMDRScheduledReport:
+class VMDRScheduledReport(BaseClass):
     """
     Represents a VMDR scheduled report.
     """
@@ -217,36 +197,14 @@ class VMDRScheduledReport:
             ]:
                 self.SCHEDULE.pop(key)
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - creates a VMDRScheduledReport object from a dictionary.
-        """
-        return cls(**data)
-
-    def __dict__(self):
-        return asdict(self)
-
     def __int__(self):
         return self.ID
 
     def __str__(self):
         return f"{self.ID}: {self.TITLE}"
 
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
-
     def valid_values(self):
         """
         valid_values - returns a dictionary of attributes that have non-None values.
         """
         return {k: v for k, v in self.to_dict().items() if v}
-
-    def to_dict(self):
-        return asdict(self)

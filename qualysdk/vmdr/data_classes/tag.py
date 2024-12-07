@@ -2,14 +2,16 @@
 tag.py - contains the CloudTag and Tag dataclasses for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
 from datetime import datetime
 from uuid import UUID
 
+from ...base.base_class import BaseClass
+
 
 @dataclass
-class Tag:
+class Tag(BaseClass):
     """
     Tag - represents a single tag in a TagList.
 
@@ -50,18 +52,6 @@ class Tag:
         yield self.TAG_ID
         yield self.NAME
 
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
     @classmethod
     def from_dict(cls, data: dict):
         """
@@ -84,7 +74,7 @@ class Tag:
 
 
 @dataclass
-class CloudTag:
+class CloudTag(BaseClass):
     """
     CloudTag - represents a single tag in a CloudTagList.
 
@@ -114,13 +104,6 @@ class CloudTag:
     def __str__(self) -> str:
         return f"{self.NAME}:{self.VALUE}"
 
-    def __dict__(self):
-        return {
-            "NAME": self.NAME,
-            "VALUE": self.VALUE,
-            "LAST_SUCCESS_DATE": self.LAST_SUCCESS_DATE,
-        }
-
     def __contains__(self, item):
         # see if it was found in the name or value:
         return item in self.NAME or item in self.VALUE
@@ -133,19 +116,3 @@ class CloudTag:
 
     def is_value(self, value: str):
         return self.VALUE == value
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a CloudTag object from a dictionary.
-
-        This function is used to create a CloudTag object from a dictionary.
-        """
-        # make sure that the dictionary has the required keys and nothing else:
-        required_keys = {"NAME", "VALUE"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        return cls(**data)

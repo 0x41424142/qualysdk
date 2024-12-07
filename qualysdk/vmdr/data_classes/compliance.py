@@ -2,12 +2,14 @@
 compliance.py - contains the Compliance dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class Compliance:
+class Compliance(BaseClass):
     """
     Compliance - represents a compliance object.
     """
@@ -37,36 +39,3 @@ class Compliance:
 
     def is_description(self, description: str):
         return self.DESCRIPTION == description
-
-    def __dict__(self):
-        return asdict(self)
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a Compliance object from a dictionary.
-
-        Params:
-            data (dict): The dictionary containing the data for the Compliance object.
-
-        Returns:
-            Compliance: The Compliance object created from the dictionary.
-        """
-        required_keys = {"_TYPE", "SECTION", "DESCRIPTION"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-        return cls(**data)

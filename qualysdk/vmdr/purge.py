@@ -2,10 +2,8 @@
 purge.py - Contains the user-facing functions to purge data from the VMDR module.
 """
 
-from typing import Union, Literal
-from datetime import datetime
+from typing import Literal
 
-from ..base.base_list import BaseList
 from ..auth.basic import BasicAuth
 from ..base.call_api import call_api
 from ..base.xml_parser import xml_parser

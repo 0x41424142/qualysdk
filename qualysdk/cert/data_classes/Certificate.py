@@ -6,12 +6,13 @@ from dataclasses import dataclass, asdict
 from typing import Union, Literal
 from datetime import datetime
 
+from ...base.base_class import BaseClass
 from .Asset import Asset
 from ...base.base_list import BaseList
 
 
 @dataclass
-class Certificate:
+class Certificate(BaseClass):
     """
     Represents a certificate in CERT.
     """
@@ -134,28 +135,3 @@ class Certificate:
 
         if self.assets:
             setattr(self, "assets", BaseList([Asset(**x) for x in self.assets]))
-
-    def to_dict(self) -> dict:
-        """
-        Returns the certificate as a dictionary.
-        """
-        return asdict(self)
-
-    def __dict__(self) -> dict:
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        Creates a Certificate object from a dictionary.
-        """
-        return cls(**data)

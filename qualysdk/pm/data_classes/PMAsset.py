@@ -2,16 +2,17 @@
 Represents a Qualys Asset in Patch Management.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
 
 from .Tag import Tag
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class PMInterface:
+class PMInterface(BaseClass):
     """
     Network Interface Data
     """
@@ -20,21 +21,6 @@ class PMInterface:
     macAddress: str = None
     address: str = None
     gatewayAddress: str = None
-
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return asdict(self)
-
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
 
     def __str__(self):
         return self.address
@@ -45,7 +31,7 @@ class PMInterface:
 
 
 @dataclass
-class PMAssetJobView:
+class PMAssetJobView(BaseClass):
     """
     Represents a Qualys Asset in Patch Management
     with additional job information attached.
@@ -147,24 +133,5 @@ class PMAssetJobView:
                 bl.append(Tag.from_dict(tag))
             setattr(self, "tags", bl)
 
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return asdict(self)
-
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
-
     def __str__(self):
         return self.name
-
-    @classmethod
-    def from_dict(cls, **kwargs):
-        return cls(**kwargs)

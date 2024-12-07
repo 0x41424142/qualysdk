@@ -2,12 +2,14 @@
 threat_intel.py - contains the ThreatIntel dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class ThreatIntel:
+class ThreatIntel(BaseClass):
     """
     ThreatIntel - represents a single threat intel entry in a ThreatIntelList.
     """
@@ -41,33 +43,3 @@ class ThreatIntel:
 
     def is_text(self, text: str):
         return self.TEXT == text
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a ThreatIntel object from a dictionary.
-
-        Params:
-            data (dict): The dictionary containing the data for the ThreatIntel object.
-
-        Returns:
-            ThreatIntel: The ThreatIntel object created from the dictionary.
-        """
-        required_keys = {"ID"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-        return cls(**data)

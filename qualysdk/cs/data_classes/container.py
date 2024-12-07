@@ -3,16 +3,17 @@ Contains the Container dataclass.
 """
 
 from dataclasses import dataclass, asdict
-from typing import Union, Literal
+from typing import Union
 from datetime import datetime
 from ipaddress import ip_address
 
+from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
 from ...exceptions.Exceptions import *
 
 
 @dataclass
-class Container:
+class Container(BaseClass):
     """
     Represents a Docker container.
     """
@@ -224,52 +225,3 @@ class Container:
             bool: True if the container is running as root, False otherwise.
         """
         return self.isRoot
-
-    def __dict__(self) -> dict:
-        """
-        Return the object as a dictionary.
-
-        Returns:
-            dict: The object as a dictionary.
-        """
-        return asdict(self)
-
-    def to_dict(self) -> dict:
-        """
-        Return the object as a dictionary.
-
-        Returns:
-            dict: The object as a dictionary.
-        """
-        return asdict(self)
-
-    def keys(self) -> list[str]:
-        """
-        Return the keys of the object.
-
-        Returns:
-            list[str]: The keys of the object.
-        """
-        return self.to_dict().keys()
-
-    def values(self) -> list:
-        """
-        Return the values of the object.
-
-        Returns:
-            list: The values of the object.
-        """
-        return self.to_dict().values()
-
-    def items(self) -> list[tuple]:
-        """
-        Return the items of the object.
-
-        Returns:
-            list[tuple]: The items of the object.
-        """
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)

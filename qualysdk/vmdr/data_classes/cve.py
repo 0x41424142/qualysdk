@@ -2,13 +2,15 @@
 cve.py - contains the CVEID dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
 from re import match
 
+from ...base.base_class import BaseClass
+
 
 @dataclass
-class CVEID:
+class CVEID(BaseClass):
     """
     CVEID - represents a single CVE ID in a CVEList.
     """
@@ -29,9 +31,6 @@ class CVEID:
     def __str__(self) -> str:
         return self.ID
 
-    def __dict__(self):
-        return asdict(self)
-
     def __contains__(self, item):
         # see if it was found in the name or vendor:
         return item in self.ID
@@ -41,18 +40,6 @@ class CVEID:
 
     def is_id(self, id: str):
         return self.ID == id
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
 
     @classmethod
     def from_str(cls, cve_id: str):
@@ -70,19 +57,3 @@ class CVEID:
             raise ValueError(f"Invalid CVE ID format: {cve_id}")
 
         return cls(ID=cve_id)
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a CVEID object from a dictionary.
-
-        This function is used to create a CVEID object from a dictionary.
-        """
-        # make sure that the dictionary has the required keys and nothing else:
-        required_keys = {"ID"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        return cls(**data)

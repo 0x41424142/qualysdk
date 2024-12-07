@@ -3,14 +3,15 @@ Evaluation data class - contains data on a cloud provider account's standing wit
 """
 
 from typing import Literal, Union
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime
 
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class Evaluation:
+class Evaluation(BaseClass):
     """
     Evaluation statistics for a control on a single resource ID,
     on a single cloud provider account.
@@ -32,25 +33,9 @@ class Evaluation:
                 except:
                     setattr(self, field, None)
 
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @staticmethod
-    def from_dict(data):
-        return Evaluation(**data)
-
 
 @dataclass
-class AccountLevelEvaluation:
+class AccountLevelEvaluation(BaseClass):
     """
     Represents the evaluation of a control on a cloud provider account,
     across all resources under that account/control.
@@ -85,25 +70,3 @@ class AccountLevelEvaluation:
             for evidence in self.evidences:
                 bl.append(evidence)
             setattr(self, "evidences", bl)
-
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create an AccountLevelEvaluation object from a dictionary
-        """
-        return cls(**data)

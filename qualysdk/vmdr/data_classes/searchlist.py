@@ -6,13 +6,14 @@ from dataclasses import dataclass, field, asdict
 from typing import *
 from datetime import datetime
 
-from ...base.base_list import BaseList
 from ..data_classes.report_template import ReportTemplate
 from .kb_entry import KBEntry
+from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class StaticSearchList:
+class StaticSearchList(BaseClass):
     """
     StaticSearchList - represents a single Static Search List in VMDR.
     """
@@ -151,28 +152,9 @@ class StaticSearchList:
     def __str__(self):
         return self.TITLE
 
-    def __dict__(self):
-        return asdict(self)
-
     def __iter__(self):
         for key in self.to_dict():
             yield key, getattr(self, key)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)
 
     def contains_qid(self, qid: int) -> bool:
         """
@@ -187,7 +169,7 @@ class StaticSearchList:
 
 
 @dataclass
-class DynamicSearchList:
+class DynamicSearchList(BaseClass):
     """
     Dynamic Search List in VMDR.
     """
@@ -346,27 +328,8 @@ class DynamicSearchList:
     def __str__(self):
         return self.TITLE
 
-    def __dict__(self):
-        return asdict(self)
-
-    def to_dict(self):
-        return asdict(self)
-
     def __int__(self):
         return self.ID
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)
 
     def contains_qid(self, qid: int) -> bool:
         """

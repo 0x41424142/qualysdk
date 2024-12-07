@@ -4,24 +4,26 @@ kb_entry.py - contains the KBEntry class for the qualysdk package.
 This class is used to represent a single entry in the Qualys KnowledgeBase (KB).
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
 from datetime import datetime
 from warnings import catch_warnings, simplefilter
 
 from bs4 import BeautifulSoup
 
-from ...base.base_list import BaseList
+
 from .bugtraq import Bugtraq
 from .software import Software
 from .vendor_reference import VendorReference
 from .cve import CVEID
 from .threat_intel import ThreatIntel
 from .compliance import Compliance
+from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass(order=True)
-class KBEntry:
+class KBEntry(BaseClass):
     """
     KBEntry - represents a single entry in the Qualys KnowledgeBase (KB).
 
@@ -309,45 +311,3 @@ class KBEntry:
 
     def is_qid(self, qid: int):
         return self.QID == qid
-
-    def items(self):
-        return self.to_dict().items()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        # return the values
-        return self.to_dict().values()
-
-    def __dict__(self):
-        return asdict(self)
-
-    def to_dict(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a KBEntry object from a dictionary.
-
-        This function is used to create a KBEntry object from a dictionary.
-        """
-        # make sure that the dictionary has the required keys and nothing else:
-        required_keys = {"QID", "VULN_TYPE", "SEVERITY_LEVEL", "TITLE", "CATEGORY"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        # convert the datetime strings to datetime objects:
-        for key in [
-            "PUBLISHED_DATETIME",
-            "CODE_MODIFIED_DATETIME",
-            "LAST_SERVICE_MODIFICATION_DATETIME",
-        ]:
-            if key in data:
-                data[key] = datetime.fromisoformat(data[key])
-
-        # and finally, create the KBEntry object:
-        return cls(**data)

@@ -5,41 +5,12 @@ Asset data class
 from dataclasses import dataclass, asdict
 from typing import Union
 
+from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
 
-"""
-TODO: Move BaseCls into the package's base module
-so it can be used universally. Things you realize 
-months into a project...
-"""
-
 
 @dataclass
-class BaseCls:
-    pass
-
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, d: dict):
-        return cls(**d)
-
-
-@dataclass
-class hostInstance(BaseCls):
+class hostInstance(BaseClass):
     id: int = None
     port: int = None
     fqdn: str = None
@@ -55,7 +26,7 @@ class hostInstance(BaseCls):
 
 
 @dataclass
-class assetInterface(BaseCls):
+class assetInterface(BaseClass):
     hostname: str = None
     address: str = None
 
@@ -64,7 +35,7 @@ class assetInterface(BaseCls):
 
 
 @dataclass
-class Tag(BaseCls):
+class Tag(BaseClass):
     name: str = None
     uuid: str = None
 
@@ -73,7 +44,7 @@ class Tag(BaseCls):
 
 
 @dataclass
-class Asset(BaseCls):
+class Asset(BaseClass):
     """
     Represents an asset in CERT,
     underneath a certificate

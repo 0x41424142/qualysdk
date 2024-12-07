@@ -3,15 +3,16 @@ Contains the dataclasses for a Qualys AWS Connector
 and subclasses for AWS/Azure connectors.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Optional, Union
 from datetime import datetime
 
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class Connector:
+class Connector(BaseClass):
     """
     Connector - represents a Qualys Connector resource record.
 
@@ -81,39 +82,14 @@ class Connector:
                 bl.append(group["name"])
             setattr(self, "groups", bl)
 
-    def to_dict(self):
-        """
-        to_dict - returns the Connector object as a dictionary
-        """
-        return asdict(self)
-
     def __int__(self):
         return self.connectorId
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
 
     def __getitem__(self, key):
         return self.to_dict()[key]
 
     def __setitem__(self, key, value):
         setattr(self, key, value)
-
-    @classmethod
-    def from_dict(cls, data):
-        """
-        from_dict - creates a Connector object from a dictionary
-        """
-        return cls(**data)
 
 
 @dataclass

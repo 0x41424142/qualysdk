@@ -2,12 +2,13 @@
 hosts.py - contains the dataclass for a Qualys GAV host record.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional, Union
 
 from frozendict import frozendict
 
+from ..base.base_class import BaseClass
 from ..base.base_list import BaseList
 
 SOFTWARE_SCHEMA = frozendict(
@@ -49,7 +50,7 @@ def handle_dict_or_list(data: Union[dict, list[dict]]) -> list[dict]:
 
 
 @dataclass
-class Host:
+class Host(BaseClass):
     """
     Host - represents a Qualys GAV host record.
 
@@ -67,7 +68,7 @@ class Host:
     assetType: Optional[str] = None
     address: Optional[str] = None
     dnsName: Optional[str] = None
-    assetName: Optional[str] = None
+    assetName: Optional[str] = ""
     netbiosName: Optional[str] = None
     timeZone: Optional[str] = None
     biosDescription: Optional[str] = None
@@ -741,38 +742,11 @@ class Host:
         """
         return self.agentId is not None
 
-    def to_dict(self) -> dict:
-        """
-        Returns a dictionary representation of the host object.
-        """
-        return asdict(self)
-
-    def keys(self) -> list:
-        """
-        Returns a list of keys for the host object.
-        """
-        return [key for key in self.to_dict().keys()]
-
-    def values(self) -> list:
-        """
-        Returns a list of values for the host object.
-        """
-        return [value for value in self.to_dict().values()]
-
-    def items(self) -> list:
-        """
-        Returns a list of tuples for the host object.
-        """
-        return [(key, value) for key, value in self.to_dict().items()]
-
     def valid_values(self) -> list:
         """
         Return a list of keys that have values.
         """
         return [key for key, value in self.to_dict().items() if value]
-
-    def __dict__(self) -> dict:
-        return asdict(self)
 
     def __iter__(self):
         """

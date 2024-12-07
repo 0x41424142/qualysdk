@@ -3,13 +3,15 @@ PMRun class shows high-level information about a
 Patch Management run of a job
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
 
+from ...base.base_class import BaseClass
+
 
 @dataclass
-class PMRun:
+class PMRun(BaseClass):
     """
     Represents a run of a Patch Management job.
     """
@@ -27,24 +29,5 @@ class PMRun:
                 datetime.fromisoformat(self.scheduledDateTime),
             )
 
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return asdict(self)
-
     def __int__(self):
-        return asdict(self)
-
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
-
-    @classmethod
-    def from_dict(cls, **kwargs):
-        return cls(**kwargs)
+        return self.jobInstanceId

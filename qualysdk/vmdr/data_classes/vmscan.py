@@ -4,10 +4,11 @@ vmscans.py - Contains the VMScan data class.
 
 from typing import Union, Literal
 from datetime import datetime, timedelta
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 
-from ...base.base_list import BaseList
 from .ip_converters import *
+from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 def parse_duration(duration: str) -> timedelta:
@@ -35,7 +36,7 @@ def parse_duration(duration: str) -> timedelta:
 
 
 @dataclass(order=True)
-class VMScan:
+class VMScan(BaseClass):
     """
     Data class to hold VM Scan data.
     """
@@ -126,33 +127,11 @@ class VMScan:
                 final_list.append(ag["ASSET_GROUP_TITLE"])
             self.ASSET_GROUP_TITLE_LIST = final_list
 
-    def to_dict(self) -> dict:
-        """
-        Convert the VMScan object to a dictionary.
-        """
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        Create a VMScan object from a dictionary.
-        """
-        return cls(**data)
-
     def __str__(self):
         return f"VMScan: {self.TITLE} - {self.REF}"
 
     def __int__(self):
         return int(self.REF.split("/")[-1])
-
-    def keys(self):
-        return self.__dict__().keys()
-
-    def values(self):
-        return self.__dict__().values()
-
-    def items(self):
-        return self.__dict__().items()
 
     def valid_values(self):
         return {k: v for k, v in self.__dict__().items() if v}

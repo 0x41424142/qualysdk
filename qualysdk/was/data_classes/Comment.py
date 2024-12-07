@@ -2,13 +2,15 @@
 Contains the Comment class for WAS
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
 
+from ...base.base_class import BaseClass
+
 
 @dataclass
-class Comment:
+class Comment(BaseClass):
     """
     Represents a comment on a WAS object
     """
@@ -45,25 +47,3 @@ class Comment:
 
     def __str__(self) -> str:
         return self.contents
-
-    def to_dict(self):
-        """
-        Converts the object to a dictionary
-        """
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(**data)

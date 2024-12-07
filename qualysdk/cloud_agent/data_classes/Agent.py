@@ -2,17 +2,18 @@
 Contains the Agent data class for the Cloud Agent module.
 """
 
-from typing import List, Union, Literal
+from typing import Literal
 from datetime import datetime
 from dataclasses import dataclass, asdict, field
 from ipaddress import ip_address
 
+from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
 from ..data_classes.CloudAgentTag import CloudAgentTag
 
 
 @dataclass
-class CloudAgent:
+class CloudAgent(BaseClass):
     """
     Represents one cloud agent in a Qualys subscription.
     """
@@ -283,21 +284,6 @@ class CloudAgent:
                     s += ", "
 
             setattr(self, "dockerInfo", s)
-
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
 
     def __int__(self):
         return self.id

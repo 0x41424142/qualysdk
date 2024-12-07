@@ -2,12 +2,14 @@
 vendor_reference.py - contains the VendorReference dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class VendorReference:
+class VendorReference(BaseClass):
     """
     VendorReference - represents a single vendor bulletin reference in a ReferenceList.
 
@@ -44,31 +46,3 @@ class VendorReference:
 
     def is_url(self, url: str):
         return self.URL == url
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a Software object from a dictionary.
-
-        This function is used to create a Software object from a dictionary.
-        """
-        # make sure that the dictionary has the required keys and nothing else:
-        required_keys = {"ID"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        return cls(**data)

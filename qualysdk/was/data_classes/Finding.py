@@ -2,17 +2,18 @@
 Contains the WASFinding class, representing a vulnerability on a web application.
 """
 
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, field
 from typing import Dict, Literal
 from datetime import datetime
 from urllib.parse import unquote_plus
 from base64 import b64decode
 
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class PayloadRequest:
+class PayloadRequest(BaseClass):
     """
     Represents a payload request from within a
     WASPayload object.
@@ -36,37 +37,12 @@ class PayloadRequest:
             except UnicodeDecodeError:
                 self.body = self.body
 
-    def to_dict(self) -> Dict:
-        """
-        Returns the PayloadRequest as a dictionary.
-        """
-        return asdict(self)
-
     def __str__(self) -> str:
         return f"{self.method}={self.link}"
 
-    def __dict__(self) -> Dict:
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: Dict):
-        """
-        Returns a PayloadRequest object from a dictionary.
-        """
-        return cls(**data)
-
 
 @dataclass
-class PayloadResponce:
+class PayloadResponce(BaseClass):
     offset: int = 0
     length: int = 0
 
@@ -76,34 +52,9 @@ class PayloadResponce:
         if not isinstance(self.length, int):
             self.length = int(self.length)
 
-    def to_dict(self) -> Dict:
-        """
-        Returns the PayloadResponce as a dictionary.
-        """
-        return asdict(self)
-
-    def __dict__(self) -> Dict:
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: Dict):
-        """
-        Returns a PayloadResponce object from a dictionary.
-        """
-        return cls(**data)
-
 
 @dataclass
-class WASPayload:
+class WASPayload(BaseClass):
     """
     Represents a payload from within a
     FindingItem object.
@@ -124,37 +75,12 @@ class WASPayload:
         if self.payloadResponce:
             self.payloadResponce = PayloadResponce.from_dict(self.payloadResponce)
 
-    def to_dict(self) -> Dict:
-        """
-        Returns the WASPayload as a dictionary.
-        """
-        return asdict(self)
-
     def __str__(self) -> str:
         return f"{self.payload}"
 
-    def __dict__(self) -> Dict:
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: Dict):
-        """
-        Returns a WASPayload object from a dictionary.
-        """
-        return cls(**data)
-
 
 @dataclass
-class FindingItem:
+class FindingItem(BaseClass):
     """
     Represents a finding from within a
     WASFinding object.
@@ -211,34 +137,9 @@ class FindingItem:
                         self.payloads_list.append(WASPayload.from_dict(itm))
             setattr(self, "payloads", None)
 
-    def to_dict(self) -> Dict:
-        """
-        Returns the FindingItem as a dictionary.
-        """
-        return asdict(self)
-
-    def __dict__(self) -> Dict:
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: Dict):
-        """
-        Returns a FindingItem object from a dictionary.
-        """
-        return cls(**data)
-
 
 @dataclass
-class ScanData:
+class ScanData(BaseClass):
     """
     Represents a scan data object from within
     a WASFinding object.
@@ -258,40 +159,15 @@ class ScanData:
                 datetime.strptime(self.launchedDate, "%Y-%m-%dT%H:%M:%SZ"),
             )
 
-    def to_dict(self) -> Dict:
-        """
-        Returns the ScanData as a dictionary.
-        """
-        return asdict(self)
-
     def __int__(self) -> int:
         return self.id
 
     def __str__(self) -> str:
         return self.reference
 
-    def __dict__(self) -> Dict:
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: Dict):
-        """
-        Returns a ScanData object from a dictionary.
-        """
-        return cls(**data)
-
 
 @dataclass
-class WASCItem:
+class WASCItem(BaseClass):
     """
     Represents a WASC item from within a
     WASFinding object.
@@ -304,34 +180,12 @@ class WASCItem:
     def __dict__(self) -> Dict:
         return self.to_dict()
 
-    def to_dict(self) -> Dict:
-        """
-        Returns the WASCItem as a dictionary.
-        """
-        return asdict(self)
-
     def __str__(self) -> str:
         return self.name
 
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: Dict):
-        """
-        Returns a WASCItem object from a dictionary.
-        """
-        return cls(**data)
-
 
 @dataclass
-class WASFinding:
+class WASFinding(BaseClass):
     """
     Represents a vulnerability on
     a web application in WAS.
@@ -603,26 +457,8 @@ class WASFinding:
                 self.sslData_list = bl
             setattr(self, "sslData", None)
 
-    def to_dict(self) -> Dict:
-        """
-        Returns the WASFinding as a dictionary.
-        """
-        return asdict(self)
-
-    def __dict__(self) -> Dict:
-        return self.to_dict()
-
     def __int__(self) -> int:
         return self.id
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
 
     def __getitem__(self, key):
         return self.to_dict().get(key)
@@ -634,10 +470,3 @@ class WASFinding:
         if not isinstance(other, WASFinding):
             return False
         return self.id == other.id
-
-    @classmethod
-    def from_dict(cls, data: Dict):
-        """
-        Returns a WASFinding object from a dictionary.
-        """
-        return cls(**data)

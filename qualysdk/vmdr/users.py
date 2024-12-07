@@ -2,7 +2,7 @@
 users.py - contains functions to interact with VMDR user management APIs.
 """
 
-from typing import List, Union, Literal
+from typing import Union, Literal
 
 from ..auth import BasicAuth
 from ..base import xml_parser, call_api

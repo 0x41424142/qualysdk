@@ -2,7 +2,7 @@
 detection.py - contains the Detection dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
 from datetime import datetime
 from warnings import catch_warnings, simplefilter
@@ -12,10 +12,11 @@ from bs4 import BeautifulSoup
 from .qds_factor import QDSFactor
 from .qds import QDS as qds
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass(order=True)
-class Detection:
+class Detection(BaseClass):
     """
     Detection - represents a single QID detection on a host.
     """
@@ -227,40 +228,3 @@ class Detection:
     def valid_values(self):
         # return a list of attribute names that have non-None values
         return {k: v for k, v in self.items() if v is not None and v != "" and v != []}
-
-    def to_dict(self):
-        """
-        to_dict - convert the Detection object to a dictionary.
-
-        This function is used to convert the Detection object to a dictionary.
-        """
-        return asdict(self)
-
-    def __dict__(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: Union[dict, list]):
-        """
-        from_dict - create a Software object from a dictionary.
-
-        This function is used to create a Software object from a dictionary.
-        """
-        # make sure that the dictionary has the required keys and nothing else:
-        required_keys = {"QID", "SEVERITY", "STATUS", "TYPE"}
-
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        return cls(**data)

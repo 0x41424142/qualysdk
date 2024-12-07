@@ -2,8 +2,8 @@
 contains the Control dataclass for the TotalCloud API
 """
 
-from dataclasses import dataclass, asdict
-from typing import Union, Literal
+from dataclasses import dataclass
+from typing import Union
 from datetime import datetime
 
 from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
@@ -14,10 +14,11 @@ import warnings
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class Control:
+class Control(BaseClass):
     """
     Represents a single control that Qualys checks a cloud provider for.
     """
@@ -96,37 +97,12 @@ class Control:
                     BeautifulSoup(getattr(self, field), "html.parser").get_text(),
                 )
 
-    def to_dict(self):
-        """
-        to_dict - return the Control as a dictionary
-        """
-        return asdict(self)
-
     def __int__(self):
         return self.cid
 
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a Control object from a dictionary
-        """
-        return cls(**data)
-
 
 @dataclass
-class AccountLevelControl:
+class AccountLevelControl(BaseClass):
     """
     Represents control on the
     cloud provider account level.
@@ -158,25 +134,3 @@ class AccountLevelControl:
 
     def __int__(self):
         return self.controlId
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create an AccountLevelControl object from a dictionary
-        """
-        return cls(**data)

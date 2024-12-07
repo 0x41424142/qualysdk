@@ -2,19 +2,16 @@
 Contains the WebAppAuthRecord class for the WAS module.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime
-from operator import ge
 from typing import Union, Literal
 
-from requests import get
-
-from qualysdk.was.data_classes.Tag import WASTag
-
-from ...base.base_list import BaseList
+from .Tag import WASTag
 from .Comment import Comment
 from .WebAppAuthFormRecord import WebAppAuthFormRecord
 from .WebAppAuthServerRecord import WebAppAuthServerRecord
+from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 def build_oauth2_record(dataclass) -> None:
@@ -192,7 +189,7 @@ def handle_date_by_attrs(dataclass, subkey: Literal["createdBy", "updatedBy"]) -
 
 
 @dataclass
-class WebAppAuthRecord:
+class WebAppAuthRecord(BaseClass):
     """
     Represents an authentication record
     in Qualys WAS
@@ -288,24 +285,5 @@ class WebAppAuthRecord:
         if self.oauth2Record:
             build_oauth2_record(self)
 
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
     def __str__(self):
         return str(self.name)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)

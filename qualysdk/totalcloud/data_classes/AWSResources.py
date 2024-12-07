@@ -2,18 +2,19 @@
 Contains resource dataclasses for AWS, such as buckets, EC2s, etc.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
 from json import loads
 from urllib.parse import unquote
 
-from ...base.base_list import BaseList
 from .QID import QID
+from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class BaseResource:
+class BaseResource(BaseClass):
     """
     Base dataclass for all AWS resources in TotalCloud
     """
@@ -82,43 +83,6 @@ class BaseResource:
             if not isinstance(data, bool):
                 setattr(self, "remediationEnabled", data.lower() == "true")
 
-    def to_dict(self):
-        """
-        to_dict - return the BaseResource as a dictionary
-        """
-        return asdict(self)
-
-    def keys(self):
-        """
-        keys - return the keys of the BaseResource
-        """
-        return self.to_dict().keys()
-
-    def values(self):
-        """
-        values - return the values of the BaseResource
-        """
-        return self.to_dict().values()
-
-    def items(self):
-        """
-        items - return the items of the BaseResource
-        """
-        return self.to_dict().items()
-
-    def __dict__(self):
-        """
-        __dict__ - return the BaseResource as a dictionary
-        """
-        return self.to_dict()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create a BaseResource object from a dictionary
-        """
-        return BaseResource(**data)
-
 
 @dataclass
 class AWSBucket(BaseResource):
@@ -160,13 +124,6 @@ class AWSBucket(BaseResource):
                 setattr(self, field, data.lower() == "true")
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSBucket object from a dictionary
-        """
-        return AWSBucket(**data)
 
 
 @dataclass
@@ -225,13 +182,6 @@ class AWSNetworkACL(BaseResource):
                 setattr(self, field, data.lower() == "true")
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSNetworkACL object from a dictionary
-        """
-        return AWSNetworkACL(**data)
 
 
 @dataclass
@@ -345,13 +295,6 @@ class AWSRDS(BaseResource):
                 setattr(self, field, data.lower() == "true")
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSRDS object from a dictionary
-        """
-        return AWSRDS(**data)
 
 
 @dataclass
@@ -506,13 +449,6 @@ class AWSIAMUser(BaseResource):
 
         super().__post_init__()
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSIAMUser object from a dictionary
-        """
-        return AWSIAMUser(**data)
-
 
 @dataclass
 class AWSVPC(BaseResource):
@@ -546,13 +482,6 @@ class AWSVPC(BaseResource):
                 setattr(self, field, data.lower() == "true")
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSVPC object from a dictionary
-        """
-        return AWSVPC(**data)
 
 
 @dataclass
@@ -604,13 +533,6 @@ class AWSSecurityGroup(BaseResource):
                 setattr(self, field, data.lower() == "true")
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSSecurityGroup object from a dictionary
-        """
-        return AWSSecurityGroup(**data)
 
 
 @dataclass
@@ -761,13 +683,6 @@ class AWSLambdaFunction(BaseResource):
 
         super().__post_init__()
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSLambdaFunction object from a dictionary
-        """
-        return AWSLambdaFunction(**data)
-
 
 @dataclass
 class AWSSubnet(BaseResource):
@@ -806,13 +721,6 @@ class AWSSubnet(BaseResource):
 
         super().__post_init__()
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSSubnet object from a dictionary
-        """
-        return AWSSubnet(**data)
-
 
 @dataclass
 class AWSInternetGateway(BaseResource):
@@ -836,13 +744,6 @@ class AWSInternetGateway(BaseResource):
             setattr(self, "attachments", bl)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSInternetGateway object from a dictionary
-        """
-        return AWSInternetGateway(**data)
 
 
 @dataclass
@@ -899,13 +800,6 @@ class AWSLoadBalancer(BaseResource):
                 setattr(self, "createdTime", datetime.fromisoformat(self.createdTime))
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSLoadBalancer object from a dictionary
-        """
-        return AWSLoadBalancer(**data)
 
 
 @dataclass
@@ -1036,13 +930,6 @@ class AWSEC2Instance(BaseResource):
 
         super().__post_init__()
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSEC2Instance object from a dictionary
-        """
-        return AWSEC2Instance(**data)
-
 
 @dataclass
 class AWSRouteTable(BaseResource):
@@ -1072,13 +959,6 @@ class AWSRouteTable(BaseResource):
                 setattr(self, field, bl)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSRouteTable object from a dictionary
-        """
-        return AWSRouteTable(**data)
 
 
 @dataclass
@@ -1117,13 +997,6 @@ class AWSEBSVolume(BaseResource):
 
         super().__post_init__()
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSEBSVolume object from a dictionary
-        """
-        return AWSEBSVolume(**data)
-
 
 @dataclass
 class AWSAutoScalingGroup(BaseResource):
@@ -1161,13 +1034,6 @@ class AWSAutoScalingGroup(BaseResource):
                 setattr(self, "createdTime", datetime.fromisoformat(self.createdTime))
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSAutoScalingGroup object from a dictionary
-        """
-        return AWSAutoScalingGroup(**data)
 
 
 @dataclass
@@ -1256,13 +1122,6 @@ class AWSEKSCluster(BaseResource):
             setattr(self, "logging", None)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSEKSCluster object from a dictionary
-        """
-        return AWSEKSCluster(**data)
 
 
 @dataclass
@@ -1374,13 +1233,6 @@ class AWSEKSNodeGroup(BaseResource):
 
         super().__post_init__()
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSEKSNodeGroup object from a dictionary
-        """
-        return AWSEKSNodeGroup(**data)
-
 
 @dataclass
 class AWSEKSFargateProfile(BaseResource):
@@ -1433,13 +1285,6 @@ class AWSEKSFargateProfile(BaseResource):
             setattr(self, "selectors", bl)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSEKSFargateProfile object from a dictionary
-        """
-        return AWSEKSFargateProfile(**data)
 
 
 @dataclass
@@ -1510,13 +1355,6 @@ class AWSVPCEndpoint(BaseResource):
 
         super().__post_init__()
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSVPCEndpoint object from a dictionary
-        """
-        return AWSVPCEndpoint(**data)
-
 
 @dataclass
 class AWSVPCEndpointService(BaseResource):
@@ -1551,13 +1389,6 @@ class AWSVPCEndpointService(BaseResource):
                 setattr(self, field, bl)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSVPCEndpointService object from a dictionary
-        """
-        return AWSVPCEndpointService(**data)
 
 
 @dataclass
@@ -1626,13 +1457,6 @@ class AWSIAMGroup(BaseResource):
             setattr(self, "AttachedManagedPolicies", bl)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSIAMGroup object from a dictionary
-        """
-        return AWSIAMGroup(**data)
 
 
 @dataclass
@@ -1742,13 +1566,6 @@ class AWSIAMPolicy(BaseResource):
             setattr(self, "classifications", bl)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSIAMPolicy object from a dictionary
-        """
-        return AWSIAMPolicy(**data)
 
 
 @dataclass
@@ -1903,13 +1720,6 @@ class AWSIAMRole(BaseResource):
 
         super().__post_init__()
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSIAMRole object from a dictionary
-        """
-        return AWSIAMRole(**data)
-
 
 @dataclass
 class AWSSagemakerNotebook(BaseResource):
@@ -1944,13 +1754,6 @@ class AWSSagemakerNotebook(BaseResource):
             setattr(self, "securityGroups", bl)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSSagemakerNotebook object from a dictionary
-        """
-        return AWSSagemakerNotebook(**data)
 
 
 @dataclass
@@ -2154,10 +1957,3 @@ class AWSCloudfrontDistribution(BaseResource):
             setattr(self, "origins", bl)
 
         super().__post_init__()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AWSCloudfrontDistribution object from a dictionary
-        """
-        return AWSCloudfrontDistribution(**data)

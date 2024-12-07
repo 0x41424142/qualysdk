@@ -2,7 +2,7 @@
 Work with Qualys WAS findings
 """
 
-from typing import Union, List, Dict, Literal
+from typing import Union
 
 from .data_classes.Finding import WASFinding
 from .base.parse_kwargs import validate_kwargs

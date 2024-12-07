@@ -4,7 +4,7 @@ Contains the WebApp class for WAS
 
 from datetime import datetime
 from typing import Union
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 
 from .Tag import WASTag
 from .AuthRecord import AuthRecord
@@ -14,10 +14,11 @@ from .Comment import Comment
 from .UrlEntry import UrlEntry
 from .PostmanCollection import PostmanCollection
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class WebApp:
+class WebApp(BaseClass):
     """
     Represents a single Web Application in WAS
     """
@@ -392,21 +393,6 @@ class WebApp:
             data = self.swaggerFile
             setattr(self, "swaggerFile", SwaggerFile.from_dict(data))
 
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
     def risk_rating(self) -> str:
         """
         Categorized risk rating based on riskScore.
@@ -435,7 +421,3 @@ class WebApp:
         # Not needed, but added for clarity:
         else:
             return "Unknown"
-
-    @staticmethod
-    def from_dict(data):
-        return WebApp(**data)

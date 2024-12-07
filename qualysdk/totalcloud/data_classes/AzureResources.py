@@ -2,12 +2,13 @@
 Contains resource dataclasses for Azure, such as SQL, VMs, etc.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
 
-from ...base.base_list import BaseList
 from .QID import QID
+from ...base.base_class import BaseClass
+from ...base.base_list import BaseList
 
 
 def process_file_or_blob(self, data, prefix):
@@ -18,7 +19,7 @@ def process_file_or_blob(self, data, prefix):
 
 
 @dataclass
-class BaseResource:
+class BaseResource(BaseClass):
     """
     Base dataclass for all AWS resources in TotalCloud
     """
@@ -88,43 +89,6 @@ class BaseResource:
             if not isinstance(data, bool):
                 setattr(self, "remediationEnabled", data.lower() == "true")
 
-    def to_dict(self):
-        """
-        to_dict - return the BaseResource as a dictionary
-        """
-        return asdict(self)
-
-    def keys(self):
-        """
-        keys - return the keys of the BaseResource
-        """
-        return self.to_dict().keys()
-
-    def values(self):
-        """
-        values - return the values of the BaseResource
-        """
-        return self.to_dict().values()
-
-    def items(self):
-        """
-        items - return the items of the BaseResource
-        """
-        return self.to_dict().items()
-
-    def __dict__(self):
-        """
-        __dict__ - return the BaseResource as a dictionary
-        """
-        return self.to_dict()
-
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create a BaseResource object from a dictionary
-        """
-        return BaseResource(**data)
-
 
 @dataclass
 class AzureVM(BaseResource):
@@ -177,13 +141,6 @@ class AzureVM(BaseResource):
                 )
             setattr(self, "imageData", bl)
 
-    @staticmethod
-    def from_dict(data):
-        """
-        from_dict - create an AzureVM object from a dictionary
-        """
-        return AzureVM(**data)
-
 
 @dataclass
 class AzureWebApp(BaseResource):
@@ -226,10 +183,6 @@ class AzureWebApp(BaseResource):
             for kind in data:
                 bl.append(kind)
             setattr(self, "subKinds", bl)
-
-    @staticmethod
-    def from_dict(data):
-        return AzureWebApp(**data)
 
 
 @dataclass
@@ -340,7 +293,3 @@ class AzureStorageAccount(BaseResource):
         for field in DT_FIELDS:
             if getattr(self, field) and not isinstance(getattr(self, field), datetime):
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
-
-    @staticmethod
-    def from_dict(data):
-        return AzureStorageAccount(**data)

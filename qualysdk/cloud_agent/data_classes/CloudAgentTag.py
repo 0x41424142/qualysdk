@@ -2,11 +2,13 @@
 Contains the CloudAgentTag data class for the Cloud Agent module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class CloudAgentTag:
+class CloudAgentTag(BaseClass):
     """
     Represents one tag in a Qualys subscription.
     """
@@ -17,21 +19,6 @@ class CloudAgentTag:
     def __post_init__(self):
         if not isinstance(self.id, int):
             self.id = int(self.id)
-
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
 
     def __str__(self):
         return self.name

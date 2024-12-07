@@ -2,12 +2,14 @@
 Contains the WebAppAuthFormRecord class for the WAS
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class WebAppAuthFormRecord:
+class WebAppAuthFormRecord(BaseClass):
     """
     Represents a single form authentication record
     in Qualys WAS
@@ -27,22 +29,6 @@ class WebAppAuthFormRecord:
 
     def __str__(self):
         return f"{self.name} : {self.value}"
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)
 
     def redact_password(self):
         """

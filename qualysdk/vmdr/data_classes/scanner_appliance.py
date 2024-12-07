@@ -8,9 +8,10 @@ from typing import Literal
 from datetime import datetime
 from ipaddress import IPv4Address
 
-from ...base.base_list import BaseList
 from .asset_group import AssetGroup
 from .tag import Tag
+from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 def build_dataclass_baselist(
@@ -61,7 +62,7 @@ def build_dataclass_baselist(
 
 
 @dataclass
-class SecurityGroup:
+class SecurityGroup(BaseClass):
     """
     Dataclass to store a scanner appliance's cloud security group information.
     """
@@ -76,13 +77,9 @@ class SecurityGroup:
         default=None,
     )
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)
-
 
 @dataclass
-class ScannerCloudInfo:
+class ScannerCloudInfo(BaseClass):
     """
     Dataclass to store a scanner appliance's cloud provider
     and instance information.
@@ -209,22 +206,6 @@ class ScannerCloudInfo:
 
         del self.EC2_INFO
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
-
     def __getitem__(self, key):
         return asdict(self)[key]
 
@@ -248,7 +229,7 @@ class ScannerCloudInfo:
 
 
 @dataclass
-class ProxySettings:
+class ProxySettings(BaseClass):
     """
     Proxy settings for a scanner appliance.
     """
@@ -266,13 +247,9 @@ class ProxySettings:
     def __str__(self) -> str:
         return self.SETTING
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)
-
 
 @dataclass
-class InterfaceSettings:
+class InterfaceSettings(BaseClass):
     """
     Dataclass to store a scanner appliance's interface settings.
     """
@@ -373,15 +350,6 @@ class InterfaceSettings:
     def valid_values(self):
         return {k: v for k, v in asdict(self).items() if v}
 
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
-
     def __getitem__(self, key):
         return asdict(self)[key]
 
@@ -389,16 +357,9 @@ class InterfaceSettings:
         asdict(self)[key] = value
         return asdict(self)
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)
-
-    def __dict__(self):
-        return asdict(self)
-
 
 @dataclass(order=True)
-class ScannerAppliance:
+class ScannerAppliance(BaseClass):
     """
     Scanner Appliances in VMDR.
     """
@@ -697,30 +658,11 @@ class ScannerAppliance:
     def __int__(self):
         return self.ID
 
-    def __dict__(self):
-        return asdict(self)
-
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
-
     def __getitem__(self, key):
         return asdict(self)[key]
 
     def __setitem__(self, key, value):
         asdict(self)[key] = value
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)
-
-    def to_dict(self):
         return asdict(self)
 
     def valid_values(self):

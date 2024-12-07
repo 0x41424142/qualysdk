@@ -2,19 +2,20 @@
 hosts.py - contains the VMDRHosts class for the qualysdk package.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
 from datetime import datetime
 
 from ipaddress import IPv4Address, IPv6Address
 
-from ...base.base_list import BaseList
 from .tag import Tag, CloudTag
 from .detection import Detection
+from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass(order=True)
-class VMDRHost:
+class VMDRHost(BaseClass):
     """
     Host - represents a Qualys VMDR host record.
     """
@@ -533,7 +534,7 @@ class VMDRHost:
         """
         return self.CLOUD_PROVIDER == "Azure"
 
-    def copy(self) -> "VMDRHost":
+    def copy(self) -> object:
         """
         Create a copy of the host object.
         """
@@ -545,46 +546,9 @@ class VMDRHost:
         """
         return {k: v for k, v in self.items() if v}
 
-    def to_dict(self) -> dict:
-        """
-        Convert the host object to a dictionary.
-        """
-        return asdict(self)
-
-    def __dict__(self) -> dict:
-        """
-        Convert the host object to a dictionary.
-        """
-        return asdict(self)
-
-    def keys(self) -> list:
-        """
-        Return the keys of the host object.
-        """
-        return self.to_dict().keys()
-
-    def values(self) -> list:
-        """
-        Return the values of the host object.
-        """
-        return self.to_dict().values()
-
-    def items(self) -> list:
-        """
-        Return the items of the host object.
-        """
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "VMDRHost":
-        """
-        Create a VMDRHost object from a dictionary.
-        """
-        return cls(**data)
-
 
 @dataclass
-class VMDRID:
+class VMDRID(BaseClass):
     """
     ID - represents a Qualys GAV ID record.
 
@@ -622,40 +586,9 @@ class VMDRID:
         else:
             return f"VMDRID({self.ID}, type='host')"
 
-    def __dict__(self) -> dict:
-        return asdict(self)
-
-    def to_dict(self) -> dict:
-        return asdict(self)
-
     def __iter__(self):
         """
         Iterate over the fields of the host object.
         """
         for key, value in self.to_dict().items():
             yield key, value
-
-    def values(self):
-        """
-        Return the values of the object.
-        """
-        return self.to_dict().values()
-
-    def keys(self):
-        """
-        Return the keys of the object.
-        """
-        return self.to_dict().keys()
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "VMDRID":
-        """
-        Create a VMDRID object from a dictionary.
-        """
-        required_keys = {"ID", "TYPE"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        return cls(**data)

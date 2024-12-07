@@ -2,16 +2,17 @@
 JobResultSummary data class
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
 
 from .PMAsset import PMAssetJobView
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class JobResultSummary:
+class JobResultSummary(BaseClass):
     """
     Represents a job result summary in Patch Management.
     """
@@ -42,27 +43,8 @@ class JobResultSummary:
                 bl.append(PMAssetJobView.from_dict(**asset_dict))
             setattr(self, "assets", bl)
 
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return asdict(self)
-
-    def keys(self):
-        return asdict(self).keys()
-
-    def values(self):
-        return asdict(self).values()
-
-    def items(self):
-        return asdict(self).items()
-
     def __getitem__(self, key):
         return getattr(self, key)
 
     def __setitem__(self, key, value):
         setattr(self, key, value)
-
-    @classmethod
-    def from_dict(cls, **kwargs):
-        return cls(**kwargs)

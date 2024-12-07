@@ -2,12 +2,14 @@
 software.py - contains the Software dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class Software:
+class Software(BaseClass):
     """
     Software - represents a single software entry in a SoftwareList.
 
@@ -39,32 +41,3 @@ class Software:
 
     def is_name(self, product: str):
         return self.PRODUCT.lower() == product.lower()
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: Union[dict, list]):
-        """
-        from_dict - create a Software object from a dictionary.
-
-        This function is used to create a Software object from a dictionary.
-        """
-        # make sure that the dictionary has the required keys and nothing else:
-        required_keys = {"PRODUCT", "VENDOR"}
-
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        return cls(**data)

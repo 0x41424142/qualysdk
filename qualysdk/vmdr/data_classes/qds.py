@@ -2,12 +2,14 @@
 qds.py - contains the QDS dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
+
+from ...base.base_class import BaseClass
 
 
 @dataclass(order=True)
-class QDS:
+class QDS(BaseClass):
     """
     QDS - represents a single QDS score.
 
@@ -50,33 +52,3 @@ class QDS:
 
     def get_score(self):
         return self.SCORE
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a QDS object from a dictionary.
-
-        Params:
-            data (dict): The dictionary containing the data for the QDS object.
-
-        Returns:
-            QDS: The QDS object created from the dictionary.
-        """
-        required_keys = {"SEVERITY", "SCORE"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-        return cls(**data)

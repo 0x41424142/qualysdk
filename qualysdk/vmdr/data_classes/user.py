@@ -4,13 +4,14 @@ user.py - Contains the User data class.
 
 from typing import Union
 from datetime import datetime
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class User:
+class User(BaseClass):
     """
     A user login in Qualys.
     """
@@ -206,27 +207,8 @@ class User:
         if self.SCAN == "none":
             self.SCAN = None
 
-    def __dict__(self):
-        return asdict(self)
-
     def __str__(self):
         return self.USER_LOGIN
 
-    def keys(self):
-        return self.__dict__().keys()
-
-    def values(self):
-        return self.__dict__().values()
-
-    def items(self):
-        return self.__dict__().items()
-
     def valid_values(self):
         return {k: v for k, v in self.__dict__().items() if v}
-
-    def to_dict(self):
-        return self.__dict__()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(**data)

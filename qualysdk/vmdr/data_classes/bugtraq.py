@@ -2,12 +2,14 @@
 bugtraq.py - contains the BugTraq dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class Bugtraq:
+class Bugtraq(BaseClass):
     """
     BugTraq - represents a single BugTraq entry in a BugTraqList.
     """
@@ -28,9 +30,6 @@ class Bugtraq:
     def __str__(self):
         return str(self.ID)
 
-    def __dict__(self):
-        return asdict(self)
-
     def __contains__(self, item):
         return item in self.ID or item in self.URL
 
@@ -42,30 +41,3 @@ class Bugtraq:
 
     def is_url(self, url: str):
         return self.URL == url
-
-    def to_dict(self):
-        return asdict(self)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create a BugTraq object from a dictionary.
-
-        This function is used to create a BugTraq object from a dictionary.
-        """
-        required_keys = {"ID"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        return cls(**data)

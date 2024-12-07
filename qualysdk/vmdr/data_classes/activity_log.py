@@ -8,9 +8,11 @@ from typing import Union, Optional
 from datetime import datetime
 from ipaddress import ip_address, IPv4Address, IPv6Address
 
+from ...base.base_class import BaseClass
+
 
 @dataclass(order=True)
-class ActivityLog:
+class ActivityLog(BaseClass):
     """
     Represents a single activity log entry.
     """
@@ -36,12 +38,6 @@ class ActivityLog:
                 else:
                     raise ValueError(f"Invalid IP address string: {self.User_IP}")
 
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
     def __str__(self):
         return f"{self.Date} - {self.Action} - {self.Module} - {self.Details} - {self.User_Name} - {self.User_Role} - {self.User_IP}"
 
@@ -50,15 +46,3 @@ class ActivityLog:
 
     def get_module(self):
         return self.Module
-
-    def from_dict(data: dict):
-        return ActivityLog(**data)
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()

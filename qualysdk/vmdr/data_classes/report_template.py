@@ -3,12 +3,14 @@ report_template.py - Contains the ReportTemplate data class.
 """
 
 from typing import Union
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from datetime import datetime
+
+from ...base.base_class import BaseClass
 
 
 @dataclass
-class ReportTemplate:
+class ReportTemplate(BaseClass):
     """
     A single report template in VMDR
     """
@@ -51,36 +53,11 @@ class ReportTemplate:
         self.ID = int(self.ID)
         self.GLOBAL = bool(self.GLOBAL)
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        Create a ReportTemplate object from a dictionary.
-        """
-        return cls(**data)
-
-    def __dict__(self):
-        return asdict(self)
-
-    def to_dict(self):
-        return asdict(self)
-
     def __int__(self):
         return self.ID
 
     def __str__(self):
         return f"{self.ID}: {self.TITLE}"
 
-    def keys(self):
-        return self.__dict__().keys()
-
-    def values(self):
-        return self.__dict__().values()
-
-    def items(self):
-        return self.__dict__().items()
-
     def valid_values(self):
         return {k: v for k, v in self.__dict__().items() if v}
-
-    def to_dict(self):
-        return asdict(self)

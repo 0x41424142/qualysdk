@@ -2,7 +2,7 @@
 asset_group.py - contains the AssetGroup dataclass for the Qualys VMDR module.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import *
 from datetime import datetime
 from ipaddress import (
@@ -15,10 +15,11 @@ from ipaddress import (
 from .ip_converters import *
 from .hosts import VMDRID
 from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass(order=True)
-class AssetGroup:
+class AssetGroup(BaseClass):
     """
     AssetGroup - represents a single asset group in Qualys.
     """
@@ -265,41 +266,6 @@ class AssetGroup:
             for key, value in self.to_dict().items()
             if value is not None and value != [] and value != ""
         }
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()
-
-    def to_dict(self):
-        """
-        to_dict - convert the AssetGroup object to a dictionary.
-
-        This function is used to convert the AssetGroup object to a dictionary.
-        """
-        return asdict(self)
-
-    def __dict__(self):
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        """
-        from_dict - create an AssetGroup object from a dictionary.
-
-        This function is used to create an AssetGroup object from a dictionary.
-        """
-        required_keys = {"ID", "TITLE"}
-        if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
-
-        return cls(**data)
 
     def to_sql(self) -> dict:
         """

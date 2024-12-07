@@ -3,14 +3,15 @@ qvs.py - Contains the KBQVS class for ```get_kb_qvs``` function in the VMDR modu
 """
 
 from typing import Union, Optional
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from datetime import datetime
 
-from ...base import BaseList
+from ...base.base_list import BaseList
+from ...base.base_class import BaseClass
 
 
 @dataclass(order=True)
-class KBQVS:
+class KBQVS(BaseClass):
     """
     Knowledgebase Qualys Vulnerability Severity (QVS) entry dataclass
     """
@@ -120,20 +121,11 @@ class KBQVS:
         setattr(self, "contributingFactors", None)
         setattr(self, "base", None)
 
-    def to_dict(self):
-        return asdict(self)
-
-    def __dict__(self):
-        return self.to_dict()
-
     def __str__(self):
         return str(self.id)
 
     def __int__(self):
         return self.qvs
-
-    def from_dict(data: dict):
-        return KBQVS(**data)
 
     def epss_category(self):
         """
@@ -152,12 +144,3 @@ class KBQVS:
             return "Critical"
         else:
             return "Unknown"
-
-    def keys(self):
-        return self.to_dict().keys()
-
-    def values(self):
-        return self.to_dict().values()
-
-    def items(self):
-        return self.to_dict().items()

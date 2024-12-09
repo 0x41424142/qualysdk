@@ -462,11 +462,12 @@ def upload_pm_patches(
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)
 
+
 def upload_pm_assets(
-        assets: BaseList,
-        cnxn: Connection,
-        table_name: str = "pm_assets",
-        override_import_dt: datetime = None,
+    assets: BaseList,
+    cnxn: Connection,
+    table_name: str = "pm_assets",
+    override_import_dt: datetime = None,
 ) -> int:
     """
     Upload results from ```pm.get_assets``` to a SQL database.
@@ -484,26 +485,50 @@ def upload_pm_assets(
     COLS = {
         "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "operatingSystem": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "version": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "platform": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "osIdentifier": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "operatingSystem": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "version": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "platform": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "osIdentifier": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "tags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "interfaces": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "scanStatus": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "interfaces": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "scanStatus": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "statusCode": types.Integer(),
         "installedPatchCount": types.Integer(),
         "missingPatchCount": types.Integer(),
         "nonSupersededMissingPatchCount": types.Integer(),
-        "activatedModules": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "lastLoggedOnUser": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "activatedModules": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "lastLoggedOnUser": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "scanDateTime": types.DateTime(),
         "statusDateTime": types.DateTime(),
-        "hardware_model": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "hardware_manufacturer": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "architecture": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "osNotSupportedForModules": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "hardware_model": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "hardware_manufacturer": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "architecture": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "osNotSupportedForModules": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Prepare the dataclass for insertion:
@@ -515,7 +540,13 @@ def upload_pm_assets(
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)
 
-def upload_pm_assetids_to_uuids(uuids: BaseList[tuple[str,str]], cnxn: Connection, table_name: str = 'pm_assetids_to_uuids', override_import_dt: datetime = None) -> int:
+
+def upload_pm_assetids_to_uuids(
+    uuids: BaseList[tuple[str, str]],
+    cnxn: Connection,
+    table_name: str = "pm_assetids_to_uuids",
+    override_import_dt: datetime = None,
+) -> int:
     """
     Upload results from ```pm.lookup_host_uuids``` to a SQL database.
 
@@ -530,15 +561,17 @@ def upload_pm_assetids_to_uuids(uuids: BaseList[tuple[str,str]], cnxn: Connectio
     """
 
     COLS = {
-        "assetId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "assetId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "uuid": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
-    # This data is structured a bit differently. 
+    # This data is structured a bit differently.
     # It is a tuple with 2 strings.
 
     # Prepare the dataclass for insertion:
-    df = DataFrame(uuids, columns=['asset_id', 'uuid'])
+    df = DataFrame(uuids, columns=["asset_id", "uuid"])
 
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)

@@ -13,6 +13,7 @@ from ...base.call_api import call_api
 from ...base.base_list import BaseList
 from ...exceptions.Exceptions import QualysAPIError
 
+
 def _threading_backend(
     auth: TokenAuth,
     platform: Literal["windows", "linux"] = "Windows",
@@ -62,7 +63,11 @@ def _threading_backend(
     match platform:
         case "Windows":
             if not kwargs.get("query"):
-                query = "patchStatus:[Missing,Installed] and isSuperseded:false" if data_type == "PATCH" else None
+                query = (
+                    "patchStatus:[Missing,Installed] and isSuperseded:false"
+                    if data_type == "PATCH"
+                    else None
+                )
             else:
                 query = kwargs.get("query")
         case _:

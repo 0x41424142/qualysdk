@@ -43,11 +43,17 @@ def get_patches(
 
     return get_assets_backend(auth, platform, "PATCH", page_count, **kwargs)
 
-def get_patch_count(auth: TokenAuth, platform: Literal["windows", "linux"] = "Windows", query: str = None, havingQuery: str = None) -> int:
+
+def get_patch_count(
+    auth: TokenAuth,
+    platform: Literal["windows", "linux"] = "Windows",
+    query: str = None,
+    havingQuery: str = None,
+) -> int:
     """
     Get the number of patches available for the specified platform.
 
-    
+
     Args:
         auth (TokenAuth): The authentication object.
         platform (Literal["windows", "linux"]): The platform to filter by. Default is "Windows".
@@ -62,8 +68,10 @@ def get_patch_count(auth: TokenAuth, platform: Literal["windows", "linux"] = "Wi
 
     if platform not in ["Windows", "Linux"]:
         raise ValueError("Invalid platform. Must be 'windows' or 'linux'.")
-    
-    params = {"platform": platform,}
+
+    params = {
+        "platform": platform,
+    }
 
     if query:
         params["query"] = query
@@ -79,7 +87,7 @@ def get_patch_count(auth: TokenAuth, platform: Literal["windows", "linux"] = "Wi
 
     if response.status_code not in range(200, 299):
         raise QualysAPIError(response.text)
-    
-    patches_value = response.json().get('patches', {})
 
-    return patches_value.get('count', 0) if patches_value else 0
+    patches_value = response.json().get("patches", {})
+
+    return patches_value.get("count", 0) if patches_value else 0

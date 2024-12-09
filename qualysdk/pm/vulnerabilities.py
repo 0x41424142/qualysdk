@@ -134,4 +134,4 @@ def lookup_cves(
         if response.status_code not in range(200, 299):
             raise QualysAPIError(response.text)
 
-        return BaseList([PMVulnerability.from_dict(**qid) for qid in response.json()])
+        return BaseList([PMVulnerability.from_dict(qid) for qid in response.json()])

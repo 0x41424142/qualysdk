@@ -27,7 +27,7 @@ You can use any of the endpoints currently supported:
 | ```get_assets``` | Returns a list of assets. |
 | ```get_patch_count``` | Returns the number of patches for a given platform that match ```query``` and ```havingQuery``` |
 | ```get_asset_count``` | Returns the number of assets for a given platform that match ```query``` and ```havingQuery``` |
-| ```lookup_host_uuids``` | Returns a list of host UUIDs for a given list of asset IDs. |
+| ```lookup_host_uuids``` | Returns a list of tuples, containing host UUIDs for a given list of asset IDs. |
 
 ## Get PM Version API
 

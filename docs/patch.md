@@ -24,7 +24,9 @@ You can use any of the endpoints currently supported:
 | ```change_job_status``` | Enable/disable a job or a list of jobs. |
 | ```lookup_cves``` | Returns a list of CVEs and other details associated with a QID. |
 | ```get_patches``` | Returns a list of patches. |
+| ```get_assets``` | Returns a list of assets. |
 | ```get_patch_count``` | Returns the number of patches for a given platform that match ```query``` and ```havingQuery``` |
+| ```get_asset_count``` | Returns the number of assets for a given platform that match ```query``` and ```havingQuery``` |
 
 ## Get PM Version API
 
@@ -484,6 +486,44 @@ windows_patches = get_patches(auth, platform='windows')
 ]
 ```
 
+## Get Assets API
+
+```get_assets``` returns a ```BaseList``` of ```Asset``` objects that match the given kwargs.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```page_count``` | ```Union[int, "all"] = "all"``` | The number of pages to return | ❌ |
+| ```pageSize``` | ```int=400``` | The number of assets to return per page | ❌ |
+| ```platform``` | ```Literal["all", "windows", "linux"] = "all"``` | The platform of the assets to return | ❌ |
+| ```query``` | ```str``` | A patch QQL query to filter with | ❌ |
+| ```havingQuery``` | ```str``` | A PM host QQL query to filter with | ❌ |
+| ```attributes``` | ```str``` | The attributes to return in the response as a comma-separated string | ❌ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import get_assets
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get all assets that are missing patches:
+assets = get_assets(auth, query="patchStatus:Missing")
+>>>[
+  Asset(
+    id='11111111-2222-3333-4444-555555555555', 
+    name='My Asset',
+    ...
+  ),
+  Asset(
+    id='22222222-3333-4444-5555-666666666666', 
+    name='My Other Asset',
+    ...
+  ),
+  ...
+]
+```
+
+
 ## Get Patch Count API
 
 ```get_patch_count``` returns the number of patches for a given platform that match the given query and havingQuery.
@@ -507,20 +547,22 @@ count = get_patch_count(auth, platform='windows', query="vendorSeverity:Critical
 >>>100
 ```
 
-
 ## ```qualysdk-pm``` CLI tool
 
-The ```qualysdk-pm``` CLI tool is a command-line interface for the PM portion of the SDK. It allows you to quickly pull down results from PM APIs and save them to an XLSX file.
+The ```qualysdk-pm``` CLI tool is a command-line interface for the PM portion of the SDK. It allows you to quickly pull down results from PM APIs and save them to an XLSX/TXT file.
+
+Use ```--help``` on each command to see the available options.
 
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count} ...
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}]
+                   {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets} ...
 
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
 positional arguments:
-  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count}
+  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets}
                         Action to perform
     list_jobs           Get a list of PM jobs.
     get_job_results     Get results for a PM job.
@@ -528,6 +570,7 @@ positional arguments:
     lookup_cves         Look up CVEs for a given QID(s).
     get_patches         Get patches for a given platform.
     get_patch_count     Get the number of patches available for a platform according to query and havingQuery.
+    get_assets          Get assets for a given platform.
 
 options:
   -h, --help            show this help message and exit
@@ -537,88 +580,4 @@ options:
                         Qualys password
   -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
                         Qualys platform
-```
-
-### List Jobs
-
-```bash
-usage: qualysdk-pm list_jobs [-h] [-o OUTPUT] [--kwarg key value]
-
-options:
-  -h, --help           show this help message and exit
-  -o, --output OUTPUT  Output xlsx file to write results to
-  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
-```
-
-### Get Job Results
-
-```bash
-usage: qualysdk-pm get_job_results [-h] [-o OUTPUT] -j JOB_ID [--kwarg key value]
-
-options:
-  -h, --help           show this help message and exit
-  -o, --output OUTPUT  Output xlsx file to write results to
-  -j, --job-id JOB_ID  Specify the job ID to get results for. Can be used multiple times
-  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
-```
-
-### Get Job Runs
-
-```bash
-usage: qualysdk-pm get_job_runs [-h] [-o OUTPUT] -j JOB_ID [--kwarg key value]
-
-options:
-  -h, --help           show this help message and exit
-  -o, --output OUTPUT  Output xlsx file to write results to
-  -j, --job-id JOB_ID  Specify the job ID to get runs for
-  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
-```
-
-### Lookup CVEs
-
-```bash
-usage: qualysdk-pm lookup_cves [-h] -q QIDS [-t THREADS] [-o OUTPUT]
-
-options:
-  -h, --help            show this help message and exit
-  -q QIDS, --qids QIDS  Specify the QID(s) to look up. Can be used multiple times
-  -t THREADS, --threads THREADS
-                        Specify the number of threads to use. Default is 5
-  -o OUTPUT, --output OUTPUT
-                        Output xlsx file to write results to
-```
-
-#### Example Usage
-
-```bash
-qualysdk-pm -u <username> -p <password> -P qg1 lookup_cves -q 6,11,10069 -o cves.xlsx
->>>Data written to cves.xlsx
-```
-
-### Get Patches
-
-```bash
-usage: qualysdk-pm get_patches [-h] [--os {all,windows,linux}] [-o OUTPUT] [--kwarg key value]
-
-options:
-  -h, --help            show this help message and exit
-  --os {all,windows,linux}
-                        Specify the platform to get patches for. Default is 'all'
-  -o, --output OUTPUT   Output xlsx file to write results to
-  --kwarg key value     Specify a keyword argument to pass to the action. Can be used multiple times
-```
-
-### Get Patch Count
-
-```bash
-usage: qualysdk-pm get_patch_count [-h] [--os {windows,linux}] [--query QUERY] [--havingQuery HAVINGQUERY] [-o OUTPUT]
-
-options:
-  -h, --help            show this help message and exit
-  --os {windows,linux}  Specify the operating system to get patches for. Default is 'Windows'
-  --query QUERY         Specify a patch QQL query
-  --havingQuery HAVINGQUERY
-                        Specify a PM asset QQL query
-  -o OUTPUT, --output OUTPUT
-                        Output txt file to write results to. Default is 'pm_patch_count.txt'
 ```

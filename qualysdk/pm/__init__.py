@@ -15,3 +15,4 @@ from .jobs import (
 from .vulnerabilities import lookup_cves
 from .version import get_version
 from .patches import get_patches, get_patch_count
+from .assets import get_assets

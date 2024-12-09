@@ -32,6 +32,8 @@ def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
             result = get_patches(auth, args.platform, **kwargs)
         case "get_patch_count":
             result = get_patch_count(auth, args.platform, **kwargs)
+        case "get_assets":
+            result = get_assets(auth, args.platform, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
         
@@ -236,6 +238,34 @@ def main():
         default="pm_patch_count.txt",
     )
 
+    get_assets_parser = subparsers.add_parser(
+        "get_assets", help="Get assets for a given platform."
+    )
+
+    get_assets_parser.add_argument(
+        "--os",
+        help="Specify the platform to get assets for. Default is 'all'",
+        type=str,
+        default="all",
+        choices=["all", "windows", "linux"],
+    )
+
+    get_assets_parser.add_argument(
+        "-o",
+        "--output",
+        help="Output xlsx file to write results to",
+        type=str,
+        default="pm_assets.xlsx",
+    )
+
+    get_assets_parser.add_argument(
+        "--kwarg",
+        help="Specify a keyword argument to pass to the action. Can be used multiple times",
+        action="append",
+        nargs=2,
+        metavar=("key", "value"),
+    )
+
     args = parser.parse_args()
 
     # create TokenAuth object
@@ -268,6 +298,9 @@ def main():
         case "get_patches":
             args.platform = args.os
             cli_fn(auth=auth, args=args, endpoint="get_patches")
+        case "get_assets":
+            args.platform = args.os
+            cli_fn(auth=auth, args=args, endpoint="get_assets")
         case "get_patch_count":
             args.kwarg = {} # No kwargs for this endpoint
             args.platform = args.os

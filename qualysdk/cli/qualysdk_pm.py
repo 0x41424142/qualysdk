@@ -36,7 +36,7 @@ def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
             result = get_assets(auth, args.platform, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
-        
+
     # if get_patch_count was called, the return is just an int. We can
     # write this to a TXT:
     if endpoint == "get_patch_count":
@@ -205,7 +205,8 @@ def main():
     )
 
     get_patch_count_parser = subparsers.add_parser(
-        "get_patch_count", help="Get the number of patches available for a platform according to query and havingQuery."
+        "get_patch_count",
+        help="Get the number of patches available for a platform according to query and havingQuery.",
     )
 
     get_patch_count_parser.add_argument(
@@ -302,7 +303,7 @@ def main():
             args.platform = args.os
             cli_fn(auth=auth, args=args, endpoint="get_assets")
         case "get_patch_count":
-            args.kwarg = {} # No kwargs for this endpoint
+            args.kwarg = {}  # No kwargs for this endpoint
             args.platform = args.os
             cli_fn(auth=auth, args=args, endpoint="get_patch_count")
         case _:

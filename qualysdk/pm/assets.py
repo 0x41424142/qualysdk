@@ -12,6 +12,7 @@ from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..exceptions.Exceptions import QualysAPIError
 
+
 def get_assets(
     auth: TokenAuth,
     platform: Literal["all", "windows", "linux"] = "all",
@@ -42,28 +43,34 @@ def get_assets(
 
     return get_assets_backend(auth, platform, "ASSET", page_count, **kwargs)
 
-@overload
-def lookup_host_uuids(
-    auth: TokenAuth,
-    assetIds: list[str|int],
-) -> BaseList[tuple[str, str]]:
-    ...
 
 @overload
 def lookup_host_uuids(
     auth: TokenAuth,
-    assetIds: BaseList[str|int],
+    assetIds: list[str | int],
 ) -> BaseList[tuple[str, str]]:
     ...
+
 
 @overload
 def lookup_host_uuids(
     auth: TokenAuth,
-    assetIds: str|int,
+    assetIds: BaseList[str | int],
+) -> BaseList[tuple[str, str]]:
+    ...
+
+
+@overload
+def lookup_host_uuids(
+    auth: TokenAuth,
+    assetIds: str | int,
 ) -> tuple[str, str]:
     ...
 
-def lookup_host_uuids(auth: TokenAuth, assetIds: Union[str, int, list[str|int], BaseList[str|int]]) -> BaseList[tuple[str, str]]:
+
+def lookup_host_uuids(
+    auth: TokenAuth, assetIds: Union[str, int, list[str | int], BaseList[str | int]]
+) -> BaseList[tuple[str, str]]:
     """
     Look up the Patch Management UUIDs for a given assetId(s)
 
@@ -77,14 +84,16 @@ def lookup_host_uuids(auth: TokenAuth, assetIds: Union[str, int, list[str|int], 
 
     # If the user passed in a comma-separated string, split it into a list:
     if isinstance(assetIds, str) and "," in assetIds:
-        assetIds = assetIds.replace(' ','').split(",")
+        assetIds = assetIds.replace(" ", "").split(",")
 
     if not isinstance(assetIds, (list, BaseList)):
         assetIds = [assetIds]
 
     # If assetIds is longer than 1K, chunk it into smaller lists:
     if len(assetIds) > 1_000:
-        print("[!]: len(assetIds) > 1K. Expect longer processing time as the SDK will make multiple API calls.")
+        print(
+            "[!]: len(assetIds) > 1K. Expect longer processing time as the SDK will make multiple API calls."
+        )
 
     no_results = []
     mapped_results = BaseList()
@@ -95,33 +104,30 @@ def lookup_host_uuids(auth: TokenAuth, assetIds: Union[str, int, list[str|int], 
             break
 
         # Call the API with a slice of 1K:
-        result = call_api(
-            auth,
-            "pm",
-            "lookup_host_uuids",
-            jsonbody=assetIds[0:1_000]
-        )
+        result = call_api(auth, "pm", "lookup_host_uuids", jsonbody=assetIds[0:1_000])
 
         if result.status_code != 200:
             raise QualysAPIError(result.text)
 
         # Remove those 1K assetIds from the list:
         assetIds = assetIds[1_000:]
-        
+
         j = result.json()
 
-        if j.get('mappedAssets'):
-            for asset in j['mappedAssets']:
-                mapped_results.append((asset['assetId'], asset['assetUuid']))
+        if j.get("mappedAssets"):
+            for asset in j["mappedAssets"]:
+                mapped_results.append((asset["assetId"], asset["assetUuid"]))
 
-        if j.get('unmappedAssets') and j.get('unmappedAssets') not in ["[]", "[null]"]:
-            for asset in j['unmappedAssets']:
+        if j.get("unmappedAssets") and j.get("unmappedAssets") not in ["[]", "[null]"]:
+            for asset in j["unmappedAssets"]:
                 no_results.append(asset)
 
-        if len(j['mappedAssets']) == 0:
+        if len(j["mappedAssets"]) == 0:
             break
 
     if no_results:
-        print(f"Warning: {len(no_results)} assetId(s) could not be found. Please check returned list.")
+        print(
+            f"Warning: {len(no_results)} assetId(s) could not be found. Please check returned list."
+        )
 
     return mapped_results

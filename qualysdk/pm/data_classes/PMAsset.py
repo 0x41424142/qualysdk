@@ -166,7 +166,6 @@ class Asset(BaseClass):
     osNotSupportedForModules: BaseList[str] = None
 
     def __post_init__(self):
-        
         # List of strings
         TO_BL_FIELDS = ["activatedModules", "osNotSupportedForModules"]
 

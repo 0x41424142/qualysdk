@@ -25,6 +25,7 @@ class PMInterface(BaseClass):
     def __str__(self):
         return self.address
 
+
 @dataclass
 class PMAssetJobView(BaseClass):
     """

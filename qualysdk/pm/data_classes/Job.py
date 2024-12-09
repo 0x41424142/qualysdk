@@ -152,20 +152,20 @@ class PMJob(BaseClass):
             obj_bl = BaseList()
             if getattr(self, tag_obj):
                 for tag in getattr(self, tag_obj):
-                    if tag_obj == 'exclusionTags':
-                        obj_bl.append(Tag.from_dict({'id': tag}))
+                    if tag_obj == "exclusionTags":
+                        obj_bl.append(Tag.from_dict({"id": tag}))
                     else:
                         obj_bl.append(Tag.from_dict(tag))
             setattr(self, tag_obj, obj_bl)
 
-            '''
+            """
             if getattr(self, tag_obj):
                 setattr(
                     self,
                     tag_obj,
                     BaseList([Tag.from_dict(tag) for tag in getattr(self, tag_obj)]),
                 )
-            '''
+            """
 
         for dt_field in BREAKDOWN_DT_FIELDS:
             if getattr(self, dt_field):

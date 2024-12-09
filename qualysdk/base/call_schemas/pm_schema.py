@@ -129,6 +129,47 @@ PM_SCHEMA = frozendict(
                 "pagination": True,
                 "auth_type": "token",
             },
+            "get_assets": {
+                "endpoint": "/pm/v1/assets",
+                "method": ["POST"],
+                "valid_params": [
+                    "pageSize",
+                    "platform",
+                ],
+                "valid_POST_data": [
+                    "query",
+                    "havingQuery",
+                    "attributes",
+                ],
+                "use_requests_json_data": True,
+                "return_type": "json",
+                "pagination": True,
+                "auth_type": "token",
+            },
+            "get_patch_count": {
+                "endpoint": "/pm/v1/patches/count",
+                "method": ["GET"],
+                "valid_params": [
+                    "platform",
+                    "query",
+                    "havingQuery",
+                ],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
+            "lookup_host_uuids": {
+                "endpoint": "/pm/v1/assets/uuids",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": ["assetIds"],
+                "use_requests_json_data": True,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
         },
     }
 )

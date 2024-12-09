@@ -71,5 +71,7 @@ from .pm import (
     upload_pm_job_runs,
     upload_pm_cves,
     upload_pm_patches,
+    upload_pm_assets,
+    upload_pm_assetids_to_uuids,
 )
 from .cert import upload_cert_certs

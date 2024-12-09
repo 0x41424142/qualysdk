@@ -131,3 +131,77 @@ class PMAssetJobView(BaseClass):
 
     def __str__(self):
         return self.name
+
+
+@dataclass
+class Asset(BaseClass):
+    """
+    Represents a Qualys Asset in Patch Management.
+    """
+
+    id: str = None
+    name: str = None
+    operatingSystem: str = None
+    version: str = None
+    platform: str = None
+    osIdentifier: str = None
+    tags: BaseList[Tag] = None
+    interfaces: BaseList[PMInterface] = None
+    scanStatus: str = None
+    status: str = None
+    statusCode: int = None
+    installedPatchCount: int = None
+    missingPatchCount: int = None
+    nonSupersededMissingPatchCount: int = None
+    activatedModules: BaseList[str] = None
+    lastLoggedOnUser: str = None
+    scanDateTime: Union[int, datetime] = None
+    statusDateTime: Union[int, datetime] = None
+    hardware: dict = None
+    # hardware is parsed into below fields
+    hardware_model: str = None
+    hardware_manufacturer: str = None
+    # end hardware
+    architecture: str = None
+    osNotSupportedForModules: BaseList[str] = None
+
+    def __post_init__(self):
+        # List of strings
+        TO_BL_FIELDS = ["activatedModules", "osNotSupportedForModules"]
+
+        for bl_field in TO_BL_FIELDS:
+            if getattr(self, bl_field):
+                bl = BaseList()
+                for obj in getattr(self, bl_field):
+                    bl.append(obj)
+                setattr(self, bl_field, bl)
+
+        FROM_TIMESTAMP_FIELDS = ["scanDateTime", "statusDateTime"]
+
+        for timestamp_field in FROM_TIMESTAMP_FIELDS:
+            if getattr(self, timestamp_field):
+                try:
+                    setattr(
+                        self,
+                        timestamp_field,
+                        datetime.fromtimestamp(getattr(self, timestamp_field) / 1000),
+                    )
+                except (OSError, TypeError):
+                    setattr(self, timestamp_field, None)
+
+        if self.interfaces:
+            bl = BaseList()
+            for interface in self.interfaces:
+                bl.append(PMInterface.from_dict(interface))
+            setattr(self, "interfaces", bl)
+
+        if self.tags:
+            bl = BaseList()
+            for tag in self.tags:
+                bl.append(Tag.from_dict({"id": tag}))
+            setattr(self, "tags", bl)
+
+        if self.hardware:
+            setattr(self, "hardware_model", self.hardware.get("model"))
+            setattr(self, "hardware_manufacturer", self.hardware.get("manufacturer"))
+            setattr(self, "hardware", None)

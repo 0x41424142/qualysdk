@@ -27,6 +27,7 @@ You can use any of the endpoints currently supported:
 | ```get_assets``` | Returns a list of assets. |
 | ```get_patch_count``` | Returns the number of patches for a given platform that match ```query``` and ```havingQuery``` |
 | ```get_asset_count``` | Returns the number of assets for a given platform that match ```query``` and ```havingQuery``` |
+| ```lookup_host_uuids``` | Returns a list of host UUIDs for a given list of asset IDs. |
 
 ## Get PM Version API
 
@@ -546,6 +547,97 @@ auth = TokenAuth(<username>, <password>, platform='qg1')
 count = get_patch_count(auth, platform='windows', query="vendorSeverity:Critical")
 >>>100
 ```
+
+## Lookup Host UUIDs from Asset IDs API
+
+```lookup_host_uuids``` returns a list of host UUIDs for a given list of asset IDs.
+
+```assetIds``` can be a list/BaseList of strings/integers, a single int/string, or a comma-separated string.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```assetIds``` | ```Union[list[str, int], BaseList[str, int], str, int]``` | The IDs of the assets to look up | ✅ |
+
+### Example 1 with GAV Query
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import lookup_host_uuids
+from qualysdk.gav import query_assets # Could also use get_all_assets!
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get some assets. All we need is assetId.
+# We can also filter for assets activated for PM:
+assets = query_assets(
+  auth, 
+  includeFields='assetId',
+  filter='sensors.activatedForModules:`PM`
+)
+
+# Get the host UUIDs for the assets:
+uuids = lookup_host_uuids(auth, [asset.assetId for asset in assets])
+>>>[
+  (
+    123456789,
+    '11111111-2222-3333-4444-555555555555'
+  ),
+  (
+    987654321,
+    '22222222-3333-4444-5555-666666666666'
+  ),
+  ...
+]
+```
+
+### Example 2 with List of ```assetIds```
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import lookup_host_uuids
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+ids = [123456789, 987654321]
+uuids = lookup_host_uuids(auth, ids)
+>>>[
+  (
+    123456789,
+    '11111111-2222-3333-4444-555555555555'
+  ),
+  (
+    987654321,
+    '22222222-3333-4444-5555-666666666666'
+  )
+]
+```
+
+### Example 3 with Comma-Separated String of ```assetIds```
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import lookup_host_uuids
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+ids = '123456789,987654321'
+uuids = lookup_host_uuids(auth, ids)
+>>>[
+  (
+    123456789,
+    '11111111-2222-3333-4444-555555555555'
+  ),
+  (
+    987654321,
+    '22222222-3333-4444-5555-666666666666'
+  )
+]
+```
+
+### Example 1 with GAV Query
+
+```py
 
 ## ```qualysdk-pm``` CLI tool
 

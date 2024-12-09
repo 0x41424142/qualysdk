@@ -160,6 +160,16 @@ PM_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "token",
             },
+            "lookup_host_uuids": {
+                "endpoint": "/pm/v1/assets/uuids",
+                "method": ["POST"],
+                "valid_params": [],
+                "valid_POST_data": ["assetIds"],
+                "use_requests_json_data": True,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
         },
     }
 )

@@ -53,7 +53,7 @@ def _thread_worker(
             raise QualysAPIError(response.text)
         with LOCK:
             responses.extend(
-                [PMVulnerability.from_dict(**qid) for qid in response.json()]
+                [PMVulnerability.from_dict(qid) for qid in response.json()]
             )
 
 

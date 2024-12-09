@@ -24,6 +24,7 @@ You can use any of the endpoints currently supported:
 | ```change_job_status``` | Enable/disable a job or a list of jobs. |
 | ```lookup_cves``` | Returns a list of CVEs and other details associated with a QID. |
 | ```get_patches``` | Returns a list of patches. |
+| ```get_patch_count``` | Returns the number of patches for a given platform that match ```query``` and ```havingQuery``` |
 
 ## Get PM Version API
 
@@ -483,6 +484,29 @@ windows_patches = get_patches(auth, platform='windows')
 ]
 ```
 
+## Get Patch Count API
+
+```get_patch_count``` returns the number of patches for a given platform that match the given query and havingQuery.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```platform``` | ```Literal["windows", "linux"] = "windows"``` | The platform of the patches to return | ✅ |
+| ```query``` | ```str``` | A patch QQL query to filter with | ❌ |
+| ```havingQuery``` | ```str``` | A PM host QQL query to filter with | ❌ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import get_patch_count
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get the number of patches for Windows
+# that are critical severity:
+count = get_patch_count(auth, platform='windows', query="vendorSeverity:Critical")
+>>>100
+```
+
 
 ## ```qualysdk-pm``` CLI tool
 
@@ -491,26 +515,27 @@ The ```qualysdk-pm``` CLI tool is a command-line interface for the PM portion of
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches} ...
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count} ...
 
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
 positional arguments:
-  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches}
+  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count}
                         Action to perform
     list_jobs           Get a list of PM jobs.
     get_job_results     Get results for a PM job.
     get_job_runs        Get runs for a PM job.
     lookup_cves         Look up CVEs for a given QID(s).
     get_patches         Get patches for a given platform.
+    get_patch_count     Get the number of patches available for a platform according to query and havingQuery.
 
 options:
   -h, --help            show this help message and exit
-  -u, --username USERNAME
+  -u USERNAME, --username USERNAME
                         Qualys username
-  -p, --password PASSWORD
+  -p PASSWORD, --password PASSWORD
                         Qualys password
-  -P, --platform {qg1,qg2,qg3,qg4}
+  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
                         Qualys platform
 ```
 
@@ -581,4 +606,19 @@ options:
                         Specify the platform to get patches for. Default is 'all'
   -o, --output OUTPUT   Output xlsx file to write results to
   --kwarg key value     Specify a keyword argument to pass to the action. Can be used multiple times
+```
+
+### Get Patch Count
+
+```bash
+usage: qualysdk-pm get_patch_count [-h] [--os {windows,linux}] [--query QUERY] [--havingQuery HAVINGQUERY] [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  --os {windows,linux}  Specify the operating system to get patches for. Default is 'Windows'
+  --query QUERY         Specify a patch QQL query
+  --havingQuery HAVINGQUERY
+                        Specify a PM asset QQL query
+  -o OUTPUT, --output OUTPUT
+                        Output txt file to write results to. Default is 'pm_patch_count.txt'
 ```

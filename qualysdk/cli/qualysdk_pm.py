@@ -30,8 +30,20 @@ def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
             result = lookup_cves(auth, args.qids, args.threads)
         case "get_patches":
             result = get_patches(auth, args.platform, **kwargs)
+        case "get_patch_count":
+            result = get_patch_count(auth, args.platform, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
+        
+    # if get_patch_count was called, the return is just an int. We can
+    # write this to a TXT:
+    if endpoint == "get_patch_count":
+        if not args.output.endswith(".txt"):
+            args.output += ".txt"
+        with open(args.output, "w") as f:
+            f.write(str(result))
+        print(f"Results written to {args.output}")
+        return
 
     # If the result object does NOT have the len() method available,
     # we need to wrap it in a BaseList:
@@ -190,6 +202,40 @@ def main():
         metavar=("key", "value"),
     )
 
+    get_patch_count_parser = subparsers.add_parser(
+        "get_patch_count", help="Get the number of patches available for a platform according to query and havingQuery."
+    )
+
+    get_patch_count_parser.add_argument(
+        "--os",
+        help="Specify the operating system to get patches for. Default is 'Windows'",
+        type=str,
+        default="windows",
+        choices=["windows", "linux"],
+    )
+
+    get_patch_count_parser.add_argument(
+        "--query",
+        help="Specify a patch QQL query",
+        type=str,
+        default=None,
+    )
+
+    get_patch_count_parser.add_argument(
+        "--havingQuery",
+        help="Specify a PM asset QQL query",
+        type=str,
+        default=None,
+    )
+
+    get_patch_count_parser.add_argument(
+        "-o",
+        "--output",
+        help="Output txt file to write results to. Default is 'pm_patch_count.txt'",
+        type=str,
+        default="pm_patch_count.txt",
+    )
+
     args = parser.parse_args()
 
     # create TokenAuth object
@@ -222,6 +268,10 @@ def main():
         case "get_patches":
             args.platform = args.os
             cli_fn(auth=auth, args=args, endpoint="get_patches")
+        case "get_patch_count":
+            args.kwarg = {} # No kwargs for this endpoint
+            args.platform = args.os
+            cli_fn(auth=auth, args=args, endpoint="get_patch_count")
         case _:
             parser.print_help()
             exit(1)

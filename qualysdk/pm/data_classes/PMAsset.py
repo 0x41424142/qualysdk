@@ -25,11 +25,6 @@ class PMInterface(BaseClass):
     def __str__(self):
         return self.address
 
-    @classmethod
-    def from_dict(cls, **kwargs):
-        return cls(**kwargs)
-
-
 @dataclass
 class PMAssetJobView(BaseClass):
     """
@@ -124,7 +119,7 @@ class PMAssetJobView(BaseClass):
         if self.interfaces:
             bl = BaseList()
             for interface in self.interfaces:
-                bl.append(PMInterface.from_dict(**interface))
+                bl.append(PMInterface.from_dict(interface))
             setattr(self, "interfaces", bl)
 
         if self.tags:

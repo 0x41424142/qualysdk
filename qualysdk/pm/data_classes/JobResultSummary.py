@@ -40,7 +40,7 @@ class JobResultSummary(BaseClass):
                         asset_dict[key] = value
 
                 asset_dict["jobId"] = self.id
-                bl.append(PMAssetJobView.from_dict(**asset_dict))
+                bl.append(PMAssetJobView.from_dict(asset_dict))
             setattr(self, "assets", bl)
 
     def __getitem__(self, key):

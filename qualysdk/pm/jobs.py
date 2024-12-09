@@ -132,7 +132,7 @@ def _list_jobs_backend(
 
         # Protect BaseList if threads are used:
         with lock:
-            responses.extend([PMJob.from_dict(**job) for job in parsed])
+            responses.extend([PMJob.from_dict(job) for job in parsed])
 
         if page_count != "all":
             pages_pulled += 1
@@ -269,11 +269,11 @@ def get_job_results(
             auth=auth, method="POST", _use_singular_in_url=True, **kwargs_no_bl
         )
         if not kwargs.get("_response_bl") and kwargs.get("_response_bl") != BaseList():
-            return JobResultSummary.from_dict(**result.json())
+            return JobResultSummary.from_dict(result.json())
         else:
             with lock:
                 kwargs["_response_bl"].extend(
-                    [JobResultSummary.from_dict(**result.json())]
+                    [JobResultSummary.from_dict(result.json())]
                 )
             return
 
@@ -347,7 +347,7 @@ def get_job_runs(
     for run in result:
         run["jobId"] = jobId
 
-    return BaseList([PMRun.from_dict(**run) for run in result])
+    return BaseList([PMRun.from_dict(run) for run in result])
 
 
 def remove_none_values(d):

@@ -10,15 +10,33 @@ from ..auth.token import TokenAuth
 from ..base.call_api import call_api
 from ..exceptions.Exceptions import QualysAPIError
 
-@overload
-def get_patch_catalog(auth: TokenAuth, patchId: Union[int, str], platform: Literal["windows", "linux"] = "windows", **kwargs) -> BaseList[CatalogPatch]:
-    ...
 
 @overload
-def get_patch_catalog(auth: TokenAuth, patchId: Union[BaseList[str, int], list[str, int]], platform: Literal["windows", "linux"] = "windows", **kwargs) -> BaseList[CatalogPatch]:
+def get_patch_catalog(
+    auth: TokenAuth,
+    patchId: Union[int, str],
+    platform: Literal["windows", "linux"] = "windows",
+    **kwargs,
+) -> BaseList[CatalogPatch]:
     ...
 
-def get_patch_catalog(auth: TokenAuth, patchId: str, platform: Literal["windows", "linux"] = "windows", **kwargs) -> BaseList[CatalogPatch]:
+
+@overload
+def get_patch_catalog(
+    auth: TokenAuth,
+    patchId: Union[BaseList[str, int], list[str, int]],
+    platform: Literal["windows", "linux"] = "windows",
+    **kwargs,
+) -> BaseList[CatalogPatch]:
+    ...
+
+
+def get_patch_catalog(
+    auth: TokenAuth,
+    patchId: str,
+    platform: Literal["windows", "linux"] = "windows",
+    **kwargs,
+) -> BaseList[CatalogPatch]:
     """
     Retrieve details on patches available for a given platform by patch UUID.
 
@@ -38,9 +56,9 @@ def get_patch_catalog(auth: TokenAuth, patchId: str, platform: Literal["windows"
 
     if platform not in ["Windows", "Linux"]:
         raise ValueError("platform must be 'windows' or 'linux'")
-    
-    if isinstance(patchId, str) and ',' in patchId:
-        patchId = patchId.replace(' ', '').split(',')
+
+    if isinstance(patchId, str) and "," in patchId:
+        patchId = patchId.replace(" ", "").split(",")
 
     if not isinstance(patchId, (list, BaseList)):
         patchId = [patchId]
@@ -57,7 +75,6 @@ def get_patch_catalog(auth: TokenAuth, patchId: str, platform: Literal["windows"
 
     # Set up chunking
     while True:
-
         if not patchId:
             # After loop has run its course,
             # list will be empty and we can break
@@ -68,16 +85,16 @@ def get_patch_catalog(auth: TokenAuth, patchId: str, platform: Literal["windows"
             auth,
             "pm",
             "get_patch_catalog",
-            jsonbody={'patchUuid': patchId[:1000]},
+            jsonbody={"patchUuid": patchId[:1000]},
             params=params,
         )
 
         if not result.status_code in range(200, 299):
             raise QualysAPIError(result.json())
-        
+
         # Remove processed patchIds from the list:
         patchId = patchId[1000:]
-        
+
         j = result.json()
 
         for catalog_entry in j:

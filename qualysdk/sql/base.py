@@ -39,7 +39,11 @@ def db_connect(
     """
 
     # Check if user AND password are provided, or trusted connection is used:
-    if not (username and password) and not trusted_cnxn and db_type not in ["sqlite", "sqlite3"]:
+    if (
+        not (username and password)
+        and not trusted_cnxn
+        and db_type not in ["sqlite", "sqlite3"]
+    ):
         raise ValueError(
             "You must provide a username and password, or use trusted connection."
         )
@@ -57,7 +61,7 @@ def db_connect(
             conn_str = f"mysql+pymysql://{username}:{password}@{host}:{port}/{db}"
         case "postgresql":
             conn_str = f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{db}"
-        case "sqlite"|"sqlite3":
+        case "sqlite" | "sqlite3":
             conn_str = f"sqlite:///{db}"
         case _:
             raise ValueError("Database type not supported.")

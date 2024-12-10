@@ -89,13 +89,6 @@ def lookup_host_uuids(
     if not isinstance(assetIds, (list, BaseList)):
         assetIds = [assetIds]
 
-    # If assetIds is longer than 1K, chunk it into smaller lists:
-    if len(assetIds) > 1_000:
-        print(
-            "[!]: len(assetIds) > 1K. Expect longer processing time as the SDK will make multiple API calls."
-        )
-
-    no_results = []
     mapped_results = BaseList()
 
     while True:
@@ -118,16 +111,7 @@ def lookup_host_uuids(
             for asset in j["mappedAssets"]:
                 mapped_results.append((asset["assetId"], asset["assetUuid"]))
 
-        if j.get("unmappedAssets") and j.get("unmappedAssets") not in ["[]", "[null]"]:
-            for asset in j["unmappedAssets"]:
-                no_results.append(asset)
-
         if len(j["mappedAssets"]) == 0:
             break
-
-    if no_results:
-        print(
-            f"Warning: {len(no_results)} assetId(s) could not be found. Please check returned list."
-        )
 
     return mapped_results

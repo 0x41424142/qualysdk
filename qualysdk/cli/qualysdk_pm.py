@@ -34,6 +34,8 @@ def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
             result = get_patch_count(auth, args.platform, **kwargs)
         case "get_assets":
             result = get_assets(auth, args.platform, **kwargs)
+        case "get_patch_catalog":
+            result = get_patch_catalog(auth, args.patch_id, args.os, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
@@ -267,6 +269,42 @@ def main():
         metavar=("key", "value"),
     )
 
+    get_patch_catalog_parser = subparsers.add_parser(
+        "get_patch_catalog", help="Get patch catalog entries for a given platform."
+    )
+
+    get_patch_catalog_parser.add_argument(
+        "--os",
+        help="Specify the platform to get patches for. Default is 'Windows'",
+        type=str,
+        default="windows",
+        choices=["windows", "linux"],
+    )
+
+    get_patch_catalog_parser.add_argument(
+        "-o",
+        "--output",
+        help="Output xlsx file to write results to",
+        type=str,
+        default="pm_patch_catalog.xlsx",
+    )
+
+    get_patch_catalog_parser.add_argument(
+        "--patch-id",
+        help="Specify the patch ID to get catalog entries for. Can be used multiple times",
+        type=str,
+        required=True,
+        action="append",
+    )
+
+    get_patch_catalog_parser.add_argument(
+        "--kwarg",
+        help="Specify a keyword argument to pass to the action. Can be used multiple times",
+        action="append",
+        nargs=2,
+        metavar=("key", "value"),
+    )
+
     args = parser.parse_args()
 
     # create TokenAuth object
@@ -306,6 +344,9 @@ def main():
             args.kwarg = {}  # No kwargs for this endpoint
             args.platform = args.os
             cli_fn(auth=auth, args=args, endpoint="get_patch_count")
+        case "get_patch_catalog":
+            args.platform = args.os
+            cli_fn(auth=auth, args=args, endpoint="get_patch_catalog")
         case _:
             parser.print_help()
             exit(1)

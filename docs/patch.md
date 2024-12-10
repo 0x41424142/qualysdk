@@ -25,9 +25,10 @@ You can use any of the endpoints currently supported:
 | ```lookup_cves``` | Returns a list of CVEs and other details associated with a QID. |
 | ```get_patches``` | Returns a list of patches. |
 | ```get_assets``` | Returns a list of assets. |
-| ```get_patch_count``` | Returns the number of patches for a given platform that match ```query``` and ```havingQuery``` |
-| ```get_asset_count``` | Returns the number of assets for a given platform that match ```query``` and ```havingQuery``` |
+| ```get_patch_count``` | Returns the number of patches for a given platform that match ```query``` and ```havingQuery```. |
+| ```get_asset_count``` | Returns the number of assets for a given platform that match ```query``` and ```havingQuery```. |
 | ```lookup_host_uuids``` | Returns a list of tuples, containing host UUIDs for a given list of asset IDs. |
+| ```get_patch_catalog``` | Returns the patch catalog for a given platform according to ```patchId```. |
 
 ## Get PM Version API
 
@@ -635,9 +636,56 @@ uuids = lookup_host_uuids(auth, ids)
 ]
 ```
 
-### Example 1 with GAV Query
+## Get Patch Catalog API
+
+```get_patch_catalog``` returns the patch catalog for a given platform according to ```patchId```.
+
+```patchId``` can be a list/BaseList of strings/integers, a single int/string, or a comma-separated string.
+
+>**Head's Up!:** You should only pass in one platform at a time. If you pass in a mix of both Windows and Linux patches, the function will only return the patches that match the ```platform``` parameter (default is Windows).
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```patchId``` | ```Union[list[str, int], BaseList[str, int], str, int]``` | The IDs of the patches to look up | ✅ |
+| ```platform``` | ```Literal["windows", "linux"] = "windows"``` | The platform of the patches to return. Defaults to windows | ❌ |
+| ```attributes``` | ```str``` | The attributes to return in the response as a comma-separated string | ❌ |
 
 ```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import get_patch_catalog, get_patches
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get some Linux patches:
+patches = get_patches(
+  auth, 
+  platform='linux', 
+  attributes="id"
+)
+
+# Get the catalog entries:
+catalog = get_patch_catalog(
+  auth, 
+  [patch.id for patch in patches], 
+  platform='linux'
+)
+>>>[
+  CatalogPatch(
+    "patchId": "11111111-2222-3333-4444-555555555555",
+    "title": "My Patch",
+    "vendor": "My Vendor",
+    ...
+  ),
+  CatalogPatch(
+    "patchId": "22222222-3333-4444-5555-666666666666",
+    "title": "My Other Patch",
+    ...
+  ),
+  ...
+]
+```
+
 
 ## ```qualysdk-pm``` CLI tool
 
@@ -648,13 +696,12 @@ Use ```--help``` on each command to see the available options.
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}]
-                   {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets} ...
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets,get_patch_catalog} ...
 
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
 positional arguments:
-  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets}
+  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets,get_patch_catalog}
                         Action to perform
     list_jobs           Get a list of PM jobs.
     get_job_results     Get results for a PM job.
@@ -663,6 +710,7 @@ positional arguments:
     get_patches         Get patches for a given platform.
     get_patch_count     Get the number of patches available for a platform according to query and havingQuery.
     get_assets          Get assets for a given platform.
+    get_patch_catalog   Get patch catalog entries for a given platform.
 
 options:
   -h, --help            show this help message and exit

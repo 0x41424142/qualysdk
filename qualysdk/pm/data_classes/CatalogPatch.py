@@ -22,6 +22,7 @@ BL_STR_FIELDS = [
     "supportedOs",
 ]
 
+
 @dataclass
 class PackageDetail(BaseClass):
     """
@@ -34,11 +35,13 @@ class PackageDetail(BaseClass):
     def __str__(self):
         return f"{self.packageName} ({self.architecture})"
 
+
 @dataclass
 class CatalogPatch(BaseClass):
     """
     A data class representing a patch in the Qualys Patch Management catalog.
     """
+
     patchId: str = None
     id: str = None
     title: str = None
@@ -80,7 +83,6 @@ class CatalogPatch(BaseClass):
     bulletin: str = None
 
     def __post_init__(self):
-
         for field in DT_FIELDS:
             if getattr(self, field):
                 try:
@@ -97,7 +99,9 @@ class CatalogPatch(BaseClass):
                 setattr(self, field, BaseList(getattr(self, field)))
 
         if self.notification:
-            print("CatalogPatch's notification attribute is currently not parsed and is set to a string. Please submit a PR adding the functionality to parse this attribute.")
+            print(
+                "CatalogPatch's notification attribute is currently not parsed and is set to a string. Please submit a PR adding the functionality to parse this attribute."
+            )
             setattr(self, "notification", str(self.notification))
 
         if self.packageDetails:

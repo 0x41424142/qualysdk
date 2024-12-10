@@ -642,10 +642,14 @@ uuids = lookup_host_uuids(auth, ids)
 
 ```patchId``` can be a list/BaseList of strings/integers, a single int/string, or a comma-separated string.
 
+>**Head's Up!:** You should only pass in one platform at a time. If you pass in a mix of both Windows and Linux patches, the function will only return the patches that match the ```platform``` parameter (default is Windows).
+
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
 | ```patchId``` | ```Union[list[str, int], BaseList[str, int], str, int]``` | The IDs of the patches to look up | ✅ |
+| ```platform``` | ```Literal["windows", "linux"] = "windows"``` | The platform of the patches to return. Defaults to windows | ❌ |
+| ```attributes``` | ```str``` | The attributes to return in the response as a comma-separated string | ❌ |
 
 ```py
 from qualysdk.auth import TokenAuth

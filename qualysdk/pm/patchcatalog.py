@@ -45,11 +45,13 @@ def get_patch_catalog(
     Args:
         auth (TokenAuth): The authentication object.
         platform (Literal['windows', 'linux']): The platform to filter by. Default is 'windows'.
-        **kwargs: Any additional valid parameters.
 
     ## Kwargs:
 
         - attributes (str): A comma-separated string of attributes to return.
+
+    Returns:
+        BaseList[CatalogPatch]: A BaseList of CatalogPatch objects.
     """
 
     platform = platform.title()

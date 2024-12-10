@@ -73,5 +73,6 @@ from .pm import (
     upload_pm_patches,
     upload_pm_assets,
     upload_pm_assetids_to_uuids,
+    upload_pm_patch_catalog,
 )
 from .cert import upload_cert_certs

@@ -139,6 +139,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_pm_patches``` | Patch Management | ```pm.get_patches()``` | ```pm_patches``` |
 | ```upload_pm_assets``` | Patch Management | ```pm.get_assets()``` | ```pm_assets``` |
 | ```upload_pm_assetids_to_uuids``` | Patch Management | ```pm.lookup_host_uuids()``` | ```pm_assetids_to_uuids``` |
+| ```upload_pm_patch_catalog``` | Patch Management | ```pm.get_patch_catalog()``` | ```pm_patch_catalog``` |
 | ```upload_cert_certs``` | Certificate View | ```cert.list_certs()``` | ```cert_certs``` for certificates and ```cert_assets``` for assets (key = certs.id -> assets.certId) |
 
 

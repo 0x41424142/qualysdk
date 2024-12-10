@@ -53,6 +53,7 @@ def get_patch_catalog(auth: TokenAuth, patchId: str, platform: Literal["windows"
         params["attributes"] = kwargs["attributes"]
 
     results = BaseList()
+    pulled = 0
 
     # Set up chunking
     while True:
@@ -81,5 +82,9 @@ def get_patch_catalog(auth: TokenAuth, patchId: str, platform: Literal["windows"
 
         for catalog_entry in j:
             results.append(CatalogPatch(**catalog_entry))
+
+        pulled += 1
+        if pulled % 5 == 0:
+            print(f"Pulled {pulled} chunks of 1K patch catalog entries")
 
     return results

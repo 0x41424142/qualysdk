@@ -68,7 +68,7 @@ class CatalogPatch(BaseClass):
     notification: str = None
     cve: BaseList[str] = None
     architecture: BaseList[str] = None
-    packageDetails: BaseList[str] = None
+    packageDetails: BaseList[PackageDetail] = None
     patchFeedProviderId: int = None
     syncDateTime: Union[int, datetime] = None
     vendorPatchId: Union[str, int] = None

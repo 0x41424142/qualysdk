@@ -692,13 +692,12 @@ Use ```--help``` on each command to see the available options.
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}]
-                   {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets} ...
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets,get_patch_catalog} ...
 
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
 positional arguments:
-  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets}
+  {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets,get_patch_catalog}
                         Action to perform
     list_jobs           Get a list of PM jobs.
     get_job_results     Get results for a PM job.
@@ -707,6 +706,7 @@ positional arguments:
     get_patches         Get patches for a given platform.
     get_patch_count     Get the number of patches available for a platform according to query and havingQuery.
     get_assets          Get assets for a given platform.
+    get_patch_catalog   Get patch catalog entries for a given platform.
 
 options:
   -h, --help            show this help message and exit

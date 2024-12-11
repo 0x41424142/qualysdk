@@ -117,7 +117,9 @@ class CloudAgent(BaseClass):
 
         for date_field in DATE_FIELDS:
             if getattr(self, date_field):
-                setattr(self, date_field, datetime.fromisoformat(getattr(self, date_field)))
+                setattr(
+                    self, date_field, datetime.fromisoformat(getattr(self, date_field))
+                )
 
         for int_field in INT_FIELDS:
             if getattr(self, int_field):

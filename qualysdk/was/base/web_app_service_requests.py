@@ -486,7 +486,9 @@ def build_update_request(
             )
         header_list = []
         for header in _headers:
-            header_list.append(xmltodict.unparse({"WebAppHeader": header}, full_document=False))
+            header_list.append(
+                xmltodict.unparse({"WebAppHeader": header}, full_document=False)
+            )
         request_dict["ServiceRequest"]["data"]["WebApp"]["headers"] = {
             "set": "\n".join(header_list)
         }

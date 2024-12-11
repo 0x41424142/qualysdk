@@ -181,7 +181,9 @@ class User(BaseClass):
                     setattr(
                         self,
                         dt_field,
-                        datetime.strptime(getattr(self, dt_field), "%Y-%m-%dT%H:%M:%S%z"),
+                        datetime.strptime(
+                            getattr(self, dt_field), "%Y-%m-%dT%H:%M:%S%z"
+                        ),
                     )
 
         for int_field in INT_FIELDS:

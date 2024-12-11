@@ -190,13 +190,19 @@ class KBEntry(BaseClass):
                         )
                     else:
                         setattr(
-                            self, dt_field, datetime.fromisoformat(getattr(self, dt_field))
+                            self,
+                            dt_field,
+                            datetime.fromisoformat(getattr(self, dt_field)),
                         )
                 else:
-                    setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
+                    setattr(
+                        self, dt_field, datetime.fromisoformat(getattr(self, dt_field))
+                    )
 
         for bool_field in BOOL_FIELDS:
-            if getattr(self, bool_field) and not isinstance(getattr(self, bool_field), bool):
+            if getattr(self, bool_field) and not isinstance(
+                getattr(self, bool_field), bool
+            ):
                 setattr(self, bool_field, bool(getattr(self, bool_field)))
 
         with catch_warnings():
@@ -206,7 +212,9 @@ class KBEntry(BaseClass):
                     setattr(
                         self,
                         html_field,
-                        BeautifulSoup(getattr(self, html_field), "html.parser").get_text(),
+                        BeautifulSoup(
+                            getattr(self, html_field), "html.parser"
+                        ).get_text(),
                     )
 
         # convert the lists to BaseList objects:

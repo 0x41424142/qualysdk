@@ -602,7 +602,9 @@ class ScannerAppliance(BaseClass):
                 setattr(
                     self,
                     custom_field[0],
-                    build_dataclass_baselist(getattr(self, custom_field[0]), custom_field[1]),
+                    build_dataclass_baselist(
+                        getattr(self, custom_field[0]), custom_field[1]
+                    ),
                 )
 
         if self.CLOUD_INFO:

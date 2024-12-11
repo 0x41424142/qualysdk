@@ -153,7 +153,9 @@ class AssetGroup(BaseClass):
                     )
                 else:
                     setattr(
-                        self, int_field, BaseList([int(x) for x in getattr(self, int_field)])
+                        self,
+                        int_field,
+                        BaseList([int(x) for x in getattr(self, int_field)]),
                     )
 
         for dt_field in DT_FIELDS:

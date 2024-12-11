@@ -142,7 +142,9 @@ class StaticSearchList(BaseClass):
         DT_FIELDS = ["CREATED", "MODIFIED"]
 
         for dt_field in DT_FIELDS:
-            if getattr(self, dt_field) and not isinstance(getattr(self, dt_field), datetime):
+            if getattr(self, dt_field) and not isinstance(
+                getattr(self, dt_field), datetime
+            ):
                 setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
         self.ID = int(self.ID)
@@ -251,7 +253,9 @@ class DynamicSearchList(BaseClass):
         DT_FIELDS = ["CREATED", "MODIFIED"]
 
         for dt_field in DT_FIELDS:
-            if getattr(self, dt_field) and not isinstance(getattr(self, dt_field), datetime):
+            if getattr(self, dt_field) and not isinstance(
+                getattr(self, dt_field), datetime
+            ):
                 setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
         self.ID = int(self.ID)

@@ -56,7 +56,9 @@ class KBQVS(BaseClass):
         DT_FIELDS = ["qvsLastChangedDate", "nvdPublishedDate"]
         for dt_field in DT_FIELDS:
             if dt_field and not isinstance(getattr(self, dt_field), datetime):
-                setattr(self, dt_field, datetime.fromtimestamp(int(self.base.get(dt_field))))
+                setattr(
+                    self, dt_field, datetime.fromtimestamp(int(self.base.get(dt_field)))
+                )
 
         if self.base.get("id"):
             setattr(self, "id", self.base.get("id"))

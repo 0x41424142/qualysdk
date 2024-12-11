@@ -198,7 +198,7 @@ def list_jobs(
                 ),
             ]
 
-            print(f"Spawned threads for both Windows and Linux jobs...")
+            print("Spawned threads for both Windows and Linux jobs...")
 
             for thread in threads:
                 thread.start()

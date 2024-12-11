@@ -620,7 +620,7 @@ def delete_authentication_record(auth: BasicAuth, **kwargs) -> list[str]:
         )
 
     if serviceResponse.get("count") == "0":
-        print(f"No auth records found. Exiting.")
+        print("No auth records found. Exiting.")
         return []
 
     deleted = []

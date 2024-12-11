@@ -299,8 +299,7 @@ def call_api(
                     to_wait = 3601  # Default to 1h 1s if no header is present.
 
                 print(
-                    "WARNING: You have reached the rate limit for this endpoint. "
-                    + f"qualysdk will automatically sleep for {to_wait} seconds and try again at approximately {datetime.now() + timedelta(seconds=to_wait)}."
+                    f"WARNING: You have reached the rate limit for this endpoint. qualysdk will automatically sleep for {to_wait} seconds and try again at approximately {datetime.now() + timedelta(seconds=to_wait)}."
                 )
                 sleep(to_wait)
                 # Go to next iteration of the loop to try again:
@@ -309,8 +308,7 @@ def call_api(
             else:
                 # Almost at rate limit:
                 print(
-                    f"Warning: This endpoint will accept {response.headers['X-RateLimit-Remaining']} more calls before rate limiting you."
-                    + f" qualysdk will automatically sleep once remaining calls hits 0."
+                    f"Warning: This endpoint will accept {response.headers['X-RateLimit-Remaining']} more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0."
                 )
 
         return response

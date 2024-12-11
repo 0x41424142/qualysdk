@@ -95,7 +95,7 @@ class BasicAuth(BaseAuthentication):
         if self.platform != "qg1":
             url = f"https://qualysapi.{self.platform}.apps.qualys.com/msp/about.php"
         else:
-            url = f"https://qualysapi.qualys.com/msp/about.php"
+            url = "https://qualysapi.qualys.com/msp/about.php"
 
         """Requires basic auth. JWT is not supported for this endpoint."""
         r = get(url, auth=(self.username, self.password))

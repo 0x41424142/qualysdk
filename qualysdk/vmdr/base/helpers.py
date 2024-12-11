@@ -74,7 +74,7 @@ def prepare_args(
         threads = rl["X-Concurrency-Limit-Limit"]
 
     (
-        print(f"Pulling/creating queue for full ID list...")
+        print("Pulling/creating queue for full ID list...")
         if not ids
         else print(f"Pulling/creating queue for user-specified IDs: {ids}...")
     )

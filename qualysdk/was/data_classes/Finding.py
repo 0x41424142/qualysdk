@@ -104,9 +104,9 @@ class FindingItem(BaseClass):
     def __post_init__(self):
         BOOL_FIELDS = ["ajax", "authentication"]
 
-        for field in BOOL_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, field == "true")
+        for bool_field in BOOL_FIELDS:
+            if getattr(self, bool_field):
+                setattr(self, bool_field, bool_field == "true")
 
         if self.accessPath:
             self.accessPath_count = int(self.accessPath.get("count"))
@@ -319,20 +319,20 @@ class WASFinding(BaseClass):
         if self.param:
             setattr(self, "param", unquote_plus(self.param))
 
-        for field in INT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, int(getattr(self, field)))
+        for int_field in INT_FIELDS:
+            if getattr(self, int_field):
+                setattr(self, int_field, int(getattr(self, int_field)))
 
-        for field in BOOL_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, bool(getattr(self, field)))
+        for bool_field in BOOL_FIELDS:
+            if getattr(self, bool_field):
+                setattr(self, bool_field, bool(getattr(self, bool_field)))
 
-        for field in DT_FIELDS:
-            if getattr(self, field):
+        for dt_field in DT_FIELDS:
+            if getattr(self, dt_field):
                 setattr(
                     self,
-                    field,
-                    datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%SZ"),
+                    dt_field,
+                    datetime.strptime(getattr(self, dt_field), "%Y-%m-%dT%H:%M:%SZ"),
                 )
 
         if self.cwe:

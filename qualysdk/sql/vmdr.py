@@ -848,7 +848,6 @@ def upload_vmdr_users(
         "LATEST_VULN": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "MAP": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "DAILY_TICKETS": types.Boolean(),
         "ASSET_GROUP_TITLE": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"

@@ -173,24 +173,24 @@ class User(BaseClass):
 
         # Convert the fields to the correct types
 
-        for field in DT_FIELDS:
-            if getattr(self, field):
-                if getattr(self, field) == "N/A":  # Some fields have N/A as a value
-                    setattr(self, field, None)
+        for dt_field in DT_FIELDS:
+            if getattr(self, dt_field):
+                if getattr(self, dt_field) == "N/A":  # Some fields have N/A as a value
+                    setattr(self, dt_field, None)
                 else:
                     setattr(
                         self,
-                        field,
-                        datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%S%z"),
+                        dt_field,
+                        datetime.strptime(getattr(self, dt_field), "%Y-%m-%dT%H:%M:%S%z"),
                     )
 
-        for field in INT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, int(getattr(self, field)))
+        for int_field in INT_FIELDS:
+            if getattr(self, int_field):
+                setattr(self, int_field, int(getattr(self, int_field)))
 
-        for field in BOOL_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, bool(getattr(self, field)))
+        for bool_field in BOOL_FIELDS:
+            if getattr(self, bool_field):
+                setattr(self, bool_field, bool(getattr(self, bool_field)))
 
         if self.ASSET_GROUP_TITLE:
             bl = BaseList()

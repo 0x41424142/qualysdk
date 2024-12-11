@@ -140,7 +140,7 @@ def add_user(
     if result["USER_OUTPUT"]["RETURN"]["@status"] == "FAILED":
         raise QualysAPIError(result["USER_OUTPUT"]["RETURN"]["MESSAGE"])
 
-    if kwargs.get("send_email") == False:
+    if not kwargs.get("send_email"):
         return f"User created. User:Pass is: {result['USER_OUTPUT']['USER']['USER_LOGIN']}:{result['USER_OUTPUT']['USER']['PASSWORD']}"
 
     else:

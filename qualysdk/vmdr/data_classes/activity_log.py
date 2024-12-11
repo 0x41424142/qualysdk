@@ -29,7 +29,7 @@ class ActivityLog(BaseClass):
         if isinstance(self.Date, str):
             self.Date = datetime.fromisoformat(self.Date)
 
-        if self.User_IP and not type(self.User_IP) in [IPv4Address, IPv6Address]:
+        if self.User_IP and type(self.User_IP) not in [IPv4Address, IPv6Address]:
             try:
                 self.User_IP = ip_address(self.User_IP)
             except ValueError:

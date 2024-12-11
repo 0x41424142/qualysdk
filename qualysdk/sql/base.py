@@ -6,8 +6,6 @@ from datetime import datetime
 from dataclasses import dataclass
 from typing import Literal
 
-from sqlalchemy import types
-
 from pandas import DataFrame
 from sqlalchemy import create_engine, Connection, types
 

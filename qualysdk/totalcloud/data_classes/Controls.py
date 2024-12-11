@@ -5,17 +5,15 @@ contains the Control dataclass for the TotalCloud API
 from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
-
-from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
-
 # suppress warning from bs4
 import warnings
 
-warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
+from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
 
+warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 @dataclass
 class Control(BaseClass):

@@ -285,9 +285,6 @@ def upload_gav_hosts(
         "cloudProvider_imagePublisher": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "cloudProvider_imagePublisher": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
         "cloudProvider_imageVersion": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),

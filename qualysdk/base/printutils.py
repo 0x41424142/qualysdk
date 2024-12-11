@@ -5,7 +5,11 @@ enable_stdout -> bool: Enable printing.
 disable_stdout -> bool: Disable printing.
 """
 
-import sys, os
+import sys
+import os
 
-disable_stdout = lambda: setattr(sys, "stdout", open(os.devnull, "w"))
-enable_stdout = lambda: setattr(sys, "stdout", sys.__stdout__)
+def disable_stdout():
+    setattr(sys, "stdout", open(os.devnull, "w"))
+
+def enable_stdout():
+    setattr(sys, "stdout", sys.__stdout__)

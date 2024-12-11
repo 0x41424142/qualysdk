@@ -48,7 +48,7 @@ def get_connectors(
 
     if kwargs.get("filter"):
         # Make sure the query key is valid
-        if not kwargs["filter"].split(":")[0] in [
+        if kwargs["filter"].split(":")[0] not in [
             "name",
             "description",
             "state",

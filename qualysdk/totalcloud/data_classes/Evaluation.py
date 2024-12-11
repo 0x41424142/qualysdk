@@ -30,7 +30,7 @@ class Evaluation(BaseClass):
             if not isinstance(value, datetime):
                 try:
                     setattr(self, field, datetime.fromisoformat(value))
-                except:
+                except (OSError, TypeError, ValueError, OverflowError):
                     setattr(self, field, None)
 
 

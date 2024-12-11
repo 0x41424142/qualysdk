@@ -176,37 +176,37 @@ class KBEntry(BaseClass):
 
         HTML_FIELDS = ["DIAGNOSIS", "CONSEQUENCE", "SOLUTION"]
 
-        for field in DATE_FIELDS:
-            if getattr(self, field) is not None and not isinstance(
-                getattr(self, field), datetime
+        for dt_field in DATE_FIELDS:
+            if getattr(self, dt_field) is not None and not isinstance(
+                getattr(self, dt_field), datetime
             ):
                 # special case for LAST_CUSTOMIZATION:
-                if field == "LAST_CUSTOMIZATION":
-                    if isinstance(getattr(self, field), dict):
+                if dt_field == "LAST_CUSTOMIZATION":
+                    if isinstance(getattr(self, dt_field), dict):
                         setattr(
                             self,
-                            field,
-                            datetime.fromisoformat(getattr(self, field)["DATETIME"]),
+                            dt_field,
+                            datetime.fromisoformat(getattr(self, dt_field)["DATETIME"]),
                         )
                     else:
                         setattr(
-                            self, field, datetime.fromisoformat(getattr(self, field))
+                            self, dt_field, datetime.fromisoformat(getattr(self, dt_field))
                         )
                 else:
-                    setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+                    setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
-        for field in BOOL_FIELDS:
-            if getattr(self, field) and not isinstance(getattr(self, field), bool):
-                setattr(self, field, bool(getattr(self, field)))
+        for bool_field in BOOL_FIELDS:
+            if getattr(self, bool_field) and not isinstance(getattr(self, bool_field), bool):
+                setattr(self, bool_field, bool(getattr(self, bool_field)))
 
         with catch_warnings():
             simplefilter("ignore")  # ignore the warning about the html.parser
-            for field in HTML_FIELDS:
-                if getattr(self, field):
+            for html_field in HTML_FIELDS:
+                if getattr(self, html_field):
                     setattr(
                         self,
-                        field,
-                        BeautifulSoup(getattr(self, field), "html.parser").get_text(),
+                        html_field,
+                        BeautifulSoup(getattr(self, html_field), "html.parser").get_text(),
                     )
 
         # convert the lists to BaseList objects:

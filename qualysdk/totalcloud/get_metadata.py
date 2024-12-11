@@ -68,7 +68,7 @@ def get_control_metadata(
             "qflow.id",
         ]
 
-        if not kwargs["filter"].split(":")[0] in valid_controls:
+        if kwargs["filter"].split(":")[0] not in valid_controls:
             raise QualysAPIError(
                 f"Invalid filter key. Valid keys: {', '.join(valid_controls)}"
             )

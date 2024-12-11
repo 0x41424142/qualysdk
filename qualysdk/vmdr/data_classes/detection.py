@@ -141,12 +141,12 @@ class Detection(BaseClass):
 
         INT_FIELDS = ["UNIQUE_VULN_ID", "QID", "SEVERITY", "TIMES_FOUND", "PORT", "ID"]
 
-        for field in DATETIME_FIELDS:
+        for dt_field in DATETIME_FIELDS:
             if (
-                isinstance(getattr(self, field), str)
-                and getattr(self, field) is not None
+                isinstance(getattr(self, dt_field), str)
+                and getattr(self, dt_field) is not None
             ):
-                setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+                setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
         # clean up fields that have html tags
         with catch_warnings():

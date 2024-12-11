@@ -394,19 +394,19 @@ def build_update_request(
                 f"urlExcludelist must be passed as a list of strings. Received: {urlExcludelist}"
             )
 
-        l = []
+        entry_list = []
         for entry in urlExcludelist:
             # Check for any regex characters in the entry.
             # If found, set the regex attribute to true.
             if is_valid_regex(entry):
-                l.append(
+                entry_list.append(
                     xmltodict.unparse(
                         {"UrlEntry": {"@regex": "true", "#text": str(entry)}},
                         full_document=False,
                     )
                 )
             else:
-                l.append(
+                entry_list.append(
                     xmltodict.unparse(
                         {"UrlEntry": {"@regex": "false", "#text": str(entry)}},
                         full_document=False,
@@ -414,7 +414,7 @@ def build_update_request(
                 )
 
         request_dict["ServiceRequest"]["data"]["WebApp"]["urlExcludelist"] = {
-            "set": "\n".join(l)
+            "set": "\n".join(entry_list)
         }
 
     if _urlAllowlist:
@@ -422,19 +422,19 @@ def build_update_request(
             raise ValueError(
                 f"urlAllowlist must be passed as a list of strings. Received: {_urlAllowlist}"
             )
-        l = []
+        url_list = []
         for entry in _urlAllowlist:
             # Check for any regex characters in the entry.
             # If found, set the regex attribute to true.
             if is_valid_regex(entry):
-                l.append(
+                url_list.append(
                     xmltodict.unparse(
                         {"UrlEntry": {"@regex": "true", "#text": str(entry)}},
                         full_document=False,
                     )
                 )
             else:
-                l.append(
+                url_list.append(
                     xmltodict.unparse(
                         {"UrlEntry": {"@regex": "false", "#text": str(entry)}},
                         full_document=False,
@@ -442,7 +442,7 @@ def build_update_request(
                 )
 
         request_dict["ServiceRequest"]["data"]["WebApp"]["urlAllowlist"] = {
-            "set": "\n".join(l)
+            "set": "\n".join(url_list)
         }
 
     if _postDataExcludelist:
@@ -451,19 +451,19 @@ def build_update_request(
                 f"postDataExcludelist must be passed as a list of strings. Received: {_postDataExcludelist}"
             )
 
-        l = []
+        post_list = []
         for entry in _postDataExcludelist:
             # Check for any regex characters in the entry.
             # If found, set the regex attribute to true.
             if is_valid_regex(entry):
-                l.append(
+                post_list.append(
                     xmltodict.unparse(
                         {"UrlEntry": {"@regex": "true", "#text": str(entry)}},
                         full_document=False,
                     )
                 )
             else:
-                l.append(
+                post_list.append(
                     xmltodict.unparse(
                         {"UrlEntry": {"@regex": "false", "#text": str(entry)}},
                         full_document=False,
@@ -471,7 +471,7 @@ def build_update_request(
                 )
 
         request_dict["ServiceRequest"]["data"]["WebApp"]["postDataExcludelist"] = {
-            "set": "\n".join(l)
+            "set": "\n".join(post_list)
         }
 
     if _useSitemap is not None:
@@ -484,11 +484,11 @@ def build_update_request(
             raise ValueError(
                 f"headers must be passed as a list of strings. Received: {_headers}"
             )
-        l = []
+        header_list = []
         for header in _headers:
-            l.append(xmltodict.unparse({"WebAppHeader": header}, full_document=False))
+            header_list.append(xmltodict.unparse({"WebAppHeader": header}, full_document=False))
         request_dict["ServiceRequest"]["data"]["WebApp"]["headers"] = {
-            "set": "\n".join(l)
+            "set": "\n".join(header_list)
         }
 
     # Unescape any HTML. Necessary due to xmltodict's behavior.

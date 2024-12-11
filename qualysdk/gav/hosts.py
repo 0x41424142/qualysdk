@@ -523,6 +523,7 @@ class Host(BaseClass):
                                 if tag.get("key")
                                 else f"{tag.get('name')}:{tag.get('value')}"
                             )
+                            bl.append(s)
                         setattr(self, "cloudProvider_tags", bl)
 
                 else:

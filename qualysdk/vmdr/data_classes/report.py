@@ -58,9 +58,9 @@ class VMDRReport(BaseClass):
 
     def __post_init__(self):
         DT_FIELDS = ["LAUNCH_DATETIME", "EXPIRATION_DATETIME"]
-        for field in DT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+        for dt_field in DT_FIELDS:
+            if getattr(self, dt_field):
+                setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
         self.ID = int(self.ID)
 

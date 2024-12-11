@@ -54,9 +54,9 @@ class KBQVS(BaseClass):
             raise ValueError("The base attribute is required.")
 
         DT_FIELDS = ["qvsLastChangedDate", "nvdPublishedDate"]
-        for field in DT_FIELDS:
-            if field and not isinstance(getattr(self, field), datetime):
-                setattr(self, field, datetime.fromtimestamp(int(self.base.get(field))))
+        for dt_field in DT_FIELDS:
+            if dt_field and not isinstance(getattr(self, dt_field), datetime):
+                setattr(self, dt_field, datetime.fromtimestamp(int(self.base.get(dt_field))))
 
         if self.base.get("id"):
             setattr(self, "id", self.base.get("id"))
@@ -88,14 +88,14 @@ class KBQVS(BaseClass):
                 "trending",
                 "malwareName",
             ]
-            for field in ONE_LONG_STR_FIELDS:
-                if field in self.contributingFactors.keys():
+            for str_field in ONE_LONG_STR_FIELDS:
+                if str_field in self.contributingFactors.keys():
                     bl = BaseList()
-                    for item in self.contributingFactors.get(field)[0].split(","):
-                        if field == "trending":
+                    for item in self.contributingFactors.get(str_field)[0].split(","):
+                        if str_field == "trending":
                             item = int(item)
                         bl.append(item)
-                    setattr(self, field, bl)
+                    setattr(self, str_field, bl)
 
             if "mitigationControls" in self.contributingFactors.keys():
                 bl = BaseList()

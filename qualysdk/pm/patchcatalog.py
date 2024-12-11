@@ -91,7 +91,7 @@ def get_patch_catalog(
             params=params,
         )
 
-        if not result.status_code in range(200, 299):
+        if result.status_code not in range(200, 299):
             raise QualysAPIError(result.json())
 
         # Remove processed patchIds from the list:

@@ -184,7 +184,7 @@ PM_SCHEMA = frozendict(
                 "endpoint": "/pm/v1/patchcatalog/patch/packages",
                 "method": ["GET"],
                 "valid_params": [
-                    "patchUuid", 
+                    "patchUuid",
                     "patchId",
                     "filter",
                     "pageNumber",
@@ -195,7 +195,7 @@ PM_SCHEMA = frozendict(
                 "return_type": "json",
                 "pagination": True,
                 "auth_type": "token",
-                },
+            },
             "get_products_in_windows_patch": {
                 "endpoint": "/pm/v1/patchcatalog/patch/{placeholder}/products",
                 "method": ["GET"],

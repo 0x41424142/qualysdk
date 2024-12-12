@@ -112,55 +112,79 @@ def get_patch_catalog(
 
 def _get_products_or_packages_in_patch():
     """
-    Backend function for user-facing get_packages_in_linux_patch 
+    Backend function for user-facing get_packages_in_linux_patch
     and get_products_in_windows_patch functions.
     """
     pass
 
+
 @overload
-def get_packages_in_linux_patch(auth: TokenAuth, patchId: str, page_count: Union[int, 'all'] = 'all', **kwargs) -> BaseList[PackageDetail]:
-    ...
-    
-@overload
-def get_packages_in_linux_patch(auth: TokenAuth, patchId: Union[BaseList[str], list[str]], page_count: Union[int, 'all'] = 'all', **kwargs) -> BaseList[PackageDetail]:
+def get_packages_in_linux_patch(
+    auth: TokenAuth, patchId: str, page_count: Union[int, "all"] = "all", **kwargs
+) -> BaseList[PackageDetail]:
     ...
 
-def get_packages_in_linux_patch(auth: TokenAuth, patchId: Union[str, BaseList[str], list[str]], page_count: Union[int, 'all'] = 'all', **kwargs) -> BaseList[PackageDetail]:
+
+@overload
+def get_packages_in_linux_patch(
+    auth: TokenAuth,
+    patchId: Union[BaseList[str], list[str]],
+    page_count: Union[int, "all"] = "all",
+    **kwargs,
+) -> BaseList[PackageDetail]:
+    ...
+
+
+def get_packages_in_linux_patch(
+    auth: TokenAuth,
+    patchId: Union[str, BaseList[str], list[str]],
+    page_count: Union[int, "all"] = "all",
+    **kwargs,
+) -> BaseList[PackageDetail]:
     """
     Get a list of packages associated with a Linux patch.
-    
+
     Args:
         auth (TokenAuth): The authentication object.
         patchId (Union[str, BaseList[str], list[str]]): The patch ID(s) to retrieve packages for. If a BaseList/list of patch IDs is provided, the SDK will use threading to speed up the process.
         page_count (int, 'all'): The number of pages to retrieve. Default is 'all'.
-        
+
     ## Kwargs:
-        
+
             - filter (str): A filter to apply to the results. Patch QQL is supported.
             - PageNumber (int): The page number to retrieve. The SDK will automatically handle pagination unless page_count = 1, in which case it will return the page you specify.
             - PageSize (int): The number of results to return per page. Used for pagination (the SDK will automatically handle pagination). Default is 10.
-            
+
     Returns:
         BaseList[PackageDetail]: A list of PackageDetail objects.
     """
     pass
-    
+
+
 @overload
-def get_products_in_windows_patch(auth: TokenAuth, patchId: str) -> BaseList[AssociatedProduct]:
+def get_products_in_windows_patch(
+    auth: TokenAuth, patchId: str
+) -> BaseList[AssociatedProduct]:
     ...
-    
+
+
 @overload
-def get_products_in_windows_patch(auth: TokenAuth, patchId: Union[BaseList[str], list[str]]) -> BaseList[AssociatedProduct]:
+def get_products_in_windows_patch(
+    auth: TokenAuth, patchId: Union[BaseList[str], list[str]]
+) -> BaseList[AssociatedProduct]:
     ...
-    
-def get_products_in_windows_patch(auth: TokenAuth, patchId: Union[str, BaseList[str], list[str]]) -> BaseList[AssociatedProduct]:
+
+
+def get_products_in_windows_patch(
+    auth: TokenAuth, patchId: Union[str, BaseList[str], list[str]]
+) -> BaseList[AssociatedProduct]:
     """
     Get a list of products associated with a Windows patch.
-    
+
     Args:
         auth (TokenAuth): The authentication object.
         patchId (Union[str, BaseList[str], list[str]]): The patch ID(s) to retrieve products for. If a BaseList/list of patch IDs is provided, the SDK will use threading to speed up the process.
-        
+
     Returns:
         BaseList[PackageDetail]: A list of PackageDetail objects.
     """

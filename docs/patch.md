@@ -29,6 +29,8 @@ You can use any of the endpoints currently supported:
 | ```get_asset_count``` | Returns the number of assets for a given platform that match ```query``` and ```havingQuery```. |
 | ```lookup_host_uuids``` | Returns a list of tuples, containing host UUIDs for a given list of asset IDs. |
 | ```get_patch_catalog``` | Returns the patch catalog for a given platform according to ```patchId```. |
+| ```get_packages_in_linux_patch``` | Returns the packages associated with a Linux patch. |
+| ```get_products_in_windows_patch``` | Returns the products associated with a Windows patch. |
 
 ## Get PM Version API
 
@@ -684,6 +686,74 @@ catalog = get_patch_catalog(
   ),
   ...
 ]
+```
+
+## Get Packages Associated with Linux Patches API
+
+```get_packages_in_linux_patch``` returns the packages associated with a Linux patch.
+
+If a ```BaseList``` or a ```list``` of patch IDs is passed, the function will use threading to speed up the process.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```patchId``` | ```Union[str, BaseList[str]]``` | The ID(s) of the patch to get packages for | ✅ |
+| ```page_count``` | ```Union[int, "all"] = "all"``` | The number of pages to return | ❌ |
+| ```filter``` | ```str``` | The QQL filter to search for packages | ❌ |
+| ```pageNumber``` | ```int``` | The page number to return. The SDK will handle pagination for you. Users can use this if ```page_count``` is 1 to pull a specific page. | ❌ |
+| ```pageSize``` | ```int=10``` | The number of packages to return per page | ❌ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import get_packages_in_linux_patch, get_patches
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get some Linux patches:
+patches = get_patches(
+  auth, 
+  platform='linux', 
+  attributes="id"
+)
+
+# Get the packages for the patches:
+packages = get_packages_in_linux_patch(
+  auth, 
+  [patch.id for patch in patches]
+)
+>>>STUB
+```
+
+## Get Products Associated with Windows Patches API
+
+```get_products_in_windows_patch``` returns the products associated with a Windows patch.
+
+If a ```BaseList``` or a ```list``` of patch IDs is passed, the function will use threading to speed up the process.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```patchId``` | ```Union[str, BaseList[str]]``` | The ID(s) of the patch to get products for | ✅ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import get_products_in_windows_patch, get_patches
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get some Windows patches:
+patches = get_patches(
+  auth, 
+  platform='windows', 
+  attributes="id"
+)
+
+# Get the products for the patches:
+products = get_products_in_windows_patch(
+  auth, 
+  [patch.id for patch in patches]
+)
+>>>STUB
 ```
 
 

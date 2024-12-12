@@ -158,6 +158,7 @@ class Host(BaseClass):
     cloudProvider_region: Optional[str] = None
     cloudProvider_spotInstance: Optional[bool] = None
     cloudProvider_subnetId: Optional[str] = None
+    cloudProvider_tags: Optional[Union[str, List[str], BaseList[str]]] = None
     cloudProvider_vpcId: Optional[str] = None
     # Azure:
     cloudProvider_imageOffer: Optional[str] = None

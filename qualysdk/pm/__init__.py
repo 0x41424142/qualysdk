@@ -16,4 +16,4 @@ from .vulnerabilities import lookup_cves
 from .version import get_version
 from .patches import get_patches, get_patch_count
 from .assets import get_assets, lookup_host_uuids
-from .patchcatalog import get_patch_catalog
+from .patchcatalog import get_patch_catalog, get_packages_in_linux_patch, get_products_in_windows_patch

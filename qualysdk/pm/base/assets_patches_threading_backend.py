@@ -7,7 +7,7 @@ from threading import Lock, Thread
 
 from ..data_classes.Patch import Patch
 from ..data_classes.PMAsset import Asset
-from ..base.page_limit import check_page_size_limit
+from .page_limit import check_page_size_limit
 from ...auth.token import TokenAuth
 from ...base.call_api import call_api
 from ...base.base_list import BaseList

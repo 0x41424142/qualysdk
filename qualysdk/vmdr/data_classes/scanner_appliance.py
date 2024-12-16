@@ -196,13 +196,13 @@ class ScannerCloudInfo(BaseClass):
                 )
             self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")["SETTING"]
 
-        for field in INT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, int(getattr(self, field)))
+        for int_field in INT_FIELDS:
+            if getattr(self, int_field):
+                setattr(self, int_field, int(getattr(self, int_field)))
 
-        for field in IPV4_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, IPv4Address(getattr(self, field)))
+        for ip_field in IPV4_FIELDS:
+            if getattr(self, ip_field):
+                setattr(self, ip_field, IPv4Address(getattr(self, ip_field)))
 
         del self.EC2_INFO
 
@@ -321,13 +321,13 @@ class InterfaceSettings(BaseClass):
         INT_FIELDS = ["SPEED"]
         IPV4_FIELDS = ["IP_ADDRESS", "GATEWAY"]
 
-        for field in INT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, int(getattr(self, field)))
+        for int_field in INT_FIELDS:
+            if getattr(self, int_field):
+                setattr(self, int_field, int(getattr(self, int_field)))
 
-        for field in IPV4_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, IPv4Address(getattr(self, field)))
+        for ip_field in IPV4_FIELDS:
+            if getattr(self, ip_field):
+                setattr(self, ip_field, IPv4Address(getattr(self, ip_field)))
 
         if self.DNS:
             self.DNS_PRIMARY = self.DNS.get("PRIMARY")
@@ -577,32 +577,34 @@ class ScannerAppliance(BaseClass):
         FLOAT_FIELDS = ["SOFTWARE_VERSION"]
         CUSTOM_DATACLASSES = [("ASSET_GROUP_LIST", "ag"), ("ASSET_TAGS_LIST", "tag")]
 
-        for field in INT_FIELDS:
-            if getattr(self, field):
+        for int_field in INT_FIELDS:
+            if getattr(self, int_field):
                 # Special case for polling interval. Split by space and take the first value.
-                if field == "POLLING_INTERVAL":
-                    setattr(self, field, int(getattr(self, field).split()[0]))
+                if int_field == "POLLING_INTERVAL":
+                    setattr(self, int_field, int(getattr(self, int_field).split()[0]))
                 else:
-                    setattr(self, field, int(getattr(self, field)))
+                    setattr(self, int_field, int(getattr(self, int_field)))
 
-        for field in FLOAT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, float(getattr(self, field)))
+        for float_field in FLOAT_FIELDS:
+            if getattr(self, float_field):
+                setattr(self, float_field, float(getattr(self, float_field)))
 
-        for field in DT_FIELDS:
-            if getattr(self, field):
+        for dt_field in DT_FIELDS:
+            if getattr(self, dt_field):
                 setattr(
                     self,
-                    field,
-                    datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%S%z"),
+                    dt_field,
+                    datetime.strptime(getattr(self, dt_field), "%Y-%m-%dT%H:%M:%S%z"),
                 )
 
-        for field in CUSTOM_DATACLASSES:
-            if getattr(self, field[0]):
+        for custom_field in CUSTOM_DATACLASSES:
+            if getattr(self, custom_field[0]):
                 setattr(
                     self,
-                    field[0],
-                    build_dataclass_baselist(getattr(self, field[0]), field[1]),
+                    custom_field[0],
+                    build_dataclass_baselist(
+                        getattr(self, custom_field[0]), custom_field[1]
+                    ),
                 )
 
         if self.CLOUD_INFO:

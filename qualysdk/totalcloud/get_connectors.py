@@ -48,7 +48,7 @@ def get_connectors(
 
     if kwargs.get("filter"):
         # Make sure the query key is valid
-        if not kwargs["filter"].split(":")[0] in [
+        if kwargs["filter"].split(":")[0] not in [
             "name",
             "description",
             "state",
@@ -71,7 +71,7 @@ def get_connectors(
 
         # Make the API request to retrieve the connectors
         response = call_api(
-            auth=auth, module="cloudview", endpoint=f"get_connectors", params=kwargs
+            auth=auth, module="cloudview", endpoint="get_connectors", params=kwargs
         )
 
         if response.status_code != 200:
@@ -134,7 +134,7 @@ def get_connector_details(
     response = call_api(
         auth=auth,
         module="cloudview",
-        endpoint=f"get_connector_details",
+        endpoint="get_connector_details",
         params={
             "placeholder": connectorId,
             "cloudprovider": provider,

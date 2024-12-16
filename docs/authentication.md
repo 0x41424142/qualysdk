@@ -20,6 +20,8 @@ with BasicAuth(<username>,<password>, platform='qg1') as auth:
 >>>qualysdk.exceptions.Exceptions.AuthTypeMismatchError: Auth type mismatch. Expected token but got basic.
 ```
 
+>**Head's Up!**: Automatic rate limit respecting, described below, is not available for Patch Management API calls. Qualys does not return the headers necessary to determine rate limit windows for these endpoints.
+
 Both authentication objects also support automatic rate limit respecting. The SDK will warn you as you get close to an API endpoint's limit and automatically sleep until the limit is lifted, continuing the call afterwards:
 
 ```plaintext

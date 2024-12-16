@@ -306,7 +306,7 @@ def format_web_app_auth_form_record_field(field: Dict[str, Any]) -> Dict[str, An
         try:
             field["data"] = unparse(field["data"])
         except Exception as e:
-            raise ValueError(f"Field data must be a string or an XNL-like dictionary.")
+            raise ValueError("Field data must be a string or an XNL-like dictionary.")
     return field
 
 
@@ -442,7 +442,7 @@ def format_web_app_auth_oauth2_record(record: Dict[str, Any]) -> Dict[str, Any]:
             record["seleniumScript"]["data"] = unparse(record["seleniumScript"]["data"])
         except Exception as e:
             raise ValueError(
-                f"SeleniumScript data must be a string or an XML-like dictionary."
+                "SeleniumScript data must be a string or an XML-like dictionary."
             )
     return record
 

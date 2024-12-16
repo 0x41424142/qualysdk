@@ -595,7 +595,7 @@ def delete_webapp(
         )
 
     if serviceResponse.get("count") == "0":
-        print(f"No applicable web apps found. Exiting.")
+        print("No applicable web apps found. Exiting.")
         return []
 
     deleted = []
@@ -688,7 +688,7 @@ def purge_webapp(auth: BasicAuth, **kwargs) -> list[str]:
         )
 
     if serviceResponse.get("count") == "0":
-        print(f"No applicable web apps found. Exiting.")
+        print("No applicable web apps found. Exiting.")
         return []
 
     deleted = []

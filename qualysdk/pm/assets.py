@@ -5,7 +5,9 @@ the /pm/v*/patches* endpoints
 
 from typing import Union, Literal, overload
 
-from .base.threading_backend import _get_patches_or_assets as get_assets_backend
+from .base.assets_patches_threading_backend import (
+    _get_patches_or_assets as get_assets_backend,
+)
 from .data_classes.PMAsset import Asset
 from ..auth.token import TokenAuth
 from ..base.base_list import BaseList

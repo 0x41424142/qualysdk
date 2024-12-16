@@ -180,6 +180,35 @@ PM_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "token",
             },
+            "get_packages_in_linux_patch": {
+                "endpoint": "/pm/v1/patchcatalog/patch/packages",
+                "method": ["GET"],
+                "valid_params": [
+                    "patchUuid",
+                    "patchId",
+                    "filter",
+                    "pageNumber",
+                    "pageSize",
+                ],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": True,
+                "auth_type": "token",
+            },
+            "get_products_in_windows_patch": {
+                "endpoint": "/pm/v1/patchcatalog/patch/{placeholder}/products",
+                "method": ["GET"],
+                "valid_params": [
+                    "placeholder",
+                    "patchId",
+                ],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
         },
     }
 )

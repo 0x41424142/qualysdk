@@ -139,30 +139,32 @@ class AssetGroup(BaseClass):
         INT_LISTS = ["APPLIANCE_IDS", "ASSIGNED_USER_IDS", "ASSIGNED_UNIT_IDS"]
         STR_LISTS = ["DNS_LIST", "NETBIOS_LIST", "EC2_IDS", "COMMENTS", "DOMAIN_LIST"]
 
-        for field in STR_LISTS:
-            if getattr(self, field):
-                setattr(self, field, BaseList(getattr(self, field).split(",")))
+        for str_field in STR_LISTS:
+            if getattr(self, str_field):
+                setattr(self, str_field, BaseList(getattr(self, str_field).split(",")))
 
-        for field in INT_LISTS:
-            if getattr(self, field):
-                if isinstance(getattr(self, field), str):
+        for int_field in INT_LISTS:
+            if getattr(self, int_field):
+                if isinstance(getattr(self, int_field), str):
                     setattr(
                         self,
-                        field,
-                        BaseList([int(x) for x in getattr(self, field).split(",")]),
+                        int_field,
+                        BaseList([int(x) for x in getattr(self, int_field).split(",")]),
                     )
                 else:
                     setattr(
-                        self, field, BaseList([int(x) for x in getattr(self, field)])
+                        self,
+                        int_field,
+                        BaseList([int(x) for x in getattr(self, int_field)]),
                     )
 
-        for field in DT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+        for dt_field in DT_FIELDS:
+            if getattr(self, dt_field):
+                setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
-        for field in INT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, int(getattr(self, field)))
+        for int_field in INT_FIELDS:
+            if getattr(self, int_field):
+                setattr(self, int_field, int(getattr(self, int_field)))
 
         # Convert IP_SET to BaseList of ipaddress.* objs.:
         if self.IP_SET:

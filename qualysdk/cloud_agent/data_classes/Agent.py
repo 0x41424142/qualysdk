@@ -115,21 +115,23 @@ class CloudAgent(BaseClass):
         ]
         IP_ADDRESS_FIELDS = ["agentInfo_connectedFrom"]
 
-        for field in DATE_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, datetime.fromisoformat(getattr(self, field)))
+        for date_field in DATE_FIELDS:
+            if getattr(self, date_field):
+                setattr(
+                    self, date_field, datetime.fromisoformat(getattr(self, date_field))
+                )
 
-        for field in INT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, int(getattr(self, field)))
+        for int_field in INT_FIELDS:
+            if getattr(self, int_field):
+                setattr(self, int_field, int(getattr(self, int_field)))
 
-        for field in FLOAT_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, float(getattr(self, field)))
+        for float_field in FLOAT_FIELDS:
+            if getattr(self, float_field):
+                setattr(self, float_field, float(getattr(self, float_field)))
 
-        for field in IP_ADDRESS_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, ip_address(getattr(self, field)))
+        for ip_field in IP_ADDRESS_FIELDS:
+            if getattr(self, ip_field):
+                setattr(self, field, ip_address(getattr(self, ip_field)))
 
         # Before setting none fields, let's build the BaseList objects
         if self.tags:
@@ -265,9 +267,9 @@ class CloudAgent(BaseClass):
             else:
                 setattr(self, "networkInterface", None)
 
-        for field in TO_NONE_FIELDS:
-            if getattr(self, field) == {}:
-                setattr(self, field, None)
+        for none_field in TO_NONE_FIELDS:
+            if getattr(self, none_field) == {}:
+                setattr(self, none_field, None)
 
         if "isDockerHost" in asdict(self).keys():
             setattr(self, "isDockerHost", self.isDockerHost == "true")

@@ -31,6 +31,7 @@ class PackageDetail(BaseClass):
 
     packageName: str = None
     architecture: str = None
+    patchId: str = None
 
     def __str__(self):
         return f"{self.packageName} ({self.architecture})"

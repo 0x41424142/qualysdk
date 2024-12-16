@@ -272,7 +272,8 @@ def call_api(
             and int(response.headers["X-RateLimit-Remaining"]) < 10
         ) or response.status_code == 429:
             # Rate limit reached:
-            if int(response.headers["X-RateLimit-Remaining"]) == 0:
+            # Qualys does not return X-RateLimit headers for PM as of 12-2024. Sigh...
+            if module != "pm" and int(response.headers["X-RateLimit-Remaining"]) == 0:
                 # Call API again for the X-RateLimit-ToWait-Sec header.
                 # Qualys sometimes only includes this header when the rate limit is reached and retried:
                 response = request(
@@ -299,18 +300,18 @@ def call_api(
                     to_wait = 3601  # Default to 1h 1s if no header is present.
 
                 print(
-                    "WARNING: You have reached the rate limit for this endpoint. "
-                    + f"qualysdk will automatically sleep for {to_wait} seconds and try again at approximately {datetime.now() + timedelta(seconds=to_wait)}."
+                    f"WARNING: You have reached the rate limit for this endpoint. qualysdk will automatically sleep for {to_wait} seconds and try again at approximately {datetime.now() + timedelta(seconds=to_wait)}."
                 )
                 sleep(to_wait)
                 # Go to next iteration of the loop to try again:
                 continue
-
+            # Qualys does not return X-RateLimit headers for PM. Sigh...
+            elif module == "pm":
+                return response
             else:
                 # Almost at rate limit:
                 print(
-                    f"Warning: This endpoint will accept {response.headers['X-RateLimit-Remaining']} more calls before rate limiting you."
-                    + f" qualysdk will automatically sleep once remaining calls hits 0."
+                    f"Warning: This endpoint will accept {response.headers['X-RateLimit-Remaining']} more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0."
                 )
 
         return response

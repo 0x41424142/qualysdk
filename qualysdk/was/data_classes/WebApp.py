@@ -405,7 +405,7 @@ class WebApp(BaseClass):
             str: The risk rating.
         """
 
-        if not type(self.riskScore) in [int, float]:
+        if type(self.riskScore) not in [int, float]:
             raise ValueError(
                 f"riskScore must be an integer or float, not {type(self.riskScore)}"
             )

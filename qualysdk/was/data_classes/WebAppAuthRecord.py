@@ -153,8 +153,8 @@ def handle_record_attrs(
         setattr(dataclass, subkey, None)
     else:
         list_data = handle_qualys_list(getattr(dataclass, "comments"), subkey)
-        setattr(dataclass, f"comments_count", list_data[0])
-        setattr(dataclass, f"comments_list", list_data[1])
+        setattr(dataclass, "comments_count", list_data[0])
+        setattr(dataclass, "comments_list", list_data[1])
         setattr(dataclass, "comments", None)
 
 

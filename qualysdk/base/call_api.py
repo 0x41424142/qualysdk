@@ -272,7 +272,8 @@ def call_api(
             and int(response.headers["X-RateLimit-Remaining"]) < 10
         ) or response.status_code == 429:
             # Rate limit reached:
-            if int(response.headers["X-RateLimit-Remaining"]) == 0:
+            # Qualys does not return X-RateLimit headers for PM as of 12-2024. Sigh...
+            if module != "pm" and int(response.headers["X-RateLimit-Remaining"]) == 0:
                 # Call API again for the X-RateLimit-ToWait-Sec header.
                 # Qualys sometimes only includes this header when the rate limit is reached and retried:
                 response = request(
@@ -304,7 +305,9 @@ def call_api(
                 sleep(to_wait)
                 # Go to next iteration of the loop to try again:
                 continue
-
+            # Qualys does not return X-RateLimit headers for PM. Sigh...
+            elif module == "pm":
+                return response
             else:
                 # Almost at rate limit:
                 print(

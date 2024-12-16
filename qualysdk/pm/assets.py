@@ -5,7 +5,9 @@ the /pm/v*/patches* endpoints
 
 from typing import Union, Literal, overload
 
-from .base.threading_backend import _get_patches_or_assets as get_assets_backend
+from .base.assets_patches_threading_backend import (
+    _get_patches_or_assets as get_assets_backend,
+)
 from .data_classes.PMAsset import Asset
 from ..auth.token import TokenAuth
 from ..base.base_list import BaseList
@@ -48,24 +50,21 @@ def get_assets(
 def lookup_host_uuids(
     auth: TokenAuth,
     assetIds: list[str | int],
-) -> BaseList[tuple[str, str]]:
-    ...
+) -> BaseList[tuple[str, str]]: ...
 
 
 @overload
 def lookup_host_uuids(
     auth: TokenAuth,
     assetIds: BaseList[str | int],
-) -> BaseList[tuple[str, str]]:
-    ...
+) -> BaseList[tuple[str, str]]: ...
 
 
 @overload
 def lookup_host_uuids(
     auth: TokenAuth,
     assetIds: str | int,
-) -> tuple[str, str]:
-    ...
+) -> tuple[str, str]: ...
 
 
 def lookup_host_uuids(

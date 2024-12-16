@@ -694,11 +694,14 @@ catalog = get_patch_catalog(
 
 If a ```BaseList``` or a ```list``` of patch IDs is passed, the function will use threading to speed up the process.
 
+> <span style="color: red; font-weight: bold;">Warning:</span> You should filter down the patches as much as possible before passing them into this function. If you bulk-pass in a lot of patches, you will almost certainly hit a rate limit. **PM APIs do not return the headers necessary for the SDK to auto-recover from rate limits.**
+
+
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
 | ```patchId``` | ```Union[str, BaseList[str]]``` | The ID(s) of the patch to get packages for | ✅ |
-| ```page_count``` | ```Union[int, "all"] = "all"``` | The number of pages to return | ❌ |
+| ```threads``` | ```int=5``` | The number of threads to use for the lookup. | ❌ |
 | ```filter``` | ```str``` | The QQL filter to search for packages | ❌ |
 | ```pageNumber``` | ```int``` | The page number to return. The SDK will handle pagination for you. Users can use this if ```page_count``` is 1 to pull a specific page. | ❌ |
 | ```pageSize``` | ```int=10``` | The number of packages to return per page | ❌ |
@@ -713,7 +716,8 @@ auth = TokenAuth(<username>, <password>, platform='qg1')
 patches = get_patches(
   auth, 
   platform='linux', 
-  attributes="id"
+  attributes="id",
+  query="vendorSeverity:Critical"
 )
 
 # Get the packages for the patches:
@@ -721,7 +725,11 @@ packages = get_packages_in_linux_patch(
   auth, 
   [patch.id for patch in patches]
 )
->>>STUB
+>>>PackageDetail(
+  packageName='minidlna_1.3.0+dfsg-2+deb11u2', 
+  architecture='noarch', 
+  patchId='48e7d965-5f86-3118-a35f-b8fd1463e6b0'
+)
 ```
 
 ## Get Products Associated with Windows Patches API
@@ -730,10 +738,14 @@ packages = get_packages_in_linux_patch(
 
 If a ```BaseList``` or a ```list``` of patch IDs is passed, the function will use threading to speed up the process.
 
+> <span style="color: red; font-weight: bold;">Warning:</span> You should filter down the patches as much as possible before passing them into this function. If you bulk-pass in a lot of patches, you will almost certainly hit a rate limit. **PM APIs do not return the headers necessary for the SDK to auto-recover from rate limits.**
+
+
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
 | ```patchId``` | ```Union[str, BaseList[str]]``` | The ID(s) of the patch to get products for | ✅ |
+| ```threads``` | ```int=5``` | The number of threads to use for the lookup. | ❌ |
 
 ```py
 from qualysdk.auth import TokenAuth
@@ -745,7 +757,8 @@ auth = TokenAuth(<username>, <password>, platform='qg1')
 patches = get_patches(
   auth, 
   platform='windows', 
-  attributes="id"
+  attributes="id",
+  query="vendorSeverity:Critical"
 )
 
 # Get the products for the patches:
@@ -753,7 +766,10 @@ products = get_products_in_windows_patch(
   auth, 
   [patch.id for patch in patches]
 )
->>>STUB
+>>>AssociatedProduct(
+  product=['Adobe Audition 2024 24 x64'], 
+  patchId='2c1649c0-a18a-3f77-8c52-a6ea297ab295'
+)
 ```
 
 

@@ -27,7 +27,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |--|--|
 | GAV (Global AssetView) |✅ See GAV [documentation page](https://qualysdk.jakelindsay.uk/gav/) for supported calls ||
 | VMDR | ✅ See VMDR [documentation page](https://qualysdk.jakelindsay.uk/vmdr/) for supported calls |
-| PM (Patch Management) | See Patch Management [documentation page](https://qualysdk.jakelindsay.uk/patch/) for supported calls |
+| PM (Patch Management) | ✅ See Patch Management [documentation page](https://qualysdk.jakelindsay.uk/patch/) for supported calls |
 | WAS | ✅ See WAS [documentation page](https://qualysdk.jakelindsay.uk/was/) for supported calls |
 | TC (TotalCloud) | ✅ See TotalCloud [documentation page](https://qualysdk.jakelindsay.uk/totalcloud/) for supported calls. |
 |Connectors | Not Started |

@@ -31,7 +31,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 | WAS | ✅ See WAS [documentation page](https://qualysdk.jakelindsay.uk/was/) for supported calls |
 | TC (TotalCloud) | ✅ See TotalCloud [documentation page](https://qualysdk.jakelindsay.uk/totalcloud/) for supported calls. |
 |Connectors | Not Started |
-|Cloud Agent | ✅ See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloudagent/) for supported calls |
+|Cloud Agent | ✅ See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloud_agent/) for supported calls |
 |CS (Container Security) | ✅ See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
 |CERT (Certificate View) | ✅ See CERT [documentation page](https://qualysdk.jakelindsay.uk/cert/) for supported calls |
 |ADMIN (Administration) | Not Started |

@@ -92,7 +92,7 @@ class CatalogPatch(BaseClass):
                         field,
                         datetime.fromtimestamp(getattr(self, field) / 1000),
                     )
-                except (TypeError, OSError):
+                except (TypeError, OSError, ValueError):
                     setattr(self, field, None)
 
         for field in BL_STR_FIELDS:

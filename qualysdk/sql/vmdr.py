@@ -218,6 +218,7 @@ def upload_vmdr_kb(
         "SOLUTION_COMMENT": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
+        "PATCH_PUBLISHED_DATE": types.DateTime(),
     }
 
     # Convert the BaseList to a DataFrame:

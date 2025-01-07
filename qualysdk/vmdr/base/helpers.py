@@ -169,9 +169,7 @@ def create_id_queue(
         id_queue = new_queue
 
     with LOCK:
-        print(
-            f"Queue created with {id_queue.qsize()} chunks of ~{chunk_size} IDs each."
-        )
+        print(f"Queue created with {id_queue.qsize()} chunks")
 
     return id_queue
 

@@ -4,7 +4,7 @@ query_kb.py - contains the query_kb function for the qualysdk package.
 This function is used to query the Qualys KnowledgeBase (KB), which is a database of vulnerabilities and their details.
 """
 
-from typing import *
+from typing import overload, Union
 from urllib.parse import parse_qs, urlparse
 
 from .data_classes.kb_entry import KBEntry
@@ -13,6 +13,7 @@ from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..base.xml_parser import xml_parser
+from ..exceptions.Exceptions import QualysAPIError
 
 
 def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
@@ -118,33 +119,52 @@ def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
     return responses
 
 
-def get_kb_qvs(auth: BasicAuth, cve: str, **kwargs) -> BaseList[KBQVS]:
+@overload
+def get_kb_qvs(auth: BasicAuth, cve: str = "", **kwargs) -> BaseList[KBQVS]:
+    ...
+
+
+@overload
+def get_kb_qvs(auth: BasicAuth, cve: list[str] = [], **kwargs) -> BaseList[KBQVS]:
+    ...
+
+
+def get_kb_qvs(
+    auth: BasicAuth, cve: Union[str, list[str]] = "", **kwargs
+) -> BaseList[KBQVS]:
     """
     Download Qualys KB QVS (Qualys Vulnerability Score) data for 1+ CVEs.
 
-    Params:
-        auth (BasicAuth) The authentication object.
-        cve (str): The CVE ID(s) to search for. Comma-separated string.
-        **kwargs: Additional filters/parameters to pass to the API. See below for details.
+    Specify CVEs as a comma-separated string or a list of strings
+    in the 'cve' parameter, or leave blank to download all CVEs.
 
-    :Kwargs:
-        action (Literal['list']): The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
-        details (Literal['All', 'Basic', 'None']): The level of detail to return. Default is 'Basic'.
-        qvs_last_modified_before (str): The date to search for QVS last modified before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        qvs_last_modified_after (str): The date to search for QVS last modified after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        qvs_min (int): The minimum QVS score to return.
-        qvs_max (int): The maximum QVS score to return.
-        nvd_published_before (str): The date to search for NVD published before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
-        nvd_published_after (str): The date to search for NVD published after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+    ## Params:
+        - auth (BasicAuth) The authentication object.
+        - cve (Union[str, list[str]]): The CVE(s) to download QVS data for. By default, pulls all CVEs.
+        - **kwargs: Additional filters/parameters to pass to the API. See below for details.
 
-    Returns:
+    ## Kwargs:
+
+        - action (Literal['list']): The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
+        - details (Literal['All', 'Basic', 'None']): The level of detail to return. Default is 'Basic'.
+        - qvs_last_modified_before (str): The date to search for QVS last modified before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        - qvs_last_modified_after (str): The date to search for QVS last modified after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        - qvs_min (int): The minimum QVS score to return.
+        - qvs_max (int): The maximum QVS score to return.
+        - nvd_published_before (str): The date to search for NVD published before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+        - nvd_published_after (str): The date to search for NVD published after Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
+
+    ## Returns:
         BaseList of KBQVS objects representing the QVS data for the CVEs returned by the query.
     """
 
     kwargs["action"] = "list"
     if kwargs.get("details"):
         kwargs["details"] = kwargs["details"].capitalize()
-    kwargs["cve"] = cve
+    if cve:
+        if isinstance(cve, list):
+            cve = ",".join(cve)
+        kwargs["cve"] = cve
 
     bl = BaseList()
 
@@ -155,9 +175,13 @@ def get_kb_qvs(auth: BasicAuth, cve: str, **kwargs) -> BaseList[KBQVS]:
         params=kwargs,
         headers={"X-Requested-With": "qualysdk SDK"},
     )
-
-    if r := response.json():
-        for data in r.values():
+    # TODO: Format has changed... need to update this
+    response = response.json()
+    # 1903 is missing param:
+    if response and not "error" in response.keys():
+        for cve, data in response.items():
             bl.append(KBQVS.from_dict(data))
+    else:
+        raise QualysAPIError(response)
 
     return bl

@@ -156,6 +156,10 @@ class KBEntry(BaseClass):
         metadata={"description": "The solution comment for the vulnerability."},
         default=None,
     )
+    PATCH_PUBLISHED_DATE: Optional[datetime] = field(
+        metadata={"description": "The date the patch was published."},
+        default=None,
+    )
 
     def __post_init__(self):
         # convert certain fields out of string format:
@@ -170,6 +174,7 @@ class KBEntry(BaseClass):
             "PUBLISHED_DATETIME",
             "CODE_MODIFIED_DATETIME",
             "LAST_CUSTOMIZATION",
+            "PATCH_PUBLISHED_DATE",
         ]
 
         BOOL_FIELDS = ["PATCHABLE", "PCI_FLAG", "IS_DISABLED"]

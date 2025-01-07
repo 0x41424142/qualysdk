@@ -44,7 +44,6 @@ You can use any of the VMDR endpoints currently supported:
 |```get_user_list```|Get a list of users in your subscription.|
 |```add_user```|Add a new user to your subscription.|
 |```edit_user```|Edit a user in your subscription.|
-|```query_kb_qvs```|Pull Qualys Vulnerability Score details on one or more CVEs.|
 |```get_activity_log```| Pull the activity log for your Qualys subscription.|
 | ```purge_hosts``` | Purge hosts from VMDR/Policy Compliance.|
 
@@ -1104,10 +1103,12 @@ with BasicAuth(<username>, <password>, platform='qg1') as auth:
 
 ```get_kb_qvs``` lets you query Qualys for QVS, EPSS, and CVSS scores for a comma-separated string of CVE IDs. Output also includes supporting details such as known threat actors, malware names/hashes, trending QIDs associated with the CVE, and more.
 
+By default, returns all CVEs with QVS data.
+
 Parameter| Possible Values |Description|Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
-| ```cve``` | ```str``` | A comma-separated string of CVE IDs to query. | ✅ |
+| ```cve``` | ```Union[str, list[str]]``` | A comma-separated string or list of strings of CVE IDs to query. | ❌ |
 | ```details``` | ```Literal['Basic', 'All']``` | The level of detail to return. Defaults to ```Basic```, which only includes CVE ID, QVS score, and last changed/published dates.| ❌ |
 | ```qvs_last_modified_before``` | ```str``` | Filter output to CVEs with a QVS score last modified before this date. Formatted like ```YYYY-MM-DD[THH:MM:SSZ]``` | ❌ |
 | ```qvs_last_modified_after``` | ```str``` | Filter output to CVEs with a QVS score last modified after this date. Formatted like ```YYYY-MM-DD[THH:MM:SSZ]``` | ❌ |
@@ -1121,9 +1122,30 @@ Parameter| Possible Values |Description|Required|
 from qualysdk import BasicAuth, vmdr
 
 with BasicAuth(<username>, <password>, platform='qg1') as auth:
-    cves = 'CVE-2021-44228,CVE-2021-40438'
+    cves = 'CVE-2021-44228'
     result = vmdr.get_kb_qvs(auth, cve=cves, details='All')
 >>>[KBQVS(id='CVE-2021-44228', qvs=95, ...), ...]
+
+# Get all CVEs:
+with BasicAuth(<username>, <password>, platform='qg1') as auth:
+    result = vmdr.get_kb_qvs(auth)
+>>>[
+    KBQVS(id='CVE-2021-44228', qvs=95, ...), 
+    KBQVS(id='CVE-2021-40438', qvs=90, ...),  
+    KBQVS(id='CVE-2021-40439', qvs=95, ...),  
+    ...
+]
+
+# Pass a list of CVEs:
+with BasicAuth(<username>, <password>, platform='qg1') as auth:
+    cves = ['CVE-2021-44228', 'CVE-2021-40438', 'CVE-2021-40439']
+    result = vmdr.get_kb_qvs(auth, cve=cves)
+>>>[
+    KBQVS(id='CVE-2021-44228', qvs=95, ...), 
+    KBQVS(id='CVE-2021-40438', qvs=90, ...),  
+    KBQVS(id='CVE-2021-40439', qvs=95, ...),  
+    ...
+]
 ```
 
 ## Get User Activity Log

@@ -9,7 +9,7 @@ VMDR_SCHEMA = frozendict(
         "vmdr": {
             "url_type": "api",
             "query_kb": {
-                "endpoint": "/api/2.0/fo/knowledge_base/vuln/",
+                "endpoint": "/api/3.0/fo/knowledge_base/vuln/",
                 "method": ["GET", "POST"],
                 "valid_params": [
                     "action",
@@ -31,10 +31,11 @@ VMDR_SCHEMA = frozendict(
                     "published_before",
                     "discovery_method",
                     "discovery_auth_types",
-                    "show_pci_reasons",
-                    "show_supported_modules_info",
+                    # "show_pci_reasons",
+                    # "show_supported_modules_info",
                     "show_disabled_flag",
-                    "show_qid_change_log",
+                    # "show_qid_change_log",
+                    # above are disabled for now.
                 ],
                 "valid_POST_data": [],
                 "use_requests_json_data": False,
@@ -43,7 +44,7 @@ VMDR_SCHEMA = frozendict(
                 "auth_type": "basic",
             },
             "get_host_list": {
-                "endpoint": "/api/2.0/fo/asset/host/",
+                "endpoint": "/api/3.0/fo/asset/host/",
                 "method": ["GET", "POST"],
                 "valid_params": [
                     "action",
@@ -100,7 +101,7 @@ VMDR_SCHEMA = frozendict(
                 "auth_type": "basic",
             },
             "get_hld": {
-                "endpoint": "/api/2.0/fo/asset/host/vm/detection/",
+                "endpoint": "/api/3.0/fo/asset/host/vm/detection/",
                 "method": ["GET", "POST"],
                 "valid_params": [
                     "action",
@@ -702,7 +703,7 @@ VMDR_SCHEMA = frozendict(
                 "auth_type": "basic",
             },
             "get_kb_qvs": {
-                "endpoint": "/api/2.0/fo/knowledge_base/qvs/",
+                "endpoint": "/api/3.0/fo/knowledge_base/qvs/",
                 "method": ["GET", "POST"],
                 "valid_params": [
                     "action",

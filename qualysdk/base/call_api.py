@@ -237,6 +237,7 @@ def call_api(
             ]
             and response.status_code in range(400, 599)
             and response.status_code not in [429, 414]
+            and endpoint != "get_kb_qvs"
             and (
                 response.status_code != 409
                 and "This API cannot be run again for another"

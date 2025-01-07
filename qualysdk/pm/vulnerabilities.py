@@ -60,13 +60,15 @@ def _thread_worker(
 @overload
 def lookup_cves(
     auth: TokenAuth, qids: list[Union[str, int]], threads: int = 5
-) -> BaseList[PMVulnerability]: ...
+) -> BaseList[PMVulnerability]:
+    ...
 
 
 @overload
 def lookup_cves(
     auth: TokenAuth, qids: Union[str, int], threads: int = 5
-) -> BaseList[PMVulnerability]: ...
+) -> BaseList[PMVulnerability]:
+    ...
 
 
 def lookup_cves(

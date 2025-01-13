@@ -76,5 +76,6 @@ from .pm import (
     upload_pm_patch_catalog,
     upload_pm_linux_packages,
     upload_pm_windows_products,
+    upload_pm_product_vuln_counts,
 )
 from .cert import upload_cert_certs

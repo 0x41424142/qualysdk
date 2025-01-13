@@ -15,5 +15,5 @@ class ProductVulnCount(BaseClass):
     patchableQIDCount: int = None
     type: str = None
     patchableQIDs: str = None
-    totalQIDs: str = None
+    totalQIDs: int = None
     severity: Literal["Critical", "Important", "Moderate", "Low", "None"] = "Undefined"

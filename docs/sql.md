@@ -142,6 +142,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_pm_patch_catalog``` | Patch Management | ```pm.get_patch_catalog()``` | ```pm_patch_catalog``` |
 | ```upload_pm_linux_packages``` | Patch Management | ```pm.get_packages_in_linux_patch()``` | ```pm_linux_packages``` |
 | ```upload_pm_windows_products``` | Patch Management | ```pm.get_products_in_windows_patch()``` | ```pm_windows_products``` |
+| ```upload_pm_product_vuln_counts``` | Patch Management | ```pm.count_product_vulns()``` | ```pm_product_vuln_counts``` |
 | ```upload_cert_certs``` | Certificate View | ```cert.list_certs()``` | ```cert_certs``` for certificates and ```cert_assets``` for assets (key = certs.id -> assets.certId) |
 
 

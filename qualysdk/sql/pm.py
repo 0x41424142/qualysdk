@@ -759,3 +759,56 @@ def upload_pm_linux_packages(
 
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)
+
+
+def upload_pm_product_vuln_counts(
+    counts: BaseList,
+    cnxn: Connection,
+    table_name: str = "pm_product_vuln_counts",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload results from ```pm.count_product_vulns``` to a SQL database.
+
+    Args:
+        counts (BaseList): A BaseList of ProductVulnCount objects.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to. Defaults to "pm_product_vuln_counts".
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+    '''@dataclass
+class ProductVulnCount(BaseClass):
+    """
+    Represents a product and its associated QID count/details.
+    """
+
+    name: str
+    totalQIDCount: int = 0
+    patchableQIDCount: int = None
+    type: str = None
+    patchableQIDs: str = None
+    totalQIDs: int = None
+    severity: Literal["Critical", "Important", "Moderate", "Low", "None"] = "Undefined"'''
+
+    COLS = {
+        "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "totalQIDCount": types.Integer(),
+        "patchableQIDCount": types.Integer(),
+        "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "patchableQIDs": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "totalQIDs": types.Integer(),
+        "severity": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+    }
+
+    # Prepare the dataclass for insertion:
+    df = DataFrame([prepare_dataclass(count) for count in counts])
+
+    # Upload the data:
+    return upload_data(df, table_name, cnxn, COLS, override_import_dt)

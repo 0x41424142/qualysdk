@@ -433,15 +433,13 @@ def count_product_vulns(
     if severityList is None:
         severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
     # check if the string or list contains all of the valid values
-    elif isinstance(severityList, str) and all(
-        s.title() in ["Critical", "Important", "Moderate", "Low", "None"]
-        for s in severityList.split(",")
-    ):
+    elif isinstance(severityList, str) and set(
+        [i.title() for i in severityList.split(",")]
+    ) == set(["Critical", "Important", "Moderate", "Low", "None"]):
         severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
 
-    elif isinstance(severityList, (list, BaseList)) and all(
-        s.title() in ["Critical", "Important", "Moderate", "Low", "None"]
-        for s in severityList
+    elif isinstance(severityList, (list, BaseList)) and set(severityList) == set(
+        ["Critical", "Important", "Moderate", "Low", "None"]
     ):
         severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
 
@@ -458,9 +456,9 @@ def count_product_vulns(
 
     results = BaseList()
 
-    if isinstance(tagUUIDs, (list, BaseList)):
+    if tagUUIDs and isinstance(tagUUIDs, (list, BaseList)):
         tagUUIDs = ",".join(tagUUIDs)
-    elif not isinstance(tagUUIDs, str):
+    elif tagUUIDs and not isinstance(tagUUIDs, str):
         raise ValueError("tagUUIDs must be a string or a list of strings.")
 
     for severity in severity_values:

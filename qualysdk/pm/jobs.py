@@ -226,14 +226,16 @@ def list_jobs(
 
 # Overload 1 for str jobId
 @overload
-def get_job_results(auth: TokenAuth, jobId: str, **kwargs) -> JobResultSummary: ...
+def get_job_results(auth: TokenAuth, jobId: str, **kwargs) -> JobResultSummary:
+    ...
 
 
 # Overload 2 for list/BaseList of PMJob
 @overload
 def get_job_results(
     auth: TokenAuth, jobId: Union[list[PMJob], BaseList[PMJob]], **kwargs
-) -> BaseList[JobResultSummary]: ...
+) -> BaseList[JobResultSummary]:
+    ...
 
 
 def get_job_results(
@@ -577,13 +579,15 @@ def create_job(
 
 
 @overload
-def delete_job(auth: TokenAuth, jobId: str) -> list[dict[str, str]]: ...
+def delete_job(auth: TokenAuth, jobId: str) -> list[dict[str, str]]:
+    ...
 
 
 @overload
 def delete_job(
     auth: TokenAuth, jobId: Union[list[str], BaseList[str]]
-) -> list[dict[str, str]]: ...
+) -> list[dict[str, str]]:
+    ...
 
 
 def delete_job(
@@ -625,7 +629,8 @@ def delete_job(
 @overload
 def change_job_status(
     auth: TokenAuth, action: Literal["Enabled", "Disabled"], jobId: str
-) -> dict: ...
+) -> dict:
+    ...
 
 
 @overload
@@ -633,7 +638,8 @@ def change_job_status(
     auth: TokenAuth,
     action: Literal["Enabled", "Disabled"],
     jobId: Union[list[str], BaseList[str]],
-) -> dict: ...
+) -> dict:
+    ...
 
 
 def change_job_status(

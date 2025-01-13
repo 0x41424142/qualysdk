@@ -214,13 +214,18 @@ class KBEntry(BaseClass):
             simplefilter("ignore")  # ignore the warning about the html.parser
             for html_field in HTML_FIELDS:
                 if getattr(self, html_field):
-                    setattr(
-                        self,
-                        html_field,
-                        BeautifulSoup(
-                            getattr(self, html_field), "html.parser"
-                        ).get_text(),
-                    )
+                    soup = BeautifulSoup(getattr(self, html_field), "html.parser")
+                    for a_tag in soup.find_all("a"):
+                        if a_tag.has_attr("href"):
+                            a_tag.replace_with(a_tag["href"])
+                    setattr(self, html_field, soup.get_text())
+                    # setattr(
+                    #    self,
+                    #    html_field,
+                    #    BeautifulSoup(
+                    #        getattr(self, html_field), "html.parser"
+                    #    ).get_text(),
+                    # )
 
         # convert the lists to BaseList objects:
         if self.BUGTRAQ_LIST:

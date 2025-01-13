@@ -9,6 +9,7 @@ from datetime import datetime
 
 from .data_classes.CatalogPatch import CatalogPatch, PackageDetail
 from .data_classes.AssociatedProduct import AssociatedProduct
+from .data_classes.ProductVulnCount import ProductVulnCount
 from ..base.base_list import BaseList
 from ..auth.token import TokenAuth
 from ..base.call_api import call_api
@@ -385,3 +386,102 @@ def get_products_in_windows_patch(
         t.join()
 
     return responses
+
+
+from typing import Union, List, Literal, overload
+
+
+@overload
+def count_product_vulns(
+    auth: TokenAuth,
+    severityList: Union[
+        Literal["Critical", "Important", "Moderate", "Low", "None"],
+        List[Literal["Critical", "Important", "Moderate", "Low", "None"]],
+    ] = None,
+    tagUUIDs: str = None,
+) -> BaseList[ProductVulnCount]:
+    ...
+
+
+@overload
+def count_product_vulns(
+    auth: TokenAuth,
+    severityList: Union[
+        Literal["Critical", "Important", "Moderate", "Low", "None"],
+        List[Literal["Critical", "Important", "Moderate", "Low", "None"]],
+    ] = None,
+    tagUUIDs: List[str] = None,
+) -> BaseList[ProductVulnCount]:
+    ...
+
+
+def count_product_vulns(
+    auth: TokenAuth,
+    severityList: Union[
+        Literal["Critical", "Important", "Moderate", "Low", "None"],
+        List[Literal["Critical", "Important", "Moderate", "Low", "None"]],
+    ] = None,
+    tagUUIDs: Union[str, List[str]] = None,
+) -> BaseList[ProductVulnCount]:
+    """
+    Get a count of active and fixed product vulnerabilities.
+
+    If no severityList value is passed, all severities will be returned (Critical, Important, Moderate, Low, None).
+
+    Args:
+        auth (TokenAuth): The authentication object.
+        severityList (Union[str, List[str]]): The severity or severities to filter by.
+            Can be a single value or a list of values. For all severities, leave this blank.
+        tagUUIDs (Union[str, List[str]]): The tag UUIDs to filter by.
+
+    Returns:
+        BaseList[ProductVulnCount]: A list of ProductVulnCount objects.
+    """
+    # Normalize severityList to a list
+    if severityList is None:
+        severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
+    # check if the string or list contains all of the valid values
+    elif isinstance(severityList, str) and set(
+        [i.title() for i in severityList.split(",")]
+    ) == set(["Critical", "Important", "Moderate", "Low", "None"]):
+        severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
+
+    elif isinstance(severityList, (list, BaseList)) and set(severityList) == set(
+        ["Critical", "Important", "Moderate", "Low", "None"]
+    ):
+        severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
+
+    elif isinstance(severityList, str):
+        severity_values = [s.title().strip() for s in severityList.split(",")]
+
+    elif isinstance(severityList, (list, BaseList)):
+        severity_values = severityList
+
+    else:
+        raise ValueError(
+            "Invalid severityList format. Must be a string or a list of strings."
+        )
+
+    results = BaseList()
+
+    if tagUUIDs and isinstance(tagUUIDs, (list, BaseList)):
+        tagUUIDs = ",".join(tagUUIDs)
+    elif tagUUIDs and not isinstance(tagUUIDs, str):
+        raise ValueError("tagUUIDs must be a string or a list of strings.")
+
+    for severity in severity_values:
+        response = call_api(
+            auth,
+            "pm",
+            "count_product_vulns",
+            params={"severityList": severity, "tagUUIDs": tagUUIDs},
+        )
+
+        if response.status_code not in range(200, 299):
+            raise QualysAPIError(response.json())
+
+        for entry in response.json():
+            entry["severity"] = severity if severity else "All"
+            results.append(ProductVulnCount(**entry))
+
+    return results

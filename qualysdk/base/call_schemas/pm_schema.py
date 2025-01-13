@@ -209,6 +209,16 @@ PM_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "token",
             },
+            "count_product_vulns": {
+                "endpoint": "/pm/v1/patchcatalog/patch/products/vulnerability/count",
+                "method": ["GET"],
+                "valid_params": ["severityList", "tagUUIDs"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
         },
     }
 )

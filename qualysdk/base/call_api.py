@@ -131,6 +131,7 @@ def call_api(
             auth_tuple = (auth.username, auth.password)
 
         # Make certain payloads/params requests-friendly:
+        # TODO: need to evaluate other modules this may apply to.
         if module != "pm":
             if payload:
                 payload = convert_bools_and_nones(payload)

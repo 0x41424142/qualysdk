@@ -7,6 +7,7 @@ from datetime import datetime
 from pandas import DataFrame
 from sqlalchemy import Connection, types
 from sqlalchemy.dialects.mysql import TEXT
+from sqlalchemy.dialects.mssql import DATETIME2
 
 from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
@@ -218,7 +219,7 @@ def upload_vmdr_kb(
         "SOLUTION_COMMENT": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "PATCH_PUBLISHED_DATE": types.DateTime(),
+        "PATCH_PUBLISHED_DATE": types.DateTime().with_variant(DATETIME2, "mssql"),
     }
 
     # Convert the BaseList to a DataFrame:

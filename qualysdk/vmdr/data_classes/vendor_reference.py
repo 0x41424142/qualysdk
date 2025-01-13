@@ -32,7 +32,7 @@ class VendorReference(BaseClass):
             )
 
     def __str__(self) -> str:
-        return self.ID
+        return f"{self.ID} ({self.URL})"
 
     def __contains__(self, item):
         # see if it was found in the name or vendor:

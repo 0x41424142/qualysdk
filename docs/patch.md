@@ -31,6 +31,7 @@ You can use any of the endpoints currently supported:
 | ```get_patch_catalog``` | Returns the patch catalog for a given platform according to ```patchId```. |
 | ```get_packages_in_linux_patch``` | Returns the packages associated with a Linux patch. |
 | ```get_products_in_windows_patch``` | Returns the products associated with a Windows patch. |
+| ```count_product_vulns``` | Return the number of vulns (active and fixed) from products in your environment. |
 
 ## Get PM Version API
 
@@ -770,6 +771,51 @@ products = get_products_in_windows_patch(
   product=['Adobe Audition 2024 24 x64'], 
   patchId='2c1649c0-a18a-3f77-8c52-a6ea297ab295'
 )
+```
+
+## Count Product Vulnerabilities API
+
+```count_product_vulns``` returns the number of active and fixed vulnerabilities stemming from products.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+| ```severityList``` | ```Union[str, list[Literal["Critical", "Important", "Moderate", "Low", "None"]]]``` | The severity levels to count vulnerabilities for. Can be a list or strings or a comma-separated string | ❌ |
+| ```tagUUIDs``` | ```Union[str, list[str]]``` | The UUIDs of the tags to filter with | ❌ |
+
+```py
+from qualysdk.auth import TokenAuth
+from qualysdk.pm import count_product_vulns
+
+auth = TokenAuth(<username>, <password>, platform='qg1')
+
+# Get the number of Critical and Important
+# vulnerabilities for all products:
+count = count_product_vulns(
+  auth, 
+  severityList=["Critical", "Important"]
+)
+>>>[
+  ProductVulnCount(
+      name='Windows', 
+      totalQIDCount=123, 
+      patchableQIDCount=None, 
+      type='APP_FAMILY', 
+      patchableQIDs=None, 
+      totalQIDs=None, 
+      severity='Critical'
+    ), 
+  ProductVulnCount(
+    name='Office', 
+    totalQIDCount=123, 
+    patchableQIDCount=None, 
+    type='APP_FAMILY', 
+    patchableQIDs=None, 
+    totalQIDs=None, 
+    severity='Critical'
+  ),
+  ...
+]
 ```
 
 

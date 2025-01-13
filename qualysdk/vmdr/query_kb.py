@@ -120,13 +120,11 @@ def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
 
 
 @overload
-def get_kb_qvs(auth: BasicAuth, cve: str = "", **kwargs) -> BaseList[KBQVS]:
-    ...
+def get_kb_qvs(auth: BasicAuth, cve: str = "", **kwargs) -> BaseList[KBQVS]: ...
 
 
 @overload
-def get_kb_qvs(auth: BasicAuth, cve: list[str] = [], **kwargs) -> BaseList[KBQVS]:
-    ...
+def get_kb_qvs(auth: BasicAuth, cve: list[str] = [], **kwargs) -> BaseList[KBQVS]: ...
 
 
 def get_kb_qvs(

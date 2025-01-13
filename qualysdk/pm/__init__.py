@@ -20,4 +20,5 @@ from .patchcatalog import (
     get_patch_catalog,
     get_packages_in_linux_patch,
     get_products_in_windows_patch,
+    count_product_vulns,
 )

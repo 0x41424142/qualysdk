@@ -176,6 +176,9 @@ def get_resources_evaluated_by_control(
         j["content"] = [j["content"]]
 
     for resp in j["content"]:
+        if provider == 'azure':
+            # change subscriptionId to accountId
+            resp['accountId'] = resp.pop('subscriptionId')
         responses.append(AccountLevelEvaluation.from_dict(resp))
 
     return responses

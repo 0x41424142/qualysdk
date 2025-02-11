@@ -16,6 +16,7 @@ You can use any of the VMDR endpoints currently supported:
 | ```get_kb_qvs``` | Query the Qualys KB for CVEs and their associated details/scores.|
 | ```get_host_list``` | Query your VMDR host inventory based on kwargs. |
 |```get_hld``` | Query your VMDR host inventory with QID detections under the ```VMDRHost.DETECTION_LIST``` attribute.|
+| ```get_cve_hld``` | Query your VMDR host inventory with CVE detections under the ```VMDRHost.DETECTION_LIST``` attribute.|
 |```get_ip_list```| Get a list of all IPs in your subscription, according to kwarg filters.|
 |```add_ips```| Add IP addresses to VMDR.|
 |```update_ips```|Update details of IP addresses already in VMDR such as ```tracking_method```, ```owner```, etc.|
@@ -58,6 +59,7 @@ Some important kwargs this API accepts:
 |Kwarg| Possible Values |Description|
 |--|--|--|
 |```show_tags```| ```False/True```|Boolean on if API output should include Qualys host tags. Accessible under ```<VMDRHost>.TAGS```. Defaults to False.|
+|```show_asset_id```| ```False/True```|Boolean on if API output should include Qualys asset IDs. Accessible under ```<VMDRHost>.ASSET_ID```. Defaults to False.|
 |```host_metadata```| ```'all','ec2','azure'```|Controls if cloud host details should be returned. It is **highly recommended** to use ```all``` if specified.|
 |```show_cloud_tags```| ```False/True```|Boolean on if API output should include cloud provider tags. Accessible under ```<VMDRHost>.CLOUD_TAGS```. Defaults to False.|
 |```filter_superseded_qids```|```False/True```|Boolean on if API output should only include non-superseded QIDs. Defaults to False.|
@@ -89,6 +91,102 @@ hosts = get_host_list(
         show_cloud_tags=True,
 )
 >>>BaseList[VMDRHost(12345), ...]
+```
+
+## VMDR CVE Host List Detection
+
+```vmdr.get_cve_hld()``` is a new version of the above ```get_hld``` function that returns a list of hosts with CVE detections under ```<VMDRHost>.DETECTION_LIST``` instead of QIDs. This function supports most of the same kwargs as ```get_hld``` and is also threaded.
+
+|Kwarg| Possible Values |Description|Required|
+|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
+|```page_count```|```Literal['all']``` (default), ```int >= 0```| How many pages to pull. Note that ```page_count``` does not apply if ```truncation_limit``` is set to 0, or not specified.|❌|
+|```threads```|```int >= 1```|The number of threads to use for data retrieval. Defaults to 5.|❌|
+|```show_asset_id```| ```False/True```|Boolean on if API output should include Qualys asset IDs. Accessible under ```<VMDRHost>.ASSET_ID```. Defaults to False.|❌|
+|```include_vuln_type```|```Literal["confirmed", "potential"]```|Filter API output to confirmed or potential vulnerabilities.|❌|
+|```show_qvs```|```False/True```|Boolean on if API output should include the Qualys Vulnerability Score.|❌|
+|```cve```| ```str```|Filter API output to a specific CVE/CVEs (comma-separated string).|❌|
+|```truncation_limit``` | ```int```|Specify how many hosts should be returned per page. If set to 0 or not specified, returns all hosts in one pull.|❌|
+|```ids```|```None/hostIDs```|Filter API output to a specific set of host IDs. Can be a comma-separated string: ```1357,2468,8901```, a range: ```12345-54321```, or a single host ID: ```12345```.|❌|
+|```id_min```|```int```|Only return hosts with an ID >= ```id_min```.|❌|
+|```id_max```|```int```|Only return hosts with an ID <= ```id_max```.|❌|
+|```ips```|```str```|Filter API output to a specific set of IP addresses. Can be a comma-separated string: ```10.0.0.1,10.0.0.2```, a range: ```10.0.0.0-10.0.0.255```, or a single IP: ```10.0.0.1```.|❌|
+|```ag_ids```|```str```|Filter API output to a specific set of asset group IDs. Can be a comma-separated string: ```1357,2468,8901```, a range: ```12345-54321```, or a single asset group ID: ```12345```.|❌|
+|```ag_titles```|```str```|Filter API output to a specific set of asset group titles. Can be a comma-separated string: ```AG1,AG2,AG3```, or a single asset group title: ```AG1```.|❌|
+|```vm_scan_since```|```str```|Filter API output to hosts that have been scanned since a specific date. Must be in the format ```YYYY-MM-DD```.|❌|
+|```no_vm_scan_since```|```str```|Filter API output to hosts that have not been scanned since a specific date. Must be in the format ```YYYY-MM-DD```.|❌|
+|```max_days_since_last_vm_scan```|```int```|Filter API output to hosts that have been scanned within a specific number of days.|❌|
+|```vm_processed_after```|```str```|Filter API output to hosts where VM scan results were processed after a specific date. Must be in the format ```YYYY-MM-DD```.|❌|
+|```vm_scan_date_before```|```str```|Filter API output to hosts where VM scan results were processed before a specific date. Must be in the format ```YYYY-MM-DD```.|❌|
+|```vm_scan_date_after```|```str```|Filter API output to hosts where VM scan results were processed after a specific date. Must be in the format ```YYYY-MM-DD```.|❌|
+|```vm_auth_scan_date_before```|```str```|Filter API output to hosts where VM authenticated scan results were processed before a specific date. Must be in the format ```YYYY-MM-DD```.|❌|
+|```vm_auth_scan_date_after```|```str```|Filter API output to hosts where VM authenticated scan results were processed after a specific date. Must be in the format ```YYYY-MM-DD```.|❌|
+|```status```|```Literal["New", "Active", "Fixed", "Re-Opened"]```| Filter API output to hosts with a specific CVE status. Multiple values can be passed as a comma-separated string: ```"New,Active"```.|❌|
+|```compliance_enabled```|```bool```|Filter API output to hosts with compliance tracking enabled.|❌|
+|```os_pattern```|```str```|Filter API output to hosts that match a specific OS regex pattern. Pattern must be valid according to the PCRE standard and be URL-encoded.|❌|
+|```qids```|```Union[int,str]```| Filter API output to hosts with a specific set of QIDs. Can be a comma-separated string: ```1357,2468,8901```, a range: ```12345-54321```, or a single QID: ```12345```.|❌|
+|```include_search_list_titles```|```str```|Filter API output to CVEs that are included in a search list by the list name. Multiple values can be passed as a comma-separated string: ```"Search List 1,Search List 2"```.|❌|
+|```exclude_search_list_titles```|```str```|Filter API output to CVEs that are not included in a search list by the list name. Multiple values can be passed as a comma-separated string: ```"Search List 1,Search List 2"```.|❌|
+|```include_search_list_ids```|```Union[int, str]```|Filter API output to CVEs that are included in a search list by the list ID. Can be a comma-separated string: ```1357,2468,8901```, a range: ```12345-54321```, or a single search list ID: ```12345```.|❌|
+|```exclude_search_list_ids```|```Union[int, str]```|Filter API output to CVEs that are not included in a search list by the list ID. Can be a comma-separated string: ```1357,2468,8901```, a range: ```12345-54321```, or a single search list ID: ```12345```.|❌|
+| ```filter_superseded_qids```|```False/True```|Boolean on if API output should only include non-superseded QIDs. Defaults to False.|❌|
+|```use_tags```|```False/True```|Boolean on if API output should use tags for filtering. Defaults to False.|❌|
+|```tag_set_by```|```Literal["id", "name"]``` = "id"|The type of tag to filter by. Defaults to ID.|❌|
+|```tag_include_selector```|```Literal["any", "all"]``` = "any"|Choose if a host must have any or all tags to be included. Defaults to "any".|❌|
+|```tag_exclude_selector```|```Literal["any", "all"]``` = "any"|Choose if a host must have any or all tags to be excluded. Defaults to "any".|❌|
+|```tag_set_include```|```str```|The tag IDs/names to include. Can be a comma-separated string: ```1357,2468,8901```, or a single tag ID/name: ```1357```.|❌|
+|```tag_set_exclude```|```str```|The tag IDs/names to exclude. Can be a comma-separated string: ```1357,2468,8901```, or a single tag ID/name: ```1357```.|❌|
+|```show_tags```|```False/True```|Boolean on if API output should include Qualys host tags.|❌|
+|```host_metadata```|```Literal["all", "ec2", "azure"]```|Controls if cloud host details should be returned. It is **highly recommended** to use ```all``` if specified.|❌|
+|```host_metadata_fields```|```str```|Control which cloud metadata fields are returned. Can be a comma-separated string: ```"field1,field2,field3"```.|❌|
+|```show_cloud_tags```|```False/True```|Boolean on if API output should include cloud provider tags.|❌|
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.vmdr import get_cve_hld
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+# Pull open, non-superseded, confirmed CVE detections for all hosts,
+# including tags and cloud metadata/tags:
+
+hosts = get_cve_hld(
+    auth,
+    show_tags=True,
+    show_cloud_tags=True,
+    filter_superseded_qids=True,
+    include_vuln_type='confirmed'
+    status='New,Active'
+)
+>>>BaseList[VMDRHost(12345), ...]
+
+hosts[0].DETECTION_LIST[0]
+>>>CVEDetection(
+    VULN_CVE='CVE-2023-34058'
+    UNIQUE_VULN_ID=1234567890, 
+    TYPE='Confirmed', 
+    SSL=True, 
+    RESULTS='Some vulnerability.', 
+    STATUS='Active', 
+    FIRST_FOUND_DATETIME=datetime.datetime(2024, 10, 31, 1, 2, 3, tzinfo=datetime.timezone.utc), 
+    LAST_FOUND_DATETIME=datetime.datetime(2025, 1, 10, 18, 29, 25, tzinfo=datetime.timezone.utc), 
+    TIMES_FOUND=2887, 
+    LAST_TEST_DATETIME=datetime.datetime(2025, 1, 10, 18, 29, 25, tzinfo=datetime.timezone.utc), 
+    LAST_UPDATE_DATETIME=datetime.datetime(2025, 1, 10, 18, 29, 25, tzinfo=datetime.timezone.utc), 
+    IS_IGNORED=True, 
+    IS_DISABLED=True, 
+    LAST_PROCESSED_DATETIME=datetime.datetime(2025, 1, 10, 18, 29, 25, tzinfo=datetime.timezone.utc), 
+    LAST_FIXED_DATETIME=None, 
+    ID=9876543210, 
+    ASSOCIATED_QID=123456, 
+    QID_TITLE='Some QID Title', 
+    CVSS=1.2, CVSS_BASE='2.6 (AV:L/AC:H/Au:N/C:P/I:P/A:N)', 
+    CVSS_TEMPORAL='1.9 (E:U/RL:OF/RC:C)', 
+    CVSS_31=1.9, 
+    CVSS_31_BASE='7.8 (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)', 
+    CVSS_31_TEMPORAL='6.8 (E:U/RL:O/RC:C)', 
+    QVS=35
+)
 ```
 
 ## VMDR Host List

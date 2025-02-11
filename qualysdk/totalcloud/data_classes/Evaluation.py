@@ -32,7 +32,7 @@ class Evaluation(BaseClass):
                     setattr(self, field, datetime.fromisoformat(value))
                 except (OSError, TypeError, ValueError, OverflowError):
                     setattr(self, field, None)
-    
+
     def __str__(self):
         if self.dateFixed:
             return f"Fixed as of {self.dateFixed}"

@@ -445,8 +445,7 @@ def upload_vmdr_hld(
                 detections.append(detection)
 
     # upload_vmdr_hosts automatically ignores the DETECTION_LIST attribute,
-    # so we can use it here with the is_hld flag set to True to put the hosts
-    # in a different table than get_host_list.
+    # so we can use it here to upload the hosts.
     hosts_uploaded = upload_vmdr_hosts(
         hld, cnxn, hosts_table_name, override_import_dt=override_import_dt
     )
@@ -1243,6 +1242,109 @@ def upload_vmdr_activity_log(
     return upload_data(
         df,
         table_name,
+        cnxn,
+        dtype=COLS,
+        override_import_dt=override_import_dt,
+    )
+
+def upload_vmdr_cve_hld(
+    hld: BaseList,
+    cnxn: Connection,
+    vulns_table_name: str = "vmdr_cve_hld_detections",
+    hosts_table_name: str = "vmdr_cve_hld_host_list",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload data from vmdr.get_cve_hld() to SQL.
+
+    Args:
+        hld (BaseList): The Host List to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        vulns_table_name (str): The name of the table to upload the detections to. Defaults to 'vmdr_cve_hld_detections'.
+        hosts_table_name (str): The name of the table to upload the hosts to. Defaults to 'vmdr_cve_hld_host_list'.
+
+    Returns:
+        int: The number of rows uploaded.
+
+    """
+
+    """
+    Get_cve_hld and get_host_list technically return the same data. get_cve_hld just
+    includes the DETECTION_LIST attribute. We can use the same upload function
+    for the host part, and then snip off the DETECTION_LIST attribute to upload
+    to a detections table.
+    """
+
+    # Isolate the detection lists. Since the Detection objects themselves
+    # have an ID attribute, we can use that to link them back to the host.
+    detections = BaseList()
+    for host in hld:
+        if host.DETECTION_LIST:
+            for detection in host.DETECTION_LIST:
+                detections.append(detection)
+
+    # upload_vmdr_hosts automatically ignores the DETECTION_LIST attribute,
+    # so we can use it here to upload the hosts.
+    hosts_uploaded = upload_vmdr_hosts(
+        hld, cnxn, hosts_table_name, override_import_dt=override_import_dt
+    )
+    print(
+        f"Uploaded {hosts_uploaded} hosts to {hosts_table_name}. Moving to detections..."
+    )
+
+    COLS = {
+        "UNIQUE_VULN_ID": types.BigInteger(),
+        "VULN_CVE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "ASSOCIATED_QID": types.BigInteger(),
+        "QID_TITLE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "TYPE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "SSL": types.Boolean(),
+        "RESULTS": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "STATUS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "FQDN": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "CVSS": types.Float(),
+        "CVSS_BASE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS_TEMPORAL": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS_31": types.Float(),
+        "CVSS_31_BASE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "CVSS_31_TEMPORAL": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "QVS": types.Integer(),
+        "PORT": types.Integer(),
+        "PROTOCOL": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "FIRST_FOUND_DATETIME": types.DateTime(),
+        "LAST_FOUND_DATETIME": types.DateTime(),
+        "TIMES_FOUND": types.Integer(),
+        "LAST_TEST_DATETIME": types.DateTime(),
+        "LAST_UPDATE_DATETIME": types.DateTime(),
+        "LAST_PROCESSED_DATETIME": types.DateTime(),
+        "LAST_FIXED_DATETIME": types.DateTime(),
+        "ID": types.Integer(),
+        "IS_IGNORED": types.Boolean(),
+        "IS_DISABLED": types.Boolean(),
+    }
+
+    # Create a copy of the detections list so we do not modify the original:
+    detections = BaseList(detections)
+
+    # Convert the BaseList to a DataFrame:
+    df = DataFrame([prepare_dataclass(detection) for detection in detections])
+
+    # Upload the data:
+    return upload_data(
+        df,
+        vulns_table_name,
         cnxn,
         dtype=COLS,
         override_import_dt=override_import_dt,

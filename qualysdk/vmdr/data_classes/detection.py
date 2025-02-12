@@ -26,11 +26,12 @@ def parse_html_fields(obj, HTML_FIELDS: list[str]) -> None:
     with catch_warnings():
         simplefilter("ignore")  # ignore the warning about the html.parser
         for field in HTML_FIELDS:
-            setattr(
-                obj,
-                field,
-                BeautifulSoup(getattr(obj, field), "html.parser").get_text(),
-            )
+            if getattr(obj, field, None):
+                setattr(
+                    obj,
+                    field,
+                    BeautifulSoup(getattr(obj, field), "html.parser").get_text(),
+                )
 
 def parse_int_fields(obj, INT_FIELDS : List[str]) -> None:
     for field in INT_FIELDS:
@@ -75,6 +76,11 @@ class BaseDetection(BaseClass):
         metadata={"description": "The status of the detection."},
         default=None,
     )
+    PROTOCOL: Optional[str] = field(
+        metadata={"description": "The protocol of the detection."},
+        default=None,
+        compare=False,
+    )
     FIRST_FOUND_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the detection was first found."},
         default=None,
@@ -97,6 +103,16 @@ class BaseDetection(BaseClass):
     )
     LAST_UPDATE_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the detection was last updated."},
+        default=None,
+        compare=False,
+    )
+    PORT: Optional[int] = field(
+        metadata={"description": "The port of the detection."},
+        default=None,
+        compare=False,
+    )
+    FQDN: Optional[str] = field(
+        metadata={"description": "The fully qualified domain name of the detection."},
         default=None,
         compare=False,
     )
@@ -126,7 +142,7 @@ class BaseDetection(BaseClass):
     )
 
     def __post_init__(self):
-        INT_FIELDS = ["UNIQUE_VULN_ID", "TIMES_FOUND", "ID"]
+        INT_FIELDS = ["UNIQUE_VULN_ID", "TIMES_FOUND", "ID", "PORT"]
         BOOL_FIELDS = ["SSL", "IS_IGNORED", "IS_DISABLED"]
         DATETIME_FIELDS = [
             "FIRST_FOUND_DATETIME",
@@ -169,25 +185,10 @@ class Detection(BaseDetection):
         default=None,
         compare=False,
     )
-    PORT: Optional[int] = field(
-        metadata={"description": "The port of the detection."},
-        default=None,
-        compare=False,
-    )
-    PROTOCOL: Optional[str] = field(
-        metadata={"description": "The protocol of the detection."},
-        default=None,
-        compare=False,
-    )
-    FQDN: Optional[str] = field(
-        metadata={"description": "The fully qualified domain name of the detection."},
-        default=None,
-        compare=False,
-    )
 
     def __post_init__(self):
 
-        INT_FIELDS = ["QID", "PORT"]
+        INT_FIELDS = ["QID"]
         parse_int_fields(self, INT_FIELDS)
 
         # convert the QDS to a QDS object

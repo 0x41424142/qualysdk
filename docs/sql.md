@@ -85,6 +85,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_vmdr_kb_qvs``` | VMDR | ```vmdr.get_kb_qvs()```| ```vmdr_kb_qvs``` |
 | ```upload_vmdr_hosts``` | VMDR | ```vmdr.get_host_list()```| ```vmdr_hosts_list``` |
 | ```upload_vmdr_hld``` | VMDR | ```vmdr.get_hld()```| ```vmdr_hld_hosts_list``` for hosts and ```vmdr_hld_detections``` for detections |
+| ```upload_vmdr_cve_hld``` | VMDR | ```vmdr.get_cve_hld()```| ```vmdr_cve_hld_host_list``` for hosts and ```vmdr_cve_hld_detections``` for detections |
 | ```upload_vmdr_ips``` | VMDR | ```vmdr.get_ip_list()```| ```vmdr_ips``` |
 | ```upload_vmdr_scanners``` | VMDR | ```vmdr.get_scanner_list()```| ```vmdr_scanners``` |
 | ```upload_vmdr_static_search_lists``` | VMDR | ```vmdr.get_static_searchlists()```| ```vmdr_static_searchlists``` |

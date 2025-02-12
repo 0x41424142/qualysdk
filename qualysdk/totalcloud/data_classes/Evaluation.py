@@ -33,6 +33,16 @@ class Evaluation(BaseClass):
                 except (OSError, TypeError, ValueError, OverflowError):
                     setattr(self, field, None)
 
+    def __str__(self):
+        if self.dateFixed:
+            return f"Fixed as of {self.dateFixed}"
+        elif self.dateReopen:
+            return f"Reopened as of {self.dateReopen}"
+        elif self.lastEvaluated:
+            return f"Last evaluated on {self.lastEvaluated}"
+        elif self.firstEvaluated:
+            return f"First evaluated on {self.firstEvaluated}"
+
 
 @dataclass
 class AccountLevelEvaluation(BaseClass):

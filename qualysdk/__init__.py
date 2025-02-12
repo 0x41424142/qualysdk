@@ -13,7 +13,7 @@ from .base.json_export import write_json
 from .gav.uber import GAVUber
 from . import gav
 
-from .vmdr import query_kb, get_host_list, get_hld
+from .vmdr import query_kb, get_host_list, get_hld, get_cve_hld
 from . import vmdr
 
 from . import cloud_agent

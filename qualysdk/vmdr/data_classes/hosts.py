@@ -9,7 +9,7 @@ from datetime import datetime
 from ipaddress import IPv4Address, IPv6Address
 
 from .tag import Tag, CloudTag
-from .detection import Detection
+from .detection import Detection, CVEDetection
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
 
@@ -468,7 +468,13 @@ class VMDRHost(BaseClass):
         # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
         if self.DETECTION_LIST:
             detections_bl = BaseList()
-            data = self.DETECTION_LIST["DETECTION"]
+            # Probe if the data is for QIDs or CVEs:
+            VULN_TYPE = "QID"
+            if "CVE_DETECTION" in self.DETECTION_LIST.keys():
+                VULN_TYPE = "CVE"
+                data = self.DETECTION_LIST["CVE_DETECTION"]
+            else:
+                data = self.DETECTION_LIST["DETECTION"]
 
             if isinstance(data, dict):
                 data = [data]
@@ -477,7 +483,15 @@ class VMDRHost(BaseClass):
                 # Append the host's ID attr to the detection dictionary
                 # to allow for a relationship:
                 detection["ID"] = self.ID
-                detections_bl.append(Detection.from_dict(detection))
+                if VULN_TYPE == "QID":
+                    detections_bl.append(Detection.from_dict(detection))
+                else:
+                    detection["CVSS_31"] = detection.pop("CVSS3.1")
+                    detection["CVSS_31_BASE"] = detection.pop("CVSS3.1_BASE", None)
+                    detection["CVSS_31_TEMPORAL"] = detection.pop(
+                        "CVSS3.1_TEMPORAL", None
+                    )
+                    detections_bl.append(CVEDetection.from_dict(detection))
 
             self.DETECTION_LIST = detections_bl
 

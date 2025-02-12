@@ -19,6 +19,7 @@ from .vmdr import (
     upload_vmdr_template_list,
     upload_vmdr_kb_qvs,
     upload_vmdr_activity_log,
+    upload_vmdr_cve_hld,
 )
 
 from .gav import upload_gav_hosts

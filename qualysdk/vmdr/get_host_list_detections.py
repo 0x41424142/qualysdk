@@ -154,3 +154,111 @@ def get_hld(
 
     print("All threads have completed. Returning responses.")
     return responses
+
+
+def get_cve_hld(
+    auth: BasicAuth,
+    chunk_size: int = 3000,
+    threads: int = 5,
+    page_count: Union[int, "all"] = "all",
+    chunk_count: Union[int, "all"] = "all",
+    **kwargs,
+) -> BaseList:
+    """
+    get a list of hosts and their CVE detections using multiple threads.
+
+    Params:
+        auth (BasicAuth): The BasicAuth object containing the username and password.
+        chunk_size (int): The size of each chunk. Defaults to 3000.
+        threads (int): The number of threads to use. Defaults to 5.
+        page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
+        chunk_count (Union[int, "all"]): The number of chunks to retrieve. Defaults to "all".
+        **kwargs: Additional keyword arguments to pass to the API.
+
+    Kwargs:
+
+        show_asset_id (Optional[bool]) #Whether to show the asset IDs. Default is 'False'.
+        include_vuln_type (Optional[Literal["confirmed", "potential"]]) #The type of vulnerability to include. If not specified, both types are included.
+        show_qvs (Optional[bool]) #Whether to show QVS. Default is False.
+        cve (Optional[str]) #The CVE to search for. Multiple CVEs can be comma-separated.
+        truncation_limit (Optional[int]) #The truncation limit for a page. Default is 1000. 0 returns all results on one page (NOT RECOMMENDED).
+        ids (Optional[str]) #A comma-separated string of host IDs to include.
+        id_min (Optional[Union[int,str]]) #The minimum host ID to include.
+        id_max (Optional[Union[int,str]]) #The maximum host ID to include.
+        ips (Optional[str]) #The IP address of the host to include. Can be a comma-separated string, and also supports ranges with a hyphen:
+        ag_ids (Optional[str]) #Show only hosts belonging to the specified asset group IDs. Can be a comma-separated string, and also supports ranges with a hyphen:
+        ag_titles (Optional[str]) #Show only hosts belonging to the specified asset group titles. Can be a comma-separated string.
+        network_ids (Optional[str]) #Show only hosts belonging to the specified network IDs. Can be a comma-separated string.
+        vm_scan_since (Optional[str]) #The date and time since the last VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        no_vm_scan_since (Optional[str]) #The date and time since the last VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        max_days_since_last_vm_scan (Optional[int]) #The maximum number of days since the last VM scan.
+        vm_processed_before (Optional[str]) #The date and time before the VM scan was processed. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_processed_after (Optional[str]) #The date and time after the VM scan was processed. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_scan_date_before (Optional[str]) #The date and time before the VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_scan_date_after (Optional[str]) #The date and time after the VM scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_auth_scan_date_before (Optional[str]) #The date and time before the VM authenticated scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        vm_auth_scan_date_after (Optional[str]) #The date and time after the VM authenticated scan. Format is 'YYYY-MM-DD[THH:MM:SS]'.
+        status (Optional[Literal["New", "Active", "Fixed", "Re-Opened"]]) #The status of the detection.
+        compliance_enabled (Optional[bool]) #Filter to hosts with compliance enabled. If False, hosts with compliance disabled are returned.
+        os_pattern (Optional[str]) #PCRE Regex to match operating systems. Use "%5E%24" for empty string.
+        qids (Optional[str]) #A comma-separated string of QIDs to include.
+        include_search_list_titles (Optional[str]) #A comma-separated string of search list titles to include.
+        exclude_search_list_titles (Optional[str]) #A comma-separated string of search list titles to exclude.
+        include_search_list_ids (Optional[str]) #A comma-separated string of search list IDs to include.
+        exclude_search_list_ids (Optional[str]) #A comma-separated string of search list IDs to exclude.
+        filter_superseded_qids (Optional[bool]) #Whether to filter superseded QIDs. Default is False.
+        use_tags (Optional[bool]) #Whether to use tags. Default is False.
+        tag_set_by (Optional[Literal['id','name']]) #When filtering on tags, whether to filter by tag ID or tag name.
+        tag_include_selector (Optional[Literal['any','all']]) #When filtering on tags, choose if asset has to match any or all tags specified.
+        tag_exclude_selector (Optional[Literal['any','all']]) #When filtering on tags, choose if asset has to match any or all tags specified.
+        tag_set_include (Optional[str]) #A comma-separated string of tag IDs or names to include.
+        tag_set_exclude (Optional[str]) #A comma-separated string of tag IDs or names to exclude.
+        show_tags (Optional[bool]) #Whether to show tags. Default is False.
+        host_metadata (Optional[Literal['all,'ec2', 'azure']]) #The type of metadata to include. Default is 'all'.
+        host_metadata_fields (Optional[str]) #A comma-separated string of metadata fields to include. Use carefully.
+        show_cloud_tags (Optional[bool]) #Whether to show cloud tags. Default is False.
+        cloud_tag_fields (Optional[str]) #A comma-separated string of cloud tag fields to include. Use carefully.
+
+    Returns:
+        BaseList: A list of VMDRHost objects, with their DETECTIONS attribute populated.
+    """
+
+    prepare_args(
+        auth=auth,
+        chunk_size=chunk_size,
+        threads=threads,
+        page_count=page_count,
+        chunk_count=chunk_count,
+        ids=kwargs.get("ids"),
+    )
+
+    id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
+    print(
+        f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'}"
+    )
+
+    threads_list = []
+
+    responses = BaseList()
+
+    for i in range(threads):
+        thread = Thread(
+            target=thread_worker,
+            args=(
+                auth,
+                id_queue,
+                responses,
+                page_count,
+                chunk_count,
+                "get_cve_hld",
+                kwargs,
+            ),
+        )
+        threads_list.append(thread)
+        thread.start()
+
+    for thread in threads_list:
+        thread.join()
+
+    print("All threads have completed. Returning responses.")
+    return responses

@@ -365,13 +365,116 @@ def hld_backend(
     return responses
 
 
+def get_cve_hld_backend(
+    auth: BasicAuth,
+    page_count: Union[int, "all"] = "all",
+    **kwargs,
+) -> List:
+    """
+    Backend for CVE Host List Detection.
+    """
+
+    # Set the kwargs
+    kwargs["action"] = "list"
+
+    responses = BaseList()
+    pulled = 0
+
+    while True:
+        with LOCK:
+            print(
+                f"{current_thread().name} - Pulling page {pulled+1} for ids {kwargs.get('ids')}. KWARGS: {kwargs}"
+            )
+
+        # make the request:
+        response = call_api(
+            auth=auth,
+            module="vmdr",
+            endpoint="get_cve_hld",
+            params=kwargs,
+            headers={"X-Requested-With": "qualysdk SDK"},
+        )
+
+        if response.status_code != 200:
+            with LOCK:
+                print(f"{current_thread().name} - No data returned on page {pulled}")
+            pulled += 1
+            if pulled != "all":
+                if pulled == page_count:
+                    with LOCK:
+                        print(f"{current_thread().name} - Pulled all pages.")
+                    break
+                else:
+                    continue
+
+        # cleaned = remove_problem_characters(response.text)
+        xml = xml_parser(response.content)
+
+        # check if there is no host list
+        if "HOST_LIST" not in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]:
+            with LOCK:
+                print(f"{current_thread().name} - No host list returned.")
+        else:
+            # check if ["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
+            # or just a dictionary. if it is just one, put it inside a list
+            if not isinstance(
+                xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+                    "HOST"
+                ],
+                list,
+            ):
+                xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+                    "HOST"
+                ] = [
+                    xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+                        "HOST"
+                    ]
+                ]
+
+            for host in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"][
+                "HOST_LIST"
+            ]["HOST"]:
+                # Ensure compatability:
+                host["DETECTION_LIST"] = host.pop("CVE_DETECTION_LIST")
+                host_obj = VMDRHost.from_dict(host)
+                responses.append(host_obj)
+
+        pulled += 1
+        if page_count != "all":
+            if pulled == page_count:
+                break
+
+        if "WARNING" in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]:
+            if "URL" in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]:
+                # get the id_min parameter from the URL to pass into kwargs:
+                params = parse_qs(
+                    urlparse(
+                        xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"][
+                            "URL"
+                        ]
+                    ).query
+                )
+                with LOCK:
+                    print(
+                        f"{current_thread().name} (get_hld) - Pagination detected. Pulling next page with id_min: {params['id_min'][0]}"
+                    )
+                kwargs["id_min"] = params["id_min"][0]
+
+            else:
+                break
+        else:
+            break
+
+    return responses
+
+
 def thread_worker(
     auth: BasicAuth,
     id_queue: Queue,
     responses: BaseList,
     page_count: Union[int, "all"],
     chunk_count: Union[int, "all"],
-    endpoint_called: Literal["get_hld", "get_host_list"],
+    endpoint_called: Literal["get_hld", "get_host_list", "get_cve_hld"],
     kwargs,
 ):
     """
@@ -383,7 +486,7 @@ def thread_worker(
         responses (BaseList): The list of responses to append to.
         page_count (Union[int, "all"]): The number of pages to retrieve. Defaults to "all".
         chunk_count (Union[int, "all"]): The number of chunks to retrieve. Defaults to "all".
-        endpoint_called (Union['get_hld', 'get_host_list']): The function that was called.
+        endpoint_called (Union['get_hld', 'get_host_list', 'get_cve_hld']): The function that was called.
         **kwargs: Additional keyword arguments to pass to the API. See get_hld() for details.
     """
 
@@ -415,6 +518,8 @@ def thread_worker(
             responses.extend(
                 get_host_list_backend(auth, page_count=page_count, **kwargs)
             )
+        elif endpoint_called == "get_cve_hld":
+            responses.extend(get_cve_hld_backend(auth, page_count=page_count, **kwargs))
         else:
             raise ValueError(
                 "endpoint_called must be either 'get_hld' or 'get_host_list'."

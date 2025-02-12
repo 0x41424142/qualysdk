@@ -98,7 +98,7 @@ hosts = get_host_list(
 ```vmdr.get_cve_hld()``` is a new version of the above ```get_hld``` function that returns a list of hosts with CVE detections under ```<VMDRHost>.DETECTION_LIST``` instead of QIDs. This function supports most of the same kwargs as ```get_hld``` and is also threaded.
 
 |Kwarg| Possible Values |Description|Required|
-|--|--|--|
+|--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth```|The authentication object.|✅|
 |```page_count```|```Literal['all']``` (default), ```int >= 0```| How many pages to pull. Note that ```page_count``` does not apply if ```truncation_limit``` is set to 0, or not specified.|❌|
 |```threads```|```int >= 1```|The number of threads to use for data retrieval. Defaults to 5.|❌|

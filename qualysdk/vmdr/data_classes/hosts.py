@@ -486,9 +486,11 @@ class VMDRHost(BaseClass):
                 if VULN_TYPE == "QID":
                     detections_bl.append(Detection.from_dict(detection))
                 else:
-                    detection['CVSS_31'] = detection.pop('CVSS3.1')
-                    detection['CVSS_31_BASE'] = detection.pop('CVSS3.1_BASE', None)
-                    detection['CVSS_31_TEMPORAL'] = detection.pop('CVSS3.1_TEMPORAL', None)
+                    detection["CVSS_31"] = detection.pop("CVSS3.1")
+                    detection["CVSS_31_BASE"] = detection.pop("CVSS3.1_BASE", None)
+                    detection["CVSS_31_TEMPORAL"] = detection.pop(
+                        "CVSS3.1_TEMPORAL", None
+                    )
                     detections_bl.append(CVEDetection.from_dict(detection))
 
             self.DETECTION_LIST = detections_bl

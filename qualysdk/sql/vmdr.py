@@ -1247,6 +1247,7 @@ def upload_vmdr_activity_log(
         override_import_dt=override_import_dt,
     )
 
+
 def upload_vmdr_cve_hld(
     hld: BaseList,
     cnxn: Connection,
@@ -1294,7 +1295,9 @@ def upload_vmdr_cve_hld(
 
     COLS = {
         "UNIQUE_VULN_ID": types.BigInteger(),
-        "VULN_CVE": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "VULN_CVE": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "ASSOCIATED_QID": types.BigInteger(),
         "QID_TITLE": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
@@ -1322,7 +1325,9 @@ def upload_vmdr_cve_hld(
         ),
         "QVS": types.Integer(),
         "PORT": types.Integer(),
-        "PROTOCOL": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "PROTOCOL": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "FIRST_FOUND_DATETIME": types.DateTime(),
         "LAST_FOUND_DATETIME": types.DateTime(),
         "TIMES_FOUND": types.Integer(),

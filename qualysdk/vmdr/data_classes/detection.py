@@ -14,6 +14,7 @@ from .qds import QDS as qds
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
 
+
 def parse_datetime_fields(obj, DATETIME_FIELDS: list[str]) -> None:
     for dt_field in DATETIME_FIELDS:
         if (
@@ -21,6 +22,7 @@ def parse_datetime_fields(obj, DATETIME_FIELDS: list[str]) -> None:
             and getattr(obj, dt_field) is not None
         ):
             setattr(obj, dt_field, datetime.fromisoformat(getattr(obj, dt_field)))
+
 
 def parse_html_fields(obj, HTML_FIELDS: list[str]) -> None:
     with catch_warnings():
@@ -33,13 +35,12 @@ def parse_html_fields(obj, HTML_FIELDS: list[str]) -> None:
                     BeautifulSoup(getattr(obj, field), "html.parser").get_text(),
                 )
 
-def parse_int_fields(obj, INT_FIELDS : List[str]) -> None:
+
+def parse_int_fields(obj, INT_FIELDS: List[str]) -> None:
     for field in INT_FIELDS:
-        if (
-            not isinstance(getattr(obj, field), int)
-            and getattr(obj, field) is not None
-        ):
+        if not isinstance(getattr(obj, field), int) and getattr(obj, field) is not None:
             setattr(obj, field, int(getattr(obj, field)))
+
 
 def parse_bool_fields(obj, BOOL_FIELDS: list[str]) -> None:
     for field in BOOL_FIELDS:
@@ -49,10 +50,11 @@ def parse_bool_fields(obj, BOOL_FIELDS: list[str]) -> None:
         ):
             setattr(obj, field, bool(getattr(obj, field)))
 
+
 @dataclass
 class BaseDetection(BaseClass):
     """
-    Parent dataclass for Detection and CVEDetection 
+    Parent dataclass for Detection and CVEDetection
     for shared attributes.
     """
 
@@ -164,14 +166,19 @@ class BaseDetection(BaseClass):
         # do the parsing
         [parser(self, fields) for parser, fields in ALL.items()]
 
+
 @dataclass(order=True)
 class Detection(BaseDetection):
     """
     Detection - represents a single QID detection on a host.
     """
 
-    QID: int = field(metadata={"description": "The QID of the detection."}, default=None)
-    SEVERITY: int = field(metadata={"description": "The severity of the detection."}, default=None)
+    QID: int = field(
+        metadata={"description": "The QID of the detection."}, default=None
+    )
+    SEVERITY: int = field(
+        metadata={"description": "The severity of the detection."}, default=None
+    )
     QDS: Optional[qds] = field(
         metadata={"description": "The Qualys Detection Score (QDS) of the detection."},
         default=None,
@@ -187,7 +194,6 @@ class Detection(BaseDetection):
     )
 
     def __post_init__(self):
-
         INT_FIELDS = ["QID"]
         parse_int_fields(self, INT_FIELDS)
 
@@ -246,15 +252,17 @@ class Detection(BaseDetection):
             PORT=self.PORT,
             PROTOCOL=self.PROTOCOL,
         )
+
     # See above #TODO
     def valid_values(self):
         # return a list of attribute names that have non-None values
         return {k: v for k, v in self.items() if v is not None and v != "" and v != []}
 
+
 @dataclass
 class CVEDetection(BaseDetection):
     """
-    In 2025, Qualys enabled the ability to pull CVEs from the 
+    In 2025, Qualys enabled the ability to pull CVEs from the
     HLD API. This class models the data returned from the new
     endpoint.
     """
@@ -266,7 +274,7 @@ class CVEDetection(BaseDetection):
     ASSOCIATED_QID: int = field(
         metadata={"description": "The QID of the detection."},
         default=None,
-    ) #needs converted from string to int
+    )  # needs converted from string to int
     QID_TITLE: str = field(
         metadata={"description": "The title of the detection."},
         default=None,
@@ -274,7 +282,7 @@ class CVEDetection(BaseDetection):
     CVSS: float = field(
         metadata={"description": "The CVSS score of the detection."},
         default=None,
-    ) #needs converted from string to float
+    )  # needs converted from string to float
     CVSS_BASE: str = field(
         metadata={"description": "The CVSS base score of the detection."},
         default=None,
@@ -286,7 +294,7 @@ class CVEDetection(BaseDetection):
     CVSS_31: float = field(
         metadata={"description": "The CVSS 3.1 score of the detection."},
         default=None,
-    ) #needs converted from string to float
+    )  # needs converted from string to float
     CVSS_31_BASE: str = field(
         metadata={"description": "The CVSS 3.1 base score of the detection."},
         default=None,
@@ -296,7 +304,9 @@ class CVEDetection(BaseDetection):
         default=None,
     )
     QVS: int = field(
-        metadata={"description": "The Qualys Vulnerability Score (QVS) of the detection."},
+        metadata={
+            "description": "The Qualys Vulnerability Score (QVS) of the detection."
+        },
         default=None,
     )
 
@@ -306,7 +316,7 @@ class CVEDetection(BaseDetection):
         FLOAT_FIELDS = ["CVSS", "CVSS_31"]
 
         parse_int_fields(self, INT_FIELDS)
-        
+
         # Could move this to a helper function,
         # but CVE detections are the only thing
         # that have float attributes.

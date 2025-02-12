@@ -418,7 +418,9 @@ def get_cve_hld_backend(
             # check if ["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
             # or just a dictionary. if it is just one, put it inside a list
             if not isinstance(
-                xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"],
+                xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
+                    "HOST"
+                ],
                 list,
             ):
                 xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
@@ -429,11 +431,11 @@ def get_cve_hld_backend(
                     ]
                 ]
 
-            for host in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-                "HOST"
-            ]:
+            for host in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"][
+                "HOST_LIST"
+            ]["HOST"]:
                 # Ensure compatability:
-                host['DETECTION_LIST'] = host.pop('CVE_DETECTION_LIST')
+                host["DETECTION_LIST"] = host.pop("CVE_DETECTION_LIST")
                 host_obj = VMDRHost.from_dict(host)
                 responses.append(host_obj)
 
@@ -464,6 +466,7 @@ def get_cve_hld_backend(
             break
 
     return responses
+
 
 def thread_worker(
     auth: BasicAuth,
@@ -516,9 +519,7 @@ def thread_worker(
                 get_host_list_backend(auth, page_count=page_count, **kwargs)
             )
         elif endpoint_called == "get_cve_hld":
-            responses.extend(
-                get_cve_hld_backend(auth, page_count=page_count, **kwargs)
-            )
+            responses.extend(get_cve_hld_backend(auth, page_count=page_count, **kwargs))
         else:
             raise ValueError(
                 "endpoint_called must be either 'get_hld' or 'get_host_list'."

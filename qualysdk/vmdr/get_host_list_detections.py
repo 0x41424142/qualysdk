@@ -156,7 +156,14 @@ def get_hld(
     return responses
 
 
-def get_cve_hld(auth: BasicAuth, chunk_size: int = 3000, threads: int = 5, page_count: Union[int, "all"] = "all", chunk_count: Union[int, "all"] = "all", **kwargs) -> BaseList:
+def get_cve_hld(
+    auth: BasicAuth,
+    chunk_size: int = 3000,
+    threads: int = 5,
+    page_count: Union[int, "all"] = "all",
+    chunk_count: Union[int, "all"] = "all",
+    **kwargs,
+) -> BaseList:
     """
     get a list of hosts and their CVE detections using multiple threads.
 
@@ -226,7 +233,9 @@ def get_cve_hld(auth: BasicAuth, chunk_size: int = 3000, threads: int = 5, page_
     )
 
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
-    print(f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
+    print(
+        f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'}"
+    )
 
     threads_list = []
 

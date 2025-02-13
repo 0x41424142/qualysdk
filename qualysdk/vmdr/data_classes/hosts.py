@@ -388,9 +388,25 @@ class VMDRHost(BaseClass):
                 case "GCP":
                     key_selector = "GCP"
                 case _:
-                    raise ValueError(
-                        f"Cloud provider {self.CLOUD_PROVIDER} is not supported."
-                    )
+                    # Fallback in the off-chance that cloud provider is blank but there
+                    # is still metadata. This has happened once or twice in testing.
+                    # Using a walrus operator for the ensuing match statement:
+                    if meta_key := list(self.METADATA.keys()):
+                        match meta_key[0]:
+                            case "EC2":
+                                key_selector = "EC2"
+                            case "AZURE":
+                                key_selector = "AZURE"
+                            case "GCP":
+                                key_selector = "GCP"
+                            case _:
+                                raise ValueError(
+                                    f"Cloud provider {self.METADATA.keys()[0]} (inferred from metadata) is not supported."
+                                )
+                    else:
+                        raise ValueError(
+                            f"Cloud provider {self.CLOUD_PROVIDER} is not supported."
+                        )
 
             # for each tuple, [0] is the dataclass attribute name, [1] is how it is represented in the metadata dict.
             VALID_EC2_KEYS = [

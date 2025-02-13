@@ -325,7 +325,7 @@ def get_findings_verbose(
     Uses ```was.get_findings()``` and ```was.get_finding_details()``` to return a ```BaseList``` of ```WASFinding```s with
     all attributes populated.
 
-    This function is multi-threaded, placing all ```WASFinding```s found
+    This function is multi-threaded, placing all ```WASFinding``` objects found
     from ```was.get_findings()``` into a queue and then spawning threads to pull the details one
     by one.
 

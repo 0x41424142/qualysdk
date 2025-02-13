@@ -391,7 +391,7 @@ class VMDRHost(BaseClass):
                     # Fallback in the off-chance that cloud provider is blank but there
                     # is still metadata. This has happened once or twice in testing.
                     # Using a walrus operator for the ensuing match statement:
-                    if meta_key:=list(self.METADATA.keys()):
+                    if meta_key := list(self.METADATA.keys()):
                         match meta_key[0]:
                             case "EC2":
                                 key_selector = "EC2"

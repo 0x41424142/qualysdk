@@ -162,6 +162,7 @@ def call_api(
                         "controlid",
                         "webappId",
                         "findingId",
+                        "scanId",
                     ]
                 )
             ):
@@ -174,6 +175,7 @@ def call_api(
                     webappId=str(params.pop("webappId", None)),
                     webappAuthRecordId=str(params.pop("webappAuthRecordId", None)),
                     findingId=str(params.pop("findingId", None)),
+                    scanId=str(params.pop("scanId", None)),
                 )
             elif payload and (
                 any(
@@ -186,6 +188,7 @@ def call_api(
                         "resourceid",
                         "webappId",
                         "findingId",
+                        "scanId",
                     ]
                 )
             ):
@@ -197,6 +200,7 @@ def call_api(
                     resourceid=str(payload.pop("resourceid", None)),
                     webappId=str(payload.pop("webappId", None)),
                     findingId=str(payload.pop("findingId", None)),
+                    scanId=str(payload.pop("scanId", None)),
                 )
             else:
                 raise ValueError(

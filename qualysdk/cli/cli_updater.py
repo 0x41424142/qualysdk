@@ -1,6 +1,6 @@
 """
-Qualysdk-updater is a CLI tool installed with 
-the SDK to check for and install updates from 
+Qualysdk-updater is a CLI tool installed with
+the SDK to check for and install updates from
 PyPI.
 """
 

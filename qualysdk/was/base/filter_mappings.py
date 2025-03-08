@@ -135,6 +135,22 @@ ENDPOINT_MAPPINGS["delete_authentication_record"] = {
 ENDPOINT_MAPPINGS["get_findings"] = ENDPOINT_MAPPINGS["count_findings"]
 ENDPOINT_MAPPINGS["get_findings"]["verbose"] = "BOOLEAN"
 
+# scans:
+ENDPOINT_MAPPINGS["count_scans"] = {
+    "id": "INTEGER",
+    "name": "TEXT",
+    "webApp_id": "INTEGER",
+    "webApp_name": "TEXT",
+    "webApp_tags_id": "INTEGER",
+    "reference": "TEXT",
+    "type": "KEYWORD",
+    "mode": "KEYWORD",
+    "status": "KEYWORD",
+    "authStatus": "KEYWORD",
+    "resultsStatus": "KEYWORD",
+    "launchedDate": "DATE",
+}
+
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],
     "TEXT": ["CONTAINS", "EQUALS", "NOT EQUALS"],
@@ -159,6 +175,30 @@ FILTER_MAPPING = {
         "OAUTH2_IMPLICIT",
         "OAUTH2_PASSWORD",
         "OAUTH2_CLIENT_CREDS",
+        "VULNERABILITY",
+        "DISCOVERY",
+        "ONDEMAND",
+        "SCHEDULED",
+        "API",
+        "SUBMITTED",
+        "RUNNING",
+        "ERROR",
+        "CANCELLED",
+        "PROCESSING",
+        "TO_BE_PROCESSED",
+        "NO_HOST_ALIVE",
+        "NO_WEB_SERVICE",
+        "SUCCESSFUL",
+        "SERVICE_ERROR",
+        "TIME_LIMIT_REACHED",
+        "SCAN_INTERNAL_ERROR",
+        "SCAN_RESULTS_INVALID",
+        "TIME_LIMIT_EXCEEDED",
+        "SCAN_NOT_LAUNCHED",
+        "SCANNER_NOT_AVAILABLE",
+        "CANCELING",
+        "DELETED",
+        "CANCELED_WITH_RESULTS",
     ],
     "BOOLEAN": ["EQUALS", "NOT EQUALS"],
 }

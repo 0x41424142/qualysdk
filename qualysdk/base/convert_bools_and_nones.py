@@ -1,5 +1,5 @@
 """
-convert_bools_and_nones.py - Contains functions to convert bools and Nones to 1/0 and 'None' respectively. 
+convert_bools_and_nones.py - Contains functions to convert bools and Nones to 1/0 and 'None' respectively.
 
 Used with the various kwargs an API endpoint accepts to get them into a requests friendly format.
 """

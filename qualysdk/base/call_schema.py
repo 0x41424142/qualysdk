@@ -1,7 +1,7 @@
 """
 call_schema.py - contains the CALL_SCHEMA lookup for the qualysdk package.
 
-The CALL_SCHEMA dictionary contains the schema for each Qualys API call. 
+The CALL_SCHEMA dictionary contains the schema for each Qualys API call.
 This schema is used to determine what parameters are required for each call and where/how
 they should be sent to the API.
 

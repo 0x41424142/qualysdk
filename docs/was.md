@@ -30,6 +30,7 @@ You can use any of the endpoints currently supported:
 | ```get_findings``` | Returns a list of findings in the subscription that match given kwargs. |
 | ```get_finding_details``` | Returns all attributes of a single finding. |
 | ```get_findings_verbose``` | Combines the functionality of ```get_findings``` and ```get_finding_details``` to return a list of findings with all attributes. Great for SQL data uploads. |
+| ```count_scans``` | Returns the number of scans in the subscription that match given kwargs. |
 
 ## Count Webapps API
 
@@ -1224,6 +1225,56 @@ auth = BasicAuth(<username>, <password>)
 findings = get_findings_verbose(auth, severity=5)
 ```
 
+## Count Scans API
+
+```count_scans``` returns the number of scans in the subscription that match given kwargs.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```id``` | ```Union[str, int]``` | Scan ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Scan name | ❌ |
+| ```name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the name filter | ❌ |
+| ```reference``` | ```str``` | Scan reference | ❌ |
+| ```reference_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the reference filter | ❌ |
+| ```type``` | ```Literal["DISCOVERY", "VULNERABILITY"]``` | Scan type | ❌ |
+| ```type_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the type filter | ❌ |
+| ```mode``` | ```Literal["ONDEMAND", "SCHEDULED", "API"]``` | Scan mode | ❌ |
+| ```mode_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the mode filter | ❌ |
+| ```status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "ERROR", "CANCELLED", "PROCESSING"]``` | Scan status | ❌ |
+| ```status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the status filter | ❌ |
+| ```webApp_id``` | ```int``` | Webapp ID | ❌ |
+| ```webApp_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_id filter | ❌ |
+| ```webApp_name``` | ```str``` | Webapp name | ❌ |
+| ```webApp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_name filter | ❌ |
+| ```webApp_tags_id``` | ```int``` | Webapp tag ID | ❌ |
+| ```webApp_tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_tags_id filter | ❌ |
+| ```resultsStatus``` | ```Literal["NOT_USED", "TO_BE_PROCESSED", "NO_HOST_ALIVE", "NO_WEB_SERVICE", "SERVICE_ERROR", "TIME_LIMIT_REACHED", "SCAN_INTERNAL_ERROR", "SCAN_RESULTS_INVALID", "SUCCESSFUL", "PROCESSING", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "SUBMITTED", "RUNNING", "CANCELED", "CANCELING", "ERROR", "DELETED", "CANCELED_WITH_RESULTS"]``` | Results status | ❌ |
+| ```resultsStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the resultsStatus filter | ❌ |
+| ```authStatus``` | ```Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]``` | Authentication status | ❌ |
+| ```authStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the authStatus filter | ❌ |
+| ```launchedDate``` | ```str``` | Scan launch date in UTC: YYYY-MM-DDTHH:MM:SSZ | ❌ |
+| ```launchedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the launchedDate filter | ❌ |
+
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import count_scans
+
+auth = BasicAuth(<username>, <password>)
+count = count_scans(
+    auth,
+    type="VULNERABILITY",
+    mode="API,SCHEDULED",
+    mode_operator="IN",
+    status="RUNNING,FINISHED",
+    status_operator="IN",
+    webApp_tags_id=123456789,
+    authStatus="NOT_USED"    
+)
+>>> 5
+```
 
 ## ```qualysdk-was``` CLI tool
 

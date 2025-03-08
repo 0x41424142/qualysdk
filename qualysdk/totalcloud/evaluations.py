@@ -1,5 +1,5 @@
 """
-Contains functions to pull stats on control IDs on resources, 
+Contains functions to pull stats on control IDs on resources,
 evaluations per account, and resources evaluated for a control.
 """
 

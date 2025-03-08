@@ -272,6 +272,17 @@ class WASFinding(BaseClass):
     sslData_certificateFingerprint: BaseList[str] = None
     sslData_flags: str = None
     updatedDate: datetime = None
+    retest: dict = None
+    # retest is parsed into below:
+    retestStatus: str = None
+    retestedDate: datetime = None
+    retestedUser_id: int = None
+    retestedUser_username: str = None
+    retestedUser_firstName: str = None
+    retestedUser_lastName: str = None
+    retestFindingStatus: str = None
+    retestReason: str = None
+    # end of retest
 
     def __post_init__(self):
         DT_FIELDS = [
@@ -292,6 +303,7 @@ class WASFinding(BaseClass):
             "webApp_id",
             "patch",
             "reactivateIn",
+            "retestedUser_id",
         ]
         BOOL_FIELDS = ["potential", "isIgnored"]
 
@@ -318,22 +330,6 @@ class WASFinding(BaseClass):
 
         if self.param:
             setattr(self, "param", unquote_plus(self.param))
-
-        for int_field in INT_FIELDS:
-            if getattr(self, int_field):
-                setattr(self, int_field, int(getattr(self, int_field)))
-
-        for bool_field in BOOL_FIELDS:
-            if getattr(self, bool_field):
-                setattr(self, bool_field, bool(getattr(self, bool_field)))
-
-        for dt_field in DT_FIELDS:
-            if getattr(self, dt_field):
-                setattr(
-                    self,
-                    dt_field,
-                    datetime.strptime(getattr(self, dt_field), "%Y-%m-%dT%H:%M:%SZ"),
-                )
 
         if self.cwe:
             setattr(self, "cwe_count", int(self.cwe.get("count")))
@@ -456,6 +452,36 @@ class WASFinding(BaseClass):
 
                 self.sslData_list = bl
             setattr(self, "sslData", None)
+
+        if self.retest:
+            setattr(self, "retestStatus", self.retest.get("retestStatus"))
+            date = self.retest.get("retestedDate")
+            if date:
+                setattr(self, "retestedDate", datetime.fromisoformat(date))
+            user = self.retest.get("retestedUser")
+            if user:
+                setattr(self, "retestedUser_id", user.get("id"))
+                setattr(self, "retestedUser_username", user.get("username"))
+                setattr(self, "retestedUser_firstName", user.get("firstName"))
+                setattr(self, "retestedUser_lastName", user.get("lastName"))
+            setattr(self, "retestFindingStatus", self.retest.get("findingStatus"))
+            setattr(self, "retestReason", self.retest.get("reason"))
+
+        for int_field in INT_FIELDS:
+            if getattr(self, int_field):
+                setattr(self, int_field, int(getattr(self, int_field)))
+
+        for bool_field in BOOL_FIELDS:
+            if getattr(self, bool_field):
+                setattr(self, bool_field, bool(getattr(self, bool_field)))
+
+        for dt_field in DT_FIELDS:
+            if getattr(self, dt_field):
+                setattr(
+                    self,
+                    dt_field,
+                    datetime.strptime(getattr(self, dt_field), "%Y-%m-%dT%H:%M:%SZ"),
+                )
 
     def __int__(self) -> int:
         return self.id

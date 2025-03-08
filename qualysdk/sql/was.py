@@ -434,6 +434,26 @@ def upload_was_findings(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "updatedDate": types.DateTime(),
+        "retestStatus": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "retestedDate": types.DateTime(),
+        "retestedUser_id": types.Integer(),
+        "retestedUser_username": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "retestedUser_firstName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "retestedUser_lastName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "retestFindingStatus": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "retestReason": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Prepare the dataclass for insertion:
@@ -450,6 +470,7 @@ def upload_was_findings(
             "history",
             "wasc",
             "sslData",
+            "retest",
         ],
         inplace=True,
     )

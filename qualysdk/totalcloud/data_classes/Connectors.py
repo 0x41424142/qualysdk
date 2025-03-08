@@ -1,5 +1,5 @@
 """
-Contains the dataclasses for a Qualys AWS Connector 
+Contains the dataclasses for a Qualys AWS Connector
 and subclasses for AWS/Azure connectors.
 """
 

@@ -29,3 +29,7 @@ from .findings import (
     get_finding_details,
     get_findings_verbose,
 )
+
+from .scans import (
+    count_scans,
+)

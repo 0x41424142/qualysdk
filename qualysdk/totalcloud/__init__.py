@@ -1,7 +1,7 @@
 """
 TotalCloud API module
 
-This module contains ways to interact with the Qualys TotalCloud APIs. 
+This module contains ways to interact with the Qualys TotalCloud APIs.
 """
 
 from .get_connectors import (

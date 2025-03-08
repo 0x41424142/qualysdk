@@ -50,24 +50,21 @@ def get_assets(
 def lookup_host_uuids(
     auth: TokenAuth,
     assetIds: list[str | int],
-) -> BaseList[tuple[str, str]]:
-    ...
+) -> BaseList[tuple[str, str]]: ...
 
 
 @overload
 def lookup_host_uuids(
     auth: TokenAuth,
     assetIds: BaseList[str | int],
-) -> BaseList[tuple[str, str]]:
-    ...
+) -> BaseList[tuple[str, str]]: ...
 
 
 @overload
 def lookup_host_uuids(
     auth: TokenAuth,
     assetIds: str | int,
-) -> tuple[str, str]:
-    ...
+) -> tuple[str, str]: ...
 
 
 def lookup_host_uuids(

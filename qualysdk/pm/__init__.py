@@ -1,5 +1,5 @@
 """
-Patch Management APIs return data on asset patching status, 
+Patch Management APIs return data on asset patching status,
 patches themselves and patching jobs.
 """
 

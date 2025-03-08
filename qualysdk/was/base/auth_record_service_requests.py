@@ -115,7 +115,7 @@ def format_filters(
                 ],
             ],
         ]
-    ]
+    ],
 ) -> Dict[str, Any]:
     """
     Formats the filters for the ServiceRequest.
@@ -150,7 +150,7 @@ def format_filters(
 
 
 def format_preferences(
-    preferences: Dict[str, Union[int, float]]
+    preferences: Dict[str, Union[int, float]],
 ) -> Dict[str, Union[int, float]]:
     """
     Formats the preferences for the ServiceRequest.
@@ -246,7 +246,7 @@ def format_web_app_auth_form_record(record: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def format_web_app_auth_form_record_field_list(
-    fields: Dict[str, List[Dict[str, Any]]]
+    fields: Dict[str, List[Dict[str, Any]]],
 ) -> Dict[str, Any]:
     """
     Formats the WebAppAuthFormRecordFieldList.
@@ -333,7 +333,7 @@ def format_web_app_auth_server_record(record: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def format_web_app_auth_server_record_field_list(
-    fields: Dict[str, List[Dict[str, Any]]]
+    fields: Dict[str, List[Dict[str, Any]]],
 ) -> Dict[str, Any]:
     """
     Formats the WebAppAuthServerRecordFieldList.

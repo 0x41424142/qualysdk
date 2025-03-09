@@ -73,7 +73,7 @@ def main():
         nargs=2,
         metavar=("key", "value"),
     )
-    
+
     list_scans_parser = subparsers.add_parser(
         "get_scans", help="Get a list of WAS scans."
     )

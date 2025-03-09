@@ -59,8 +59,25 @@ class WASScan(BaseClass):
     # end of profile parsing
 
     def __post_init__(self):
-        parse_fields(self, self.launchedBy, "launchedBy", ["id", "username", "firstname", "lastname"])
-        parse_fields(self, self.summary, "summary",["crawlDuration","testDuration","linksCrawled","nbRequests","resultsStatus","authStatus",])
+        parse_fields(
+            self,
+            self.launchedBy,
+            "launchedBy",
+            ["id", "username", "firstname", "lastname"],
+        )
+        parse_fields(
+            self,
+            self.summary,
+            "summary",
+            [
+                "crawlDuration",
+                "testDuration",
+                "linksCrawled",
+                "nbRequests",
+                "resultsStatus",
+                "authStatus",
+            ],
+        )
         parse_fields(self, self.canceledBy, "canceledBy", ["id", "username"])
         parse_fields(self, self.profile, "profile", ["id", "name"])
         parse_fields(self, self.target.get("webApp"), "target", ["id", "name"])
@@ -71,7 +88,9 @@ class WASScan(BaseClass):
             "canceledBy_id": int,
             "profile_id": int,
             "multi": bool,
-            "launchedDate": lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ") if x else None,
+            "launchedDate": lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ")
+            if x
+            else None,
             "target_id": int,
             "summary_crawlDuration": int,
             "summary_testDuration": int,

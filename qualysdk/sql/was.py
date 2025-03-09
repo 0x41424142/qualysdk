@@ -548,7 +548,7 @@ def upload_was_scans(
         "profile_name": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-    }    
+    }
 
     # Prepare the dataclass for insertion:
     df = DataFrame([prepare_dataclass(scan) for scan in scans])

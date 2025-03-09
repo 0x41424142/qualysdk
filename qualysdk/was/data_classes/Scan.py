@@ -2,13 +2,11 @@
 Contains the WASScan class, representing a scan in the Qualys WAS module.
 """
 
-# NOTE: THIS FILE IS TODO. IT NEEDS TO BE COMPLETED AND CHECKED.
-
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Union, Literal
+from dataclasses import dataclass
+from typing import Dict, Union
 from datetime import datetime
 
-from ...base.base_list import BaseList
+from ...base.post_init_parser import parse_fields
 from ...base.base_class import BaseClass
 
 
@@ -24,116 +22,67 @@ class WASScan(BaseClass):
     type: str = None
     mode: str = None
     multi: bool = None
-    webapps: BaseList = None
-    profile: dict = None
-    # profile is parsed into below fields:
-    profile_id: int = None
-    profile_name: str = None
-    # end profile
-    scanner: dict = None
-    # scanner is parsed into below fields:
-    scanner_id: int = None
-    scanner_name: str = None
-    scanner_type: str = None
-    # end scanner
-    scannerAppliance: dict = None
-    # scannerAppliance is parsed into below fields:
-    scannerAppliance_id: int = None
-    scannerAppliance_name: str = None
-    scannerAppliance_type: str = None
-    # end scannerAppliance
-    status: str = None
-    launchedDate: datetime = None
-    launchedBy: dict = None
+    target: Dict = None
+    # target is parsed into below fields:
+    target_id: int = None
+    target_name: str = None
+    # end of target parsing
+    launchedDate: Union[datetime, str] = None
+    launchedBy: Dict = None
     # launchedBy is parsed into below fields:
     launchedBy_id: int = None
     launchedBy_username: str = None
-    launchedBy_firstName: str = None
-    launchedBy_lastName: str = None
-    # end launchedBy
-    duration: int = None
-    cancelledDate: datetime = None
-    cancelledBy: dict = None
-    # cancelledBy is parsed into below fields:
-    cancelledBy_id: int = None
-    cancelledBy_username: str = None
-    cancelledBy_firstName: str = None
-    cancelledBy_lastName: str = None
-    # end cancelledBy
-    progressPercentage: int = None
-    resultsStatus: str = None
-    authStatus: str = None
-    crawlingStatus: str = None
-    cancellable: bool = None
-    target: dict = None
-    # target is parsed into below fields:
-    target_webapps: BaseList = None
-    # end target
-    options: dict = None
-    # options is parsed into below fields:
-    options_progressiveScanning: bool = None
-    options_bruteforceOption: str = None
-    options_crawlingScope: str = None
-    # end options
+    launchedBy_firstname: str = None
+    launchedBy_lastname: str = None
+    # end of launchedBy parsing
+    status: str = None
+    consolidatedStatus: str = None
+    summary: Dict = None
+    # summary is parsed into below fields:
+    summary_crawlDuration: int = None
+    summary_testDuration: int = None
+    summary_linksCrawled: int = None
+    summary_nbRequests: int = None
+    summary_resultsStatus: str = None
+    summary_authStatus: str = None
+    # end of summary parsing
+    cancelMode: str = None
+    canceledBy: Dict = None
+    # canceledBy is parsed into below fields:
+    canceledBy_id: int = None
+    canceledBy_username: str = None
+    # end of canceledBy parsing
+    profile: Dict = None
+    # profile is parsed into below fields:
+    profile_id: int = None
+    profile_name: str = None
+    # end of profile parsing
 
     def __post_init__(self):
-        """
-        Parse nested dictionaries into flat attributes.
-        """
-        if self.profile:
-            self.profile_id = self.profile.get("id")
-            self.profile_name = self.profile.get("name")
+        parse_fields(self, self.launchedBy, "launchedBy", ["id", "username", "firstname", "lastname"])
+        parse_fields(self, self.summary, "summary",["crawlDuration","testDuration","linksCrawled","nbRequests","resultsStatus","authStatus",])
+        parse_fields(self, self.canceledBy, "canceledBy", ["id", "username"])
+        parse_fields(self, self.profile, "profile", ["id", "name"])
+        parse_fields(self, self.target.get("webApp"), "target", ["id", "name"])
 
-        if self.scanner:
-            self.scanner_id = self.scanner.get("id")
-            self.scanner_name = self.scanner.get("name")
-            self.scanner_type = self.scanner.get("type")
+        FIELD_TYPES = {
+            "id": int,
+            "launchedBy_id": int,
+            "canceledBy_id": int,
+            "profile_id": int,
+            "multi": bool,
+            "launchedDate": lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ") if x else None,
+            "target_id": int,
+            "summary_crawlDuration": int,
+            "summary_testDuration": int,
+            "summary_linksCrawled": int,
+            "summary_nbRequests": int,
+        }
 
-        if self.scannerAppliance:
-            self.scannerAppliance_id = self.scannerAppliance.get("id")
-            self.scannerAppliance_name = self.scannerAppliance.get("name")
-            self.scannerAppliance_type = self.scannerAppliance.get("type")
-
-        if self.launchedBy:
-            self.launchedBy_id = self.launchedBy.get("id")
-            self.launchedBy_username = self.launchedBy.get("username")
-            self.launchedBy_firstName = self.launchedBy.get("firstName")
-            self.launchedBy_lastName = self.launchedBy.get("lastName")
-
-        if self.cancelledBy:
-            self.cancelledBy_id = self.cancelledBy.get("id")
-            self.cancelledBy_username = self.cancelledBy.get("username")
-            self.cancelledBy_firstName = self.cancelledBy.get("firstName")
-            self.cancelledBy_lastName = self.cancelledBy.get("lastName")
-
-        if self.target:
-            webapps = self.target.get("webapps", {}).get("list", [])
-            if webapps:
-                self.target_webapps = BaseList()
-                for webapp in webapps:
-                    self.target_webapps.append(webapp)
-
-        if self.options:
-            self.options_progressiveScanning = self.options.get("progressiveScanning")
-            self.options_bruteforceOption = self.options.get("bruteforceOption")
-            self.options_crawlingScope = self.options.get("crawlingScope")
-
-        # Convert string dates to datetime objects
-        if isinstance(self.launchedDate, str):
-            try:
-                self.launchedDate = datetime.fromisoformat(
-                    self.launchedDate.replace("Z", "+00:00")
-                )
-            except (ValueError, TypeError):
-                pass
-
-        if isinstance(self.cancelledDate, str):
-            try:
-                self.cancelledDate = datetime.fromisoformat(
-                    self.cancelledDate.replace("Z", "+00:00")
-                )
-            except (ValueError, TypeError):
-                pass
+        for field, field_type in FIELD_TYPES.items():
+            value = getattr(self, field)
+            if value:
+                setattr(self, field, field_type(value))
 
     def __str__(self) -> str:
         return self.name

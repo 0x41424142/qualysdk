@@ -151,6 +151,9 @@ ENDPOINT_MAPPINGS["count_scans"] = {
     "launchedDate": "DATE",
 }
 
+# get_scans is the same as count_scans:
+ENDPOINT_MAPPINGS["get_scans"] = ENDPOINT_MAPPINGS["count_scans"]
+
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],
     "TEXT": ["CONTAINS", "EQUALS", "NOT EQUALS"],

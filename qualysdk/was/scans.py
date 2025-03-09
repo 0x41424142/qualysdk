@@ -33,6 +33,8 @@ def call_scan_api(
     match endpoint:
         case "count_scans":
             params = {"placeholder": "count", "scanId": ""}
+        case "get_scans":
+            params = {"placeholder": "search", "scanId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -110,3 +112,111 @@ def count_scans(auth: BasicAuth, **kwargs) -> int:
         )
 
     return int(serviceResponse.get("count"))
+
+
+def get_scans(
+    auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
+) -> BaseList[WASScan]:
+    """
+    Get a list of scans from Qualys WAS according
+    to the filters provided
+
+    Args:
+        auth (BasicAuth): The authentication object
+        page_count (Union[int, "all"]): The number of pages to retrieve. Default is "all"
+
+    ## Kwargs:
+
+        - id (int): The finding ID
+        - id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the ID filter.
+        - name (str): The scan name
+        - name_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the name filter.
+        - reference (str): The scan reference
+        - reference_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the reference filter.
+        - type (Literal["DISCOVERY", "VULNERABILITY"]): The scan type
+        - type_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the type filter.
+        - mode (Literal["ONDEMAND", "SCHEDULED", "API"]): The scan mode
+        - mode_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the mode filter.
+        - status (Literal["SUBMITTED", "RUNNING", "FINISHED", "ERROR", "CANCELLED", "PROCESSING"]): The scan status
+        - status_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the status filter.
+        - webApp_id (int): The web application ID
+        - webApp_id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the webApp.id filter.
+        - webApp_name (str): The web application name
+        - webApp_name_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the webApp.name filter.
+        - webApp_tags_id (int): The web application tag ID
+        - webApp_tags_id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the webApp.tags.id filter.
+        - resultsStatus (Literal["NOT_USED", "TO_BE_PROCESSED", "NO_HOST_ALIVE", "NO_WEB_SERVICE", "SERVICE_ERROR", "TIME_LIMIT_REACHED", "SCAN_INTERNAL_ERROR", "SCAN_RESULTS_INVALID", "SUCCESSFUL", "PROCESSING", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "SUBMITTED", "RUNNING", "CANCELED", "CANCELING", "ERROR", "DELETED", "CANCELED_WITH_RESULTS"]): The results status
+        - resultsStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the resultsStatus filter.
+        - authStatus (Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]): The authentication status
+        - authStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the authStatus filter.
+        - launchedDate (str): The scan launch date in UTC: YYYY-MM-DDTHH:MM:SSZ
+        - launchedDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the launchedDate filter.
+
+    Returns:
+        BaseList[WASScan]: A list of WASScan objects
+    """
+
+    if page_count != "all" and not (isinstance(page_count, int) or page_count < 0):
+        raise ValueError("page_count must be 'all' or a positive integer")
+
+    pageNo = 0
+    payload = None
+
+    # If kwargs are provided, validate them:
+    if kwargs:
+        kwargs = validate_kwargs(endpoint="get_scans", **kwargs)
+        payload = build_service_request(**kwargs)
+
+    scanList = BaseList()
+
+    while True:
+        # Make the API call:
+        parsed = call_scan_api(auth, "get_scans", payload)
+
+        # Parse the XML response:
+        serviceResponse = parsed.get("ServiceResponse")
+        if not serviceResponse:
+            raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+        if serviceResponse.get("responseCode") != "SUCCESS":
+            raise QualysAPIError(
+                f"API response returned error: {serviceResponse.get('responseCode')}"
+            )
+
+        if serviceResponse.get("count") == "0":
+            print(f"No scans found on page {pageNo}. Exiting.")
+            break
+
+        data = serviceResponse.get("data")
+
+        if data.get("WasScan"):
+            data = data.get("WasScan")
+
+        if isinstance(data, dict):
+            data = [data]
+
+        for scan in data:
+            # Create the objects:
+            scanList.append(WASScan.from_dict(scan))
+
+        print(
+            f"Retrieved {serviceResponse.get('count')} WAS scans on page {pageNo}. Running total: {len(scanList)}"
+        )
+
+        pageNo += 1
+
+        if page_count != "all" and pageNo >= page_count:
+            print(f"Reached page_count limit. Returning {pageNo} page(s).")
+            break
+
+        # Check for pagination:
+        if serviceResponse.get("hasMoreRecords") == "true":
+            # Update the XML payload with the new Criteria:
+            # <Criteria field="id" operator="GREATER">XXX</Criteria>
+            kwargs["id.operator"] = "GREATER"
+            kwargs["id"] = serviceResponse.get("lastId")
+            payload = build_service_request(**kwargs)
+        else:
+            break
+
+    return scanList

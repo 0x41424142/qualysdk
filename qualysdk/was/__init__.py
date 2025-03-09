@@ -32,4 +32,5 @@ from .findings import (
 
 from .scans import (
     count_scans,
+    get_scans,
 )

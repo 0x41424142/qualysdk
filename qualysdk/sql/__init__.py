@@ -65,6 +65,7 @@ from .was import (
     upload_was_webapps,
     upload_was_authentication_records,
     upload_was_findings,
+    upload_was_scans,
 )
 from .pm import (
     upload_pm_jobs,

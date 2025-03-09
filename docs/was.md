@@ -1346,21 +1346,23 @@ The ```qualysdk-was``` CLI tool is a command-line interface for the WAS portion 
 ### Usage
 
 ```bash
-usage: qualysdk-was [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {get_findings} ...
+usage: qualysdk-was [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {get_findings,get_scans} ...
 
 CLI script to quickly perform Web Application Scanning (WAS) operations using qualysdk
 
 positional arguments:
-  {get_findings}        Action to perform
+  {get_findings,get_scans}
+                        Action to perform
     get_findings        Get a list of WAS findings.
+    get_scans           Get a list of WAS scans.
 
 options:
   -h, --help            show this help message and exit
-  -u USERNAME, --username USERNAME
+  -u, --username USERNAME
                         Qualys username
-  -p PASSWORD, --password PASSWORD
+  -p, --password PASSWORD
                         Qualys password
-  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
+  -P, --platform {qg1,qg2,qg3,qg4}
                         Qualys platform
 ```
 
@@ -1378,4 +1380,15 @@ options:
 # Example with a few kwargs:
 qualysdk-was -u <username> -p <password> -P qg1 get_findings --kwarg verbose true --kwarg group XSS --output xss_findings.xlsx
 >>>Data written to xss_findings.xlsx.
+```
+
+### Get Scans
+
+```bash
+usage: qualysdk-was get_scans [-h] [-o OUTPUT] [--kwarg key value]
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output xlsx file to write results to
+  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
 ```

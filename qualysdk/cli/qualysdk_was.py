@@ -73,6 +73,24 @@ def main():
         nargs=2,
         metavar=("key", "value"),
     )
+    
+    list_scans_parser = subparsers.add_parser(
+        "get_scans", help="Get a list of WAS scans."
+    )
+    list_scans_parser.add_argument(
+        "-o",
+        "--output",
+        help="Output xlsx file to write results to",
+        type=str,
+        default="was_scans.xlsx",
+    )
+    list_scans_parser.add_argument(
+        "--kwarg",
+        help="Specify a keyword argument to pass to the action. Can be used multiple times",
+        action="append",
+        nargs=2,
+        metavar=("key", "value"),
+    )
 
     args = parser.parse_args()
 
@@ -82,6 +100,17 @@ def main():
     # perform action
     if args.action == "get_findings":
         cli_findings(auth=auth, args=args, endpoint="get_findings")
+    elif args.action == "get_scans":
+        kwargs = dict(args.kwarg) if args.kwarg else {}
+        if "page_count" in kwargs:
+            kwargs["page_count"] = int(kwargs["page_count"])
+        for kwarg in kwargs:
+            if str(kwargs[kwarg]).lower() == "true":
+                kwargs[kwarg] = True
+            elif str(kwargs[kwarg]).lower() == "false":
+                kwargs[kwarg] = False
+        result = get_scans(auth, **kwargs)
+        write_excel(result, args.output)
     else:
         parser.print_help()
         exit(1)

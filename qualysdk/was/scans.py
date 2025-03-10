@@ -223,6 +223,7 @@ def get_scans(
 
     return scanList
 
+
 def get_scan_details(auth: BasicAuth, scanId: Union[str, int]) -> WASScan:
     """
     Pull all details of a single scan from Qualys WAS

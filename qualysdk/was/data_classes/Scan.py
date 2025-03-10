@@ -8,6 +8,7 @@ from datetime import datetime
 
 from ...base.post_init_parser import parse_fields
 from ...base.base_class import BaseClass
+from ...base.base_list import BaseList
 
 
 @dataclass
@@ -57,6 +58,16 @@ class WASScan(BaseClass):
     profile_id: int = None
     profile_name: str = None
     # end of profile parsing
+    options: Dict = None
+    # options is parsed into below fields:
+    options_count: int = None
+    options_list: list = None
+    # end of options parsing
+    scanDuration: int = None
+    sendMail: bool = None
+    sendOneMail: bool = None
+    enableWAFAuth: bool = None
+    progressiveScanning: str = None
 
     def __post_init__(self):
         parse_fields(
@@ -81,6 +92,7 @@ class WASScan(BaseClass):
         parse_fields(self, self.canceledBy, "canceledBy", ["id", "username"])
         parse_fields(self, self.profile, "profile", ["id", "name"])
         parse_fields(self, self.target.get("webApp"), "target", ["id", "name"])
+        parse_fields(self, self.options, "options", ["count", "list"])
 
         FIELD_TYPES = {
             "id": int,
@@ -96,12 +108,27 @@ class WASScan(BaseClass):
             "summary_testDuration": int,
             "summary_linksCrawled": int,
             "summary_nbRequests": int,
+            "options_count": int,
+            "scanDuration": int,
+            "sendMail": bool,
+            "sendOneMail": bool,
+            "enableWAFAuth": bool,
         }
 
         for field, field_type in FIELD_TYPES.items():
             value = getattr(self, field)
             if value:
                 setattr(self, field, field_type(value))
+
+        if self.options_list:
+            # raise data:
+            options_list = self.options_list
+            if isinstance(options_list, dict):
+                options_list = options_list.get("WasScanOption")
+            bl = BaseList()
+            for option in options_list:
+                bl.append(f"{option.get('name')}:{option.get('value')}")
+            setattr(self, "options_list", bl)
 
     def __str__(self) -> str:
         return self.name

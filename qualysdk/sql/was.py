@@ -548,6 +548,17 @@ def upload_was_scans(
         "profile_name": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
+        "options_count": types.Integer(),
+        "options_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "scanDuration": types.Integer(),
+        "sendMail": types.Boolean(),
+        "sendOneMail": types.Boolean(),
+        "enableWAFAuth": types.Boolean(),
+        "progressiveScanning": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Prepare the dataclass for insertion:
@@ -561,6 +572,7 @@ def upload_was_scans(
             "canceledBy",
             "profile",
             "summary",
+            "options",
         ],
         inplace=True,
     )

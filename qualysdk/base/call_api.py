@@ -150,6 +150,7 @@ def call_api(
                 "{controlid}",
                 "{webappId}",
                 "{findingId}",
+                "{scanId}",
             ]
         ):
             if params and (

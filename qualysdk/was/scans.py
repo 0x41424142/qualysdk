@@ -35,12 +35,14 @@ def call_scan_api(
             params = {"placeholder": "count", "scanId": ""}
         case "get_scans":
             params = {"placeholder": "search", "scanId": ""}
+        case "get_scan_details":
+            params = {"placeholder": "get", "scanId": payload.pop("scanId")}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
     response = call_api(
         auth=auth,
-        override_method="GET" if endpoint == "get_finding_details" else "POST",
+        override_method="GET" if endpoint == "get_scan_details" else "POST",
         module="was",
         endpoint="call_scans_api",
         payload=payload,
@@ -220,3 +222,39 @@ def get_scans(
             break
 
     return scanList
+
+def get_scan_details(auth: BasicAuth, scanId: Union[str, int]) -> WASScan:
+    """
+    Pull all details of a single scan from Qualys WAS
+    by its finding # or unique ID
+
+    Args:
+        auth (BasicAuth): The authentication object
+        scanId (Union[str, int]): The finding number or unique ID of the scanId
+
+    Returns:
+        WASFinding: The WASFinding object
+    """
+
+    if not isinstance(scanId, (str, int)):
+        raise ValueError("scanId must be a string or integer")
+
+    # Make the API call
+    parsed = call_scan_api(auth, "get_scan_details", {"scanId": scanId})
+
+    # Parse the XML response:
+    serviceResponse = parsed.get("ServiceResponse")
+    if not serviceResponse:
+        raise QualysAPIError("No ServiceResponse tag returned in the API response")
+
+    if serviceResponse.get("responseCode") != "SUCCESS":
+        raise QualysAPIError(
+            f"API response returned error: {serviceResponse.get('responseCode')}"
+        )
+
+    data = serviceResponse.get("data")
+
+    if data.get("WasScan"):
+        data = data.get("WasScan")
+
+    return WASScan.from_dict(data)

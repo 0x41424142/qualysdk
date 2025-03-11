@@ -260,6 +260,7 @@ def get_scan_details(auth: BasicAuth, scanId: Union[str, int]) -> WASScan:
 
     return WASScan.from_dict(data)
 
+
 def get_scans_verbose(
     auth: BasicAuth, thread_count: int = 5, **kwargs
 ) -> BaseList[WASScan]:
@@ -305,7 +306,7 @@ def get_scans_verbose(
         - authStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the authStatus filter.
         - launchedDate (str): The scan launch date in UTC: YYYY-MM-DDTHH:MM:SSZ
         - launchedDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the launchedDate filter.
-        
+
     Returns:
         BaseList[WASScan]: The list of scans that match the given kwargs.
     """

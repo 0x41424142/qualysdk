@@ -93,7 +93,12 @@ class WASScan(BaseClass):
         parse_fields(self, self.profile, "profile", ["id", "name"])
         parse_fields(self, self.target.get("webApp"), "target", ["id", "name"])
         parse_fields(self, self.options, "options", ["count", "list"])
-        parse_fields(self, self.launchedBy, "launchedBy", ["id", "username", "firstName", "lastName"])
+        parse_fields(
+            self,
+            self.launchedBy,
+            "launchedBy",
+            ["id", "username", "firstName", "lastName"],
+        )
 
         FIELD_TYPES = {
             "id": int,

@@ -34,4 +34,5 @@ from .scans import (
     count_scans,
     get_scans,
     get_scan_details,
+    get_scans_verbose,
 )

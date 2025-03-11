@@ -517,10 +517,10 @@ def upload_was_scans(
         "launchedBy_username": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "launchedBy_firstname": types.String().with_variant(
+        "launchedBy_firstName": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "launchedBy_lastname": types.String().with_variant(
+        "launchedBy_lastName": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),

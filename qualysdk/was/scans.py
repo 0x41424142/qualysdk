@@ -259,3 +259,129 @@ def get_scan_details(auth: BasicAuth, scanId: Union[str, int]) -> WASScan:
         data = data.get("WasScan")
 
     return WASScan.from_dict(data)
+
+def get_scans_verbose(
+    auth: BasicAuth, thread_count: int = 5, **kwargs
+) -> BaseList[WASScan]:
+    """
+    Uses ```was.get_scans()``` and ```was.get_scan_details()``` to return a ```BaseList``` of ```WASScan```s with
+    all attributes populated.
+
+    This function is multi-threaded, placing all ```WASScan``` found
+    from ```was.get_scans()``` into a queue and then spawning threads to pull the details one
+    by one.
+
+    The details threads wait for work to be added to the queue and then pull
+    the details for each ```WASScan.id```.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        thread_count (int): The number of threads to spawn. Defaults to 5.
+
+    ## Kwargs:
+
+        - page_count (Union[int, "all"]): The number of pages to retrieve. Default is "all"
+        - id (int): The finding ID
+        - id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the ID filter.
+        - name (str): The scan name
+        - name_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the name filter.
+        - reference (str): The scan reference
+        - reference_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the reference filter.
+        - type (Literal["DISCOVERY", "VULNERABILITY"]): The scan type
+        - type_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the type filter.
+        - mode (Literal["ONDEMAND", "SCHEDULED", "API"]): The scan mode
+        - mode_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the mode filter.
+        - status (Literal["SUBMITTED", "RUNNING", "FINISHED", "ERROR", "CANCELLED", "PROCESSING"]): The scan status
+        - status_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the status filter.
+        - webApp_id (int): The web application ID
+        - webApp_id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the webApp.id filter.
+        - webApp_name (str): The web application name
+        - webApp_name_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the webApp.name filter.
+        - webApp_tags_id (int): The web application tag ID
+        - webApp_tags_id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the webApp.tags.id filter.
+        - resultsStatus (Literal["NOT_USED", "TO_BE_PROCESSED", "NO_HOST_ALIVE", "NO_WEB_SERVICE", "SERVICE_ERROR", "TIME_LIMIT_REACHED", "SCAN_INTERNAL_ERROR", "SCAN_RESULTS_INVALID", "SUCCESSFUL", "PROCESSING", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "SUBMITTED", "RUNNING", "CANCELED", "CANCELING", "ERROR", "DELETED", "CANCELED_WITH_RESULTS"]): The results status
+        - resultsStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the resultsStatus filter.
+        - authStatus (Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]): The authentication status
+        - authStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the authStatus filter.
+        - launchedDate (str): The scan launch date in UTC: YYYY-MM-DDTHH:MM:SSZ
+        - launchedDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the launchedDate filter.
+        
+    Returns:
+        BaseList[WASScan]: The list of scans that match the given kwargs.
+    """
+
+    # Check thread_count for a valid value:
+    if not isinstance(thread_count, int) or thread_count < 1:
+        raise ValueError("thread_count must be an integer >= 1.")
+
+    # Set up Queue and List, with some cheeky as-needed imports:
+    from queue import Queue
+    from threading import Thread, Lock, current_thread
+
+    q = Queue()
+    scanList = BaseList()
+    LOCK = Lock()
+    threads = []
+
+    # Get the scans:
+    print(f"({current_thread().name}) Getting base scan list...")
+    scans = get_scans(auth, **kwargs)
+
+    print(
+        f"({current_thread().name}) Pulled {len(scans)} scans. Starting {thread_count} thread(s) for details pull.."
+    )
+
+    # Add the scans to the queue:
+    for scan in scans:
+        q.put(scan)
+
+    def worker():
+        while True:
+            try:
+                # Exit condition 1: Queue is empty
+                if q.empty():
+                    with LOCK:
+                        print(
+                            f"({current_thread().name}) Queue is empty. Thread exiting."
+                        )
+                        break
+
+                scan = q.get()
+                # Exit condition 2: scan is None (because Queue is empty)
+                if not scan:
+                    with LOCK:
+                        print(
+                            f"({current_thread().name}) Queue is empty. Thread exiting."
+                        )
+                        q.task_done()
+                    break
+
+                details = get_scan_details(auth, scan.id)
+                scanList.append(details)
+                q.task_done()
+                with LOCK:
+                    if len(scanList) % 10 == 0:
+                        print(
+                            f"({current_thread().name}) Pulled {len(scanList)} scan details so far..."
+                        )
+
+            except Exception as e:
+                with LOCK:
+                    print(
+                        f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}"
+                    )
+                q.task_done()
+                break
+
+    # Start the threads:
+    for i in range(thread_count):
+        t = Thread(target=worker)
+        threads.append(t)
+        t.start()
+
+    # Wait for the threads to finish:
+    for t in threads:
+        t.join()
+
+    print(f"Pulled {len(scanList)} scan details.")
+    return scanList

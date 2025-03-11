@@ -33,8 +33,8 @@ class WASScan(BaseClass):
     # launchedBy is parsed into below fields:
     launchedBy_id: int = None
     launchedBy_username: str = None
-    launchedBy_firstname: str = None
-    launchedBy_lastname: str = None
+    launchedBy_firstName: str = None
+    launchedBy_lastName: str = None
     # end of launchedBy parsing
     status: str = None
     consolidatedStatus: str = None
@@ -93,6 +93,7 @@ class WASScan(BaseClass):
         parse_fields(self, self.profile, "profile", ["id", "name"])
         parse_fields(self, self.target.get("webApp"), "target", ["id", "name"])
         parse_fields(self, self.options, "options", ["count", "list"])
+        parse_fields(self, self.launchedBy, "launchedBy", ["id", "username", "firstName", "lastName"])
 
         FIELD_TYPES = {
             "id": int,

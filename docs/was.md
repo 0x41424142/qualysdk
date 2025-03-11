@@ -32,6 +32,7 @@ You can use any of the endpoints currently supported:
 | ```get_findings_verbose``` | Combines the functionality of ```get_findings``` and ```get_finding_details``` to return a list of findings with all attributes. Great for SQL data uploads. |
 | ```count_scans``` | Returns the number of scans in the subscription that match given kwargs. |
 | ```get_scans``` | Returns a list of scans in the subscription that match given kwargs. |
+| ```get_scan_details``` | Returns all attributes of a single scan. |
 
 ## Count Webapps API
 
@@ -1337,6 +1338,38 @@ scans = get_scans(
     ),
     ...
 ]
+```
+
+## Get Scan Details API
+
+```get_scan_details``` returns the details of a single scan in the subscription.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan # | ✅ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_scan_details, get_scans
+
+auth = BasicAuth(<username>, <password>)
+
+# Get some scans:
+scans = get_scans(auth, type="VULNERABILITY")
+
+# Get details for the first scan:
+scan = get_scan_details(auth, scanId=scans[0].id)
+>>> WASScan(
+    id=123456789, 
+    name='Test Scan', 
+    reference='test_scan', 
+    type='VULNERABILITY', 
+    mode='API', 
+    status='RUNNING', 
+    launchedDate='2023-10-01T12:00:00Z',
+    ...
+)
 ```
 
 ## ```qualysdk-was``` CLI tool

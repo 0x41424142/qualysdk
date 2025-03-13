@@ -9,8 +9,8 @@ import xmltodict
 
 from ..base.web_app_service_requests import format_xml_list
 
-def build_scan_service_request(
 
+def build_scan_service_request(
     **kwargs,
 ) -> dict[str, str]:
     """
@@ -35,18 +35,26 @@ def build_scan_service_request(
                         },
                         "webApps": {
                             "set": {
-                                "WebApp": format_xml_list(kwargs.get("web.app.ids", []), "id"),
+                                "WebApp": format_xml_list(
+                                    kwargs.get("web.app.ids", []), "id"
+                                ),
                             },
-                        } if kwargs.get("web.app.ids") else None,
+                        }
+                        if kwargs.get("web.app.ids")
+                        else None,
                         "profileOption": kwargs.get("profile.option", "DEFAULT"),
                         "tags": {
                             "included": {
                                 "option": kwargs.get("included.tags.option", "ALL"),
                                 "tagList": {
-                                    "set": format_xml_list(kwargs.get("included.tag.ids", []), "Tag")
+                                    "set": format_xml_list(
+                                        kwargs.get("included.tag.ids", []), "Tag"
+                                    )
                                 },
                             },
-                        } if kwargs.get("included.tag.ids") else None,
+                        }
+                        if kwargs.get("included.tag.ids")
+                        else None,
                         "scannerOption": kwargs.get("scanner.option", "DEFAULT"),
                         "cancelOption": kwargs.get("cancel.option", "DEFAULT"),
                         "authRecordOption": kwargs.get("auth.record.option", "NONE"),
@@ -63,7 +71,6 @@ def build_scan_service_request(
         request_dict["ServiceRequest"]["data"]["WasScan"]["target"].pop("webApps")
     if not request_dict["ServiceRequest"]["data"]["WasScan"]["target"]["tags"]:
         request_dict["ServiceRequest"]["data"]["WasScan"]["target"].pop("tags")
- 
 
     # Unescape any HTML. Necessary due to xmltodict's behavior.
     try:

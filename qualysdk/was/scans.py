@@ -390,17 +390,20 @@ def get_scans_verbose(
     print(f"Pulled {len(scanList)} scan details.")
     return scanList
 
-def launch_scan(auth: BasicAuth, name: str, profile_id: Union[str, int], **kwargs) -> int:
+
+def launch_scan(
+    auth: BasicAuth, name: str, profile_id: Union[str, int], **kwargs
+) -> int:
     """
     Launch a new scan in Qualys WAS, targeting one or more web applications.
 
     **[!] Either `web_app_ids` or `included_tag_ids` is required and are mutually exclusive.**
-    
+
     Args:
         auth (BasicAuth): The authentication object.
         name (str): The name of the scan.
         profile_id: The ID of the option profile to use.
-    
+
     ## Kwargs:
 
         - web_app_ids (Union[str, int, list[Union[str, int]]]): The ID(s) of the web application(s) to scan. Required if included_tag_ids is not provided.
@@ -422,7 +425,7 @@ def launch_scan(auth: BasicAuth, name: str, profile_id: Union[str, int], **kwarg
     # Ensure either target_webApp_id or target_tags_included_tagList_tag_id is provided:
     if not kwargs.get("web_app_ids") and not kwargs.get("included_tag_ids"):
         raise ValueError("Either web_app_ids or included_tag_ids is required.")
-    
+
     kwargs["name"] = name
     kwargs["profile_id"] = profile_id
 
@@ -430,7 +433,7 @@ def launch_scan(auth: BasicAuth, name: str, profile_id: Union[str, int], **kwarg
     for arg in ["web_app_ids", "included_tag_ids"]:
         if kwargs.get(arg) and not isinstance(kwargs[arg], list):
             kwargs[arg] = [kwargs[arg]]
-    
+
     # Validate the kwargs:
     kwargs = validate_kwargs(endpoint="launch_scan", **kwargs)
 

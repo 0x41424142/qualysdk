@@ -34,6 +34,7 @@ You can use any of the endpoints currently supported:
 | ```get_scans``` | Returns a list of scans in the subscription that match given kwargs. |
 | ```get_scan_details``` | Returns all attributes of a single scan. |
 | ```get_scans_verbose``` | Combines the functionality of ```get_scans``` and ```get_scan_details``` to return a list of scans with all attributes. Great for SQL data uploads. |
+| ```launch_scan``` | Launches a scan in the subscription. |
 
 ## Count Webapps API
 
@@ -1420,6 +1421,50 @@ scans = get_scans_verbose(auth, type="VULNERABILITY")
     ),
     ...
 ]
+```
+
+## Launch Scan API
+
+```launch_scan``` launches a scan on webapps either by specifying webapp IDs or tags.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```name``` | ```str``` | Name of the scan | ✅ |
+| ```profile_id``` | ```int``` | Scan profile ID | ✅ |
+| ```web_app_ids``` | ```Union[str, int, list[str, int]]``` | Webapp ID(s) to scan | ⚠️ required if `included_tag_ids` not specified |
+| ```included_tag_ids``` | ```Union[str, int, list[str, int]]``` | Tag ID(s) to scan | ⚠️ required if `web_app_ids` not specified |
+| ```included_tag_options``` | ```Literal["ALL", "ANY"]``` | Whether to scan all or any tags | ❌ |
+| ```scanner_appliance_type``` | ```Literal["EXTERNAL", "INTERNAL"]``` | Scanner appliance type | ❌ |
+| ```auth_record_option``` | ```Union[str, int]``` | Authentication record ID | ❌ |
+| ```profile_option``` | ```Literal["DEFAULT", "ANY", "ALL"]``` | Profile option | ❌ |
+| ```scanner_option``` | ```Union[str, int]``` | Scanner appliance ID | ❌ |
+| ```send_mail``` | ```bool``` | Whether to send an email | ❌ |
+| ```send_one_mail``` | ```bool``` | Whether to send one email | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import launch_scan
+
+auth = BasicAuth(<username>, <password>)
+
+# Launch a scan on a single webapp:
+launch_scan(
+    auth,
+    name="Test Scan",
+    profile_id=123456789,
+    web_app_ids=123456789
+)
+>>> 123456789 # Scan ID
+
+# Launch a scan on all webapps with a specific tag:
+launch_scan(
+    auth,
+    name="Test Scan",
+    profile_id=123456789,
+    included_tag_ids=123456789
+)
+>>> 123456789
 ```
 
 ## ```qualysdk-was``` CLI tool

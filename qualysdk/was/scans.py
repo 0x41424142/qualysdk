@@ -7,6 +7,7 @@ from typing import Union
 from .data_classes.Scan import WASScan
 from .base.parse_kwargs import validate_kwargs
 from .base.web_app_service_requests import build_service_request
+from .base.scan_service_requests import build_scan_service_request
 from .base.web_app_service_requests import validate_response
 from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
@@ -37,6 +38,8 @@ def call_scan_api(
             params = {"placeholder": "search", "scanId": ""}
         case "get_scan_details":
             params = {"placeholder": "get", "scanId": payload.pop("scanId")}
+        case "launch_scan":
+            params = {"placeholder": "launch", "scanId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -386,3 +389,60 @@ def get_scans_verbose(
 
     print(f"Pulled {len(scanList)} scan details.")
     return scanList
+
+def launch_scan(auth: BasicAuth, name: str, profile_id: Union[str, int], **kwargs) -> int:
+    """
+    Launch a new scan in Qualys WAS, targeting one or more web applications.
+
+    **[!] Either `web_app_ids` or `included_tag_ids` is required and are mutually exclusive.**
+    
+    Args:
+        auth (BasicAuth): The authentication object.
+        name (str): The name of the scan.
+        profile_id: The ID of the option profile to use.
+    
+    ## Kwargs:
+
+        - web_app_ids (Union[str, int, list[Union[str, int]]]): The ID(s) of the web application(s) to scan. Required if included_tag_ids is not provided.
+        - included_tags_option (Literal["ALL", "ANY"]): The option for included tags.
+        - included_tag_ids (Union[str, int, list[Union[str, int]]]): The ID(s) of the tag(s) to include. Required if web_app_ids is not provided.
+        - scanner_appliance_type (Literal["EXTERNAL", "INTERNAL"]): The type of scanner appliance.
+        - auth_record_option (Union[str, int]): The authentication record ID.
+        - profile_option (Literal["DEFAULT", "ALL", "ANY"]): The profile option.
+        - scanner_option (Union[str, int]): The scanner ID.
+        - send_mail (bool): Whether to send an email.
+        - send_one_mail (bool): Whether to send one email.
+
+
+    Returns:
+        int: The ID of the scan that was launched.
+
+    """
+
+    # Ensure either target_webApp_id or target_tags_included_tagList_tag_id is provided:
+    if not kwargs.get("web_app_ids") and not kwargs.get("included_tag_ids"):
+        raise ValueError("Either web_app_ids or included_tag_ids is required.")
+    
+    kwargs["name"] = name
+    kwargs["profile_id"] = profile_id
+
+    # check for single values and convert to list for web_app_ids and included_tag_ids:
+    for arg in ["web_app_ids", "included_tag_ids"]:
+        if kwargs.get(arg) and not isinstance(kwargs[arg], list):
+            kwargs[arg] = [kwargs[arg]]
+    
+    # Validate the kwargs:
+    kwargs = validate_kwargs(endpoint="launch_scan", **kwargs)
+
+    # Build the payload:
+    payload = build_scan_service_request(**kwargs)
+
+    # Make the API call:
+    parsed = call_scan_api(auth, "launch_scan", payload)
+
+    data = parsed.get("ServiceResponse").get("data")
+
+    if data.get("WasScan"):
+        data = data.get("WasScan")
+
+    return int(data.get("id"))

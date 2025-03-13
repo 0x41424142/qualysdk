@@ -169,7 +169,6 @@ def validate_response(response: Response) -> dict:
 
 def build_service_request(
     _webapp_creation_or_edit: bool = False,
-    action: Literal["set", "add", "remove"] = "set",
     authRecord_id: int = None,
     _uris: Union[str, list[str]] = None,
     tag_ids: Union[int, list[int]] = None,

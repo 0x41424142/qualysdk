@@ -32,4 +32,13 @@ from .findings import (
 
 from .scans import (
     count_scans,
+    get_scans,
+    get_scan_details,
+    get_scans_verbose,
+    launch_scan,
+    cancel_scan,
+    get_scan_status,
+    scan_again,
+    delete_scan,
+    get_scan_results,
 )

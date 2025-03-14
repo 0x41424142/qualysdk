@@ -133,6 +133,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_was_webapps``` | WAS | ```was.get_webapps()``` or ```was.get_webapps_verbose()``` (```get_webapps_verbose()``` is recommended!) | ```was_webapps``` |
 | ```upload_was_authentication_records``` | WAS | ```was.get_authentication_records()``` or ```was.get_authentication_records_verbose()``` (```get_webapps_verbose()``` is recommended!) | ```was_authentication_records``` |
 | ```upload_was_findings``` | WAS | ```was.get_findings()``` or ```was.get_findings_verbose()``` (```get_findings_verbose()``` is recommended!) | ```was_findings``` |
+| ```upload_was_scans``` | WAS | ```was.get_scans()``` or ```was.get_scans_verbose()``` (```get_scans_verbose()``` is recommended!) | ```was_scans``` |
 | ```upload_pm_jobs``` | Patch Management | ```pm.list_jobs()``` | ```pm_jobs``` |
 | ```upload_pm_job_results``` | Patch Management | ```pm.get_job_results()``` | ```pm_job_results_jobResults``` for job summaries and ```pm_job_results_assets``` for assets (key = jobResults.id -> assets.jobId)|
 | ```upload_pm_job_runs``` | Patch Management | ```pm.get_job_runs()``` | ```pm_job_runs``` |

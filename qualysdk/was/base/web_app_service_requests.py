@@ -149,6 +149,10 @@ def validate_response(response: Response) -> dict:
             f"WAS API Error. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
         )
 
+    # early exit if the request is for downloading scan results:
+    if len(parsed) == 1 and "WasScan" in parsed.keys():
+        return parsed
+
     serviceResponse = parsed.get("ServiceResponse")
     if not serviceResponse:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
@@ -160,16 +164,16 @@ def validate_response(response: Response) -> dict:
             .get("errorMessage")
         )
         responseCode = parsed.get("ServiceResponse").get("responseCode")
-        raise QualysAPIError(
-            f"WAS API Error. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
-        )
+        if "Scan is not in a running state. Scan status: CANCELED" != errorMessage:
+            raise QualysAPIError(
+                f"WAS API Error. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
+            )
 
     return parsed
 
 
 def build_service_request(
     _webapp_creation_or_edit: bool = False,
-    action: Literal["set", "add", "remove"] = "set",
     authRecord_id: int = None,
     _uris: Union[str, list[str]] = None,
     tag_ids: Union[int, list[int]] = None,

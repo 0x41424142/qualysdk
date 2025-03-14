@@ -151,6 +151,38 @@ ENDPOINT_MAPPINGS["count_scans"] = {
     "launchedDate": "DATE",
 }
 
+# get_scans is the same as count_scans:
+ENDPOINT_MAPPINGS["get_scans"] = ENDPOINT_MAPPINGS["count_scans"]
+
+ENDPOINT_MAPPINGS["launch_scan"] = {
+    "name": "TEXT",
+    "type": "KEYWORD",
+    "web_app_ids": "INTEGER",
+    "included_tags_option": "KEYWORD",
+    "included_tag_ids": "INTEGER",
+    "scanner_appliance_type": "KEYWORD",
+    "profile_id": "INTEGER",
+    "auth_record_option": "INTEGER",
+    "profile_option": "KEYWORD",
+    "scanner_option": "INTEGER",
+    "send_mail": "BOOLEAN",
+    "send_one_mail": "BOOLEAN",
+}
+
+ENDPOINT_MAPPINGS["delete_scan"] = {
+    "id": "INTEGER",
+    "name": "TEXT",
+    "webApp_id": "INTEGER",
+    "webApp_name": "TEXT",
+    "reference": "TEXT",
+    "launchedDate": "DATE",
+    "type": "KEYWORD",
+    "mode": "KEYWORD",
+    "status": "KEYWORD",
+    "authStatus": "KEYWORD",
+    "resultsStatus": "KEYWORD",
+}
+
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],
     "TEXT": ["CONTAINS", "EQUALS", "NOT EQUALS"],
@@ -199,6 +231,14 @@ FILTER_MAPPING = {
         "CANCELING",
         "DELETED",
         "CANCELED_WITH_RESULTS",
+        # launch scan:
+        "ALL",
+        "ANY",
+        "EXTERNAL",
+        "INTERNAL",
+        "scannerTags",
+        "SPECIFIC",
+        "DEFAULT",
     ],
     "BOOLEAN": ["EQUALS", "NOT EQUALS"],
 }

@@ -137,7 +137,7 @@ class WebApp(BaseClass):
 
         for field in DT_FIELDS:
             value = getattr(self, field)
-            if not isinstance(value, datetime):
+            if value and not isinstance(value, datetime):
                 setattr(self, field, datetime.fromisoformat(value))
 
         for field in INT_FIELDS:
@@ -421,3 +421,9 @@ class WebApp(BaseClass):
         # Not needed, but added for clarity:
         else:
             return "Unknown"
+
+    def __str__(self):
+        return self.name
+
+    def __int__(self):
+        return self.id

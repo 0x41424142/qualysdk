@@ -477,3 +477,105 @@ def upload_was_findings(
 
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)
+
+
+def upload_was_scans(
+    scans: BaseList,
+    cnxn: Connection,
+    table_name: str = "was_scans",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload results from ```was.get_scans```
+    to a SQL database.
+
+    Args:
+        scans (BaseList): A BaseList of WebAppScan objects.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to.
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "id": types.Integer(),
+        "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "reference": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "mode": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "multi": types.Boolean(),
+        "target_id": types.Integer(),
+        "target_name": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "launchedDate": types.DateTime(),
+        "launchedBy_id": types.Integer(),
+        "launchedBy_username": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "launchedBy_firstName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "launchedBy_lastName": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "consolidatedStatus": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "summary_crawlDuration": types.Integer(),
+        "summary_testDuration": types.Integer(),
+        "summary_linksCrawled": types.Integer(),
+        "summary_nbRequests": types.Integer(),
+        "summary_resultsStatus": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "summary_authStatus": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "cancelMode": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "canceledBy_id": types.Integer(),
+        "canceledBy_username": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "profile_id": types.Integer(),
+        "profile_name": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "options_count": types.Integer(),
+        "options_list": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "scanDuration": types.Integer(),
+        "sendMail": types.Boolean(),
+        "sendOneMail": types.Boolean(),
+        "enableWAFAuth": types.Boolean(),
+        "progressiveScanning": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+    }
+
+    # Prepare the dataclass for insertion:
+    df = DataFrame([prepare_dataclass(scan) for scan in scans])
+
+    # Drop any columns that we parsed out:
+    df.drop(
+        columns=[
+            "target",
+            "launchedBy",
+            "canceledBy",
+            "profile",
+            "summary",
+            "options",
+        ],
+        inplace=True,
+    )
+
+    # Upload the data:
+    return upload_data(df, table_name, cnxn, COLS, override_import_dt)

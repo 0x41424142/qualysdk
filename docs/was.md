@@ -31,6 +31,14 @@ You can use any of the endpoints currently supported:
 | ```get_finding_details``` | Returns all attributes of a single finding. |
 | ```get_findings_verbose``` | Combines the functionality of ```get_findings``` and ```get_finding_details``` to return a list of findings with all attributes. Great for SQL data uploads. |
 | ```count_scans``` | Returns the number of scans in the subscription that match given kwargs. |
+| ```get_scans``` | Returns a list of scans in the subscription that match given kwargs. |
+| ```get_scan_details``` | Returns all attributes of a single scan. |
+| ```get_scans_verbose``` | Combines the functionality of ```get_scans``` and ```get_scan_details``` to return a list of scans with all attributes. Great for SQL data uploads. |
+| ```launch_scan``` | Launches a scan in the subscription. |
+| ```cancel_scan``` | Cancels a scan in the subscription. |
+| ```get_scan_status``` | Returns the status of a scan and the results/status of trying to authenticate to the target. |
+| ```scan_again``` | Launches a scan again, optionally with a new name. |
+| ```get_scan_results``` | Returns the results of a scan as a dictionary, optionally writing to an XML file. |
 
 ## Count Webapps API
 
@@ -1276,6 +1284,384 @@ count = count_scans(
 >>> 5
 ```
 
+## List Scans API
+
+```get_scans``` returns a list of scans in the subscription that match given kwargs.
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to return. If 'all', returns all pages | ❌ |
+| ```id``` | ```Union[str, int]``` | Scan ID | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Scan name | ❌ |
+| ```name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the name filter | ❌ |
+| ```reference``` | ```str``` | Scan reference | ❌ |
+| ```reference_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the reference filter | ❌ |
+| ```type``` | ```Literal["DISCOVERY", "VULNERABILITY"]``` | Scan type | ❌ |
+| ```type_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the type filter | ❌ |
+| ```mode``` | ```Literal["ONDEMAND", "SCHEDULED", "API"]``` | Scan mode | ❌ |
+| ```mode_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the mode filter | ❌ |
+| ```status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "ERROR", "CANCELLED", "PROCESSING"]``` | Scan status | ❌ |
+| ```status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the status filter | ❌ |
+| ```webApp_id``` | ```int``` | Webapp ID | ❌ |
+| ```webApp_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_id filter | ❌ |
+| ```webApp_name``` | ```str``` | Webapp name | ❌ |
+| ```webApp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_name filter | ❌ |
+| ```webApp_tags_id``` | ```int``` | Webapp tag ID | ❌ |
+| ```webApp_tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_tags_id filter | ❌ |
+| ```resultsStatus``` | ```Literal["NOT_USED", "TO_BE_PROCESSED", "NO_HOST_ALIVE", "NO_WEB_SERVICE", "SERVICE_ERROR", "TIME_LIMIT_REACHED", "SCAN_INTERNAL_ERROR", "SCAN_RESULTS_INVALID", "SUCCESSFUL", "PROCESSING", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "SUBMITTED", "RUNNING", "CANCELED", "CANCELING", "ERROR", "DELETED", "CANCELED_WITH_RESULTS"]``` | Results status | ❌ |
+| ```resultsStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the resultsStatus filter | ❌ |
+| ```authStatus``` | ```Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]``` | Authentication status | ❌ |
+| ```authStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the authStatus filter | ❌ |
+| ```launchedDate``` | ```str``` | Scan launch date in UTC: YYYY-MM-DDTHH:MM:SSZ | ❌ |
+| ```launchedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the launchedDate filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_scans
+
+auth = BasicAuth(<username>, <password>)
+scans = get_scans(
+    auth,
+    type="VULNERABILITY",
+    mode="API,SCHEDULED",
+    mode_operator="IN",
+    status="RUNNING,FINISHED",
+    status_operator="IN",
+    webApp_tags_id=123456789,
+    authStatus="NOT_USED"    
+)
+>>>[
+    WASScan(
+        id=123456789, 
+        name='Test Scan', 
+        reference='test_scan', 
+        type='VULNERABILITY', 
+        mode='API', 
+        status='RUNNING', 
+        launchedDate='2023-10-01T12:00:00Z',
+        ...
+    ),
+    ...
+]
+```
+
+## Get Scan Details API
+
+```get_scan_details``` returns the details of a single scan in the subscription.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan # | ✅ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_scan_details, get_scans
+
+auth = BasicAuth(<username>, <password>)
+
+# Get some scans:
+scans = get_scans(auth, type="VULNERABILITY")
+
+# Get details for the first scan:
+scan = get_scan_details(auth, scanId=scans[0].id)
+>>> WASScan(
+    id=123456789, 
+    name='Test Scan', 
+    reference='test_scan', 
+    type='VULNERABILITY', 
+    mode='API', 
+    status='RUNNING', 
+    launchedDate='2023-10-01T12:00:00Z',
+    ...
+)
+```
+
+## Get Scans Verbose API
+
+```get_scans_verbose``` combines the ```get_scan_details``` and ```get_scans``` methods to return a list of scans with all attributes. This method uses threading to speed up the process. Number of threads can be set with the ```thread_count``` parameter.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```thread_count``` | ```int=5``` | Number of threads to use for the request | ❌ |
+| ```page_count``` | ```Union[int, 'all'] = 'all'``` | Number of pages to return. If 'all', returns all pages | ❌ |
+| ```type``` | ```Literal["DISCOVERY", "VULNERABILITY"]``` | Scan type | ❌ |
+| ```type_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the type filter | ❌ |
+| ```mode``` | ```Literal["ONDEMAND", "SCHEDULED", "API"]``` | Scan mode | ❌ |
+| ```mode_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the mode filter | ❌ |
+| ```status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "ERROR", "CANCELLED", "PROCESSING"]``` | Scan status | ❌ |
+| ```status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the status filter | ❌ |
+| ```webApp_id``` | ```int``` | Webapp ID | ❌ |
+| ```webApp_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_id filter | ❌ |
+| ```webApp_name``` | ```str``` | Webapp name | ❌ |
+| ```webApp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_name filter | ❌ |
+| ```webApp_tags_id``` | ```int``` | Webapp tag ID | ❌ |
+| ```webApp_tags_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_tags_id filter | ❌ |
+| ```resultsStatus``` | ```Literal["NOT_USED", "TO_BE_PROCESSED", "NO_HOST_ALIVE", "NO_WEB_SERVICE", "SERVICE_ERROR", "TIME_LIMIT_REACHED", "SCAN_INTERNAL_ERROR", "SCAN_RESULTS_INVALID", "SUCCESSFUL", "PROCESSING", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "SUBMITTED", "RUNNING", "CANCELED", "CANCELING", "ERROR", "DELETED", "CANCELED_WITH_RESULTS"]``` | Results status | ❌ |
+| ```resultsStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the resultsStatus filter | ❌ |
+| ```authStatus``` | ```Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]``` | Authentication status | ❌ |
+| ```authStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the authStatus filter | ❌ |
+| ```launchedDate``` | ```str``` | Scan launch date in UTC: YYYY-MM-DDTHH:MM:SSZ | ❌ |
+| ```launchedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the launchedDate filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_scans_verbose
+
+auth = BasicAuth(<username>, <password>)
+scans = get_scans_verbose(auth, type="VULNERABILITY")
+>>>[
+    WASScan(
+        id=123456789, 
+        name='Test Scan', 
+        reference='test_scan', 
+        type='VULNERABILITY', 
+        mode='API', 
+        status='RUNNING', 
+        launchedDate='2023-10-01T12:00:00Z',
+        ...
+    ),
+    ...
+]
+```
+
+## Launch Scan API
+
+```launch_scan``` launches a scan on webapps either by specifying webapp IDs or tags.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```name``` | ```str``` | Name of the scan | ✅ |
+| ```scan_type``` | ```Literal["DISCOVERY", "VULNERABILITY"]``` | Scan type | ✅ |
+| ```profile_id``` | ```int``` | Scan profile ID | ✅ |
+| ```web_app_ids``` | ```Union[str, int, list[str, int]]``` | Webapp ID(s) to scan | ⚠️ required if `included_tag_ids` not specified |
+| ```included_tag_ids``` | ```Union[str, int, list[str, int]]``` | Tag ID(s) to scan | ⚠️ required if `web_app_ids` not specified |
+| ```included_tag_options``` | ```Literal["ALL", "ANY"]``` | Whether to scan all or any tags | ❌ |
+| ```scanner_appliance_type``` | ```Literal["EXTERNAL", "INTERNAL"]``` | Scanner appliance type | ❌ |
+| ```auth_record_option``` | ```Union[str, int]``` | Authentication record ID | ❌ |
+| ```profile_option``` | ```Literal["DEFAULT", "ANY", "ALL"]``` | Profile option | ❌ |
+| ```scanner_option``` | ```Union[str, int]``` | Scanner appliance ID | ❌ |
+| ```send_mail``` | ```bool``` | Whether to send an email | ❌ |
+| ```send_one_mail``` | ```bool``` | Whether to send one email | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import launch_scan
+
+auth = BasicAuth(<username>, <password>)
+
+# Launch a scan on a single webapp:
+launch_scan(
+    auth,
+    name="Test Scan",
+    scan_type="VULNERABILITY",
+    profile_id=123456789,
+    web_app_ids=123456789
+)
+>>> 123456789 # Scan ID
+
+# Launch a scan on all webapps with a specific tag:
+launch_scan(
+    auth,
+    name="Test Scan",
+    scan_type="DISCOVERY",
+    profile_id=123456789,
+    included_tag_ids=123456789
+)
+>>> 123456789
+```
+
+## Cancel Scan API
+
+```cancel_scan``` cancels a scan, optionally retaining the results up to the point of cancellation.
+
+This API returns a string of "SUCCESS" if the scan was successfully cancelled, or error details as a string if the scan could not be cancelled. See below example for such cases.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan ID | ✅ |
+| ```retain_results``` | ```bool``` | Whether to retain results. Defaults to `False` | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import cancel_scan, get_scans
+
+auth = BasicAuth(<username>, <password>)
+
+# Find some scans to cancel:
+scans = get_scan_details(auth, status="RUNNING", type="VULNERABILITY")
+
+# Cancel the scan(s), saving the results so far:
+for scan in scans:
+    cancel_scan(auth, scan.id, retain_results=True)
+>>>"SUCCESS"
+
+# Example of an error:
+cancel_scan(auth, 123456789)
+>>> "Error cancelling scan: Scan is not in a running state. Scan status: CANCELED - Verify the WasScan ID passed to the request and that this scan is still running."
+```
+
+## Get Scan Status API
+
+```get_scan_status``` returns the status of a scan as well as the status/result of trying to authenticate to the target webapp.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan ID | ✅ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_scan_status
+
+auth = BasicAuth(<username>, <password>)
+scanId = 123456789
+
+status = get_scan_status(auth, scanId)
+>>>{
+  "@{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "https://qualysapi.qg3.apps.qualys.com/qps/xsd/3.0/was/wasscan.xsd",
+  "responseCode": "SUCCESS",
+  "count": "1",
+  "data": {
+    "WasScan": {
+      "id": "123456789",
+      "status": "RUNNING",
+      "consolidatedStatus": "RUNNING"
+    }
+  }
+}
+```
+
+## Launch a Re-Scan API
+
+```scan_again``` re-launches a scan, optionally with a new name.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan ID | ✅ |
+| ```newName``` | ```str``` | New name for the scan | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import scan_again
+
+auth = BasicAuth(<username>, <password>)
+scanId = 123456789
+
+scan_again(auth, scanId, newName="New Scan Name")
+>>>123456789
+```
+
+## Delete Scan API
+
+```delete_scan``` deletes 1+ scans from the subscription. 
+
+For <field>_operator fields that support `IN`, pass the value as a comma-separated string. For example, to delete multiple scan IDs 12345, 54321, and 98765, pass `id="12345,54321,98765"` & `id_operator="IN"`.
+
+>**Head's Up!:** At least one kwarg is required to make the request and the scan must be in a terminal state (FINISHED, ERROR, CANCELLED, etc.) to be deleted.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```id``` | ```Union[str, int, list[str, int]]``` | Scan ID(s) | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Scan name | ❌ |
+| ```name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the name filter | ❌ |
+| ```webApp_id``` | ```Union[str, int]``` | Webapp IDs | ❌ |
+| ```webApp_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_id filter | ❌ |
+| ```webApp_name``` | ```str``` | Webapp name | ❌ |
+| ```webApp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_name filter | ❌ |
+| ```reference``` | ```str``` | Scan reference | ❌ |
+| ```reference_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the reference filter | ❌ |
+| ```launchedDate``` | ```str``` | Scan launch date in UTC: YYYY-MM-DDTHH:MM:SSZ | ❌ |
+| ```launchedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the launchedDate filter | ❌ |
+| ```type``` | ```Literal["DISCOVERY", "VULNERABILITY"]``` | Scan type | ❌ |
+| ```type_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the type filter | ❌ |
+| ```mode``` | ```Literal["ONDEMAND", "SCHEDULED", "API"]``` | Scan mode | ❌ |
+| ```mode_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the mode filter | ❌ |
+| ```status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "ERROR", "CANCELLED", "PROCESSING"]``` | Scan status | ❌ |
+| ```status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the status filter | ❌ |
+| ```authStatus``` | ```Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]``` | Authentication status | ❌ |
+| ```authStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the authStatus filter | ❌ |
+| ```resultsStatus``` | ```Literal["NOT_USED", "TO_BE_PROCESSED", "NO_HOST_ALIVE", "NO_WEB_SERVICE", "SERVICE_ERROR", "TIME_LIMIT_REACHED", "SCAN_INTERNAL_ERROR", "SCAN_RESULTS_INVALID", "SUCCESSFUL", "PROCESSING", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "SUBMITTED", "RUNNING", "CANCELED", "CANCELING", "ERROR", "DELETED", "CANCELED_WITH_RESULTS"]``` | Results status | ❌ |
+| ```resultsStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the resultsStatus filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import delete_scan
+
+auth = BasicAuth(<username>, <password>)
+
+# Delete a single scan by ID:
+delete_scan(auth, id=123456789)
+>>>[123456789]
+
+# Delete multiple scans by ID:
+delete_scan(
+    auth, 
+    id="123456789,987654321", 
+    id_operator="IN"
+)
+>>>[123456789, 987654321]
+
+# Delete all on-demand discovery 
+# scans that have an error or are cancelled:
+
+delete_scan(
+    auth,
+    type="DISCOVERY",
+    mode="ONDEMAND",
+    status="ERROR,CANCELLED"
+    status_operator="IN"
+)
+>>>[123456789, 987654321, 246813579, ...]
+```
+
+## Get Scan Results API
+
+```get_scan_results``` returns the results of a scan, optionally writing the results to an XML file.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan ID | ✅ |
+| ```writeToFile``` | ```str``` | File path to write results to | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_scan_results
+
+auth = BasicAuth(<username>, <password>)
+scanId = 123456789
+
+# Get the results of a scan, do not write to file:
+results = get_scan_results(auth, scanId)
+>>>{
+    "id": "123456789",
+    "stats": ...,
+    "vulns": ...,
+    "target": ...,
+    ...
+}
+
+# Get the results of a scan, write to file:
+results = get_scan_results(auth, scanId, writeToFile="/foo/bar/scan_results.xml")
+>>>Wrote scan results to /foo/bar/scan_results.xml.
+>>>{
+    "id": "123456789",
+    "stats": ...,
+    "vulns": ...,
+    "target": ...,
+    ...
+}
+```
+
+
 ## ```qualysdk-was``` CLI tool
 
 The ```qualysdk-was``` CLI tool is a command-line interface for the WAS portion of the SDK. It allows you to quickly pull down results from WAS APIs and save them to an XLSX file.
@@ -1283,21 +1669,23 @@ The ```qualysdk-was``` CLI tool is a command-line interface for the WAS portion 
 ### Usage
 
 ```bash
-usage: qualysdk-was [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {get_findings} ...
+usage: qualysdk-was [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {get_findings,get_scans} ...
 
 CLI script to quickly perform Web Application Scanning (WAS) operations using qualysdk
 
 positional arguments:
-  {get_findings}        Action to perform
+  {get_findings,get_scans}
+                        Action to perform
     get_findings        Get a list of WAS findings.
+    get_scans           Get a list of WAS scans.
 
 options:
   -h, --help            show this help message and exit
-  -u USERNAME, --username USERNAME
+  -u, --username USERNAME
                         Qualys username
-  -p PASSWORD, --password PASSWORD
+  -p, --password PASSWORD
                         Qualys password
-  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
+  -P, --platform {qg1,qg2,qg3,qg4}
                         Qualys platform
 ```
 
@@ -1315,4 +1703,15 @@ options:
 # Example with a few kwargs:
 qualysdk-was -u <username> -p <password> -P qg1 get_findings --kwarg verbose true --kwarg group XSS --output xss_findings.xlsx
 >>>Data written to xss_findings.xlsx.
+```
+
+### Get Scans
+
+```bash
+usage: qualysdk-was get_scans [-h] [-o OUTPUT] [--kwarg key value]
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output xlsx file to write results to
+  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
 ```

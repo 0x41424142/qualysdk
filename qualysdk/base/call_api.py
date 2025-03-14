@@ -151,6 +151,7 @@ def call_api(
                 "{webappId}",
                 "{findingId}",
                 "{scanId}",
+                "{tagId}",
             ]
         ):
             if params and (
@@ -164,6 +165,7 @@ def call_api(
                         "webappId",
                         "findingId",
                         "scanId",
+                        "tagId",
                     ]
                 )
             ):
@@ -177,6 +179,7 @@ def call_api(
                     webappAuthRecordId=str(params.pop("webappAuthRecordId", None)),
                     findingId=str(params.pop("findingId", None)),
                     scanId=str(params.pop("scanId", None)),
+                    tagId=str(params.pop("tagId", None)),
                 )
             elif payload and (
                 any(
@@ -190,6 +193,7 @@ def call_api(
                         "webappId",
                         "findingId",
                         "scanId",
+                        "tagId",
                     ]
                 )
             ):
@@ -202,6 +206,7 @@ def call_api(
                     webappId=str(payload.pop("webappId", None)),
                     findingId=str(payload.pop("findingId", None)),
                     scanId=str(payload.pop("scanId", None)),
+                    tagId=str(payload.pop("tagId", None)),
                 )
             else:
                 raise ValueError(
@@ -240,6 +245,7 @@ def call_api(
                 "was",
                 "pm",
                 "cert",
+                "tagging",
             ]
             and response.status_code in range(400, 599)
             and response.status_code not in [429, 414]

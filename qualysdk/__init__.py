@@ -22,6 +22,7 @@ from . import cs
 from . import was
 from . import pm
 from . import cert
+from . import tagging
 
 from .sql import db_connect
 

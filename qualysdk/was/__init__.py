@@ -37,4 +37,5 @@ from .scans import (
     get_scans_verbose,
     launch_scan,
     cancel_scan,
+    get_scan_status,
 )

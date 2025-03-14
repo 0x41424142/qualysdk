@@ -36,6 +36,7 @@ You can use any of the endpoints currently supported:
 | ```get_scans_verbose``` | Combines the functionality of ```get_scans``` and ```get_scan_details``` to return a list of scans with all attributes. Great for SQL data uploads. |
 | ```launch_scan``` | Launches a scan in the subscription. |
 | ```cancel_scan``` | Cancels a scan in the subscription. |
+| ```get_scan_status``` | Returns the status of a scan and the results/status of trying to authenticate to the target. |
 
 ## Count Webapps API
 
@@ -1494,6 +1495,37 @@ scans = get_scan_details(auth, status="RUNNING", type="VULNERABILITY")
 for scan in scans:
     cancel_scan(auth, scan.id, retain_results=True)
 >>>"SUCCESS"
+```
+
+## Get Scan Status API
+
+```get_scan_status``` returns the status of a scan as well as the status/result of trying to authenticate to the target webapp.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan ID | ✅ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_scan_status
+
+auth = BasicAuth(<username>, <password>)
+scanId = 123456789
+
+status = get_scan_status(auth, scanId)
+>>>{
+  "@{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "https://qualysapi.qg3.apps.qualys.com/qps/xsd/3.0/was/wasscan.xsd",
+  "responseCode": "SUCCESS",
+  "count": "1",
+  "data": {
+    "WasScan": {
+      "id": "123456789",
+      "status": "RUNNING",
+      "consolidatedStatus": "RUNNING"
+    }
+  }
+}
 ```
 
 ## ```qualysdk-was``` CLI tool

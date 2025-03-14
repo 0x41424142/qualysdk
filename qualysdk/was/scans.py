@@ -60,12 +60,14 @@ def call_scan_api(
                         pretty=True,
                     )
                 }
+        case "get_scan_status":
+            params = {"placeholder": "status", "scanId": payload.pop("scanId")}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
     response = call_api(
         auth=auth,
-        override_method="GET" if endpoint == "get_scan_details" else "POST",
+        override_method="GET" if endpoint in ["get_scan_details", "get_scan_status"] else "POST",
         module="was",
         endpoint="call_scans_api",
         payload=payload,
@@ -501,3 +503,22 @@ def cancel_scan(
     )
 
     return parsed.get("ServiceResponse", dict()).get("responseCode", "UNKNOWN")
+
+def get_scan_status(auth: BasicAuth, scanId: Union[str, int]) -> dict:
+    """
+    Retrieve the status and authentication status of a scan in Qualys WAS.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        scanId (Union[str, int]): The ID of the scan.
+
+    Returns:
+        dict: A dictionary representation of the API's XML response.
+    """
+
+    if not isinstance(scanId, (str, int)):
+        raise ValueError("scanId must be a string or integer")
+
+    parsed = call_scan_api(auth, "get_scan_status", {"scanId": scanId})
+
+    return parsed.get("ServiceResponse")

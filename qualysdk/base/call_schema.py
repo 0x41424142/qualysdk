@@ -21,6 +21,7 @@ schemas = [
     VMDR_SCHEMA,
     WAS_SCHEMA,
     CERTVIEW_SCHEMA,
+    TAGGING_SCHEMA,
 ]
 
 CALL_SCHEMA = dict()

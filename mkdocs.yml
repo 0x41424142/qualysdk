@@ -13,6 +13,7 @@ nav:
   - Certificate View: cert.md
   - Web Application Scanning: was.md
   - Patch Management: patch.md
+  - Tagging: tagging.md
   - SQL Uploads: sql.md
   - The Call Schema: callschema.md
 

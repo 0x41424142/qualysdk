@@ -160,9 +160,10 @@ def validate_response(response: Response) -> dict:
             .get("errorMessage")
         )
         responseCode = parsed.get("ServiceResponse").get("responseCode")
-        raise QualysAPIError(
-            f"WAS API Error. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
-        )
+        if 'Scan is not in a running state. Scan status: CANCELED' != errorMessage:
+            raise QualysAPIError(
+                f"WAS API Error. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
+            )
 
     return parsed
 

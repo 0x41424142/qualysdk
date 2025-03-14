@@ -1477,6 +1477,8 @@ launch_scan(
 
 ```cancel_scan``` cancels a scan, optionally retaining the results up to the point of cancellation.
 
+This API returns a string of "SUCCESS" if the scan was successfully cancelled, or error details as a string if the scan could not be cancelled. See below example for such cases.
+
 | Parameter | Possible Values | Description | Required |
 | -- | -- | -- | -- |
 | ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
@@ -1496,6 +1498,10 @@ scans = get_scan_details(auth, status="RUNNING", type="VULNERABILITY")
 for scan in scans:
     cancel_scan(auth, scan.id, retain_results=True)
 >>>"SUCCESS"
+
+# Example of an error:
+cancel_scan(auth, 123456789)
+>>> "Error cancelling scan: Scan is not in a running state. Scan status: CANCELED - Verify the WasScan ID passed to the request and that this scan is still running."
 ```
 
 ## Get Scan Status API
@@ -1548,6 +1554,71 @@ scanId = 123456789
 
 scan_again(auth, scanId, newName="New Scan Name")
 >>>123456789
+```
+
+## Delete Scan API
+
+```delete_scan``` deletes 1+ scans from the subscription. 
+
+For <field>_operator fields that support `IN`, pass the value as a comma-separated string. For example, to delete multiple scan IDs 12345, 54321, and 98765, pass `id="12345,54321,98765"` & `id_operator="IN"`.
+
+>**Head's Up!:** At least one kwarg is required to make the request and the scan must be in a terminal state (FINISHED, ERROR, CANCELLED, etc.) to be deleted.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```id``` | ```Union[str, int, list[str, int]]``` | Scan ID(s) | ❌ |
+| ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the ID filter | ❌ |
+| ```name``` | ```str``` | Scan name | ❌ |
+| ```name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the name filter | ❌ |
+| ```webApp_id``` | ```Union[str, int]``` | Webapp IDs | ❌ |
+| ```webApp_id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the webApp_id filter | ❌ |
+| ```webApp_name``` | ```str``` | Webapp name | ❌ |
+| ```webApp_name_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the webApp_name filter | ❌ |
+| ```reference``` | ```str``` | Scan reference | ❌ |
+| ```reference_operator``` | ```Literal["EQUALS", "NOT EQUALS", "CONTAINS"]``` | Operator for the reference filter | ❌ |
+| ```launchedDate``` | ```str``` | Scan launch date in UTC: YYYY-MM-DDTHH:MM:SSZ | ❌ |
+| ```launchedDate_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]``` | Operator for the launchedDate filter | ❌ |
+| ```type``` | ```Literal["DISCOVERY", "VULNERABILITY"]``` | Scan type | ❌ |
+| ```type_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the type filter | ❌ |
+| ```mode``` | ```Literal["ONDEMAND", "SCHEDULED", "API"]``` | Scan mode | ❌ |
+| ```mode_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the mode filter | ❌ |
+| ```status``` | ```Literal["SUBMITTED", "RUNNING", "FINISHED", "ERROR", "CANCELLED", "PROCESSING"]``` | Scan status | ❌ |
+| ```status_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the status filter | ❌ |
+| ```authStatus``` | ```Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]``` | Authentication status | ❌ |
+| ```authStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the authStatus filter | ❌ |
+| ```resultsStatus``` | ```Literal["NOT_USED", "TO_BE_PROCESSED", "NO_HOST_ALIVE", "NO_WEB_SERVICE", "SERVICE_ERROR", "TIME_LIMIT_REACHED", "SCAN_INTERNAL_ERROR", "SCAN_RESULTS_INVALID", "SUCCESSFUL", "PROCESSING", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "SUBMITTED", "RUNNING", "CANCELED", "CANCELING", "ERROR", "DELETED", "CANCELED_WITH_RESULTS"]``` | Results status | ❌ |
+| ```resultsStatus_operator``` | ```Literal["EQUALS", "NOT EQUALS", "IN"]``` | Operator for the resultsStatus filter | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import delete_scan
+
+auth = BasicAuth(<username>, <password>)
+
+# Delete a single scan by ID:
+delete_scan(auth, id=123456789)
+>>>[123456789]
+
+# Delete multiple scans by ID:
+delete_scan(
+    auth, 
+    id="123456789,987654321", 
+    id_operator="IN"
+)
+>>>[123456789, 987654321]
+
+# Delete all on-demand discovery 
+# scans that have an error or are cancelled:
+
+delete_scan(
+    auth,
+    type="DISCOVERY",
+    mode="ONDEMAND",
+    status="ERROR,CANCELLED"
+    status_operator="IN"
+)
+>>>[123456789, 987654321, 246813579, ...]
 ```
 
 

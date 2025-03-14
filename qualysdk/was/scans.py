@@ -62,6 +62,8 @@ def call_scan_api(
                 }
         case "get_scan_status":
             params = {"placeholder": "status", "scanId": payload.pop("scanId")}
+        case "delete_scan":
+            params = {"placeholder": "delete", "scanId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -502,6 +504,10 @@ def cancel_scan(
         auth, "cancel_scan", payload, cancel_with_results=retain_results
     )
 
+    if parsed.get("ServiceResponse", dict()).get("responseCode") != "SUCCESS":
+        fullMessage = parsed.get("ServiceResponse", dict()).get("responseErrorDetails", dict())
+        return f"Error cancelling scan: {fullMessage.get('errorMessage')} - {fullMessage.get('errorResolution')}"
+
     return parsed.get("ServiceResponse", dict()).get("responseCode", "UNKNOWN")
 
 def get_scan_status(auth: BasicAuth, scanId: Union[str, int]) -> dict:
@@ -571,3 +577,64 @@ def scan_again(auth: BasicAuth, scanId: Union[str, int], newName: str = None) ->
 
     return int(data.get("ServiceResponse").get("data").get("WasScan").get("id"))
     
+
+def delete_scan(auth: BasicAuth, **kwargs) -> list[int]:
+    """
+    Delete 1+ scans in Qualys WAS.
+
+    NOTE: Scans must be in a terminal state (FINISHED, ERROR, CANCELED, etc.) to be deleted.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+
+    ## Kwargs:
+
+        - id (Union[str, int]): The ID of the scan to delete.
+        - id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the ID filter.
+        - name (str): The name of the scan.
+        - name_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the name filter.
+        - webApp_name (str): The name of the web application.
+        - webApp_name_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the webApp.name filter.
+        - webApp_id (Union[str, int]): The ID of the web application.
+        - webApp_id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the webApp.id filter.
+        - reference (str): The reference of the scan.
+        - reference_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the reference filter.
+        - launchedDate (str): The date the scan was launched.
+        - launchedDate_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER"]): Operator for the launchedDate filter.
+        - type (Literal["DISCOVERY", "VULNERABILITY"]): The type of scan.
+        - type_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the type filter.
+        - mode (Literal["ONDEMAND", "SCHEDULED", "API"]): The mode of the scan.
+        - mode_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the mode filter.
+        - status (Literal["SUBMITTED", "RUNNING", "FINISHED", "ERROR", "CANCELLED", "PROCESSING"]): The status of the scan.
+        - status_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the status filter.
+        - authStatus (Literal["NONE", "NOT_USED", "SUCCESSFUL", "FAILED", "PARTIAL"]): The authentication status of the scan.
+        - authStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the authStatus filter.
+        - resultsStatus (Literal["NOT_USED", "TO_BE_PROCESSED", "NO_HOST_ALIVE", "NO_WEB_SERVICE", "SERVICE_ERROR", "TIME_LIMIT_REACHED", "SCAN_INTERNAL_ERROR", "SCAN_RESULTS_INVALID", "SUCCESSFUL", "PROCESSING", "TIME_LIMIT_EXCEEDED", "SCAN_NOT_LAUNCHED", "SCANNER_NOT_AVAILABLE", "SUBMITTED", "RUNNING", "CANCELED", "CANCELING", "ERROR", "DELETED", "CANCELED_WITH_RESULTS"]): The results status of the scan.
+        - resultsStatus_operator (Literal["EQUALS", "NOT EQUALS", "IN"]): Operator for the resultsStatus filter.
+
+    Returns:
+        list[int]: The IDs of the scans that were deleted.
+    """
+
+    if not kwargs:
+        raise ValueError("At least one filter is required.")
+    
+    # Validate the kwargs:
+    kwargs = validate_kwargs(endpoint="delete_scan", **kwargs)
+
+    # Build the payload:
+    payload = build_service_request(**kwargs)
+
+    # Make the API call:
+    parsed = call_scan_api(auth, "delete_scan", payload)
+
+    deleted = []
+    scans = parsed.get("ServiceResponse", dict()).get("data", dict()).get("WasScan", [])
+    if isinstance(scans, dict):
+        scans = [scans]
+    if len(scans) == 0:
+        print("No scans found to delete...")
+    for scan in scans:
+        deleted.append(int(scan.get("id")))
+
+    return deleted

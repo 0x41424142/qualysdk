@@ -169,6 +169,20 @@ ENDPOINT_MAPPINGS["launch_scan"] = {
     "send_one_mail": "BOOLEAN",
 }
 
+ENDPOINT_MAPPINGS["delete_scan"] = {
+    "id": "INTEGER",
+    "name": "TEXT",
+    "webApp_id": "INTEGER",
+    "webApp_name": "TEXT",
+    "reference": "TEXT",
+    "launchedDate": "DATE",
+    "type": "KEYWORD",
+    "mode": "KEYWORD",
+    "status": "KEYWORD",
+    "authStatus": "KEYWORD",
+    "resultsStatus": "KEYWORD",
+}
+
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],
     "TEXT": ["CONTAINS", "EQUALS", "NOT EQUALS"],

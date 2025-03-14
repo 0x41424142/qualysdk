@@ -35,6 +35,7 @@ You can use any of the endpoints currently supported:
 | ```get_scan_details``` | Returns all attributes of a single scan. |
 | ```get_scans_verbose``` | Combines the functionality of ```get_scans``` and ```get_scan_details``` to return a list of scans with all attributes. Great for SQL data uploads. |
 | ```launch_scan``` | Launches a scan in the subscription. |
+| ```cancel_scan``` | Cancels a scan in the subscription. |
 
 ## Count Webapps API
 
@@ -1431,6 +1432,7 @@ scans = get_scans_verbose(auth, type="VULNERABILITY")
 | -- | -- | -- | -- |
 | ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```name``` | ```str``` | Name of the scan | ✅ |
+| ```scan_type``` | ```Literal["DISCOVERY", "VULNERABILITY"]``` | Scan type | ✅ |
 | ```profile_id``` | ```int``` | Scan profile ID | ✅ |
 | ```web_app_ids``` | ```Union[str, int, list[str, int]]``` | Webapp ID(s) to scan | ⚠️ required if `included_tag_ids` not specified |
 | ```included_tag_ids``` | ```Union[str, int, list[str, int]]``` | Tag ID(s) to scan | ⚠️ required if `web_app_ids` not specified |
@@ -1452,6 +1454,7 @@ auth = BasicAuth(<username>, <password>)
 launch_scan(
     auth,
     name="Test Scan",
+    scan_type="VULNERABILITY",
     profile_id=123456789,
     web_app_ids=123456789
 )
@@ -1461,10 +1464,36 @@ launch_scan(
 launch_scan(
     auth,
     name="Test Scan",
+    scan_type="DISCOVERY",
     profile_id=123456789,
     included_tag_ids=123456789
 )
 >>> 123456789
+```
+
+## Cancel Scan API
+
+```cancel_scan``` cancels a scan, optionally retaining the results up to the point of cancellation.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan ID | ✅ |
+| ```retain_results``` | ```bool``` | Whether to retain results. Defaults to `False` | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import cancel_scan, get_scans
+
+auth = BasicAuth(<username>, <password>)
+
+# Find some scans to cancel:
+scans = get_scan_details(auth, status="RUNNING", type="VULNERABILITY")
+
+# Cancel the scan(s), saving the results so far:
+for scan in scans:
+    cancel_scan(auth, scan.id, retain_results=True)
+>>>"SUCCESS"
 ```
 
 ## ```qualysdk-was``` CLI tool

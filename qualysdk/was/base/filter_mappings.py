@@ -156,6 +156,7 @@ ENDPOINT_MAPPINGS["get_scans"] = ENDPOINT_MAPPINGS["count_scans"]
 
 ENDPOINT_MAPPINGS["launch_scan"] = {
     "name": "TEXT",
+    "type": "KEYWORD",
     "web_app_ids": "INTEGER",
     "included_tags_option": "KEYWORD",
     "included_tag_ids": "INTEGER",

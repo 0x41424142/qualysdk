@@ -2,7 +2,9 @@
 Contains functions to interact with scans in the Qualys WAS module.
 """
 
-from typing import Union
+from typing import Union, Literal
+
+from xmltodict import unparse
 
 from .data_classes.Scan import WASScan
 from .base.parse_kwargs import validate_kwargs
@@ -16,7 +18,7 @@ from ..base.base_list import BaseList
 
 
 def call_scan_api(
-    auth: BasicAuth, endpoint: str, payload: dict
+    auth: BasicAuth, endpoint: str, payload: dict, cancel_with_results: bool = False
 ) -> Union[int, WASScan, BaseList[WASScan]]:
     """
     Call a Qualys WAS API scan endpoint and return the parsed response. This is
@@ -26,6 +28,7 @@ def call_scan_api(
         auth (BasicAuth): The authentication object.
         endpoint (str): The API endpoint to call.
         payload (dict): The payload to send to the API.
+        cancel_with_results (bool): Whether to cancel the scan with results. Default is False. Only applies to cancel_scan.
 
     Returns:
         Union[int, WASScan, BaseList[WASScan]]: The parsed response from the API.
@@ -40,6 +43,22 @@ def call_scan_api(
             params = {"placeholder": "get", "scanId": payload.pop("scanId")}
         case "launch_scan":
             params = {"placeholder": "launch", "scanId": ""}
+        case "cancel_scan":
+            params = {"placeholder": "cancel", "scanId": payload.pop("scanId")}
+            if cancel_with_results:
+                payload = {
+                    "_xml_data": unparse(
+                        {
+                            "ServiceRequest": {
+                                "data": {
+                                    "WasScan": {
+                                        "cancelWithResults": "true",
+                                    }
+                                }
+                            }
+                        }, pretty=True
+                    )
+                }
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -132,7 +151,7 @@ def get_scans(
 
     ## Kwargs:
 
-        - id (int): The finding ID
+        - id (int): The scan ID
         - id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the ID filter.
         - name (str): The scan name
         - name_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the name filter.
@@ -234,7 +253,7 @@ def get_scan_details(auth: BasicAuth, scanId: Union[str, int]) -> WASScan:
 
     Args:
         auth (BasicAuth): The authentication object
-        scanId (Union[str, int]): The finding number or unique ID of the scanId
+        scanId (Union[str, int]): The scanId
 
     Returns:
         WASFinding: The WASFinding object
@@ -285,7 +304,7 @@ def get_scans_verbose(
     ## Kwargs:
 
         - page_count (Union[int, "all"]): The number of pages to retrieve. Default is "all"
-        - id (int): The finding ID
+        - id (int): The scan ID
         - id_operator (Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]): Operator for the ID filter.
         - name (str): The scan name
         - name_operator (Literal["EQUALS", "NOT EQUALS", "CONTAINS"]): Operator for the name filter.
@@ -392,7 +411,7 @@ def get_scans_verbose(
 
 
 def launch_scan(
-    auth: BasicAuth, name: str, profile_id: Union[str, int], **kwargs
+    auth: BasicAuth, name: str, scan_type: Literal["DISCOVERY", "VULNERABILITY"], profile_id: Union[str, int], **kwargs
 ) -> int:
     """
     Launch a new scan in Qualys WAS, targeting one or more web applications.
@@ -427,6 +446,7 @@ def launch_scan(
         raise ValueError("Either web_app_ids or included_tag_ids is required.")
 
     kwargs["name"] = name
+    kwargs["type"] = scan_type
     kwargs["profile_id"] = profile_id
 
     # check for single values and convert to list for web_app_ids and included_tag_ids:
@@ -449,3 +469,25 @@ def launch_scan(
         data = data.get("WasScan")
 
     return int(data.get("id"))
+
+def cancel_scan(auth: BasicAuth, scanId: Union[str, int], retain_results: bool = False) -> str:
+    """
+    Cancel an ongoing scan in Qualys WAS.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        scanId (Union[str, int]): The ID of the scan to cancel.
+        retain_results (bool): Whether to save the results of the scan up until the point of cancellation. Default is False.
+
+    Returns:
+        str: Status message indicating the scan was cancelled.
+    """
+
+    if not isinstance(scanId, (str, int)):
+        raise ValueError("scanId must be a string or integer")
+    
+    payload = {"scanId": scanId}
+
+    parsed = call_scan_api(auth, "cancel_scan", payload, cancel_with_results=retain_results)
+
+    return parsed.get("ServiceResponse", dict()).get("responseCode", "UNKNOWN")

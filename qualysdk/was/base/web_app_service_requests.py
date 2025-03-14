@@ -148,6 +148,10 @@ def validate_response(response: Response) -> dict:
         raise QualysAPIError(
             f"WAS API Error. Status code: {response.status_code}. Endpoint reporting: {responseCode}. Error message: {errorMessage}"
         )
+    
+    # early exit if the request is for downloading scan results:
+    if len(parsed) == 1 and "WasScan" in parsed.keys():
+        return parsed
 
     serviceResponse = parsed.get("ServiceResponse")
     if not serviceResponse:

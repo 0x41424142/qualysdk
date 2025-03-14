@@ -40,4 +40,5 @@ from .scans import (
     get_scan_status,
     scan_again,
     delete_scan,
+    get_scan_results,
 )

@@ -38,6 +38,7 @@ You can use any of the endpoints currently supported:
 | ```cancel_scan``` | Cancels a scan in the subscription. |
 | ```get_scan_status``` | Returns the status of a scan and the results/status of trying to authenticate to the target. |
 | ```scan_again``` | Launches a scan again, optionally with a new name. |
+| ```get_scan_results``` | Returns the results of a scan as a dictionary, optionally writing to an XML file. |
 
 ## Count Webapps API
 
@@ -1619,6 +1620,45 @@ delete_scan(
     status_operator="IN"
 )
 >>>[123456789, 987654321, 246813579, ...]
+```
+
+## Get Scan Results API
+
+```get_scan_results``` returns the results of a scan, optionally writing the results to an XML file.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan ID | ✅ |
+| ```writeToFile``` | ```str``` | File path to write results to | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import get_scan_results
+
+auth = BasicAuth(<username>, <password>)
+scanId = 123456789
+
+# Get the results of a scan, do not write to file:
+results = get_scan_results(auth, scanId)
+>>>{
+    "id": "123456789",
+    "stats": ...,
+    "vulns": ...,
+    "target": ...,
+    ...
+}
+
+# Get the results of a scan, write to file:
+results = get_scan_results(auth, scanId, writeToFile="/foo/bar/scan_results.xml")
+>>>Wrote scan results to /foo/bar/scan_results.xml.
+>>>{
+    "id": "123456789",
+    "stats": ...,
+    "vulns": ...,
+    "target": ...,
+    ...
+}
 ```
 
 

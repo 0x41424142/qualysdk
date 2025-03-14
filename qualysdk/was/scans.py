@@ -3,6 +3,7 @@ Contains functions to interact with scans in the Qualys WAS module.
 """
 
 from typing import Union, Literal
+from os import path, makedirs
 
 from xmltodict import unparse
 
@@ -64,12 +65,14 @@ def call_scan_api(
             params = {"placeholder": "status", "scanId": payload.pop("scanId")}
         case "delete_scan":
             params = {"placeholder": "delete", "scanId": ""}
+        case "download_results":
+            params = {"placeholder": "download", "scanId": payload.pop("scanId")}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
     response = call_api(
         auth=auth,
-        override_method="GET" if endpoint in ["get_scan_details", "get_scan_status"] else "POST",
+        override_method="GET" if endpoint in ["get_scan_details", "get_scan_status", "download_results"] else "POST",
         module="was",
         endpoint="call_scans_api",
         payload=payload,
@@ -638,3 +641,37 @@ def delete_scan(auth: BasicAuth, **kwargs) -> list[int]:
         deleted.append(int(scan.get("id")))
 
     return deleted
+
+def get_scan_results(auth: BasicAuth, scanId: Union[str, int], writeToFile: str = None) -> dict:
+    """
+    Download the results of a scan.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        scanId (Union[str, int]): The ID of the scan.
+        writeToFile (str): The filepath to write the results to. Default is None (do not write to file).
+
+    Returns:
+        dict: The results of the scan.
+    """
+    
+    if not isinstance(scanId, (str, int)):
+        raise ValueError("scanId must be a string or integer")
+    
+    if writeToFile and not isinstance(writeToFile, str):
+        raise ValueError("writeToFile must be a string or None")
+
+    parsed = call_scan_api(auth, "download_results", {"scanId": scanId})
+
+    if writeToFile:
+        if not writeToFile.lower().endswith(".xml"):
+            writeToFile += ".xml"   
+
+        if not path.exists(path.dirname(writeToFile)):
+            makedirs(path.dirname(writeToFile))
+
+        with open(writeToFile, "w") as f:
+            f.write(unparse(parsed, pretty=True))
+            print(f"Results written to {writeToFile}")
+
+    return parsed.get("WasScan")

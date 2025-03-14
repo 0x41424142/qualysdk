@@ -56,7 +56,8 @@ def call_scan_api(
                                     }
                                 }
                             }
-                        }, pretty=True
+                        },
+                        pretty=True,
                     )
                 }
         case _:
@@ -411,7 +412,11 @@ def get_scans_verbose(
 
 
 def launch_scan(
-    auth: BasicAuth, name: str, scan_type: Literal["DISCOVERY", "VULNERABILITY"], profile_id: Union[str, int], **kwargs
+    auth: BasicAuth,
+    name: str,
+    scan_type: Literal["DISCOVERY", "VULNERABILITY"],
+    profile_id: Union[str, int],
+    **kwargs,
 ) -> int:
     """
     Launch a new scan in Qualys WAS, targeting one or more web applications.
@@ -470,7 +475,10 @@ def launch_scan(
 
     return int(data.get("id"))
 
-def cancel_scan(auth: BasicAuth, scanId: Union[str, int], retain_results: bool = False) -> str:
+
+def cancel_scan(
+    auth: BasicAuth, scanId: Union[str, int], retain_results: bool = False
+) -> str:
     """
     Cancel an ongoing scan in Qualys WAS.
 
@@ -485,9 +493,11 @@ def cancel_scan(auth: BasicAuth, scanId: Union[str, int], retain_results: bool =
 
     if not isinstance(scanId, (str, int)):
         raise ValueError("scanId must be a string or integer")
-    
+
     payload = {"scanId": scanId}
 
-    parsed = call_scan_api(auth, "cancel_scan", payload, cancel_with_results=retain_results)
+    parsed = call_scan_api(
+        auth, "cancel_scan", payload, cancel_with_results=retain_results
+    )
 
     return parsed.get("ServiceResponse", dict()).get("responseCode", "UNKNOWN")

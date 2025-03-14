@@ -22,31 +22,33 @@ FILTER_MAPPING = {
         "EQUALS",
         "NOT EQUALS",
         "IN",
-        "EC2", 
-        "AZURE", 
-        "GCP", 
-        "IBM", 
+        "EC2",
+        "AZURE",
+        "GCP",
+        "IBM",
         "OCI",
-        "STATIC", 
-        "GROOVY", 
-        "OS_REGEX", 
-        "NETWORK_RANGE", 
-        "NAME_CONTAINS", 
-        "INSTALLED_SOFTWARE", 
-        "OPEN_PORTS", 
-        "VULN_EXIST", 
-        "ASSET_SEARCH", 
+        "STATIC",
+        "GROOVY",
+        "OS_REGEX",
+        "NETWORK_RANGE",
+        "NAME_CONTAINS",
+        "INSTALLED_SOFTWARE",
+        "OPEN_PORTS",
+        "VULN_EXIST",
+        "ASSET_SEARCH",
         "CLOUD_ASSET",
-        "NETWORK_TAG", 
-        "NETWORK", "NETWORK_RANGE_ENHANCED", 
-        "CLOUD_ASSET", 
-        "GLOBAL_ASSET_VIEW", 
-        "TAGSET", 
-        "BUSINESS_INFORMATION", 
+        "NETWORK_TAG",
+        "NETWORK",
+        "NETWORK_RANGE_ENHANCED",
+        "CLOUD_ASSET",
+        "GLOBAL_ASSET_VIEW",
+        "TAGSET",
+        "BUSINESS_INFORMATION",
         "VULN_DETECTION",
     ],
     "BOOLEAN": ["EQUALS", "NOT EQUALS"],
 }
+
 
 def validate_kwargs(endpoint: str, **kwargs):
     """
@@ -57,10 +59,14 @@ def validate_kwargs(endpoint: str, **kwargs):
         **kwargs: The kwargs to validate
     """
     if endpoint not in ENDPOINT_MAPPINGS:
-        raise ValueError(f"Invalid endpoint: {endpoint}. Must be one of {ENDPOINT_MAPPINGS.keys()}")
+        raise ValueError(
+            f"Invalid endpoint: {endpoint}. Must be one of {ENDPOINT_MAPPINGS.keys()}"
+        )
 
     for key, value in kwargs.items():
         if key.endswith("_operator"):
             continue
         if key not in ENDPOINT_MAPPINGS[endpoint]:
-            raise ValueError(f"Invalid key: {key}. Must be one of {ENDPOINT_MAPPINGS[endpoint].keys()}")
+            raise ValueError(
+                f"Invalid key: {key}. Must be one of {ENDPOINT_MAPPINGS[endpoint].keys()}"
+            )

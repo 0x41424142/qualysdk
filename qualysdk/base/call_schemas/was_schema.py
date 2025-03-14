@@ -121,7 +121,7 @@ WAS_SCHEMA = frozendict(
                 "pagination": False,
                 "auth_type": "basic",
                 "_xml_data": True,
-            }
+            },
         },
     }
 )

@@ -72,7 +72,9 @@ def call_scan_api(
 
     response = call_api(
         auth=auth,
-        override_method="GET" if endpoint in ["get_scan_details", "get_scan_status", "download_results"] else "POST",
+        override_method="GET"
+        if endpoint in ["get_scan_details", "get_scan_status", "download_results"]
+        else "POST",
         module="was",
         endpoint="call_scans_api",
         payload=payload,
@@ -508,10 +510,13 @@ def cancel_scan(
     )
 
     if parsed.get("ServiceResponse", dict()).get("responseCode") != "SUCCESS":
-        fullMessage = parsed.get("ServiceResponse", dict()).get("responseErrorDetails", dict())
+        fullMessage = parsed.get("ServiceResponse", dict()).get(
+            "responseErrorDetails", dict()
+        )
         return f"Error cancelling scan: {fullMessage.get('errorMessage')} - {fullMessage.get('errorResolution')}"
 
     return parsed.get("ServiceResponse", dict()).get("responseCode", "UNKNOWN")
+
 
 def get_scan_status(auth: BasicAuth, scanId: Union[str, int]) -> dict:
     """
@@ -532,6 +537,7 @@ def get_scan_status(auth: BasicAuth, scanId: Union[str, int]) -> dict:
 
     return parsed.get("ServiceResponse")
 
+
 def scan_again(auth: BasicAuth, scanId: Union[str, int], newName: str = None) -> int:
     """
     Launch a rescan of a previous scan in Qualys WAS, optionally with a new name.
@@ -547,7 +553,7 @@ def scan_again(auth: BasicAuth, scanId: Union[str, int], newName: str = None) ->
 
     if not isinstance(scanId, (str, int)):
         raise ValueError("scanId must be a string or integer")
-    
+
     payload = dict()
 
     if newName:
@@ -579,7 +585,7 @@ def scan_again(auth: BasicAuth, scanId: Union[str, int], newName: str = None) ->
     data = validate_response(result)
 
     return int(data.get("ServiceResponse").get("data").get("WasScan").get("id"))
-    
+
 
 def delete_scan(auth: BasicAuth, **kwargs) -> list[int]:
     """
@@ -621,7 +627,7 @@ def delete_scan(auth: BasicAuth, **kwargs) -> list[int]:
 
     if not kwargs:
         raise ValueError("At least one filter is required.")
-    
+
     # Validate the kwargs:
     kwargs = validate_kwargs(endpoint="delete_scan", **kwargs)
 
@@ -642,7 +648,10 @@ def delete_scan(auth: BasicAuth, **kwargs) -> list[int]:
 
     return deleted
 
-def get_scan_results(auth: BasicAuth, scanId: Union[str, int], writeToFile: str = None) -> dict:
+
+def get_scan_results(
+    auth: BasicAuth, scanId: Union[str, int], writeToFile: str = None
+) -> dict:
     """
     Download the results of a scan.
 
@@ -654,10 +663,10 @@ def get_scan_results(auth: BasicAuth, scanId: Union[str, int], writeToFile: str 
     Returns:
         dict: The results of the scan.
     """
-    
+
     if not isinstance(scanId, (str, int)):
         raise ValueError("scanId must be a string or integer")
-    
+
     if writeToFile and not isinstance(writeToFile, str):
         raise ValueError("writeToFile must be a string or None")
 
@@ -665,7 +674,7 @@ def get_scan_results(auth: BasicAuth, scanId: Union[str, int], writeToFile: str 
 
     if writeToFile:
         if not writeToFile.lower().endswith(".xml"):
-            writeToFile += ".xml"   
+            writeToFile += ".xml"
 
         if not path.exists(path.dirname(writeToFile)):
             makedirs(path.dirname(writeToFile))

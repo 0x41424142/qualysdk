@@ -111,6 +111,17 @@ WAS_SCHEMA = frozendict(
                 "auth_type": "basic",
                 "_xml_data": True,
             },
+            "scan_again": {
+                "endpoint": "/qps/rest/3.0/scanagain/was/scan/{scanId}",
+                "method": ["POST"],
+                "valid_params": ["scanId"],
+                "valid_POST_data": ["_xml_data"],
+                "use_requests_json_data": False,
+                "return_type": "xml",
+                "pagination": False,
+                "auth_type": "basic",
+                "_xml_data": True,
+            }
         },
     }
 )

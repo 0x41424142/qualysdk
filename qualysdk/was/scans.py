@@ -522,3 +522,52 @@ def get_scan_status(auth: BasicAuth, scanId: Union[str, int]) -> dict:
     parsed = call_scan_api(auth, "get_scan_status", {"scanId": scanId})
 
     return parsed.get("ServiceResponse")
+
+def scan_again(auth: BasicAuth, scanId: Union[str, int], newName: str = None) -> int:
+    """
+    Launch a rescan of a previous scan in Qualys WAS, optionally with a new name.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        scanId (Union[str, int]): The ID of the scan to rescan.
+        newName (str): The new name for the scan.
+
+    Returns:
+        int: The ID of the new scan that was launched.
+    """
+
+    if not isinstance(scanId, (str, int)):
+        raise ValueError("scanId must be a string or integer")
+    
+    payload = dict()
+
+    if newName:
+        payload = {
+            "_xml_data": unparse(
+                {
+                    "ServiceRequest": {
+                        "data": {
+                            "WasScan": {
+                                "name": newName,
+                            }
+                        }
+                    }
+                }
+            )
+        }
+
+    params = {"scanId": scanId}
+
+    result = call_api(
+        auth=auth,
+        module="was",
+        endpoint="scan_again",
+        payload=payload if payload else None,
+        params=params,
+        headers={"Content-Type": "text/xml"},
+    )
+
+    data = validate_response(result)
+
+    return int(data.get("ServiceResponse").get("data").get("WasScan").get("id"))
+    

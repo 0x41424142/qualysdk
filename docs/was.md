@@ -37,6 +37,7 @@ You can use any of the endpoints currently supported:
 | ```launch_scan``` | Launches a scan in the subscription. |
 | ```cancel_scan``` | Cancels a scan in the subscription. |
 | ```get_scan_status``` | Returns the status of a scan and the results/status of trying to authenticate to the target. |
+| ```scan_again``` | Launches a scan again, optionally with a new name. |
 
 ## Count Webapps API
 
@@ -1527,6 +1528,28 @@ status = get_scan_status(auth, scanId)
   }
 }
 ```
+
+## Launch a Re-Scan API
+
+```scan_again``` re-launches a scan, optionally with a new name.
+
+| Parameter | Possible Values | Description | Required |
+| -- | -- | -- | -- |
+| ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```scanId``` | ```Union[str, int]``` | Scan ID | ✅ |
+| ```newName``` | ```str``` | New name for the scan | ❌ |
+
+```py
+from qualysdk import BasicAuth
+from qualysdk.was import scan_again
+
+auth = BasicAuth(<username>, <password>)
+scanId = 123456789
+
+scan_again(auth, scanId, newName="New Scan Name")
+>>>123456789
+```
+
 
 ## ```qualysdk-was``` CLI tool
 

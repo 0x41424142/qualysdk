@@ -38,4 +38,5 @@ from .scans import (
     launch_scan,
     cancel_scan,
     get_scan_status,
+    scan_again,
 )

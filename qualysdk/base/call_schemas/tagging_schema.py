@@ -20,4 +20,5 @@ TAGGING_SCHEMA = frozendict(
                 "_xml_data": False,
             },
         },
-    })
+    }
+)

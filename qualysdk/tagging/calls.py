@@ -3,15 +3,12 @@ Contains the middleware API call formatting for tagging APIs
 """
 
 
-
 from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from .base.kwarg_validation import validate_kwargs
 
 
-def call_tags_api(
-    auth: BasicAuth, endpoint: str, payload: dict
-):
+def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
     """
     Call a Qualys Tagging API endpoint and return the parsed response. This is
     a backend function and should not be called directly.
@@ -44,9 +41,12 @@ def call_tags_api(
 
     if data.get("ServiceResponse", {}).get("responseCode") != "SUCCESS":
         errorDetails = data.get("ServiceResponse", {}).get("responseErrorDetails", {})
-        raise ValueError(f"Failed to call {endpoint} API: {errorDetails.get('errorMessage')} - {errorDetails.get('errorResolution')}")
-    
+        raise ValueError(
+            f"Failed to call {endpoint} API: {errorDetails.get('errorMessage')} - {errorDetails.get('errorResolution')}"
+        )
+
     return data
+
 
 def count_tags(auth: BasicAuth, **kwargs) -> int:
     """
@@ -104,4 +104,4 @@ def count_tags(auth: BasicAuth, **kwargs) -> int:
 
     response = call_tags_api(auth, "count_tags", jsonpayload if has_criteria else None)
 
-    return response.get('ServiceResponse', {}).get('count', 0)
+    return response.get("ServiceResponse", {}).get("count", 0)

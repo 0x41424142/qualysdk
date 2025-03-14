@@ -80,8 +80,10 @@ def main():
     if args.action == "count_tags":
         result = cli_findings(auth=auth, args=args, endpoint="count_tags")
 
-    try: args.stdout
-    except AttributeError: args.stdout = False
+    try:
+        args.stdout
+    except AttributeError:
+        args.stdout = False
 
     if args.stdout or args.action == "count_tags":
         print(result)

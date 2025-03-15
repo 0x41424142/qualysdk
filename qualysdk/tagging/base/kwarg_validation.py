@@ -13,6 +13,9 @@ ENDPOINT_MAPPINGS = {
     },
 }
 
+# search/get tags takes the same kwargs as count_tags:
+ENDPOINT_MAPPINGS["get_tags"] = ENDPOINT_MAPPINGS["count_tags"]
+
 
 FILTER_MAPPING = {
     "INTEGER": ["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"],

@@ -81,3 +81,5 @@ from .pm import (
     upload_pm_product_vuln_counts,
 )
 from .cert import upload_cert_certs
+
+from .tagging import upload_tagging_tags

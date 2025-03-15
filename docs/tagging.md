@@ -119,13 +119,15 @@ The ```qualysdk-tag``` CLI tool is a command-line interface for the tagging port
 ### Usage
 
 ```bash
-usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags} ...
+usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags,get_tags} ...
 
 CLI script to quickly perform tagging operations using qualysdk
 
 positional arguments:
-  {count_tags}          Action to perform
+  {count_tags,get_tags}
+                        Action to perform
     count_tags          Count how many tags match the given criteria.
+    get_tags            Get the tags that match the given criteria.
 
 options:
   -h, --help            show this help message and exit
@@ -145,5 +147,16 @@ usage: qualysdk-tag count_tags [-h] [-o OUTPUT] [--kwarg key value]
 options:
   -h, --help           show this help message and exit
   -o, --output OUTPUT  Output (json) file to write results to
+  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
+```
+
+### Get Tags
+
+```bash
+usage: qualysdk-tag get_tags [-h] [-o OUTPUT] [--kwarg key value]
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output (xlsx) file to write results to
   --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
 ```

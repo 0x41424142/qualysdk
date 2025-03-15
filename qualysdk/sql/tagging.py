@@ -11,6 +11,7 @@ from sqlalchemy.dialects.mysql import TEXT
 from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
 
+
 def upload_tagging_tags(
     tags: BaseList,
     cnxn: Connection,
@@ -35,17 +36,27 @@ def upload_tagging_tags(
         "id": types.INTEGER(),
         "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "modified": types.DateTime(),
-        "ruleType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "ruleType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "parentTagId": types.INTEGER(),
-        "ruleText": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "ruleText": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "created": types.DateTime(),
-        "children": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "children": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "color": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "criticalityScore": types.INTEGER(),
-        "description": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "description": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "srcAssetGroupId": types.INTEGER(),
         "srcBusinessUnitId": types.INTEGER(),
-        "provider": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "provider": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Prepare the dataclass for insertion:

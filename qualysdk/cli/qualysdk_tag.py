@@ -28,7 +28,9 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
     if args.output:
-        write_json(result, args.output) if endpoint == "count_tags" else write_excel(result, args.output)
+        write_json(result, args.output) if endpoint == "count_tags" else write_excel(
+            result, args.output
+        )
     return result
 
 
@@ -72,7 +74,7 @@ def main():
         nargs=2,
         metavar=("key", "value"),
     )
-    
+
     # get_tags action:
     get_tags_parser = subparsers.add_parser(
         "get_tags", help="Get the tags that match the given criteria."

@@ -5,7 +5,7 @@ operations using qualysdk.
 
 from argparse import ArgumentParser, Namespace
 
-from qualysdk import BasicAuth, write_json
+from qualysdk import BasicAuth, write_json, write_excel
 from qualysdk.tagging import *
 
 
@@ -22,11 +22,15 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
     match endpoint:
         case "count_tags":
             result = count_tags(auth, **kwargs)
+        case "get_tags":
+            result = get_tags(auth, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
     if args.output:
-        write_json(result, args.output)
+        write_json(result, args.output) if endpoint == "count_tags" else write_excel(
+            result, args.output
+        )
     return result
 
 
@@ -71,6 +75,25 @@ def main():
         metavar=("key", "value"),
     )
 
+    # get_tags action:
+    get_tags_parser = subparsers.add_parser(
+        "get_tags", help="Get the tags that match the given criteria."
+    )
+    get_tags_parser.add_argument(
+        "-o",
+        "--output",
+        help="Output (xlsx) file to write results to",
+        type=str,
+        default=None,
+    )
+    get_tags_parser.add_argument(
+        "--kwarg",
+        help="Specify a keyword argument to pass to the action. Can be used multiple times",
+        action="append",
+        nargs=2,
+        metavar=("key", "value"),
+    )
+
     args = parser.parse_args()
 
     # create BasicAuth object
@@ -79,17 +102,14 @@ def main():
     # perform action
     if args.action == "count_tags":
         result = cli_findings(auth=auth, args=args, endpoint="count_tags")
-
-    try:
-        args.stdout
-    except AttributeError:
-        args.stdout = False
-
-    if args.stdout or args.action == "count_tags":
-        print(result)
+    elif args.action == "get_tags":
+        result = cli_findings(auth=auth, args=args, endpoint="get_tags")
     else:
         parser.print_help()
         exit(1)
+
+    if not args.output:
+        print(result)
 
 
 if __name__ == "__main__":

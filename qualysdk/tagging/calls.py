@@ -8,6 +8,7 @@ from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..base.base_list import BaseList
 
+
 def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
     """
     Call a Qualys Tagging API endpoint and return the parsed response. This is
@@ -109,6 +110,7 @@ def count_tags(auth: BasicAuth, **kwargs) -> int:
 
     return response.get("ServiceResponse", {}).get("count", 0)
 
+
 def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
     """
     Get the tags that match the given kwarg filters
@@ -134,7 +136,7 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
     Returns:
         BaseList[Tag]: The tags that match the given filters
     """
-    
+
     validate_kwargs("get_tags", **kwargs)
 
     has_more = True
@@ -171,16 +173,19 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
             data = [data]
         for tag in data:
             results.append(Tag.from_dict(tag["Tag"]))
-            
+
         has_more = response.get("ServiceResponse", {}).get("hasMoreRecords", False)
         if has_more not in [False, "false"]:
             jsonpayload["ServiceRequest"]["filters"]["Criteria"].append(
-                {"field": "id", "operator": "GREATER", "value": response.get("ServiceResponse", {}).get("lastId")}
+                {
+                    "field": "id",
+                    "operator": "GREATER",
+                    "value": response.get("ServiceResponse", {}).get("lastId"),
+                }
             )
             print("Pagination detected, fetching more results...")
         else:
             has_more = False
-        
+
     print("No more results to fetch. Exiting...")
     return results
-    

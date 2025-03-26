@@ -111,6 +111,36 @@ def upload_cs_containers(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "users": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "riskScore": types.Integer(),
+        "riskScoreCalculatedDate": types.DateTime(),
+        "cloudProvider": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "maxQdsScore": types.Integer(),
+        "qdsSeverity": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "formulaUsed": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "scanTypes": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "criticality": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "criticalityUpdated": types.DateTime(),
+        "isExposedToWorld": types.Boolean(),
+        "k8sExposure": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "exceptions": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "compliance_failCount": types.Integer(),
+        "compliance_passCount": types.Integer(),
+        "compliance_errorCount": types.Integer(),
+        "lastComplianceScanned": types.DateTime(),
     }
 
     # Prepare the dataclass for insertion:
@@ -120,6 +150,8 @@ def upload_cs_containers(
     df.drop(
         columns=[
             "host",
+            "cluster",
+            "compliance",
         ],
         inplace=True,
     )

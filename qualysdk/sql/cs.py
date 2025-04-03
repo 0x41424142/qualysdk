@@ -158,3 +158,52 @@ def upload_cs_containers(
 
     # Upload the data:
     return upload_data(df, table_name, cnxn, COLS, override_import_dt)
+
+def upload_cs_software(
+        software: BaseList,
+        cnxn: Connection,
+        table_name: str = "cs_software",
+        override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload results from ```cs.get_software_on_container```
+    to a SQL database.
+
+    Args:
+        software (BaseList): A BaseList of csSoftware objects.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "version": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "scanType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "packagePath": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "fixVersion": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        # vulnerabilities is parsed into below fields:
+        "vulnerabilities_severity5Count": types.Integer(),
+        "vulnerabilities_severity4Count": types.Integer(),
+        "vulnerabilities_severity3Count": types.Integer(),
+        "vulnerabilities_severity2Count": types.Integer(),
+        "vulnerabilities_severity1Count": types.Integer(),
+        # End vulnerabilities fields
+        "containerSha": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+    }
+
+    # Prepare the dataclass for insertion:
+    df = DataFrame([prepare_dataclass(software) for software in software])
+
+    # Drop cols that are parsed out into other fields:
+    df.drop(
+        columns=[
+            "vulnerabilities",
+        ],
+        inplace=True,
+    )
+
+    # Upload the data:
+    return upload_data(df, table_name, cnxn, COLS, override_import_dt)

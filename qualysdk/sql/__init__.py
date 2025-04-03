@@ -60,7 +60,7 @@ from .totalcloud import (
 )
 
 from .cloud_agent import upload_cloud_agents
-from .cs import upload_cs_containers
+from .cs import upload_cs_containers, upload_cs_software
 from .was import (
     upload_was_webapps,
     upload_was_authentication_records,

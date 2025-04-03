@@ -117,11 +117,14 @@ class Container(BaseClass):
             host_dt_fields = ["lastUpdated"]
             for field in host_dt_fields:
                 if isinstance(self.host.get(field), str):
-                    setattr(
-                        self.host,
-                        f"host_{field}",
-                        datetime.fromtimestamp(int(self.host[field]) / 1000),
-                    )
+                    try:
+                        setattr(
+                            self,
+                            f"host_{field}",
+                            datetime.fromtimestamp(int(self.host[field]) / 1000),
+                        )
+                    except ValueError:
+                        setattr(self, f"host_{field}", datetime.fromisoformat(self.host[field]))
 
             if self.host.get("ipAddress"):
                 setattr(self, "host_ipAddress", ip_address(self.host["ipAddress"]))

@@ -1,13 +1,8 @@
-"""
-Contains the csSoftware dataclass, used mainly in the get_software_on_container method.
-"""
+"""Contains the csSoftware dataclass"""
 
 from dataclasses import dataclass
-from typing import Union, Literal
-from datetime import datetime
 
 from ...base.base_class import BaseClass
-from ...base.base_list import BaseList
 from ...exceptions.Exceptions import *
 
 @dataclass

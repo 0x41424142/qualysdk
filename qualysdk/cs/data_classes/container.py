@@ -2,14 +2,15 @@
 Contains the Container dataclass.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
 from ipaddress import ip_address
 
+from .software import csSoftware
+from .vulnerability import csVuln
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
-from ...exceptions.Exceptions import *
 
 
 @dataclass
@@ -51,11 +52,17 @@ class Container(BaseClass):
     lastScanned: Union[str, datetime] = None
     source: str = None
     environment: str = None
-    arguments: str = None
+    arguments: BaseList[str] = None
     command: str = None
     drift: dict = None
-    vulnerabilities: dict = None
-    softwares: dict = None
+    # drift is parsed into below fields:
+    drift_category: BaseList[str] = None
+    drift_reason: BaseList[str] = None
+    drift_software: BaseList[csSoftware] = None
+    drift_vulnerability: BaseList[csVuln] = None
+    # End drift fields
+    vulnerabilities: BaseList[csVuln] = None
+    softwares: BaseList[csSoftware] = None
     isDrift: bool = None
     isRoot: bool = None
     cluster: dict = None
@@ -126,36 +133,68 @@ class Container(BaseClass):
                     except ValueError:
                         setattr(self, f"host_{field}", datetime.fromisoformat(self.host[field]))
 
-            if self.host.get("ipAddress"):
-                setattr(self, "host_ipAddress", ip_address(self.host["ipAddress"]))
+        def process_nested_fields(parent_field, target_prefix, fields, transform=None, wipe_parent=True):
+            """
+            Process nested fields from the parent field into the target prefix.
+            Args:
+                parent_field (str): The name of the parent field.
+                target_prefix (str): The prefix for the target fields.
+                fields (list): List of fields to process.
+                transform (dict, optional): A dictionary with a key and a function to transform the data.
+                wipe_parent (bool, optional): Whether to wipe the parent field after processing.
 
-            host_fields = ["sensorUuid", "hostname", "uuid"]
-            for field in host_fields:
-                if self.host.get(field):
-                    setattr(self, f"host_{field}", self.host[field])
+            Returns:
+                None
+            """
+            parent_data = getattr(self, parent_field, {})
+            if not parent_data:
+                return
+            
+            if transform and callable(transform) and parent_data.get(transform["key"]):
+                setattr(self, f"{target_prefix}_{transform['key']}", transform["func"](parent_data[transform["key"]]))
 
-            # Set the original host field to None:
-            setattr(self, "host", None)
+            for field in fields:
+                if parent_data.get(field):
+                    # if a regular list, convert to BaseList:
+                    if isinstance(parent_data[field], list):
+                        bl = BaseList()
+                        for item in parent_data[field]:
+                            bl.append(item)
+                        setattr(self, f"{target_prefix}_{field}", bl)
+                    else:
+                        setattr(self, f"{target_prefix}_{field}", parent_data[field])
+            if wipe_parent:
+                setattr(self, parent_field, None)
+        
+        process_nested_fields("host", "host", ["sensorUuid", "hostname", "uuid"], {"key": "ipAddress", "func": ip_address})
+        process_nested_fields("cluster", "cluster", ["name", "uid"])
+        process_nested_fields("compliance", "compliance", ["failCount", "passCount", "errorCount"])
+        bl = BaseList()
+        # doing drift vulns here as a special case since process_nested_fields
+        # currently only handles one key
+        for vuln in self.drift.get("vulnerability", []):
+            vuln["containerSha"] = self.sha
+            bl.append(csVuln.from_dict(vuln))
+        setattr(self, "drift_vulnerability", bl)
+        process_nested_fields("drift", "drift", ["category", "reason"], {"key": "software", "func": lambda x: BaseList(csSoftware.from_dict(x))})
 
-        if self.cluster:
-            setattr(self, "cluster_name", self.cluster.get("name"))
-            setattr(self, "cluster_uid", self.cluster.get("uid"))
-        del self.cluster
-
-        if self.compliance:
-            setattr(self, "compliance_failCount", self.compliance.get("failCount"))
-            setattr(self, "compliance_passCount", self.compliance.get("passCount"))
-            setattr(self, "compliance_errorCount", self.compliance.get("errorCount"))
-        del self.compliance
-
-        if self.portMapping:
-            data = self.portMapping
+        def process_field(field_name, cls=None, add_sha=False):
+            data = getattr(self, field_name)
+            if not data:
+                return
             bl = BaseList()
             if isinstance(data, dict):
                 data = [data]
             for item in data:
-                bl.append(item)
-            setattr(self, "portMapping", bl)
+                if add_sha:
+                    item["containerSha"] = self.sha
+                bl.append(cls.from_dict(item) if cls else item)
+            setattr(self, field_name, bl)
+        
+        process_field("softwares", csSoftware, add_sha=True)
+        process_field("vulnerabilities", csVuln, add_sha=True)
+        # process the simpler fields:
+        [process_field(field) for field in ["portMapping", "arguments", "environment", "hostArchitecture", "scanTypes", "users"]]
 
         # NOTE: I have yet to see any of the commented
         # out fields below. I will update this as needed.
@@ -163,23 +202,8 @@ class Container(BaseClass):
             "cloudProvider",
             "exceptions",
             "cluster",
-            "isRoot",
-            "softwares",
-            "vulnerabilities",
-            "drift",
-            "arguments",
-            "environment",
-            "lastScanned",
-            "operatingSystem",
-            "users",
             "services",
-            "hostArchitecture",
-            "macAddress",
-            "path",
             "label",
-            "scanTypes",
-            "criticality",
-            "criticalityUpdated",
             "isExposedToWorld",
             "k8sExposure",
         ]

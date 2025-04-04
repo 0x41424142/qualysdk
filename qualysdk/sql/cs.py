@@ -98,13 +98,23 @@ def upload_cs_containers(
         "command": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "drift": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "drift_category": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "vulnerabilities": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "drift_reason": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "drift_software": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "drift_vulnerability": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "softwares": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
+        
         "isDrift": types.Boolean(),
         "isRoot": types.Boolean(),
         "cluster": types.String().with_variant(
@@ -152,6 +162,7 @@ def upload_cs_containers(
             "host",
             "cluster",
             "compliance",
+            "drift",
         ],
         inplace=True,
     )

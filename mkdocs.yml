@@ -16,6 +16,7 @@ nav:
   - Tagging: tagging.md
   - SQL Uploads: sql.md
   - The Call Schema: callschema.md
+  - JSON support: json.md
 
 markdown_extensions:
   - pymdownx.highlight:

@@ -16,7 +16,10 @@ You can use any of the endpoints currently supported:
 | ```get_container_details``` | Returns detailed information about a single container instance. |
 | ```get_software_on_container``` | Returns a list of software installed on a container - vulnerability counts by severity, software name, version, and more. |
 | ```get_container_vuln_count``` | Returns a `dict` of vulnerability counts by severity for a container. |
+| ```get_container_vulns``` | Returns a list of vulnerabilities for a container. |
 
+
+# Container API Calls
 
 ## List Containers API
 
@@ -124,4 +127,36 @@ vuln_count = get_container_vuln_count(auth, containers[0].sha)
     'severity2Count': 4,
     'severity1Count': 5,
 }
+```
+
+## Get Container Vulnerabilities API
+
+```get_container_vulns``` returns a list of vulnerabilities for a container, specified by the ```containerSha``` argument. For containers pulled with qualysdk, the ```containerSha``` is accessible via the ```Container.sha``` dataclass attribute.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```containerSha``` | ```str``` | Sha hash of a container | ✅ |
+| ```filter``` | ```str``` | Filter string using [Qualys container security QQL](https://docs.qualys.com/en/cs/1.33.0/search/language.htm) | ❌ |
+| ```isDrift``` | ```bool``` | Whether to include drifted software | ❌ |
+
+```py
+from qualysdk import TokenAuth
+from qualysdk.cs import get_container_vulns, list_containers
+auth = TokenAuth(<username>, <password>)
+# Get a BaseList of containers:
+containers = list_containers(auth, page_count=1)
+# Get the vulnerabilities for the first container:
+vulns = get_container_vulns(auth, containers[0].sha)
+>>>[
+    csVuln(
+        qid=123456,
+        title='Vulnerability Title',
+        severity=4,
+        patchAvailable=True,
+        cveids=['CVE-2023-12345'],
+        ...
+    ),
+    ...
+]
 ```

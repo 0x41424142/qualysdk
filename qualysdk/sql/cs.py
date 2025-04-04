@@ -114,7 +114,7 @@ def upload_cs_containers(
         "softwares": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        
+
         "isDrift": types.Boolean(),
         "isRoot": types.Boolean(),
         "cluster": types.String().with_variant(
@@ -213,6 +213,74 @@ def upload_cs_software(
         columns=[
             "vulnerabilities",
         ],
+        inplace=True,
+    )
+
+    # Upload the data:
+    return upload_data(df, table_name, cnxn, COLS, override_import_dt)
+
+def upload_cs_vulns(
+    vulns: BaseList,
+    cnxn: Connection,
+    table_name: str = "cs_vulns",
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload results from ```cs.get_container_vulns```
+    to a SQL database.
+
+    Args:
+        vulns (BaseList): A BaseList of csVuln objects.
+        cnxn (Connection): The Connection object to the SQL database.
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    COLS = {
+        "qid": types.Integer(),
+        "title": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "result": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "severity": types.Integer(),
+        "customerSeverity": types.Integer(),
+        "qdsScore": types.Integer(),
+        "cvssInfo_baseScore": types.Float(),
+        "cvssInfo_temporalScore": types.Float(),
+        "cvssInfo_accessVector": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "cvss3Info_baseScore": types.Float(),
+        "cvss3Info_temporalScore": types.Float(),
+        "port": types.Integer(),
+        "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "risk": types.Integer(),
+        "category": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "discoveryType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "authType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "supportedBy": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "product": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "vendor": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "cveids": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "threatIntel": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "software": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "lastFound": types.DateTime(),
+        "firstFound": types.DateTime(),
+        "typeDetected": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "scanType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "source": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "reason": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "imageResult": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "containerResult": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "containerSha": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "vulnerability": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "isExempted": types.Boolean(),
+        "vendorData": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+    }
+
+    # Prepare the dataclass for insertion:
+    df = DataFrame([prepare_dataclass(vuln) for vuln in vulns])
+    # Drop cols that are parsed out into other fields:
+    df.drop(
+        columns=["cvssInfo", "cvss3Info"],
         inplace=True,
     )
 

@@ -12,6 +12,7 @@ from sqlalchemy import create_engine, Connection, types
 from ..base.base_class import IP_TYPES
 from ..base.base_list import BaseList
 
+
 def db_connect(
     host: str = "localhost",
     db: str = "qualysdk",
@@ -246,9 +247,13 @@ def upload_json(
             for item in data:
                 check_nested_types(item)
         elif isinstance(data, datetime):
-            raise ValueError(f"Datetime object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function.")
+            raise ValueError(
+                f"Datetime object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function."
+            )
         elif isinstance(data, IP_TYPES):
-            raise ValueError("IP address object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function.")
+            raise ValueError(
+                "IP address object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function."
+            )
 
     # Perform the check on the provided json_data
     check_nested_types(json_data)
@@ -260,15 +265,13 @@ def upload_json(
         datetime.now() if not override_import_dt else override_import_dt
     )
     df["import_datetime"] = df["import_datetime"].dt.tz_localize(None)
-    
+
     # Convert all dict and list columns to strings:
     for col in df.select_dtypes(include=["object"]).columns:
         df[col] = df[col].apply(lambda x: str(x) if isinstance(x, (dict, list)) else x)
 
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table_name}...")
-    df.to_sql(
-        table_name, cnxn, if_exists="append", index=False, chunksize=4000
-    )
+    df.to_sql(table_name, cnxn, if_exists="append", index=False, chunksize=4000)
 
     return len(df)

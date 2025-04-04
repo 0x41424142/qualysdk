@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from ...base.base_class import BaseClass
 from ...exceptions.Exceptions import *
 
+
 @dataclass
 class csSoftware(BaseClass):
     """
@@ -38,7 +39,7 @@ class csSoftware(BaseClass):
             ]:
                 if key in self.vulnerabilities:
                     setattr(self, key, self.vulnerabilities[key])
-                    
+
             del self.vulnerabilities
 
     def __str__(self):

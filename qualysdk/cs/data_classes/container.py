@@ -100,13 +100,29 @@ class Container(BaseClass):
         )
         self._convert_ip_fields(["ipv4", "ipv6"])
         self._process_host_fields()
-        self._process_nested_fields("host", "host", ["sensorUuid", "hostname", "uuid"], {"key": "ipAddress", "func": ip_address})
+        self._process_nested_fields(
+            "host",
+            "host",
+            ["sensorUuid", "hostname", "uuid"],
+            {"key": "ipAddress", "func": ip_address},
+        )
         self._process_nested_fields("cluster", "cluster", ["name", "uid"])
-        self._process_nested_fields("compliance", "compliance", ["failCount", "passCount", "errorCount"])
+        self._process_nested_fields(
+            "compliance", "compliance", ["failCount", "passCount", "errorCount"]
+        )
         self._process_drift_fields()
         self._process_field("softwares", csSoftware, add_sha=True)
         self._process_field("vulnerabilities", csVuln, add_sha=True)
-        self._process_simple_fields(["portMapping", "arguments", "environment", "hostArchitecture", "scanTypes", "users"])
+        self._process_simple_fields(
+            [
+                "portMapping",
+                "arguments",
+                "environment",
+                "hostArchitecture",
+                "scanTypes",
+                "users",
+            ]
+        )
         self._check_undefined_attributes()
 
     def _convert_datetime_fields(self, fields):
@@ -127,17 +143,31 @@ class Container(BaseClass):
                 value = self.host.get(field)
                 if isinstance(value, str):
                     try:
-                        setattr(self, f"host_{field}", datetime.fromtimestamp(int(value) / 1000))
+                        setattr(
+                            self,
+                            f"host_{field}",
+                            datetime.fromtimestamp(int(value) / 1000),
+                        )
                     except ValueError:
                         setattr(self, f"host_{field}", datetime.fromisoformat(value))
 
-    def _process_nested_fields(self, parent_field, target_prefix, fields, transform=None, wipe_parent=True):
+    def _process_nested_fields(
+        self, parent_field, target_prefix, fields, transform=None, wipe_parent=True
+    ):
         parent_data = getattr(self, parent_field, {})
         if not parent_data:
             return
 
-        if transform and callable(transform.get("func")) and parent_data.get(transform["key"]):
-            setattr(self, f"{target_prefix}_{transform['key']}", transform["func"](parent_data[transform["key"]]))
+        if (
+            transform
+            and callable(transform.get("func"))
+            and parent_data.get(transform["key"])
+        ):
+            setattr(
+                self,
+                f"{target_prefix}_{transform['key']}",
+                transform["func"](parent_data[transform["key"]]),
+            )
 
         for field in fields:
             if parent_data.get(field):
@@ -157,7 +187,15 @@ class Container(BaseClass):
                 vuln["containerSha"] = self.sha
                 bl.append(csVuln.from_dict(vuln))
             self.drift_vulnerability = bl
-            self._process_nested_fields("drift", "drift", ["category", "reason"], {"key": "software", "func": lambda x: BaseList(csSoftware.from_dict(x))})
+            self._process_nested_fields(
+                "drift",
+                "drift",
+                ["category", "reason"],
+                {
+                    "key": "software",
+                    "func": lambda x: BaseList(csSoftware.from_dict(x)),
+                },
+            )
 
     def _process_field(self, field_name, cls=None, add_sha=False):
         data = getattr(self, field_name, None)

@@ -16,12 +16,15 @@ def _process_value(value):
     # types that need recursive processing:
     elif hasattr(value, "to_dict"):  # Check if it's another dataclass
         return {k: _process_value(v) for k, v in value.to_dict().items()}
-    elif isinstance(value, (list, BaseList)):  # Handle lists of dataclasses or other types
+    elif isinstance(
+        value, (list, BaseList)
+    ):  # Handle lists of dataclasses or other types
         return [_process_value(item) for item in value]
     elif isinstance(value, dict):  # Handle dictionaries
         return {k: _process_value(v) for k, v in value.items()}
     else:
         return value
+
 
 @dataclass
 class BaseClass:
@@ -32,7 +35,7 @@ class BaseClass:
 
     def to_dict(self):
         return asdict(self)
-    
+
     def to_serializable_dict(self):
         """
         Converts the dataclass to a serializable dictionary.
@@ -47,7 +50,7 @@ class BaseClass:
 
     def items(self):
         return asdict(self).items()
-    
+
     def dump_json(self, indent=2):
         """
         Dumps the object as a JSON string, recursively processing dataclass attributes.

@@ -31,7 +31,13 @@ CS_SCHEMA = frozendict(
             "get_software_on_container": {
                 "endpoint": "/csapi/v1.3/containers/{placeholder}/software",
                 "method": ["GET"],
-                "valid_params": ["placeholder", "containerSha", "filter", "sort", "isDrift"],
+                "valid_params": [
+                    "placeholder",
+                    "containerSha",
+                    "filter",
+                    "sort",
+                    "isDrift",
+                ],
                 "valid_POST_data": [],
                 "use_requests_json_data": False,
                 "return_type": "json",
@@ -51,7 +57,13 @@ CS_SCHEMA = frozendict(
             "get_container_vulns": {
                 "endpoint": "/csapi/v1.3/containers/{placeholder}/vuln",
                 "method": ["GET"],
-                "valid_params": ["placeholder", "containerSha", "filter", "type", "isDrift"],
+                "valid_params": [
+                    "placeholder",
+                    "containerSha",
+                    "filter",
+                    "type",
+                    "isDrift",
+                ],
                 "valid_POST_data": [],
                 "use_requests_json_data": False,
                 "return_type": "json",

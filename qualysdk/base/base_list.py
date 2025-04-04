@@ -10,6 +10,7 @@ from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
 IP_TYPES = (IPv4Address, IPv6Address, IPv4Network, IPv6Network)
 
+
 class BaseList(list):
     """
     BaseList - represents a base list class for the qualysdk package.
@@ -23,7 +24,7 @@ class BaseList(list):
     def __str__(self) -> str:
         # instead of returning "[...]", return a comma-separated string of the objects in the list
         return ", ".join(str(obj) for obj in self) if self else "[]"
-    
+
     def dump_json(self, indent=2) -> str:
         """
         Dumps the list as a JSON string.
@@ -42,11 +43,17 @@ class BaseList(list):
                 return {k: process_value(v) for k, v in value.items()}
             else:
                 return value
+
         processed_data = [process_value(item) for item in self]
         return dumps(processed_data, indent=indent)
-    
+
     def to_serializable_list(self):
         """
         Converts the list to a serializable list.
         """
-        return [item.to_serializable_dict() if hasattr(item, "to_serializable_dict") else item for item in self]
+        return [
+            item.to_serializable_dict()
+            if hasattr(item, "to_serializable_dict")
+            else item
+            for item in self
+        ]

@@ -2,7 +2,7 @@
 SQL server integration for qualysdk
 """
 
-from .base import db_connect
+from .base import db_connect, upload_json
 from .vmdr import (
     upload_vmdr_ags,
     upload_vmdr_kb,

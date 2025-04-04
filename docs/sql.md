@@ -190,3 +190,32 @@ hosts_with_detections = vmdr.get_hld(
     show_qds_factors=True,
 )
 ```
+
+## The `upload_json` Function
+
+`upload_json` allows you to upload data that is serializable to JSON to a SQL database. Any nested dictionaries or lists will be uploaded as JSON strings, allowing for more normalization to be done in the database. This is useful for data that is not easily represented in a flat table format, such as complex nested structures or large lists of items such as tags and vulnerability lists. Fields that are parsed out by the SDK inside their respective dataclasses will still be parsed out and uploaded as separate columns in the table.
+
+```py
+from qualysdk.sql import upload_json, db_connect
+
+# Get a connection to the DB
+cnxn = db_connect(
+    db="my_test.db",
+    db_type="sqlite",
+)
+
+# pull a few records from the Host List Detection API
+vmdr_hosts = vmdr.get_hld(
+    BasicAuth(<username>, <password>),
+    show_asset_id=True,
+    show_tags=True,
+    show_cloud_tags=True,
+    host_metadata="all",
+    page_count=1,
+    chunk_count=1,
+    threads=1,
+)
+# Upload the data to the DB
+upload_json(vmdr_hosts, cnxn, table_name="vmdr_hld_with_json")
+>>> Uploaded 12345 records to vmdr_hld
+```

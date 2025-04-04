@@ -2,7 +2,7 @@
 SQL server integration for qualysdk
 """
 
-from .base import db_connect
+from .base import db_connect, upload_json
 from .vmdr import (
     upload_vmdr_ags,
     upload_vmdr_kb,
@@ -60,7 +60,7 @@ from .totalcloud import (
 )
 
 from .cloud_agent import upload_cloud_agents
-from .cs import upload_cs_containers
+from .cs import upload_cs_containers, upload_cs_software, upload_cs_vulns
 from .was import (
     upload_was_webapps,
     upload_was_authentication_records,

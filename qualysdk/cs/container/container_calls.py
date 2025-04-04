@@ -6,6 +6,8 @@ from typing import Union
 from urllib.parse import parse_qs
 
 from ..data_classes.container import Container
+from ..data_classes.software import csSoftware
+from ..data_classes.vulnerability import csVuln
 from ...auth.token import TokenAuth
 from ...base.call_api import call_api
 from ...base.base_list import BaseList
@@ -110,3 +112,117 @@ def get_container_details(auth: TokenAuth, containerSha: str) -> Container:
         raise QualysAPIError(response.json())
 
     return Container.from_dict(response.json())
+
+
+def get_software_on_container(
+    auth: TokenAuth, containerSha: str, **kwargs
+) -> BaseList[Container]:
+    """
+    Get software on a container.
+
+    Args:
+        auth (TokenAuth): The authentication token.
+        containerSha (str): The SHA hash of the container.
+        **kwargs: Any additional arguments to pass to the API.
+
+    ## Kwargs:
+
+    - filter (str): A filter to apply to the list using Qualys Container Security QQL.
+    - sort (str): The sort order to use.
+    - isDrift (bool): Whether or not to include drifted software.
+
+    Returns:
+        BaseList[csSoftware]: A list of csSoftware objects.
+    """
+
+    params = {"placeholder": containerSha}
+    for key, value in kwargs.items():
+        if key not in params:
+            params[key] = value
+
+    response = call_api(
+        auth,
+        module="containersecurity",
+        endpoint="get_software_on_container",
+        params=params,
+    )
+
+    # Check for valid response:
+    if response.status_code != 200:
+        raise QualysAPIError(response.json())
+
+    bl = BaseList()
+    for item in response.json().get("data", []):
+        # append the sha to the software object for tracking:
+        item["containerSha"] = containerSha
+        bl.append(csSoftware.from_dict(item))
+    return bl
+
+
+def get_container_vuln_count(auth: TokenAuth, containerSha: str) -> dict[str, int]:
+    """
+    Get the number of vulnerabilities on a container.
+
+    Args:
+        auth (TokenAuth): The authentication token.
+        containerSha (str): The SHA hash of the container.
+
+    Returns:
+        dict[str, int]: A dictionary with the number of vulnerabilities by severity.
+    """
+
+    params = {"placeholder": containerSha}
+    response = call_api(
+        auth,
+        module="containersecurity",
+        endpoint="get_container_vuln_count",
+        params=params,
+    )
+    # Check for valid response:
+    if response.status_code != 200:
+        raise QualysAPIError(response.json())
+
+    return response.json().get("data", {})
+
+
+def get_container_vulns(
+    auth: TokenAuth, containerSha: str, **kwargs
+) -> BaseList[csVuln]:
+    """
+    Get a list of vulnerabilities on a container.
+
+    Args:
+        auth (TokenAuth): The authentication token.
+        containerSha (str): The SHA hash of the container.
+        **kwargs: Any additional arguments to pass to the API.
+
+    ## Kwargs:
+    - filter (str): A filter to apply to the list using Qualys Container Security QQL.
+    - isDrift (bool): Whether or not to include drifted vulnerabilities.
+
+    Returns:
+        BaseList[csVuln]: A list of csVuln objects.
+    """
+
+    params = {"placeholder": containerSha}
+    for key, value in kwargs.items():
+        if key not in params:
+            params[key] = value
+
+    response = call_api(
+        auth,
+        module="containersecurity",
+        endpoint="get_container_vulns",
+        params=params,
+    )
+    # Check for valid response:
+    if response.status_code != 200:
+        raise QualysAPIError(response.json())
+    bl = BaseList()
+    j = response.json()
+    if j.get("details", {}).get("vulns"):
+        for item in j["details"]["vulns"]:
+            # append the sha to the software object for tracking:
+            item["containerSha"] = containerSha
+            bl.append(csVuln.from_dict(item))
+    return bl

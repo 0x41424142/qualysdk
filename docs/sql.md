@@ -130,6 +130,8 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_totalcloud_azure_webapp``` | TotalCloud | ```totalcloud.get_inventory(provider='azure', resourceType='web app')``` | ```totalcloud_azure_webapp_inventory``` |
 | ```upload_totalcloud_azure_storageaccount``` | TotalCloud | ```totalcloud.get_inventory(provider='azure', resourceType='storage account')``` | ```totalcloud_azure_storageaccount_inventory``` |
 | ```upload_cs_containers``` | Container Security | ```cs.list_containers()``` | ```cs_containers``` |
+| ```upload_cs_software``` | Container Security | ```cs.get_software_on_container()``` | ```cs_software``` |
+| ```upload_cs_vulns``` | Container Security | ```cs.get_container_vulns()``` | ```cs_vulns``` |
 | ```upload_was_webapps``` | WAS | ```was.get_webapps()``` or ```was.get_webapps_verbose()``` (```get_webapps_verbose()``` is recommended!) | ```was_webapps``` |
 | ```upload_was_authentication_records``` | WAS | ```was.get_authentication_records()``` or ```was.get_authentication_records_verbose()``` (```get_webapps_verbose()``` is recommended!) | ```was_authentication_records``` |
 | ```upload_was_findings``` | WAS | ```was.get_findings()``` or ```was.get_findings_verbose()``` (```get_findings_verbose()``` is recommended!) | ```was_findings``` |
@@ -187,4 +189,33 @@ hosts_with_detections = vmdr.get_hld(
     show_qds=True,
     show_qds_factors=True,
 )
+```
+
+## The `upload_json` Function
+
+`upload_json` allows you to upload data that is serializable to JSON to a SQL database. Any nested dictionaries or lists will be uploaded as JSON strings, allowing for more normalization to be done in the database. This is useful for data that is not easily represented in a flat table format, such as complex nested structures or large lists of items such as tags and vulnerability lists. Fields that are parsed out by the SDK inside their respective dataclasses will still be parsed out and uploaded as separate columns in the table.
+
+```py
+from qualysdk.sql import upload_json, db_connect
+
+# Get a connection to the DB
+cnxn = db_connect(
+    db="my_test.db",
+    db_type="sqlite",
+)
+
+# pull a few records from the Host List Detection API
+vmdr_hosts = vmdr.get_hld(
+    BasicAuth(<username>, <password>),
+    show_asset_id=True,
+    show_tags=True,
+    show_cloud_tags=True,
+    host_metadata="all",
+    page_count=1,
+    chunk_count=1,
+    threads=1,
+)
+# Upload the data to the DB
+upload_json(vmdr_hosts, cnxn, table_name="vmdr_hld_with_json")
+>>> Uploaded 12345 records to vmdr_hld
 ```

@@ -14,7 +14,12 @@ You can use any of the endpoints currently supported:
 |--|--|
 | ```list_containers``` | Lists all containers in the subscription that match given kwargs. |
 | ```get_container_details``` | Returns detailed information about a single container instance. |
+| ```get_software_on_container``` | Returns a list of software installed on a container - vulnerability counts by severity, software name, version, and more. |
+| ```get_container_vuln_count``` | Returns a `dict` of vulnerability counts by severity for a container. |
+| ```get_container_vulns``` | Returns a list of vulnerabilities for a container. |
 
+
+# Container API Calls
 
 ## List Containers API
 
@@ -56,4 +61,102 @@ auth = TokenAuth(<username>, <password>)
 containers = list_containers(auth, page_count=1)
 # Get the details of the first container:
 details = get_container_details(auth, containers[0].sha)
+```
+
+## Get Software on Container API
+
+```get_software_on_container``` returns a list of software installed on a container, specified by the ```containerSha``` argument. For containers pulled with qualysdk, the ```containerSha``` is accessible via the ```Container.sha``` dataclass attribute.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```containerSha``` | ```str``` | Sha hash of a container | ✅ |
+| ```filter``` | ```str``` | Filter string using [Qualys container security QQL](https://docs.qualys.com/en/cs/1.33.0/search/language.htm) | ❌ |
+| ```sort``` | ```str``` | Sort string using [Qualys container security QQL](https://docs.qualys.com/en/cs/1.33.0/search/language.htm) | ❌ |
+| ```isDrift``` | ```bool``` | Whether to include drifted software | ❌ |
+| ```
+
+```py
+from qualysdk import TokenAuth
+from qualysdk.cs import get_software_on_container, list_containers
+
+auth = TokenAuth(<username>, <password>)
+# Get a BaseList of containers:
+containers = list_containers(auth, page_count=1)
+# Get the software on the first container:
+software = get_software_on_container(auth, containers[0].sha)
+>>>[
+    csSoftware(
+        name='nginx',
+        version='1.21.6',
+        scanType='DYNAMIC',
+        packagePath=None,
+        fixVersion=None,
+        vulnerabilities_severity5Count=1,
+        vulnerabilities_severity4Count=2,
+        vulnerabilities_severity3Count=3,
+        vulnerabilities_severity2Count=4,
+        vulnerabilities_severity1Count=5,
+        containerSha='sha256:1234567890abcdef...',
+    ),
+    ...
+]
+```
+
+## Get Container Vulnerability Count API
+
+```get_container_vuln_count``` returns a dict of vulnerability counts by severity for a container, specified by the ```containerSha``` argument. For containers pulled with qualysdk, the ```containerSha``` is accessible via the ```Container.sha``` dataclass attribute.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```containerSha``` | ```str``` | Sha hash of a container | ✅ |
+
+```py
+from qualysdk import TokenAuth
+from qualysdk.cs import get_container_vuln_count, list_containers
+auth = TokenAuth(<username>, <password>)
+# Get a BaseList of containers:
+containers = list_containers(auth, page_count=1)
+# Get the vulnerability count for the first container:
+vuln_count = get_container_vuln_count(auth, containers[0].sha)
+>>>{
+    'severity5Count': 1,
+    'severity4Count': 2,
+    'severity3Count': 3,
+    'severity2Count': 4,
+    'severity1Count': 5,
+}
+```
+
+## Get Container Vulnerabilities API
+
+```get_container_vulns``` returns a list of vulnerabilities for a container, specified by the ```containerSha``` argument. For containers pulled with qualysdk, the ```containerSha``` is accessible via the ```Container.sha``` dataclass attribute.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```containerSha``` | ```str``` | Sha hash of a container | ✅ |
+| ```filter``` | ```str``` | Filter string using [Qualys container security QQL](https://docs.qualys.com/en/cs/1.33.0/search/language.htm) | ❌ |
+| ```isDrift``` | ```bool``` | Whether to include drifted software | ❌ |
+
+```py
+from qualysdk import TokenAuth
+from qualysdk.cs import get_container_vulns, list_containers
+auth = TokenAuth(<username>, <password>)
+# Get a BaseList of containers:
+containers = list_containers(auth, page_count=1)
+# Get the vulnerabilities for the first container:
+vulns = get_container_vulns(auth, containers[0].sha)
+>>>[
+    csVuln(
+        qid=123456,
+        title='Vulnerability Title',
+        severity=4,
+        patchAvailable=True,
+        cveids=['CVE-2023-12345'],
+        ...
+    ),
+    ...
+]
 ```

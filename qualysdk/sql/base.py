@@ -9,6 +9,9 @@ from typing import Literal
 from pandas import DataFrame
 from sqlalchemy import create_engine, Connection, types
 
+from ..base.base_class import IP_TYPES
+from ..base.base_list import BaseList
+
 
 def db_connect(
     host: str = "localhost",
@@ -209,3 +212,66 @@ def flatten_dict_to_string(d, parent_key="") -> str:
         else:
             items.append(f"{new_key}:{v}")
     return ", ".join(items)
+
+
+def upload_json(
+    json_data: dict,
+    cnxn: Connection,
+    table_name: str,
+    override_import_dt: datetime = None,
+) -> int:
+    """
+    Upload a JSON-serializable dictionary to a SQL table.
+    Appends 'import_datetime' column to the JSON data.
+
+    Args:
+        json_data (dict): The JSON data to upload.
+        cnxn (Connection): The Connection object to the SQL database.
+        table_name (str): The name of the table to upload to.
+        override_import_dt (datetime): If provided, will override the import_datetime column with this value.
+
+    Returns:
+        int: The number of rows uploaded.
+    """
+
+    def check_nested_types(data):
+        """
+        Recursively check for datetime or ipaddress types in the data.
+        Raise an error if such types are found.
+        """
+
+        if isinstance(data, dict):
+            for key, value in data.items():
+                check_nested_types(value)
+        elif isinstance(data, list):
+            for item in data:
+                check_nested_types(item)
+        elif isinstance(data, datetime):
+            raise ValueError(
+                f"Datetime object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function."
+            )
+        elif isinstance(data, IP_TYPES):
+            raise ValueError(
+                "IP address object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function."
+            )
+
+    # Perform the check on the provided json_data
+    check_nested_types(json_data)
+
+    df = DataFrame.from_records(json_data)
+
+    # Add an import_datetime column:
+    df["import_datetime"] = (
+        datetime.now() if not override_import_dt else override_import_dt
+    )
+    df["import_datetime"] = df["import_datetime"].dt.tz_localize(None)
+
+    # Convert all dict and list columns to strings:
+    for col in df.select_dtypes(include=["object"]).columns:
+        df[col] = df[col].apply(lambda x: str(x) if isinstance(x, (dict, list)) else x)
+
+    # Upload the data:
+    print(f"Uploading {len(df)} rows to {table_name}...")
+    df.to_sql(table_name, cnxn, if_exists="append", index=False, chunksize=4000)
+
+    return len(df)

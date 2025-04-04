@@ -2,14 +2,15 @@
 Contains the Container dataclass.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 from datetime import datetime
 from ipaddress import ip_address
 
+from .software import csSoftware
+from .vulnerability import csVuln
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
-from ...exceptions.Exceptions import *
 
 
 @dataclass
@@ -35,13 +36,11 @@ class Container(BaseClass):
     ipv6: ip_address = None
     name: str = None
     host: dict = None
-    # host is parsed into below fields:
     host_sensorUuid: str = None
     host_hostname: str = None
     host_ipAddress: ip_address = None
     host_uuid: str = None
     host_lastUpdated: Union[str, datetime] = None
-    # End host fields
     hostArchitecture: str = None
     state: str = None
     portMapping: list[dict] = None
@@ -51,25 +50,25 @@ class Container(BaseClass):
     lastScanned: Union[str, datetime] = None
     source: str = None
     environment: str = None
-    arguments: str = None
+    arguments: BaseList[str] = None
     command: str = None
     drift: dict = None
-    vulnerabilities: dict = None
-    softwares: dict = None
+    drift_category: BaseList[str] = None
+    drift_reason: BaseList[str] = None
+    drift_software: BaseList[csSoftware] = None
+    drift_vulnerability: BaseList[csVuln] = None
+    vulnerabilities: BaseList[csVuln] = None
+    softwares: BaseList[csSoftware] = None
     isDrift: bool = None
     isRoot: bool = None
     cluster: dict = None
-    # cluster is parsed into below fields:
     cluster_name: str = None
     cluster_uid: str = None
-    # End cluster fields
     users: list[dict] = None
     compliance: dict = None
-    # compliance is parsed into below fields:
     compliance_failCount: int = None
     compliance_passCount: int = None
     compliance_errorCount: int = None
-    # End compliance fields
     lastComplianceScanned: Union[str, datetime] = None
     cloudProvider: str = None
     exceptions: BaseList[str] = None
@@ -88,99 +87,143 @@ class Container(BaseClass):
         """
         Post-initialization function for the Container class.
         """
+        self._convert_datetime_fields(
+            [
+                "created",
+                "updated",
+                "stateChanged",
+                "lastScanned",
+                "lastComplianceScanned",
+                "riskScoreCalculatedDate",
+                "criticalityUpdated",
+            ]
+        )
+        self._convert_ip_fields(["ipv4", "ipv6"])
+        self._process_host_fields()
+        self._process_nested_fields(
+            "host",
+            "host",
+            ["sensorUuid", "hostname", "uuid"],
+            {"key": "ipAddress", "func": ip_address},
+        )
+        self._process_nested_fields("cluster", "cluster", ["name", "uid"])
+        self._process_nested_fields(
+            "compliance", "compliance", ["failCount", "passCount", "errorCount"]
+        )
+        self._process_drift_fields()
+        self._process_field("softwares", csSoftware, add_sha=True)
+        self._process_field("vulnerabilities", csVuln, add_sha=True)
+        self._process_simple_fields(
+            [
+                "portMapping",
+                "arguments",
+                "environment",
+                "hostArchitecture",
+                "scanTypes",
+                "users",
+            ]
+        )
+        self._check_undefined_attributes()
 
-        # Convert any datetime strings to datetime objects using fromtimestamp:
-        DT_FIELDS = [
-            "created",
-            "updated",
-            "stateChanged",
-            "lastScanned",
-            "lastComplianceScanned",
-            "riskScoreCalculatedDate",
-            "criticalityUpdated",
-        ]
-        for field in DT_FIELDS:
-            if isinstance(getattr(self, field), str):
-                setattr(
-                    self,
-                    field,
-                    datetime.fromtimestamp(int(getattr(self, field)) / 1000),
-                )
+    def _convert_datetime_fields(self, fields):
+        for field in fields:
+            value = getattr(self, field, None)
+            if isinstance(value, str):
+                setattr(self, field, datetime.fromtimestamp(int(value) / 1000))
 
-        # Convert any IP address strings to ip_address objects:
-        IP_FIELDS = ["ipv4", "ipv6"]
-        for field in IP_FIELDS:
-            if isinstance(getattr(self, field), str):
-                setattr(self, field, ip_address(getattr(self, field)))
+    def _convert_ip_fields(self, fields):
+        for field in fields:
+            value = getattr(self, field, None)
+            if isinstance(value, str):
+                setattr(self, field, ip_address(value))
 
+    def _process_host_fields(self):
         if self.host:
-            host_dt_fields = ["lastUpdated"]
-            for field in host_dt_fields:
-                if isinstance(self.host.get(field), str):
-                    setattr(
-                        self.host,
-                        f"host_{field}",
-                        datetime.fromtimestamp(int(self.host[field]) / 1000),
-                    )
+            for field in ["lastUpdated"]:
+                value = self.host.get(field)
+                if isinstance(value, str):
+                    try:
+                        setattr(
+                            self,
+                            f"host_{field}",
+                            datetime.fromtimestamp(int(value) / 1000),
+                        )
+                    except ValueError:
+                        setattr(self, f"host_{field}", datetime.fromisoformat(value))
 
-            if self.host.get("ipAddress"):
-                setattr(self, "host_ipAddress", ip_address(self.host["ipAddress"]))
+    def _process_nested_fields(
+        self, parent_field, target_prefix, fields, transform=None, wipe_parent=True
+    ):
+        parent_data = getattr(self, parent_field, {})
+        if not parent_data:
+            return
 
-            host_fields = ["sensorUuid", "hostname", "uuid"]
-            for field in host_fields:
-                if self.host.get(field):
-                    setattr(self, f"host_{field}", self.host[field])
+        if (
+            transform
+            and callable(transform.get("func"))
+            and parent_data.get(transform["key"])
+        ):
+            setattr(
+                self,
+                f"{target_prefix}_{transform['key']}",
+                transform["func"](parent_data[transform["key"]]),
+            )
 
-            # Set the original host field to None:
-            setattr(self, "host", None)
+        for field in fields:
+            if parent_data.get(field):
+                value = parent_data[field]
+                if isinstance(value, list):
+                    setattr(self, f"{target_prefix}_{field}", BaseList(value))
+                else:
+                    setattr(self, f"{target_prefix}_{field}", value)
 
-        if self.cluster:
-            setattr(self, "cluster_name", self.cluster.get("name"))
-            setattr(self, "cluster_uid", self.cluster.get("uid"))
-        del self.cluster
+        if wipe_parent:
+            setattr(self, parent_field, None)
 
-        if self.compliance:
-            setattr(self, "compliance_failCount", self.compliance.get("failCount"))
-            setattr(self, "compliance_passCount", self.compliance.get("passCount"))
-            setattr(self, "compliance_errorCount", self.compliance.get("errorCount"))
-        del self.compliance
-
-        if self.portMapping:
-            data = self.portMapping
+    def _process_drift_fields(self):
+        if self.drift:
             bl = BaseList()
-            if isinstance(data, dict):
-                data = [data]
-            for item in data:
-                bl.append(item)
-            setattr(self, "portMapping", bl)
+            for vuln in self.drift.get("vulnerability", []):
+                vuln["containerSha"] = self.sha
+                bl.append(csVuln.from_dict(vuln))
+            self.drift_vulnerability = bl
+            self._process_nested_fields(
+                "drift",
+                "drift",
+                ["category", "reason"],
+                {
+                    "key": "software",
+                    "func": lambda x: BaseList(csSoftware.from_dict(x)),
+                },
+            )
 
-        # NOTE: I have yet to see any of the commented
-        # out fields below. I will update this as needed.
+    def _process_field(self, field_name, cls=None, add_sha=False):
+        data = getattr(self, field_name, None)
+        if not data:
+            return
+        bl = BaseList()
+        if isinstance(data, dict):
+            data = [data]
+        for item in data:
+            if add_sha:
+                item["containerSha"] = self.sha
+            bl.append(cls.from_dict(item) if cls else item)
+        setattr(self, field_name, bl)
+
+    def _process_simple_fields(self, fields):
+        for field in fields:
+            self._process_field(field)
+
+    def _check_undefined_attributes(self):
         attributes_to_check = [
             "cloudProvider",
             "exceptions",
             "cluster",
-            "isRoot",
-            "softwares",
-            "vulnerabilities",
-            "drift",
-            "arguments",
-            "environment",
-            "lastScanned",
-            "operatingSystem",
-            "users",
             "services",
-            "hostArchitecture",
-            "macAddress",
-            "path",
             "label",
-            "scanTypes",
-            "criticality",
-            "criticalityUpdated",
             "isExposedToWorld",
             "k8sExposure",
         ]
-
         for attribute in attributes_to_check:
             if getattr(self, attribute, None):
                 print(

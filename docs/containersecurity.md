@@ -15,6 +15,7 @@ You can use any of the endpoints currently supported:
 | ```list_containers``` | Lists all containers in the subscription that match given kwargs. |
 | ```get_container_details``` | Returns detailed information about a single container instance. |
 | ```get_software_on_container``` | Returns a list of software installed on a container - vulnerability counts by severity, software name, version, and more. |
+| ```get_container_vuln_count``` | Returns a `dict` of vulnerability counts by severity for a container. |
 
 
 ## List Containers API
@@ -97,4 +98,30 @@ software = get_software_on_container(auth, containers[0].sha)
     ),
     ...
 ]
+```
+
+## Get Container Vulnerability Count API
+
+```get_container_vuln_count``` returns a dict of vulnerability counts by severity for a container, specified by the ```containerSha``` argument. For containers pulled with qualysdk, the ```containerSha``` is accessible via the ```Container.sha``` dataclass attribute.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```containerSha``` | ```str``` | Sha hash of a container | ✅ |
+
+```py
+from qualysdk import TokenAuth
+from qualysdk.cs import get_container_vuln_count, list_containers
+auth = TokenAuth(<username>, <password>)
+# Get a BaseList of containers:
+containers = list_containers(auth, page_count=1)
+# Get the vulnerability count for the first container:
+vuln_count = get_container_vuln_count(auth, containers[0].sha)
+>>>{
+    'severity5Count': 1,
+    'severity4Count': 2,
+    'severity3Count': 3,
+    'severity2Count': 4,
+    'severity1Count': 5,
+}
 ```

@@ -156,3 +156,31 @@ def get_software_on_container(
         item['containerSha'] = containerSha
         bl.append(csSoftware.from_dict(item))
     return bl
+
+def get_container_vuln_count(
+    auth: TokenAuth, containerSha: str
+) -> dict[str, int]:
+    """
+    Get the number of vulnerabilities on a container.
+
+    Args:
+        auth (TokenAuth): The authentication token.
+        containerSha (str): The SHA hash of the container.
+
+    Returns:
+        dict[str, int]: A dictionary with the number of vulnerabilities by severity.
+    """
+
+
+    params = {"placeholder": containerSha}
+    response = call_api(
+        auth,
+        module="containersecurity",
+        endpoint="get_container_vuln_count",
+        params=params,
+    )
+    # Check for valid response:
+    if response.status_code != 200:
+        raise QualysAPIError(response.json())
+    
+    return response.json().get("data", {})

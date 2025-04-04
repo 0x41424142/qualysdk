@@ -37,7 +37,17 @@ CS_SCHEMA = frozendict(
                 "return_type": "json",
                 "pagination": False,
                 "auth_type": "token",
-            },  
+            },
+            "get_container_vuln_count": {
+                "endpoint": "/csapi/v1.3/containers/{placeholder}/vuln/count",
+                "method": ["GET"],
+                "valid_params": ["placeholder", "containerSha"],
+                "valid_POST_data": [],
+                "use_requests_json_data": False,
+                "return_type": "json",
+                "pagination": False,
+                "auth_type": "token",
+            },
         },
     }
 )

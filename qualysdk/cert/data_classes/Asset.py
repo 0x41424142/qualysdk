@@ -2,12 +2,11 @@
 Asset data class
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union
 
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
-
 
 @dataclass
 class hostInstance(BaseClass):

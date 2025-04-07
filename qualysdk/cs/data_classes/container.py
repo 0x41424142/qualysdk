@@ -11,7 +11,7 @@ from .software import csSoftware
 from .vulnerability import csVuln
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
-
+from ...base import DONT_EXPAND
 
 @dataclass
 class Container(BaseClass):
@@ -98,31 +98,32 @@ class Container(BaseClass):
                 "criticalityUpdated",
             ]
         )
-        self._convert_ip_fields(["ipv4", "ipv6"])
-        self._process_host_fields()
-        self._process_nested_fields(
-            "host",
-            "host",
-            ["sensorUuid", "hostname", "uuid"],
-            {"key": "ipAddress", "func": ip_address},
-        )
-        self._process_nested_fields("cluster", "cluster", ["name", "uid"])
-        self._process_nested_fields(
-            "compliance", "compliance", ["failCount", "passCount", "errorCount"]
-        )
-        self._process_drift_fields()
-        self._process_field("softwares", csSoftware, add_sha=True)
-        self._process_field("vulnerabilities", csVuln, add_sha=True)
-        self._process_simple_fields(
-            [
-                "portMapping",
-                "arguments",
-                "environment",
-                "hostArchitecture",
-                "scanTypes",
-                "users",
-            ]
-        )
+        if not DONT_EXPAND.flag:
+            self._convert_ip_fields(["ipv4", "ipv6"])
+            self._process_host_fields()
+            self._process_nested_fields(
+                "host",
+                "host",
+                ["sensorUuid", "hostname", "uuid"],
+                {"key": "ipAddress", "func": ip_address},
+            )
+            self._process_nested_fields("cluster", "cluster", ["name", "uid"])
+            self._process_nested_fields(
+                "compliance", "compliance", ["failCount", "passCount", "errorCount"]
+            )
+            self._process_drift_fields()
+            self._process_field("softwares", csSoftware, add_sha=True)
+            self._process_field("vulnerabilities", csVuln, add_sha=True)
+            self._process_simple_fields(
+                [
+                    "portMapping",
+                    "arguments",
+                    "environment",
+                    "hostArchitecture",
+                    "scanTypes",
+                    "users",
+                ]
+            )
         self._check_undefined_attributes()
 
     def _convert_datetime_fields(self, fields):

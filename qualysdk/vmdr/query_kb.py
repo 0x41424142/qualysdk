@@ -49,10 +49,8 @@ def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
         - published_before (str): The date to search for vulnerabilities published before Formatted as 'YYYY-MM-DD[THH:MM:SSZ]' format UTC/GMT.
         - discovery_method (str): The discovery method of the vulnerability.
         - discovery_auth_types (str): The authentication types used to discover the vulnerability.
-        - show_pci_reasons (bool): Whether to show PCI reasons. Default is 'False'.
         - show_supported_modules_info (bool): Whether to show supported modules info. Default is 'False'.
         - show_disabled_flag (bool): Whether to show the disabled flag. Default is 'False'.
-        - show_qid_change_log (bool): Whether to show the QID change log. Default is 'False'.
 
     Returns:
         BaseList of KBEntry objects representing the vulnerabilities returned by the query.

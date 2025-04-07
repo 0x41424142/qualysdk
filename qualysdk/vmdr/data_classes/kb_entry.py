@@ -308,6 +308,9 @@ class KBEntry(BaseClass):
 
             self.COMPLIANCE_LIST = final_compliance_list
 
+        if self.SUPPORTED_MODULES:
+            self.SUPPORTED_MODULES = BaseList(self.SUPPORTED_MODULES.split(","))
+
     def __str__(self):
         return f"{self.QID}"
 

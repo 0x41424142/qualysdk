@@ -5,6 +5,7 @@ base.py - contains the base functionality for the SQL module of qualysdk.
 from datetime import datetime
 from dataclasses import dataclass
 from typing import Literal
+from json import dumps
 
 from pandas import DataFrame
 from sqlalchemy import create_engine, Connection, types
@@ -268,7 +269,7 @@ def upload_json(
 
     # Convert all dict and list columns to strings:
     for col in df.select_dtypes(include=["object"]).columns:
-        df[col] = df[col].apply(lambda x: str(x) if isinstance(x, (dict, list)) else x)
+        df[col] = df[col].apply(lambda x: dumps(x) if isinstance(x, (dict, list, BaseList)) else x)
 
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table_name}...")

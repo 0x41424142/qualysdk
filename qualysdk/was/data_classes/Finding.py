@@ -10,6 +10,7 @@ from base64 import b64decode
 
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -69,11 +70,12 @@ class WASPayload(BaseClass):
         # if self.headers:
         #    self.headers = b64decode(self.headers).decode("utf-8")
 
-        if self.request:
-            self.request = PayloadRequest.from_dict(self.request)
+        if not DONT_EXPAND.flag:
+            if self.request:
+                self.request = PayloadRequest.from_dict(self.request)
 
-        if self.payloadResponce:
-            self.payloadResponce = PayloadResponce.from_dict(self.payloadResponce)
+            if self.payloadResponce:
+                self.payloadResponce = PayloadResponce.from_dict(self.payloadResponce)
 
     def __str__(self) -> str:
         return f"{self.payload}"
@@ -108,34 +110,35 @@ class FindingItem(BaseClass):
             if getattr(self, bool_field):
                 setattr(self, bool_field, bool_field == "true")
 
-        if self.accessPath:
-            self.accessPath_count = int(self.accessPath.get("count"))
-            self.accessPath_list = BaseList()
-            if self.accessPath_count > 0:
-                data = self.accessPath.get("list").get("Url")
-                if not isinstance(data, list):
-                    data = [data]
-                for itm in data:
-                    self.accessPath_list.append(itm)
-            setattr(self, "accessPath", None)
-
-        if self.payloads:
-            self.payloads_count = int(self.payloads.get("count"))
-            self.payloads_list = BaseList()
-            if self.payloads_count > 0:
-                try:
-                    data = (
-                        self.payloads.get("list").get("PayloadInstance").get("request")
-                    )
-                    if data:
-                        self.payloads_list.append(PayloadRequest.from_dict(data))
-                except AttributeError:
-                    data = self.payloads.get("list").get("PayloadInstance")
+        if not DONT_EXPAND.flag:
+            if self.accessPath:
+                self.accessPath_count = int(self.accessPath.get("count"))
+                self.accessPath_list = BaseList()
+                if self.accessPath_count > 0:
+                    data = self.accessPath.get("list").get("Url")
                     if not isinstance(data, list):
                         data = [data]
                     for itm in data:
-                        self.payloads_list.append(WASPayload.from_dict(itm))
-            setattr(self, "payloads", None)
+                        self.accessPath_list.append(itm)
+                setattr(self, "accessPath", None)
+
+            if self.payloads:
+                self.payloads_count = int(self.payloads.get("count"))
+                self.payloads_list = BaseList()
+                if self.payloads_count > 0:
+                    try:
+                        data = (
+                            self.payloads.get("list").get("PayloadInstance").get("request")
+                        )
+                        if data:
+                            self.payloads_list.append(PayloadRequest.from_dict(data))
+                    except AttributeError:
+                        data = self.payloads.get("list").get("PayloadInstance")
+                        if not isinstance(data, list):
+                            data = [data]
+                        for itm in data:
+                            self.payloads_list.append(WASPayload.from_dict(itm))
+                setattr(self, "payloads", None)
 
 
 @dataclass
@@ -307,11 +310,148 @@ class WASFinding(BaseClass):
         ]
         BOOL_FIELDS = ["potential", "isIgnored"]
 
-        if self.webApp:
-            self.webApp_id = self.webApp.get("id")
-            self.webApp_name = self.webApp.get("name")
-            self.webApp_url = self.webApp.get("url")
-            setattr(self, "webApp", None)
+        if not DONT_EXPAND.flag:
+            if self.webApp:
+                self.webApp_id = self.webApp.get("id")
+                self.webApp_name = self.webApp.get("name")
+                self.webApp_url = self.webApp.get("url")
+                setattr(self, "webApp", None)
+
+            if self.cwe:
+                setattr(self, "cwe_count", int(self.cwe.get("count")))
+                bl = BaseList()
+                data = self.cwe.get("list").get("long")
+                if data:
+                    if not isinstance(data, list):
+                        data = [data]
+                    for itm in data:
+                        bl.append(int(itm))
+                setattr(self, "cwe_list", bl)
+                setattr(self, "cwe", None)
+
+            if self.owasp:
+                setattr(self, "owasp_count", int(self.owasp.get("count")))
+                bl = BaseList()
+                data = self.owasp.get("list").get("OWASP")
+                if data:
+                    if not isinstance(data, list):
+                        data = [data]
+                    for itm in data:
+                        owaspstr = (
+                            f"{itm.get('name')} - {itm.get('url')} - code={itm.get('code')}"
+                        )
+                        bl.append(owaspstr)
+                setattr(self, "owasp_list", bl)
+                setattr(self, "owasp", None)
+
+            if self.resultList:
+                setattr(self, "resultList_count", int(self.resultList.get("count")))
+                bl = BaseList()
+                data = self.resultList.get("list").get("Result")
+                if data:
+                    if not isinstance(data, list):
+                        data = [data]
+                    for itm in data:
+                        bl.append(FindingItem.from_dict(itm))
+
+                if bl:
+                    # Parse out accessPath_count/list, payloads_count/list
+                    for itm in bl:
+                        if itm.accessPath_list:
+                            self.accessPath_count += itm.accessPath_count
+                            self.accessPath_list += itm.accessPath_list
+                        if itm.payloads_list:
+                            self.payloads_count += itm.payloads_count
+                            self.payloads_list += itm.payloads_list
+
+                setattr(self, "resultList_list", bl)
+                setattr(self, "resultList", None)
+
+            if self.cvssV3:
+                self.cvssV3_base = float(self.cvssV3.get("base"))
+                self.cvssV3_temporal = float(self.cvssV3.get("temporal"))
+                self.cvssV3_attackVector = self.cvssV3.get("attackVector")
+                setattr(self, "cvssV3", None)
+
+            if self.history:
+                data = self.history["set"]["WebAppFindingHistory"]
+                bl = BaseList()
+                if data:
+                    if not isinstance(data, list):
+                        data = [data]
+                    for itm in data:
+                        bl.append(ScanData.from_dict(itm["scanData"]))
+                setattr(self, "history_list", bl)
+                setattr(self, "history", None)
+
+            if self.wasc:
+                setattr(self, "wasc_count", int(self.wasc.get("count")))
+                bl = BaseList()
+                data = self.wasc.get("list").get("WASC")
+                if data:
+                    if not isinstance(data, list):
+                        data = [data]
+                    for itm in data:
+                        bl.append(WASCItem.from_dict(itm))
+                setattr(self, "wasc_list", bl)
+                setattr(self, "wasc", None)
+
+            if self.sslData:
+                self.sslData_certificateFingerprint = BaseList()
+                self.sslData_protocol = self.sslData.get("protocol")
+                self.sslData_virtualhost = self.sslData.get("virtualhost")
+                self.sslData_ip = self.sslData.get("ip")
+                self.sslData_flags = self.sslData.get("flags")
+                try:
+                    self.sslData_port = int(self.sslData.get("port"))
+                except TypeError:
+                    self.sslData_port = None
+
+                self.sslData_result = self.sslData.get("result")
+                data = self.sslData.get("sslDataInfoList")
+                if data:
+                    data = data["list"].get("SSLDataInfo")
+                    bl = BaseList()
+                    if not isinstance(data, list):
+                        data = [data]
+                    for datapoint in data:
+                        for itm, val in datapoint.items():
+                            match itm:
+                                case "sslDataCipherList":
+                                    if val:
+                                        for cipher in val.get("list").get("SSLDataCipher"):
+                                            # protocol, name, keyExchange, auth, mac, encryption, grade
+                                            string = f"{cipher.get('protocol')}: {cipher.get('name')} (keyExchange: {cipher.get('keyExchange')}; auth: {cipher.get('auth')}; mac: {cipher.get('mac')}; encryption: {cipher.get('encryption')}; grade: {cipher.get('grade')})"
+                                            bl.append(string) if string not in bl else None
+                                case "sslDataKexList":
+                                    if val:
+                                        for kex in val.get("list").get("SSLDataKex"):
+                                            string = f"{kex.get('protocol')}: {kex.get('kex')} (keysize: {kex.get('keysize')}; fwdsec: {kex.get('fwdsec')}; classical: {kex.get('classical')}; quantum: {kex.get('quantum')})"
+                                            bl.append(string) if string not in bl else None
+                                case "sslDataPropList":
+                                    if val:
+                                        for prop in val.get("list").get("SSLDataProp"):
+                                            string = f"{prop.get('name')}: {prop.get('value')} ({prop.get('protocol')})"
+                                            bl.append(string) if string not in bl else None
+                                case "certificateFingerprint":
+                                    self.sslData_certificateFingerprint.append(val)
+
+                    self.sslData_list = bl
+                setattr(self, "sslData", None)
+
+            if self.retest:
+                setattr(self, "retestStatus", self.retest.get("retestStatus"))
+                date = self.retest.get("retestedDate")
+                if date:
+                    setattr(self, "retestedDate", datetime.fromisoformat(date))
+                user = self.retest.get("retestedUser")
+                if user:
+                    setattr(self, "retestedUser_id", user.get("id"))
+                    setattr(self, "retestedUser_username", user.get("username"))
+                    setattr(self, "retestedUser_firstName", user.get("firstName"))
+                    setattr(self, "retestedUser_lastName", user.get("lastName"))
+                setattr(self, "retestFindingStatus", self.retest.get("findingStatus"))
+                setattr(self, "retestReason", self.retest.get("reason"))
 
         if self.status:
             setattr(self, "status", self.status.upper())
@@ -330,142 +470,6 @@ class WASFinding(BaseClass):
 
         if self.param:
             setattr(self, "param", unquote_plus(self.param))
-
-        if self.cwe:
-            setattr(self, "cwe_count", int(self.cwe.get("count")))
-            bl = BaseList()
-            data = self.cwe.get("list").get("long")
-            if data:
-                if not isinstance(data, list):
-                    data = [data]
-                for itm in data:
-                    bl.append(int(itm))
-            setattr(self, "cwe_list", bl)
-            setattr(self, "cwe", None)
-
-        if self.owasp:
-            setattr(self, "owasp_count", int(self.owasp.get("count")))
-            bl = BaseList()
-            data = self.owasp.get("list").get("OWASP")
-            if data:
-                if not isinstance(data, list):
-                    data = [data]
-                for itm in data:
-                    owaspstr = (
-                        f"{itm.get('name')} - {itm.get('url')} - code={itm.get('code')}"
-                    )
-                    bl.append(owaspstr)
-            setattr(self, "owasp_list", bl)
-            setattr(self, "owasp", None)
-
-        if self.resultList:
-            setattr(self, "resultList_count", int(self.resultList.get("count")))
-            bl = BaseList()
-            data = self.resultList.get("list").get("Result")
-            if data:
-                if not isinstance(data, list):
-                    data = [data]
-                for itm in data:
-                    bl.append(FindingItem.from_dict(itm))
-
-            if bl:
-                # Parse out accessPath_count/list, payloads_count/list
-                for itm in bl:
-                    if itm.accessPath_list:
-                        self.accessPath_count += itm.accessPath_count
-                        self.accessPath_list += itm.accessPath_list
-                    if itm.payloads_list:
-                        self.payloads_count += itm.payloads_count
-                        self.payloads_list += itm.payloads_list
-
-            setattr(self, "resultList_list", bl)
-            setattr(self, "resultList", None)
-
-        if self.cvssV3:
-            self.cvssV3_base = float(self.cvssV3.get("base"))
-            self.cvssV3_temporal = float(self.cvssV3.get("temporal"))
-            self.cvssV3_attackVector = self.cvssV3.get("attackVector")
-            setattr(self, "cvssV3", None)
-
-        if self.history:
-            data = self.history["set"]["WebAppFindingHistory"]
-            bl = BaseList()
-            if data:
-                if not isinstance(data, list):
-                    data = [data]
-                for itm in data:
-                    bl.append(ScanData.from_dict(itm["scanData"]))
-            setattr(self, "history_list", bl)
-            setattr(self, "history", None)
-
-        if self.wasc:
-            setattr(self, "wasc_count", int(self.wasc.get("count")))
-            bl = BaseList()
-            data = self.wasc.get("list").get("WASC")
-            if data:
-                if not isinstance(data, list):
-                    data = [data]
-                for itm in data:
-                    bl.append(WASCItem.from_dict(itm))
-            setattr(self, "wasc_list", bl)
-            setattr(self, "wasc", None)
-
-        if self.sslData:
-            self.sslData_certificateFingerprint = BaseList()
-            self.sslData_protocol = self.sslData.get("protocol")
-            self.sslData_virtualhost = self.sslData.get("virtualhost")
-            self.sslData_ip = self.sslData.get("ip")
-            self.sslData_flags = self.sslData.get("flags")
-            try:
-                self.sslData_port = int(self.sslData.get("port"))
-            except TypeError:
-                self.sslData_port = None
-
-            self.sslData_result = self.sslData.get("result")
-            data = self.sslData.get("sslDataInfoList")
-            if data:
-                data = data["list"].get("SSLDataInfo")
-                bl = BaseList()
-                if not isinstance(data, list):
-                    data = [data]
-                for datapoint in data:
-                    for itm, val in datapoint.items():
-                        match itm:
-                            case "sslDataCipherList":
-                                if val:
-                                    for cipher in val.get("list").get("SSLDataCipher"):
-                                        # protocol, name, keyExchange, auth, mac, encryption, grade
-                                        string = f"{cipher.get('protocol')}: {cipher.get('name')} (keyExchange: {cipher.get('keyExchange')}; auth: {cipher.get('auth')}; mac: {cipher.get('mac')}; encryption: {cipher.get('encryption')}; grade: {cipher.get('grade')})"
-                                        bl.append(string) if string not in bl else None
-                            case "sslDataKexList":
-                                if val:
-                                    for kex in val.get("list").get("SSLDataKex"):
-                                        string = f"{kex.get('protocol')}: {kex.get('kex')} (keysize: {kex.get('keysize')}; fwdsec: {kex.get('fwdsec')}; classical: {kex.get('classical')}; quantum: {kex.get('quantum')})"
-                                        bl.append(string) if string not in bl else None
-                            case "sslDataPropList":
-                                if val:
-                                    for prop in val.get("list").get("SSLDataProp"):
-                                        string = f"{prop.get('name')}: {prop.get('value')} ({prop.get('protocol')})"
-                                        bl.append(string) if string not in bl else None
-                            case "certificateFingerprint":
-                                self.sslData_certificateFingerprint.append(val)
-
-                self.sslData_list = bl
-            setattr(self, "sslData", None)
-
-        if self.retest:
-            setattr(self, "retestStatus", self.retest.get("retestStatus"))
-            date = self.retest.get("retestedDate")
-            if date:
-                setattr(self, "retestedDate", datetime.fromisoformat(date))
-            user = self.retest.get("retestedUser")
-            if user:
-                setattr(self, "retestedUser_id", user.get("id"))
-                setattr(self, "retestedUser_username", user.get("username"))
-                setattr(self, "retestedUser_firstName", user.get("firstName"))
-                setattr(self, "retestedUser_lastName", user.get("lastName"))
-            setattr(self, "retestFindingStatus", self.retest.get("findingStatus"))
-            setattr(self, "retestReason", self.retest.get("reason"))
 
         for int_field in INT_FIELDS:
             if getattr(self, int_field):

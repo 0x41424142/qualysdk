@@ -12,6 +12,7 @@ from .WebAppAuthFormRecord import WebAppAuthFormRecord
 from .WebAppAuthServerRecord import WebAppAuthServerRecord
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 def build_oauth2_record(dataclass) -> None:
@@ -268,22 +269,23 @@ class WebAppAuthRecord(BaseClass):
             if getattr(self, field) and not isinstance(getattr(self, field), datetime):
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
-        for field in DATEBY_FIELDS:
-            if getattr(self, field):
-                handle_date_by_attrs(self, field)
+        if not DONT_EXPAND.flag:
+            for field in DATEBY_FIELDS:
+                if getattr(self, field):
+                    handle_date_by_attrs(self, field)
 
-        if self.tags:
-            res = handle_qualys_list(self.tags, "Tag")
-            setattr(self, "tags_count", res[0])
-            setattr(self, "tags_list", res[1])
-            setattr(self, "tags", None)
+            if self.tags:
+                res = handle_qualys_list(self.tags, "Tag")
+                setattr(self, "tags_count", res[0])
+                setattr(self, "tags_list", res[1])
+                setattr(self, "tags", None)
 
-        for field in RECORD_FIELDS:
-            if getattr(self, field):
-                handle_record_attrs(self, field if field != "comments" else "Comment")
+            for field in RECORD_FIELDS:
+                if getattr(self, field):
+                    handle_record_attrs(self, field if field != "comments" else "Comment")
 
-        if self.oauth2Record:
-            build_oauth2_record(self)
+            if self.oauth2Record:
+                build_oauth2_record(self)
 
     def __str__(self):
         return str(self.name)

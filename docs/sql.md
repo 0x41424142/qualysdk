@@ -215,6 +215,12 @@ vmdr_hosts = vmdr.get_hld(
     chunk_count=1,
     threads=1,
 )
+
+# NOTE: you MUST run <BaseList>.to_serializable_list() 
+# on the data before uploading it to the DB
+vmdr_hosts = vmdr_hosts.to_serializable_list()
+
+
 # Upload the data to the DB
 upload_json(vmdr_hosts, cnxn, table_name="vmdr_hld_with_json")
 >>> Uploaded 12345 records to vmdr_hld

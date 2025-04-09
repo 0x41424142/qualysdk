@@ -10,6 +10,7 @@ from string import digits
 from .Tag import Tag
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -134,9 +135,6 @@ class PMJob(BaseClass):
         ):
             setattr(self, "completionPercent", float(self.completionPercent))
 
-        if self.coAuthorUserIds:
-            setattr(self, "coAuthorUserIds", BaseList(self.coAuthorUserIds))
-
         if self.startDateTime:
             setattr(
                 self,
@@ -144,56 +142,60 @@ class PMJob(BaseClass):
                 datetime.strptime(self.startDateTime, "%Y-%m-%d %I:%M:%S %p"),
             )
 
-        for base_list_field in NON_STR_OR_OBJ_BASELIST_FIELDS:
-            if getattr(self, base_list_field):
-                setattr(self, base_list_field, BaseList(getattr(self, base_list_field)))
-
-        for tag_obj in TAG_OBJ_FIELDS:
-            obj_bl = BaseList()
-            if getattr(self, tag_obj):
-                for tag in getattr(self, tag_obj):
-                    if tag_obj == "exclusionTags":
-                        obj_bl.append(Tag.from_dict({"id": tag}))
-                    else:
-                        obj_bl.append(Tag.from_dict(tag))
-            setattr(self, tag_obj, obj_bl)
-
-            """
-            if getattr(self, tag_obj):
-                setattr(
-                    self,
-                    tag_obj,
-                    BaseList([Tag.from_dict(tag) for tag in getattr(self, tag_obj)]),
-                )
-            """
-
-        for dt_field in BREAKDOWN_DT_FIELDS:
-            if getattr(self, dt_field):
-                setattr(
-                    self,
-                    f"{dt_field}_date",
-                    datetime.fromtimestamp(getattr(self, dt_field)["date"] / 1000),
-                )
-                setattr(
-                    self,
-                    f"{dt_field}_user_name",
-                    getattr(self, dt_field)["user"].get("name"),
-                )
-                setattr(
-                    self,
-                    f"{dt_field}_user_id",
-                    getattr(self, dt_field)["user"].get("id"),
-                )
-                setattr(self, dt_field, None)
-
-        for timestamp_field in FROM_TIMESTAMP_FIELDS:
-            if getattr(self, timestamp_field):
-                setattr(
-                    self,
-                    timestamp_field,
-                    datetime.fromtimestamp(getattr(self, timestamp_field) / 1000),
-                )
-
         for int_field in TO_INT_FIELDS:
             if getattr(self, int_field):
                 setattr(self, int_field, int(getattr(self, int_field)))
+
+        if not DONT_EXPAND.flag:
+            if self.coAuthorUserIds:
+                setattr(self, "coAuthorUserIds", BaseList(self.coAuthorUserIds))
+
+            for base_list_field in NON_STR_OR_OBJ_BASELIST_FIELDS:
+                if getattr(self, base_list_field):
+                    setattr(self, base_list_field, BaseList(getattr(self, base_list_field)))
+
+            for tag_obj in TAG_OBJ_FIELDS:
+                obj_bl = BaseList()
+                if getattr(self, tag_obj):
+                    for tag in getattr(self, tag_obj):
+                        if tag_obj == "exclusionTags":
+                            obj_bl.append(Tag.from_dict({"id": tag}))
+                        else:
+                            obj_bl.append(Tag.from_dict(tag))
+                setattr(self, tag_obj, obj_bl)
+
+                """
+                if getattr(self, tag_obj):
+                    setattr(
+                        self,
+                        tag_obj,
+                        BaseList([Tag.from_dict(tag) for tag in getattr(self, tag_obj)]),
+                    )
+                """
+
+            for dt_field in BREAKDOWN_DT_FIELDS:
+                if getattr(self, dt_field):
+                    setattr(
+                        self,
+                        f"{dt_field}_date",
+                        datetime.fromtimestamp(getattr(self, dt_field)["date"] / 1000),
+                    )
+                    setattr(
+                        self,
+                        f"{dt_field}_user_name",
+                        getattr(self, dt_field)["user"].get("name"),
+                    )
+                    setattr(
+                        self,
+                        f"{dt_field}_user_id",
+                        getattr(self, dt_field)["user"].get("id"),
+                    )
+                    setattr(self, dt_field, None)
+
+            for timestamp_field in FROM_TIMESTAMP_FIELDS:
+                if getattr(self, timestamp_field):
+                    setattr(
+                        self,
+                        timestamp_field,
+                        datetime.fromtimestamp(getattr(self, timestamp_field) / 1000),
+                    )

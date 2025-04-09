@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -82,16 +83,17 @@ class Patch(BaseClass):
                 except (TypeError, OSError, ValueError):
                     setattr(self, field, None)
 
-        for field in BL_FIELDS:
-            if field != "qid" and getattr(self, field):
-                setattr(self, field, BaseList(getattr(self, field)))
-            elif field == "qid" and getattr(self, field):
-                setattr(
-                    self, field, BaseList([int(qid) for qid in getattr(self, field)])
-                )
+        if not DONT_EXPAND.flag:
+            for field in BL_FIELDS:
+                if field != "qid" and getattr(self, field):
+                    setattr(self, field, BaseList(getattr(self, field)))
+                elif field == "qid" and getattr(self, field):
+                    setattr(
+                        self, field, BaseList([int(qid) for qid in getattr(self, field)])
+                    )
 
-        if getattr(self, "packageDetails"):
-            bl = BaseList()
-            for package in self.packageDetails:
-                bl.append(PackageDetail(**package))
-            setattr(self, "packageDetails", bl)
+            if getattr(self, "packageDetails"):
+                bl = BaseList()
+                for package in self.packageDetails:
+                    bl.append(PackageDetail(**package))
+                setattr(self, "packageDetails", bl)

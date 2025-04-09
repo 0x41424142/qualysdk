@@ -9,7 +9,7 @@ from datetime import datetime
 from .Tag import Tag
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
-
+from ...base import DONT_EXPAND
 
 @dataclass
 class PMInterface(BaseClass):
@@ -83,12 +83,13 @@ class PMAssetJobView(BaseClass):
             "notApplicable",
         ]
 
-        for bl_field in TO_BL_FIELDS:
-            if getattr(self, bl_field):
-                bl = BaseList()
-                for obj in getattr(self, bl_field):
-                    bl.append(obj)
-                setattr(self, bl_field, bl)
+        if not DONT_EXPAND.flag:
+            for bl_field in TO_BL_FIELDS:
+                if getattr(self, bl_field):
+                    bl = BaseList()
+                    for obj in getattr(self, bl_field):
+                        bl.append(obj)
+                    setattr(self, bl_field, bl)
 
         FROM_TIMESTAMP_FIELDS = [
             "endDateTime",
@@ -117,17 +118,18 @@ class PMAssetJobView(BaseClass):
             if getattr(self, bool_field):
                 setattr(self, bool_field, bool(getattr(self, bool_field)))
 
-        if self.interfaces:
-            bl = BaseList()
-            for interface in self.interfaces:
-                bl.append(PMInterface.from_dict(interface))
-            setattr(self, "interfaces", bl)
+        if not DONT_EXPAND.flag:
+            if self.interfaces:
+                bl = BaseList()
+                for interface in self.interfaces:
+                    bl.append(PMInterface.from_dict(interface))
+                setattr(self, "interfaces", bl)
 
-        if self.tags:
-            bl = BaseList()
-            for tag in self.tags:
-                bl.append(Tag.from_dict(tag))
-            setattr(self, "tags", bl)
+            if self.tags:
+                bl = BaseList()
+                for tag in self.tags:
+                    bl.append(Tag.from_dict(tag))
+                setattr(self, "tags", bl)
 
     def __str__(self):
         return self.name
@@ -168,15 +170,32 @@ class Asset(BaseClass):
     def __post_init__(self):
         # List of strings
         TO_BL_FIELDS = ["activatedModules", "osNotSupportedForModules"]
-
-        for bl_field in TO_BL_FIELDS:
-            if getattr(self, bl_field):
-                bl = BaseList()
-                for obj in getattr(self, bl_field):
-                    bl.append(obj)
-                setattr(self, bl_field, bl)
-
         FROM_TIMESTAMP_FIELDS = ["scanDateTime", "statusDateTime"]
+
+        if not DONT_EXPAND.flag:
+            for bl_field in TO_BL_FIELDS:
+                if getattr(self, bl_field):
+                    bl = BaseList()
+                    for obj in getattr(self, bl_field):
+                        bl.append(obj)
+                    setattr(self, bl_field, bl)
+
+            if self.interfaces:
+                bl = BaseList()
+                for interface in self.interfaces:
+                    bl.append(PMInterface.from_dict(interface))
+                setattr(self, "interfaces", bl)
+
+            if self.tags:
+                bl = BaseList()
+                for tag in self.tags:
+                    bl.append(Tag.from_dict({"id": tag}))
+                setattr(self, "tags", bl)
+
+            if self.hardware:
+                setattr(self, "hardware_model", self.hardware.get("model"))
+                setattr(self, "hardware_manufacturer", self.hardware.get("manufacturer"))
+                setattr(self, "hardware", None)
 
         for timestamp_field in FROM_TIMESTAMP_FIELDS:
             if getattr(self, timestamp_field):
@@ -188,20 +207,3 @@ class Asset(BaseClass):
                     )
                 except (OSError, TypeError):
                     setattr(self, timestamp_field, None)
-
-        if self.interfaces:
-            bl = BaseList()
-            for interface in self.interfaces:
-                bl.append(PMInterface.from_dict(interface))
-            setattr(self, "interfaces", bl)
-
-        if self.tags:
-            bl = BaseList()
-            for tag in self.tags:
-                bl.append(Tag.from_dict({"id": tag}))
-            setattr(self, "tags", bl)
-
-        if self.hardware:
-            setattr(self, "hardware_model", self.hardware.get("model"))
-            setattr(self, "hardware_manufacturer", self.hardware.get("manufacturer"))
-            setattr(self, "hardware", None)

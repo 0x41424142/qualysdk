@@ -9,6 +9,7 @@ from datetime import datetime
 from .PMAsset import PMAssetJobView
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -29,19 +30,20 @@ class JobResultSummary(BaseClass):
         if self.createdOn:
             setattr(self, "createdOn", datetime.fromtimestamp(self.createdOn / 1000))
 
-        if self.assets:
-            bl = BaseList()
-            for asset in self.assets:
-                asset_dict = dict()
-                for key, value in asset.items():
-                    if key == "asset":
-                        asset_dict.update(value)
-                    else:
-                        asset_dict[key] = value
+        if not DONT_EXPAND.flag:
+            if self.assets:
+                bl = BaseList()
+                for asset in self.assets:
+                    asset_dict = dict()
+                    for key, value in asset.items():
+                        if key == "asset":
+                            asset_dict.update(value)
+                        else:
+                            asset_dict[key] = value
 
-                asset_dict["jobId"] = self.id
-                bl.append(PMAssetJobView.from_dict(asset_dict))
-            setattr(self, "assets", bl)
+                    asset_dict["jobId"] = self.id
+                    bl.append(PMAssetJobView.from_dict(asset_dict))
+                setattr(self, "assets", bl)
 
     def __getitem__(self, key):
         return getattr(self, key)

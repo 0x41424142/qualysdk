@@ -1571,7 +1571,9 @@ def upload_totalcloud_aws_eksnodegroup(
         "releaseVersion": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "version": types.Float(),
+        "version": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "labels": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList

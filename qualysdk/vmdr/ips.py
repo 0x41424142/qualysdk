@@ -10,27 +10,28 @@ from ..exceptions.Exceptions import *
 from .data_classes.ip_converters import convert_ips, convert_ranges
 from ..base.base_list import BaseList
 from ..base import xml_parser
+from ..base import DONT_EXPAND
 
 
-def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
+def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList | dict[str, BaseList[str]]:
     """
     Gets a list of IP addresses from the Qualys subscription.
 
     Params:
-        auth (BasicAuth): Qualys BasicAuth object.
+        - auth (BasicAuth): Qualys BasicAuth object.
 
     ## Kwargs:
 
-        action (str): Action to perform on the IP addresses. Defaults to "list". WARNING: SDK automatically sets this value. It is just included for completeness.
-        echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value. It is just included for completeness.
-        ips (str): Show only certain IP addresses/ranges. One or more IPs/ranges may be specified. Multiple entries are comma separated. A host IP range is specified with a hyphen (for example, 10.10.10.44-10.10.10.90).
-        network_id (Union[str, int]): Network ID to filter on. Defaults to None. NOTE: This has to be enabled in the Qualys subscription!
-        tracking_method (Literal[None, "IP", "DNS", "NETBIOS"]): Tracking method to filter on. Defaults to None. Valid values are IP, DNS, NETBIOS.
-        compliance_enabled (Union[str, bool]): Whether to filter to IPs within the compliance module. Defaults to None.
-        certview_enabled (Union[str, bool]): Whether to filter to IPs within certview module. Defaults to None.
+        - action (str): Action to perform on the IP addresses. Defaults to "list". WARNING: SDK automatically sets this value. It is just included for completeness.
+        - echo_request (bool): Whether to echo the request. Defaults to False. WARNING: SDK automatically sets this value. It is just included for completeness.
+        - ips (str): Show only certain IP addresses/ranges. One or more IPs/ranges may be specified. Multiple entries are comma separated. A host IP range is specified with a hyphen (for example, 10.10.10.44-10.10.10.90).
+        - network_id (Union[str, int]): Network ID to filter on. Defaults to None. NOTE: This has to be enabled in the Qualys subscription!
+        - tracking_method (Literal[None, "IP", "DNS", "NETBIOS"]): Tracking method to filter on. Defaults to None. Valid values are IP, DNS, NETBIOS.
+        - compliance_enabled (Union[str, bool]): Whether to filter to IPs within the compliance module. Defaults to None.
+        - certview_enabled (Union[str, bool]): Whether to filter to IPs within certview module. Defaults to None.
 
     Returns:
-        BaseList: BaseList object containing the IP addresses/ranges.
+        - BaseList or dict[str, BaseList[str]]: A BaseList object containing the IP addresses. If DONT_EXPAND is set, a dictionary with the key IP_OBJ with the value of the BaseList object is returned.
     """
     ip_list = BaseList()
 
@@ -74,8 +75,14 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList:
 
     else:
         raise Exception(f"Failed to pull IP list. Status code: {response.status_code}")
-
-    return ip_list
+    
+    if DONT_EXPAND.flag:
+        # If DONT_EXPAND is set, convert the IPs to strings:
+        return {
+            "IP_OBJ": BaseList([str(ip) for ip in ip_list]),
+        }
+    else:
+        return ip_list
 
 
 def add_ips(

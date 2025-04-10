@@ -7,6 +7,7 @@ from typing import Union, Dict
 from datetime import datetime
 
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass(order=True)
@@ -175,27 +176,28 @@ class VMDRScheduledReport(BaseClass):
         if self.ACTIVE:
             self.ACTIVE = bool(self.ACTIVE)
 
-        if self.SCHEDULE:
-            # First, do all the conversions.
-            self.START_DATE_UTC = datetime.fromisoformat(
-                self.SCHEDULE["START_DATE_UTC"]
-            )
-            self.START_HOUR = int(self.SCHEDULE["START_HOUR"])
-            self.START_MINUTE = int(self.SCHEDULE["START_MINUTE"])
-            self.TIME_ZONE = self.SCHEDULE["TIME_ZONE"]
-            self.TIME_ZONE_CODE = self.TIME_ZONE["TIME_ZONE_CODE"]
-            self.TIME_ZONE_DETAILS = self.TIME_ZONE["TIME_ZONE_DETAILS"]
-            self.DST_SELECTED = bool(self.SCHEDULE["DST_SELECTED"])
-            # Finally, remove all the above keys from the SCHEDULE dict,
-            # leaving us only with the frequency data.
-            for key in [
-                "START_DATE_UTC",
-                "START_HOUR",
-                "START_MINUTE",
-                "TIME_ZONE",
-                "DST_SELECTED",
-            ]:
-                self.SCHEDULE.pop(key)
+        if not DONT_EXPAND.flag:
+            if self.SCHEDULE:
+                # First, do all the conversions.
+                self.START_DATE_UTC = datetime.fromisoformat(
+                    self.SCHEDULE["START_DATE_UTC"]
+                )
+                self.START_HOUR = int(self.SCHEDULE["START_HOUR"])
+                self.START_MINUTE = int(self.SCHEDULE["START_MINUTE"])
+                self.TIME_ZONE = self.SCHEDULE["TIME_ZONE"]
+                self.TIME_ZONE_CODE = self.TIME_ZONE["TIME_ZONE_CODE"]
+                self.TIME_ZONE_DETAILS = self.TIME_ZONE["TIME_ZONE_DETAILS"]
+                self.DST_SELECTED = bool(self.SCHEDULE["DST_SELECTED"])
+                # Finally, remove all the above keys from the SCHEDULE dict,
+                # leaving us only with the frequency data.
+                for key in [
+                    "START_DATE_UTC",
+                    "START_HOUR",
+                    "START_MINUTE",
+                    "TIME_ZONE",
+                    "DST_SELECTED",
+                ]:
+                    self.SCHEDULE.pop(key)
 
     def __int__(self):
         return self.ID

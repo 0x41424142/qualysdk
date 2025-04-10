@@ -16,6 +16,7 @@ from .ip_converters import *
 from .hosts import VMDRID
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass(order=True)
@@ -139,24 +140,63 @@ class AssetGroup(BaseClass):
         INT_LISTS = ["APPLIANCE_IDS", "ASSIGNED_USER_IDS", "ASSIGNED_UNIT_IDS"]
         STR_LISTS = ["DNS_LIST", "NETBIOS_LIST", "EC2_IDS", "COMMENTS", "DOMAIN_LIST"]
 
-        for str_field in STR_LISTS:
-            if getattr(self, str_field):
-                setattr(self, str_field, BaseList(getattr(self, str_field).split(",")))
+        if not DONT_EXPAND.flag:
+            for str_field in STR_LISTS:
+                if getattr(self, str_field):
+                    setattr(self, str_field, BaseList(getattr(self, str_field).split(",")))
 
-        for int_field in INT_LISTS:
-            if getattr(self, int_field):
-                if isinstance(getattr(self, int_field), str):
-                    setattr(
-                        self,
-                        int_field,
-                        BaseList([int(x) for x in getattr(self, int_field).split(",")]),
+            for int_field in INT_LISTS:
+                if getattr(self, int_field):
+                    if isinstance(getattr(self, int_field), str):
+                        setattr(
+                            self,
+                            int_field,
+                            BaseList([int(x) for x in getattr(self, int_field).split(",")]),
+                        )
+                    else:
+                        setattr(
+                            self,
+                            int_field,
+                            BaseList([int(x) for x in getattr(self, int_field)]),
+                        )
+
+            # Convert IP_SET to BaseList of ipaddress.* objs.:
+            if self.IP_SET:
+                final_ip_set = BaseList()
+                if self.IP_SET.get("IP_RANGE"):
+                    if isinstance(self.IP_SET.get("IP_RANGE"), str):
+                        # We can use single_range here because it's a single IP range.
+                        final_ip_set.extend([single_range(self.IP_SET.get("IP_RANGE"))])
+                    else:
+                        # We can use convert_ranges here because it's a list of IP ranges.
+                        final_ip_set.extend(convert_ranges(self.IP_SET.get("IP_RANGE")))
+
+                if self.IP_SET.get("IP"):
+                    if isinstance(self.IP_SET.get("IP"), str):
+                        # We can use single_ip here because it's a single IP.
+                        final_ip_set.extend([single_ip(self.IP_SET.get("IP"))])
+                    else:
+                        # We can use convert_ips here because it's a list of IPs.
+                        final_ip_set.extend(convert_ips(self.IP_SET.get("IP")))
+
+                self.IP_SET = final_ip_set
+
+            # Convert HOST_IDS to BaseList of VMDRID objs.:
+            if self.HOST_IDS:
+                final_host_ids = BaseList()
+                if isinstance(self.HOST_IDS, str):
+                    final_host_ids.extend(
+                        [
+                            VMDRID(ID=host_id, TYPE="host")
+                            for host_id in self.HOST_IDS.split(",")
+                        ]
                     )
                 else:
-                    setattr(
-                        self,
-                        int_field,
-                        BaseList([int(x) for x in getattr(self, int_field)]),
+                    final_host_ids.extend(
+                        [VMDRID(ID=host_id, TYPE="host") for host_id in self.HOST_IDS]
                     )
+
+                self.HOST_IDS = final_host_ids
 
         for dt_field in DT_FIELDS:
             if getattr(self, dt_field):
@@ -165,45 +205,7 @@ class AssetGroup(BaseClass):
         for int_field in INT_FIELDS:
             if getattr(self, int_field):
                 setattr(self, int_field, int(getattr(self, int_field)))
-
-        # Convert IP_SET to BaseList of ipaddress.* objs.:
-        if self.IP_SET:
-            final_ip_set = BaseList()
-            if self.IP_SET.get("IP_RANGE"):
-                if isinstance(self.IP_SET.get("IP_RANGE"), str):
-                    # We can use single_range here because it's a single IP range.
-                    final_ip_set.extend([single_range(self.IP_SET.get("IP_RANGE"))])
-                else:
-                    # We can use convert_ranges here because it's a list of IP ranges.
-                    final_ip_set.extend(convert_ranges(self.IP_SET.get("IP_RANGE")))
-
-            if self.IP_SET.get("IP"):
-                if isinstance(self.IP_SET.get("IP"), str):
-                    # We can use single_ip here because it's a single IP.
-                    final_ip_set.extend([single_ip(self.IP_SET.get("IP"))])
-                else:
-                    # We can use convert_ips here because it's a list of IPs.
-                    final_ip_set.extend(convert_ips(self.IP_SET.get("IP")))
-
-            self.IP_SET = final_ip_set
-
-        # Convert HOST_IDS to BaseList of VMDRID objs.:
-        if self.HOST_IDS:
-            final_host_ids = BaseList()
-            if isinstance(self.HOST_IDS, str):
-                final_host_ids.extend(
-                    [
-                        VMDRID(ID=host_id, TYPE="host")
-                        for host_id in self.HOST_IDS.split(",")
-                    ]
-                )
-            else:
-                final_host_ids.extend(
-                    [VMDRID(ID=host_id, TYPE="host") for host_id in self.HOST_IDS]
-                )
-
-            self.HOST_IDS = final_host_ids
-
+                
     def __str__(self):
         return self.TITLE
 

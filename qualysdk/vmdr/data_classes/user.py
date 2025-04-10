@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
-
+from ...base import DONT_EXPAND
 
 @dataclass
 class User(BaseClass):
@@ -154,22 +154,22 @@ class User(BaseClass):
         ]
 
         # Parse out the nested fields
+        if not DONT_EXPAND.flag:
+            if self.CONTACT_INFO:
+                for key, value in self.CONTACT_INFO.items():
+                    setattr(self, key, value if value else None)
 
-        if self.CONTACT_INFO:
-            for key, value in self.CONTACT_INFO.items():
-                setattr(self, key, value if value else None)
+            if self.PERMISSIONS:
+                for key, value in self.PERMISSIONS.items():
+                    setattr(self, key, value if value else None)
 
-        if self.PERMISSIONS:
-            for key, value in self.PERMISSIONS.items():
-                setattr(self, key, value if value else None)
+            if self.NOTIFICATIONS:
+                for key, value in self.NOTIFICATIONS.items():
+                    setattr(self, key, value if value else None)
 
-        if self.NOTIFICATIONS:
-            for key, value in self.NOTIFICATIONS.items():
-                setattr(self, key, value if value else None)
-
-        if self.ASSIGNED_ASSET_GROUPS:
-            for key, value in self.ASSIGNED_ASSET_GROUPS.items():
-                setattr(self, key, value if value else None)
+            if self.ASSIGNED_ASSET_GROUPS:
+                for key, value in self.ASSIGNED_ASSET_GROUPS.items():
+                    setattr(self, key, value if value else None)
 
         # Convert the fields to the correct types
 
@@ -194,14 +194,15 @@ class User(BaseClass):
             if getattr(self, bool_field):
                 setattr(self, bool_field, bool(getattr(self, bool_field)))
 
-        if self.ASSET_GROUP_TITLE:
-            bl = BaseList()
-            data = self.ASSET_GROUP_TITLE
-            if not isinstance(data, list):
-                data = [data]
-            for item in data:
-                bl.append(item)
-            self.ASSET_GROUP_TITLE = bl
+        if not DONT_EXPAND.flag:
+            if self.ASSET_GROUP_TITLE:
+                bl = BaseList()
+                data = self.ASSET_GROUP_TITLE
+                if not isinstance(data, list):
+                    data = [data]
+                for item in data:
+                    bl.append(item)
+                self.ASSET_GROUP_TITLE = bl
 
         if self.MAP == "none":
             self.MAP = None

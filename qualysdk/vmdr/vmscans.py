@@ -23,26 +23,29 @@ def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
     Args:
         auth (BasicAuth): Qualys BasicAuth object.
 
-    Keyword Args:
+    ## Kwargs:
+
         SCAN LIST FILTERS:
-        scan_ref (str): Scan reference ID. Formatted like scan/1234567890123456, compliance/1234567890123456, or qscap/1234567890123456.
-        state (Union[Literal["Running", "Paused", "Canceled", "Finished", "Error", "Queued", "Loading"], BaseList[str]): State of the scan. Multiple states can be specified as a comma-separated string. Can also pass a BaseList of strings.
-        processed (bool): Whether the scan has been processed. Defaults to None.
-        type (Literal["On-Demand", "API", "Scheduled"]): Type of scan. Defaults to None.
-        target (Union[str, BaseList[str]]) Target IP(s) of the scan. Can be a single IP string, or a BaseList of strings. Calls API with the correct format - a comma separated string. If an IP range/network obj is passed, it is formatted as 1.2.3.4-5.6.7.8.
-        user_login (str): Filter on owner of the scan. Defaults to None.
-        launched_after_datetime (Union[strm datetime]): Filter on scans launched after a certain datetime. Can be a string or a datetime object. If a datetime object is passed, it is converted to a string.
-        launched_before_datetime (Union[str, datetime]): Filter on scans launched before a certain datetime. Can be a string or a datetime object. If a datetime object is passed, it is converted to a string.
-        scan_type (Literal["certview", "ec2certview"]): Filter on scan type. Defaults to None.
-        client_id (Union[str, int]): Filter on client ID. Defaults to None.
-        client_name (str): Filter on client name. Defaults to None.
+
+        -scan_ref (str): Scan reference ID. Formatted like scan/1234567890123456, compliance/1234567890123456, or qscap/1234567890123456.
+        -state (Union[Literal["Running", "Paused", "Canceled", "Finished", "Error", "Queued", "Loading"], BaseList[str]): State of the scan. Multiple states can be specified as a comma-separated string. Can also pass a BaseList of strings.
+        -processed (bool): Whether the scan has been processed. Defaults to None.
+        -type (Literal["On-Demand", "API", "Scheduled"]): Type of scan. Defaults to None.
+        -target (Union[str, BaseList[str]]) Target IP(s) of the scan. Can be a single IP string, or a BaseList of strings. Calls API with the correct format - a comma separated string. If an IP range/network obj is passed, it is formatted as 1.2.3.4-5.6.7.8.
+        -user_login (str): Filter on owner of the scan. Defaults to None.
+        -launched_after_datetime (Union[strm datetime]): Filter on scans launched after a certain datetime. Can be a string or a datetime object. If a datetime object is passed, it is converted to a string.
+        -launched_before_datetime (Union[str, datetime]): Filter on scans launched before a certain datetime. Can be a string or a datetime object. If a datetime object is passed, it is converted to a string.
+        -scan_type (Literal["certview", "ec2certview"]): Filter on scan type. Defaults to None.
+        -client_id (Union[str, int]): Filter on client ID. Defaults to None.
+        -client_name (str): Filter on client name. Defaults to None.
 
         SHOW/HIDE FIELDS:
-        show_ags (bool): Whether to show AGs. Defaults to None.
-        show_op (bool): Whether to show OP. Defaults to None.
-        show_status (bool): Whether to show status. Defaults to None.
-        show_last (bool): Whether to show last scan. Defaults to None.
-        ignore_target (bool): Whether to ignore the target. Defaults to None.
+        
+        -show_ags (bool): Whether to show AGs. Defaults to None.
+        -show_op (bool): Whether to show OP. Defaults to None.
+        -show_status (bool): Whether to show status. Defaults to None.
+        -show_last (bool): Whether to show last scan. Defaults to None.
+        -ignore_target (bool): Whether to ignore the target. Defaults to None.
 
     Returns:
         BaseList: BaseList object containing the scan(s) in the Qualys subscription.

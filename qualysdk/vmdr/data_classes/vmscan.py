@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from .ip_converters import *
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 def parse_duration(duration: str) -> timedelta:
@@ -102,30 +103,31 @@ class VMScan(BaseClass):
             self.STATE = self.STATUS["STATE"]
 
         # For the IPs/IP ranges in the TARGET field, determine if it is a single IP/range, or a comma separated string of IPs/ranges.
-        if self.TARGET:
-            final_list = BaseList()
-            self.TARGET = self.TARGET.split(",")
-            for t in self.TARGET:
-                if "-" in t:
-                    t = single_range(t)
-                else:
-                    t = single_ip(t)
-                final_list.append(t)
-            self.TARGET = final_list
+        if not DONT_EXPAND.flag:
+            if self.TARGET:
+                final_list = BaseList()
+                self.TARGET = self.TARGET.split(",")
+                for t in self.TARGET:
+                    if "-" in t:
+                        t = single_range(t)
+                    else:
+                        t = single_ip(t)
+                    final_list.append(t)
+                self.TARGET = final_list
+
+            # create the baselist for the asset group titles
+            # first, check if [ASSET_GROUP_TITLE_LIST] is a dict. If it is, convert it to a list
+            if self.ASSET_GROUP_TITLE_LIST:
+                if isinstance(self.ASSET_GROUP_TITLE_LIST, dict):
+                    self.ASSET_GROUP_TITLE_LIST = [self.ASSET_GROUP_TITLE_LIST]
+                # create the BaseList object
+                final_list = BaseList()
+                for ag in self.ASSET_GROUP_TITLE_LIST:
+                    final_list.append(ag["ASSET_GROUP_TITLE"])
+                self.ASSET_GROUP_TITLE_LIST = final_list
 
         if self.PROCESSED:
             self.PROCESSED = bool(self.PROCESSED)
-
-        # create the baselist for the asset group titles
-        # first, check if [ASSET_GROUP_TITLE_LIST] is a dict. If it is, convert it to a list
-        if self.ASSET_GROUP_TITLE_LIST:
-            if isinstance(self.ASSET_GROUP_TITLE_LIST, dict):
-                self.ASSET_GROUP_TITLE_LIST = [self.ASSET_GROUP_TITLE_LIST]
-            # create the BaseList object
-            final_list = BaseList()
-            for ag in self.ASSET_GROUP_TITLE_LIST:
-                final_list.append(ag["ASSET_GROUP_TITLE"])
-            self.ASSET_GROUP_TITLE_LIST = final_list
 
     def __str__(self):
         return f"VMScan: {self.TITLE} - {self.REF}"

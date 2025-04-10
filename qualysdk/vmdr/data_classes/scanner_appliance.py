@@ -12,6 +12,7 @@ from .asset_group import AssetGroup
 from .tag import Tag
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 def build_dataclass_baselist(
@@ -172,29 +173,30 @@ class ScannerCloudInfo(BaseClass):
         INT_FIELDS = ["ACCOUNT_ID"]
         IPV4_FIELDS = ["INSTANCE_ADDRESS_PRIVATE", "INSTANCE_ADDRESS_PUBLIC"]
 
-        if self.EC2_INFO:
-            # Set the parsed out attributes
-            self.INSTANCE_ID = self.EC2_INFO.get("INSTANCE_ID")
-            self.INSTANCE_TYPE = self.EC2_INFO.get("INSTANCE_TYPE")
-            self.AMI_ID = self.EC2_INFO.get("AMI_ID")
-            self.ACCOUNT_ID = self.EC2_INFO.get("ACCOUNT_ID")
-            self.INSTANCE_REGION = self.EC2_INFO.get("INSTANCE_REGION")
-            self.INSTANVE_AVAILABILITY_ZONE = self.EC2_INFO.get(
-                "INSTANVE_AVAILABILITY_ZONE"
-            )
-            self.INSTANCE_ZONE_TYPE = self.EC2_INFO.get("INSTANCE_ZONE_TYPE")
-            self.INSTANCE_VPC_ID = self.EC2_INFO.get("INSTANCE_VPC_ID")
-            self.INSTANCE_SUBNET_ID = self.EC2_INFO.get("INSTANCE_SUBNET_ID")
-            self.INSTANCE_ADDRESS_PRIVATE = self.EC2_INFO.get(
-                "INSTANCE_ADDRESS_PRIVATE"
-            )
-            self.INSTANCE_ADDRESS_PUBLIC = self.EC2_INFO.get("INSTANCE_ADDRESS_PUBLIC")
-            self.HOSTNAME_PRIVATE = self.EC2_INFO.get("HOSTNAME_PRIVATE")
-            if self.EC2_INFO.get("SECURITY_GROUPS"):
-                self.SECURITY_GROUPS = SecurityGroup.from_dict(
-                    self.EC2_INFO.get("SECURITY_GROUPS")
+        if not DONT_EXPAND.flag:
+            if self.EC2_INFO:
+                # Set the parsed out attributes
+                self.INSTANCE_ID = self.EC2_INFO.get("INSTANCE_ID")
+                self.INSTANCE_TYPE = self.EC2_INFO.get("INSTANCE_TYPE")
+                self.AMI_ID = self.EC2_INFO.get("AMI_ID")
+                self.ACCOUNT_ID = self.EC2_INFO.get("ACCOUNT_ID")
+                self.INSTANCE_REGION = self.EC2_INFO.get("INSTANCE_REGION")
+                self.INSTANVE_AVAILABILITY_ZONE = self.EC2_INFO.get(
+                    "INSTANVE_AVAILABILITY_ZONE"
                 )
-            self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")["SETTING"]
+                self.INSTANCE_ZONE_TYPE = self.EC2_INFO.get("INSTANCE_ZONE_TYPE")
+                self.INSTANCE_VPC_ID = self.EC2_INFO.get("INSTANCE_VPC_ID")
+                self.INSTANCE_SUBNET_ID = self.EC2_INFO.get("INSTANCE_SUBNET_ID")
+                self.INSTANCE_ADDRESS_PRIVATE = self.EC2_INFO.get(
+                    "INSTANCE_ADDRESS_PRIVATE"
+                )
+                self.INSTANCE_ADDRESS_PUBLIC = self.EC2_INFO.get("INSTANCE_ADDRESS_PUBLIC")
+                self.HOSTNAME_PRIVATE = self.EC2_INFO.get("HOSTNAME_PRIVATE")
+                if self.EC2_INFO.get("SECURITY_GROUPS"):
+                    self.SECURITY_GROUPS = SecurityGroup.from_dict(
+                        self.EC2_INFO.get("SECURITY_GROUPS")
+                    )
+                self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")["SETTING"]
 
         for int_field in INT_FIELDS:
             if getattr(self, int_field):
@@ -204,7 +206,8 @@ class ScannerCloudInfo(BaseClass):
             if getattr(self, ip_field):
                 setattr(self, ip_field, IPv4Address(getattr(self, ip_field)))
 
-        del self.EC2_INFO
+        if not DONT_EXPAND.flag:
+            del self.EC2_INFO
 
     def __getitem__(self, key):
         return asdict(self)[key]
@@ -329,11 +332,12 @@ class InterfaceSettings(BaseClass):
             if getattr(self, ip_field):
                 setattr(self, ip_field, IPv4Address(getattr(self, ip_field)))
 
-        if self.DNS:
-            self.DNS_PRIMARY = self.DNS.get("PRIMARY")
-            self.DNS_SECONDARY = self.DNS.get("SECONDARY")
-            self.DOMAIN = self.DNS.get("DOMAIN")
-            del self.DNS
+        if not DONT_EXPAND.flag:
+            if self.DNS:
+                self.DNS_PRIMARY = self.DNS.get("PRIMARY")
+                self.DNS_SECONDARY = self.DNS.get("SECONDARY")
+                self.DOMAIN = self.DNS.get("DOMAIN")
+                del self.DNS
 
     def __str__(self):
         # Comma-separated string of non-empty values in k:v format
@@ -597,22 +601,23 @@ class ScannerAppliance(BaseClass):
                     datetime.strptime(getattr(self, dt_field), "%Y-%m-%dT%H:%M:%S%z"),
                 )
 
-        for custom_field in CUSTOM_DATACLASSES:
-            if getattr(self, custom_field[0]):
-                setattr(
-                    self,
-                    custom_field[0],
-                    build_dataclass_baselist(
-                        getattr(self, custom_field[0]), custom_field[1]
-                    ),
-                )
+        if not DONT_EXPAND.flag:
+            for custom_field in CUSTOM_DATACLASSES:
+                if getattr(self, custom_field[0]):
+                    setattr(
+                        self,
+                        custom_field[0],
+                        build_dataclass_baselist(
+                            getattr(self, custom_field[0]), custom_field[1]
+                        ),
+                    )
 
-        if self.CLOUD_INFO:
-            setattr(self, "CLOUD_INFO", ScannerCloudInfo.from_dict(self.CLOUD_INFO))
+            if self.CLOUD_INFO:
+                setattr(self, "CLOUD_INFO", ScannerCloudInfo.from_dict(self.CLOUD_INFO))
 
-        # convert UUID:
-        if self.UUID:
-            setattr(self, "UUID", uuid(self.UUID))
+            # convert UUID:
+            if self.UUID:
+                setattr(self, "UUID", uuid(self.UUID))
 
         if self.UPDATED:
             setattr(self, "UPDATED", self.UPDATED == "Yes")
@@ -621,38 +626,45 @@ class ScannerAppliance(BaseClass):
         if self.IS_CLOUD_DEPLOYED:
             setattr(self, "IS_CLOUD_DEPLOYED", self.IS_CLOUD_DEPLOYED == "1")
 
-        if self.INTERFACE_SETTINGS:
-            if isinstance(self.INTERFACE_SETTINGS, dict):
-                setattr(
-                    self,
-                    "INTERFACE_SETTINGS",
-                    InterfaceSettings.from_dict(self.INTERFACE_SETTINGS),
-                )
-            else:
-                setattr(
-                    self,
-                    "INTERFACE_SETTINGS",
-                    BaseList(
-                        [
-                            InterfaceSettings.from_dict(item)
-                            for item in self.INTERFACE_SETTINGS
-                        ]
-                    ),
-                )
+        if not DONT_EXPAND.flag:
+            if self.INTERFACE_SETTINGS:
+                if isinstance(self.INTERFACE_SETTINGS, dict):
+                    setattr(
+                        self,
+                        "INTERFACE_SETTINGS",
+                        InterfaceSettings.from_dict(self.INTERFACE_SETTINGS),
+                    )
+                else:
+                    setattr(
+                        self,
+                        "INTERFACE_SETTINGS",
+                        BaseList(
+                            [
+                                InterfaceSettings.from_dict(item)
+                                for item in self.INTERFACE_SETTINGS
+                            ]
+                        ),
+                    )
 
-        if self.PROXY_SETTINGS:
-            if isinstance(self.PROXY_SETTINGS, dict):
-                setattr(
-                    self, "PROXY_SETTINGS", ProxySettings.from_dict(self.PROXY_SETTINGS)
-                )
-            else:
-                setattr(
-                    self,
-                    "PROXY_SETTINGS",
-                    BaseList(
-                        [ProxySettings.from_dict(item) for item in self.PROXY_SETTINGS]
-                    ),
-                )
+            if self.PROXY_SETTINGS:
+                if isinstance(self.PROXY_SETTINGS, dict):
+                    setattr(
+                        self, "PROXY_SETTINGS", ProxySettings.from_dict(self.PROXY_SETTINGS)
+                    )
+                else:
+                    setattr(
+                        self,
+                        "PROXY_SETTINGS",
+                        BaseList(
+                            [ProxySettings.from_dict(item) for item in self.PROXY_SETTINGS]
+                        ),
+                    )
+
+        #check for empty dicts in the dataclass and set them to None:
+        if DONT_EXPAND.flag:
+            for attr in self.__dataclass_fields__.keys():
+                if getattr(self, attr) == {}:
+                    setattr(self, attr, None)
 
     def __str__(self):
         return self.NAME

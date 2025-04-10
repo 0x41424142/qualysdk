@@ -388,11 +388,12 @@ def get_scheduled_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]
     Get a list of scheduled reports in VMDR, according to kwargs.
 
     Parameters:
-        auth: Required[BasicAuth] - The BasicAuth object.
+        - auth Required[BasicAuth] - The BasicAuth object.
 
-    :Kwargs:
-        id: Optional[Union[int,str]] - A specific report ID to get.
-        is_active: Optional[bool] - Filter output to active or inactive reports. True for active, False for inactive.
+    ## Kwargs:
+
+        - id: Optional[Union[int,str]] - A specific report ID to get.
+        - is_active: Optional[bool] - Filter output to active or inactive reports. True for active, False for inactive.
 
     Returns:
         BaseList[VMDRReport] - A list of VMDRReport objects.

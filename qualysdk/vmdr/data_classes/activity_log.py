@@ -3,7 +3,7 @@ activity_log.py - Contains the ActivityLog class, which represents
 a single activity log entry.
 """
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import Union, Optional
 from datetime import datetime
 from ipaddress import ip_address, IPv4Address, IPv6Address

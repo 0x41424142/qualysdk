@@ -9,6 +9,7 @@ from datetime import datetime
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
 from ...exceptions.Exceptions import *
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -45,11 +46,12 @@ class RemediationActivity(BaseClass):
             if self.cloudType.upper() == "AWS":
                 self.accountId = int(self.accountId)
 
-        if self.Errors:
-            setattr(self, "errors", str(self.Errors))
+        if not DONT_EXPAND.flag:
+            if self.Errors:
+                setattr(self, "errors", str(self.Errors))
 
-        if self.policyNames:
-            bl = BaseList()
-            for policy in self.policyNames:
-                bl.append(policy)
-            setattr(self, "policyNames", bl)
+            if self.policyNames:
+                bl = BaseList()
+                for policy in self.policyNames:
+                    bl.append(policy)
+                setattr(self, "policyNames", bl)

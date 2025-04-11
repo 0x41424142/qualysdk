@@ -8,6 +8,7 @@ from datetime import datetime
 
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -71,12 +72,13 @@ class AccountLevelEvaluation(BaseClass):
                 datetime.fromisoformat(getattr(self, "evaluatedOn")),
             )
 
-        if self.evaluationDates:
-            data = self.evaluationDates
-            setattr(self, "evaluationDates", Evaluation.from_dict(data))
+        if not DONT_EXPAND.flag:
+            if self.evaluationDates:
+                data = self.evaluationDates
+                setattr(self, "evaluationDates", Evaluation.from_dict(data))
 
-        if self.evidences:
-            bl = BaseList()
-            for evidence in self.evidences:
-                bl.append(evidence)
-            setattr(self, "evidences", bl)
+            if self.evidences:
+                bl = BaseList()
+                for evidence in self.evidences:
+                    bl.append(evidence)
+                setattr(self, "evidences", bl)

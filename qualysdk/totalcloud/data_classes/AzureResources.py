@@ -9,6 +9,7 @@ from datetime import datetime
 from .QID import QID
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
+from ...base import DONT_EXPAND
 
 
 def process_file_or_blob(self, data, prefix):
@@ -56,33 +57,34 @@ class BaseResource(BaseClass):
             if getattr(self, field) and not isinstance(getattr(self, field), datetime):
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
-        if self.additionalDetails:
-            setattr(self, "additionalDetails", str(self.additionalDetails))
+        if DONT_EXPAND.flag:
+            if self.additionalDetails:
+                setattr(self, "additionalDetails", str(self.additionalDetails))
 
-        if self.connectorUuids:
-            data = self.connectorUuids
-            bl = BaseList()
-            for uuid in data:
-                bl.append(uuid)
-            setattr(self, "connectorUuids", bl)
+            if self.connectorUuids:
+                data = self.connectorUuids
+                bl = BaseList()
+                for uuid in data:
+                    bl.append(uuid)
+                setattr(self, "connectorUuids", bl)
 
-        if self.tags:
-            data = self.tags
-            bl = BaseList()
-            if isinstance(data, dict):
-                data = [data]
-            for tag in data:
-                bl.append(f"{tag.get('value', None)}")
-            setattr(self, "tags", bl)
+            if self.tags:
+                data = self.tags
+                bl = BaseList()
+                if isinstance(data, dict):
+                    data = [data]
+                for tag in data:
+                    bl.append(f"{tag.get('value', None)}")
+                setattr(self, "tags", bl)
 
-        if self.qualysTags:
-            data = self.qualysTags
-            bl = BaseList()
-            if isinstance(data, dict):
-                data = [data]
-            for tag in data:
-                bl.append(tag["tagName"])
-            setattr(self, "qualysTags", bl)
+            if self.qualysTags:
+                data = self.qualysTags
+                bl = BaseList()
+                if isinstance(data, dict):
+                    data = [data]
+                for tag in data:
+                    bl.append(tag["tagName"])
+                setattr(self, "qualysTags", bl)
 
         if self.remediationEnabled:
             data = self.remediationEnabled
@@ -119,27 +121,28 @@ class AzureVM(BaseResource):
         """
         super().__post_init__()
 
-        if self.vulnerabilityStats:
-            data = self.vulnerabilityStats
-            setattr(self, "vulnerabilityStats", QID(**data))
+        if not DONT_EXPAND.flag:
+            if self.vulnerabilityStats:
+                data = self.vulnerabilityStats
+                setattr(self, "vulnerabilityStats", QID(**data))
 
-        if self.statuses:
-            data = self.statuses
-            bl = BaseList()
-            for status in data:
-                bl.append(
-                    f"{status.get('code')}:{status.get('level')}:{status.get('displayStatus')}:{status.get('message')}:{status.get('time')}"
-                )
-            setattr(self, "statuses", bl)
+            if self.statuses:
+                data = self.statuses
+                bl = BaseList()
+                for status in data:
+                    bl.append(
+                        f"{status.get('code')}:{status.get('level')}:{status.get('displayStatus')}:{status.get('message')}:{status.get('time')}"
+                    )
+                setattr(self, "statuses", bl)
 
-        if self.imageData:
-            data = self.imageData
-            bl = BaseList()
-            for image in data:
-                bl.append(
-                    f"{image.get('id')}:{image.get('offer')}:{image.get('publisher')}:{image.get('version')} (sku:{image.get('sku')})"
-                )
-            setattr(self, "imageData", bl)
+            if self.imageData:
+                data = self.imageData
+                bl = BaseList()
+                for image in data:
+                    bl.append(
+                        f"{image.get('id')}:{image.get('offer')}:{image.get('publisher')}:{image.get('version')} (sku:{image.get('sku')})"
+                    )
+                setattr(self, "imageData", bl)
 
 
 @dataclass
@@ -170,19 +173,20 @@ class AzureWebApp(BaseResource):
     def __post_init__(self):
         super().__post_init__()
 
-        if self.enabledHosts:
-            data = self.enabledHosts
-            bl = BaseList()
-            for host in data:
-                bl.append(host)
-            setattr(self, "enabledHosts", bl)
+        if not DONT_EXPAND.flag:
+            if self.enabledHosts:
+                data = self.enabledHosts
+                bl = BaseList()
+                for host in data:
+                    bl.append(host)
+                setattr(self, "enabledHosts", bl)
 
-        if self.subKinds:
-            data = self.subKinds
-            bl = BaseList()
-            for kind in data:
-                bl.append(kind)
-            setattr(self, "subKinds", bl)
+            if self.subKinds:
+                data = self.subKinds
+                bl = BaseList()
+                for kind in data:
+                    bl.append(kind)
+                setattr(self, "subKinds", bl)
 
 
 @dataclass
@@ -242,16 +246,17 @@ class AzureStorageAccount(BaseResource):
             "blob_lastEnabledTime",
         ]
 
-        if self.resourceIdentity:
-            dict_keys = ["type"]
-            for field in dict_keys:
-                if self.resourceIdentity.get(field):
-                    setattr(
-                        self,
-                        f"resourceIdentity_{field}",
-                        self.resourceIdentity.get(field),
-                    )
-            setattr(self, "resourceIdentity", None)
+        if not DONT_EXPAND.flag:
+            if self.resourceIdentity:
+                dict_keys = ["type"]
+                for field in dict_keys:
+                    if self.resourceIdentity.get(field):
+                        setattr(
+                            self,
+                            f"resourceIdentity_{field}",
+                            self.resourceIdentity.get(field),
+                        )
+                setattr(self, "resourceIdentity", None)
 
         if self.file:
             process_file_or_blob(self, self.file, "file")
@@ -267,28 +272,29 @@ class AzureStorageAccount(BaseResource):
             else:
                 setattr(self, "hnsEnabled", self.hnsEnabled)
 
-        if self.networkAcls:
-            dict_keys = ["bypass", "defaultAction", "ipRules", "virtualNetworkRules"]
-            ipRules_list = BaseList()
-            virtualNetworkRules_list = BaseList()
-            for field in dict_keys:
-                if self.networkAcls.get(field):
-                    if field == "ipRules":
-                        for ipRule in self.networkAcls.get(field):
-                            ipRules_list.append(
-                                f"{ipRule.get('action')} {ipRule.get('value')}"
+        if not DONT_EXPAND.flag:
+            if self.networkAcls:
+                dict_keys = ["bypass", "defaultAction", "ipRules", "virtualNetworkRules"]
+                ipRules_list = BaseList()
+                virtualNetworkRules_list = BaseList()
+                for field in dict_keys:
+                    if self.networkAcls.get(field):
+                        if field == "ipRules":
+                            for ipRule in self.networkAcls.get(field):
+                                ipRules_list.append(
+                                    f"{ipRule.get('action')} {ipRule.get('value')}"
+                                )
+                        elif field == "virtualNetworkRules":
+                            for virtualNetworkRule in self.networkAcls.get(field):
+                                # TODO: parse virtualNetworkRule
+                                virtualNetworkRules_list.append(virtualNetworkRule)
+                        else:
+                            setattr(
+                                self, f"networkAcls_{field}", self.networkAcls.get(field)
                             )
-                    elif field == "virtualNetworkRules":
-                        for virtualNetworkRule in self.networkAcls.get(field):
-                            # TODO: parse virtualNetworkRule
-                            virtualNetworkRules_list.append(virtualNetworkRule)
-                    else:
-                        setattr(
-                            self, f"networkAcls_{field}", self.networkAcls.get(field)
-                        )
-            setattr(self, "networkAcls_ipRules", ipRules_list)
-            setattr(self, "networkAcls_virtualNetworkRules", virtualNetworkRules_list)
-            setattr(self, "networkAcls", None)
+                setattr(self, "networkAcls_ipRules", ipRules_list)
+                setattr(self, "networkAcls_virtualNetworkRules", virtualNetworkRules_list)
+                setattr(self, "networkAcls", None)
 
         for field in DT_FIELDS:
             if getattr(self, field) and not isinstance(getattr(self, field), datetime):

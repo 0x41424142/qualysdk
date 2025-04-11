@@ -1,7 +1,7 @@
 """
 Contains the middleware API call formatting for tagging APIs
 """
-from typing import Union
+from typing import Union, overload
 
 from .base.kwarg_validation import validate_kwargs
 from .data_classes.Tag import Tag
@@ -33,6 +33,8 @@ def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
             params = {"placeholder": "get", "tagId": payload}
         case "create_tag":
             params = {"placeholder": "create", "tagId": ""}
+        case "delete_tag":
+            params = {"placeholder": "delete", "tagId": payload}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -286,3 +288,35 @@ def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
     tag = data[0].get("Tag", {})
     if tag:
         return Tag.from_dict(tag)
+
+@overload
+def delete_tag(auth: BasicAuth, tag_id: Union[int, str]) -> int:
+    ...
+
+@overload
+def delete_tag(auth: BasicAuth, tag_id: list[Union[int,str]]) -> int:
+    ...
+
+def delete_tag(auth: BasicAuth, tag_id: Union[int, str, list[Union[int, str]]]) -> int:
+    """
+    Delete one or more tags by their IDs.
+
+    This method supports overloading to handle both single and multiple tag IDs.
+    To delete multiple tags, pass a list of IDs.
+    To delete a single tag, pass a single ID.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        tag_id (Union[int, str, list[Union[int, str]]]): The ID(s) of the tag(s) to delete.
+
+    Returns:
+        int: The number of tags deleted.
+    """
+
+    if not isinstance(tag_id, list):
+        tag_id = [tag_id]
+    deleted = 0
+    for tag in tag_id:
+        response = call_tags_api(auth, "delete_tag", tag)
+        deleted += response.get("ServiceResponse", {}).get("count", 0)
+    return deleted

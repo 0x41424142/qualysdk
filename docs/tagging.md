@@ -219,17 +219,18 @@ The ```qualysdk-tag``` CLI tool is a command-line interface for the tagging port
 ### Usage
 
 ```bash
-usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags,get_tags,get_tag_details,create_tag} ...
+usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags,get_tags,get_tag_details,create_tag,delete_tag} ...
 
 CLI script to quickly perform tagging operations using qualysdk
 
 positional arguments:
-  {count_tags,get_tags,get_tag_details,create_tag}
+  {count_tags,get_tags,get_tag_details,create_tag,delete_tag}
                         Action to perform
     count_tags          Count how many tags match the given criteria.
     get_tags            Get the tags that match the given criteria.
     get_tag_details     Get all details of a single tag.
-    create_tag          Create a new tag.
+    create_tag          Create a new tag. NOTE: For creating children tags, use --kwarg children with a comma-separated string, like: "child1,child2,etc"
+    delete_tag          Delete a tag. NOTE: For deleting multiple tags, use --kwarg tagId with a comma-separated string, like: 'id1,id2,etc'
 
 options:
   -h, --help            show this help message and exit
@@ -292,4 +293,15 @@ Below shows how to create a dynamic tag with children tags underneath.
 
 ```bash
 qualysdk-tag -u <username> -p <password> create_tag -n "My servers tag" --kwarg ruleType GLOBAL_ASSET_VIEW --kwarg ruleText "hardware.category:Server" --kwarg color "#FFFF00" --kwarg children "CHILD1,CHILD2,CHILD3"
+```
+
+### Delete Tag
+
+```bash
+usage: qualysdk-tag delete_tag [-h] [-o OUTPUT] -t TAGID
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output (json) file to write results to
+  -t, --tagId TAGID    ID(s) of the tag to delete. Multiple values can be provided as a comma-separated string
 ```

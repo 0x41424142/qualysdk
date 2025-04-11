@@ -9,7 +9,8 @@ from qualysdk import BasicAuth, write_json, write_excel, BaseList
 from qualysdk.tagging import *
 
 def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
-    if getattr(args, 'kwarg'):
+    # hasattr is needed to prevent AttributeError:
+    if hasattr(args, 'kwarg') and getattr(args, 'kwarg'):
         kwargs = dict(args.kwarg)
     else:
         kwargs = {}
@@ -33,6 +34,10 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             if "children" in kwargs:
                 kwargs["children"] = BaseList(kwargs["children"].split(","))
             result = create_tag(auth, args.name, **kwargs)
+        case "delete_tag":
+            # parse out tag ids into a list:
+            args.tagId = args.tagId.split(",")
+            result = delete_tag(auth, tag_id=args.tagId)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
@@ -154,6 +159,25 @@ def main():
         metavar=("key", "value"),
     )
 
+    delete_tag_parser = subparsers.add_parser(
+        "delete_tag",
+        help="Delete a tag. NOTE: For deleting multiple tags, use --kwarg tagId with a comma-separated string, like: 'id1,id2,etc'"
+    )
+    delete_tag_parser.add_argument(
+        '-o',
+        '--output',
+        help="Output (json) file to write results to",
+        type=str,
+        default=None
+    )
+    delete_tag_parser.add_argument(
+        "-t",
+        "--tagId",
+        help="ID(s) of the tag to delete. Multiple values can be provided as a comma-separated string",
+        type=str,
+        required=True
+    )
+
     args = parser.parse_args()
 
     # create BasicAuth object
@@ -168,12 +192,14 @@ def main():
         result = cli_findings(auth=auth, args=args, endpoint="get_tag_details")
     elif args.action == "create_tag":
         result = cli_findings(auth=auth, args=args, endpoint="create_tag")
+    elif args.action == "delete_tag":
+        result = cli_findings(auth=auth, args=args, endpoint="delete_tag")
     else:
         parser.print_help()
         exit(1)
 
     if not args.output:
-        if args.action == 'count_tags': print(result)
+        if isinstance(result, int): print(result)
         else: print(result.dump_json(indent=2))
 
 if __name__ == "__main__":

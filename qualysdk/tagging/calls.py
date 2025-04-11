@@ -35,6 +35,8 @@ def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
             params = {"placeholder": "create", "tagId": ""}
         case "delete_tag":
             params = {"placeholder": "delete", "tagId": payload}
+        case "update_tag":
+            params = {"placeholder": "update", "tagId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -222,6 +224,8 @@ def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
     """
     Create a new tag with the given name and optional parameters.
 
+    If no ruleType is provided, the tag will be created as a static tag.
+
     Args:
         auth (BasicAuth): The authentication object.
         name (str): The name of the tag to create.
@@ -229,7 +233,7 @@ def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
 
     ## Kwargs:
 
-        ruleType (Literal["GROOVY", "OS_REGEX", "NETWORK_RANGE", "NAME_CONTAINS", "INSTALLED_SOFTWARE", "OPEN_PORTS", "VULN_EXIST", "ASSET_SEARCH", "NETWORK_TAG", "NETWORK", "NETWORK_RANGE_ENHANCED", "CLOUD_ASSET", "GLOBAL_ASSET_VIEW", "TAGSET", "BUSINESS_INFORMATION", "VULN_DETECTION"]): The rule type for the tag.
+        ruleType (Literal["STATIC", "GROOVY", "OS_REGEX", "NETWORK_RANGE", "NAME_CONTAINS", "INSTALLED_SOFTWARE", "OPEN_PORTS", "VULN_EXIST", "ASSET_SEARCH", "NETWORK_TAG", "NETWORK", "NETWORK_RANGE_ENHANCED", "CLOUD_ASSET", "GLOBAL_ASSET_VIEW", "TAGSET", "BUSINESS_INFORMATION", "VULN_DETECTION"]): The rule type for the tag.
         ruleText (str): The rule text for a new dynamic tag.
         children (list[str]): A list of child tag names to also create.
         parentTagId (int): The ID of the parent tag.
@@ -320,3 +324,90 @@ def delete_tag(auth: BasicAuth, tag_id: Union[int, str, list[Union[int, str]]]) 
         response = call_tags_api(auth, "delete_tag", tag)
         deleted += response.get("ServiceResponse", {}).get("count", 0)
     return deleted
+
+def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
+    """
+    Update an existing tag with the given ID and optional parameters.
+
+    NOTE: You should not try to add and remove children at the same time.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        tag_id (Union[int, str]): The ID of the tag to update.
+        **kwargs: Optional parameters for the tag.
+
+    ## Kwargs:
+
+        name (str): The new name of the tag.
+        ruleType (Literal["STATIC", "GROOVY", "OS_REGEX", "NETWORK_RANGE", "NAME_CONTAINS", "INSTALLED_SOFTWARE", "OPEN_PORTS", "VULN_EXIST", "ASSET_SEARCH", "NETWORK_TAG", "NETWORK", "NETWORK_RANGE_ENHANCED", "CLOUD_ASSET", "GLOBAL_ASSET_VIEW", "TAGSET", "BUSINESS_INFORMATION", "VULN_DETECTION"]): The rule type for the tag.
+        ruleText (str): The rule text for a new dynamic tag.
+        add_children (list[str]): A list of child tag names to add/create.
+        remove_children (list[str]): A list of child tag IDs to remove.
+        parentTagId (int): The ID of the parent tag.
+        criticalityScore (int): The criticality score for the tag.
+        color (str): The hex color code for the tag, such as #FFFFFF.
+        description (str): A description for the tag.
+        provider (Literal["EC2", "AZURE", "GCP", "IBM", "OCI"]): The cloud provider for the tag.
+
+    Returns:
+        Tag: The updated tag object.
+    """
+
+    # if no kwargs are provided, raise an error
+    if not kwargs:
+        raise ValueError("No kwargs provided for tag update")
+
+    # Build the service request:
+    payload_template = {
+        "ServiceRequest": {
+            "data": {
+                "Tag": {
+                    "id": tag_id,
+                    "name": kwargs.get("name"),
+                    "ruleType": kwargs.get("ruleType"),
+                    "ruleText": kwargs.get("ruleText"),
+                    "parentTagId": kwargs.get("parentTagId"),
+                    "criticalityScore": kwargs.get("criticalityScore"),
+                    "color": kwargs.get("color"),
+                    "description": kwargs.get("description"),
+                    "provider": kwargs.get("provider"),
+                }
+            }
+        }
+    }
+
+    # Remove any None values from the payload
+    jsonpayload = {
+        "ServiceRequest": {
+            "data": {
+                "Tag": {k: v for k, v in payload_template["ServiceRequest"]["data"]["Tag"].items() if v is not None}
+            }
+        }
+    }
+
+    # Add children if provided
+    if "add_children" in kwargs:
+        jsonpayload["ServiceRequest"]["data"]["Tag"]["children"] = {
+            "set": {
+                "TagSimple": [
+                    {"name": child} for child in kwargs["add_children"]
+                ]
+            }
+        }
+    # Remove children if provided
+    if "remove_children" in kwargs:
+        jsonpayload["ServiceRequest"]["data"]["Tag"]["children"] = {
+            "remove": {
+                "TagSimple": [
+                    {"id": child} for child in kwargs["remove_children"]
+                ]
+            }
+        }
+
+    response = call_tags_api(auth, "update_tag", jsonpayload)
+    data = response.get("ServiceResponse", {}).get("data", {})
+    if not data:
+        raise ValueError(f"No data found for tag update")
+    tag = data[0].get("Tag", {})
+    if tag:
+        return Tag.from_dict(tag)

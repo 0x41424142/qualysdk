@@ -162,11 +162,13 @@ for tag in tags:
 
 ```create_tag``` creates a new tag, optionally with a parent tag and child tags.
 
+If no `ruleType` is provided, the tag will be static.
+
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```name``` | ```str``` | The name of the tag to create | ✅ |
-| ```ruleType``` | ```Literal["GROOVY", "OS_REGEX", "NETWORK_RANGE", "NAME_CONTAINS", "INSTALLED_SOFTWARE", "OPEN_PORTS", "VULN_EXIST", "ASSET_SEARCH", "NETWORK_TAG", "NETWORK", "NETWORK_RANGE_ENHANCED", "CLOUD_ASSET", "GLOBAL_ASSET_VIEW", "TAGSET", "BUSINESS_INFORMATION", "VULN_DETECTION"]``` | The type of rule the tag uses. If not provided, the tag will be static. | ❌ |
+| ```ruleType``` | ```Literal["STATIC", "GROOVY", "OS_REGEX", "NETWORK_RANGE", "NAME_CONTAINS", "INSTALLED_SOFTWARE", "OPEN_PORTS", "VULN_EXIST", "ASSET_SEARCH", "NETWORK_TAG", "NETWORK", "NETWORK_RANGE_ENHANCED", "CLOUD_ASSET", "GLOBAL_ASSET_VIEW", "TAGSET", "BUSINESS_INFORMATION", "VULN_DETECTION"]``` | The type of rule the tag uses. If not provided, the tag will be static. | ❌ |
 | ```ruleText``` | ```str``` | If `ruleType` is set, this string contains the logic for the rule. | ❌ |
 | ```children``` | ```List[str]``` | A list of child tag names to create. | ❌ |
 | ```parentTagId``` | ```int``` | The ID of the parent tag to create the tag under. | ❌ |
@@ -258,6 +260,62 @@ delete_tag(
     tag_id=[tag.id for tag in tags]
 )
 >>>5
+```
+
+## Update Tag API
+
+```update_tag``` updates a tag.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```tag_id``` | ``` Union[str, int]``` | The ID of a tag to update. | ✅ |
+| ```name``` | ```str``` | The new name of the tag | ❌ |
+| ```ruleType``` | ```Literal["STATIC", "GROOVY", "OS_REGEX", "NETWORK_RANGE", "NAME_CONTAINS", "INSTALLED_SOFTWARE", "OPEN_PORTS", "VULN_EXIST", "ASSET_SEARCH", "NETWORK_TAG", "NETWORK", "NETWORK_RANGE_ENHANCED", "CLOUD_ASSET", "GLOBAL_ASSET_VIEW", "TAGSET", "BUSINESS_INFORMATION", "VULN_DETECTION"]``` | The type of rule the tag uses. If not provided, the tag will be static. | ❌ |
+| ```ruleText``` | ```str``` | If `ruleType` is set, this string contains the logic for the rule. | ❌ |
+| ```add_children``` | ```List[str]``` | A list of child tag names to add. | ❌ |
+| ```remove_children``` | ```List[int]``` | A list of child tag IDs to remove. | ❌ |
+| ```criticalityScore``` | ```int``` | The criticality that assets with this tag should be assigned. | ❌ |
+| ```color``` | ```str``` (hex code, such as `#FFFFFF`) | The color of the tag. | ❌ |
+| ```description``` | ```str``` | A description of the tag. | ❌ |
+| ```provider``` | ```Literal["EC2", "AZURE", "GCP", "IBM", "OCI"]``` | The cloud provider the tag is for. | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.tagging import update_tag
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+# Update a tag's name, description, and color:
+update_tag(
+    auth,
+    tag_id=123456789,
+    name='My Updated Tag',
+    description='This is an updated tag',
+    color='#FF00FF'
+)
+
+# Change a tag from static to dynamic,
+# looking for Windows Servers:
+update_tag(
+    auth,
+    tag_id=123456789,
+    ruleType='GLOBAL_ASSET_VIEW',
+    ruleText="operatingSystem:Windows and hardware.category:Server",
+    color='#00FFFF',
+    description='This is a dynamic tag for Windows servers'
+)
+
+# Update a tag to add children tags and 
+# remove some pre-existing children tags
+# as well as adding a parent tag:
+update_tag(
+    auth,
+    tag_id=123456789,
+    add_children=['My New Child Tag 1', 'My New Child Tag 2'],
+    remove_children=[987654321, 123456799],
+    parentTagId=123459789
+)
 ```
 
 ## ```qualysdk-tag``` CLI tool
@@ -352,4 +410,27 @@ options:
   -h, --help           show this help message and exit
   -o, --output OUTPUT  Output (json) file to write results to
   -t, --tagId TAGID    ID(s) of the tag to delete. Multiple values can be provided as a comma-separated string
+```
+
+### Update Tag
+
+```bash
+usage: qualysdk-tag update_tag [-h] [-o OUTPUT] -t TAGID [--kwarg key value]
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output (json) file to write results to
+  -t, --tagId TAGID    ID of the tag to update
+  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times. For add_children, supply a comma-separated string of names. for remove_children, supply
+                       a comma-separated string of ids.
+```
+
+#### Example Tag Update
+
+Below shows how to update a tag to add children tags and remove children tags.
+
+Note that you should not add AND remove children tags in the same command. You should run two separate commands to do this.
+
+```bash
+qualysdk-tag -u <username> -p <password> update_tag -t 12345678 --kwarg name "MY TAG UPDATED VIA API" --kwarg parentTagId 98765432 --kwarg description "My updated tag" --kwarg add_children "Child1,Child2" --kwarg remove_children 62041845
 ```

@@ -38,6 +38,13 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             # parse out tag ids into a list:
             args.tagId = args.tagId.split(",")
             result = delete_tag(auth, tag_id=args.tagId)
+        case "update_tag":
+            # parse out children into a list:
+            if "add_children" in kwargs:
+                kwargs["add_children"] = BaseList(kwargs["add_children"].split(","))
+            if "remove_children" in kwargs:
+                kwargs["remove_children"] = BaseList(kwargs["remove_children"].split(","))
+            result = update_tag(auth, args.tagId, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
@@ -178,6 +185,32 @@ def main():
         required=True
     )
 
+    update_tag_parser = subparsers.add_parser(
+        "update_tag",
+        help="Update a tag. NOTE: For adding/removing children tags, use --kwarg add_children/remove_children with a comma-separated string, like: 'id1,id2,etc'"
+    )
+    update_tag_parser.add_argument(
+        '-o',
+        '--output',
+        help="Output (json) file to write results to",
+        type=str,
+        default=None
+    )
+    update_tag_parser.add_argument(
+        "-t",
+        "--tagId",
+        help="ID of the tag to update",
+        type=int,
+        required=True
+    )
+    update_tag_parser.add_argument(
+        "--kwarg",
+        help="Specify a keyword argument to pass to the action. Can be used multiple times. For add_children, supply a comma-separated string of names. for remove_children, supply a comma-separated string of ids.",
+        action="append",
+        nargs=2,
+        metavar=("key", "value"),
+    )
+
     args = parser.parse_args()
 
     # create BasicAuth object
@@ -194,6 +227,8 @@ def main():
         result = cli_findings(auth=auth, args=args, endpoint="create_tag")
     elif args.action == "delete_tag":
         result = cli_findings(auth=auth, args=args, endpoint="delete_tag")
+    elif args.action == "update_tag":
+        result = cli_findings(auth=auth, args=args, endpoint="update_tag")
     else:
         parser.print_help()
         exit(1)

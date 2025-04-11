@@ -8,9 +8,10 @@ from argparse import ArgumentParser, Namespace
 from qualysdk import BasicAuth, write_json, write_excel, BaseList
 from qualysdk.tagging import *
 
+
 def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
     # hasattr is needed to prevent AttributeError:
-    if hasattr(args, 'kwarg') and getattr(args, 'kwarg'):
+    if hasattr(args, "kwarg") and getattr(args, "kwarg"):
         kwargs = dict(args.kwarg)
     else:
         kwargs = {}
@@ -43,19 +44,21 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             if "add_children" in kwargs:
                 kwargs["add_children"] = BaseList(kwargs["add_children"].split(","))
             if "remove_children" in kwargs:
-                kwargs["remove_children"] = BaseList(kwargs["remove_children"].split(","))
+                kwargs["remove_children"] = BaseList(
+                    kwargs["remove_children"].split(",")
+                )
             result = update_tag(auth, args.tagId, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
     if args.output:
-        if endpoint == 'get_tag_details':
+        if endpoint == "get_tag_details":
             result = result.to_serializable_dict()
             write_json(result, args.output)
         else:
-            write_json(result, args.output) if endpoint == "count_tags" else write_excel(
+            write_json(
                 result, args.output
-            )
+            ) if endpoint == "count_tags" else write_excel(result, args.output)
     return result
 
 
@@ -120,16 +123,15 @@ def main():
     )
 
     get_details_parser = subparsers.add_parser(
-        "get_tag_details",
-        help="Get all details of a single tag."
+        "get_tag_details", help="Get all details of a single tag."
     )
 
     get_details_parser.add_argument(
-        '-o',
-        '--output',
+        "-o",
+        "--output",
         help="Output (json) file to write results to",
         type=str,
-        default=None
+        default=None,
     )
 
     get_details_parser.add_argument(
@@ -137,26 +139,22 @@ def main():
         "--tagId",
         help="ID of the tag to pull details for",
         type=int,
-        required=True
+        required=True,
     )
 
     create_tag_parser = subparsers.add_parser(
         "create_tag",
-        help='Create a new tag. NOTE: For creating children tags, use --kwarg children with a comma-separated string, like: "child1,child2,etc"'
+        help='Create a new tag. NOTE: For creating children tags, use --kwarg children with a comma-separated string, like: "child1,child2,etc"',
     )
     create_tag_parser.add_argument(
-        '-o',
-        '--output',
+        "-o",
+        "--output",
         help="Output (json) file to write results to",
         type=str,
-        default=None
+        default=None,
     )
     create_tag_parser.add_argument(
-        "-n",
-        "--name",
-        help="Name of the tag to create",
-        type=str,
-        required=True
+        "-n", "--name", help="Name of the tag to create", type=str, required=True
     )
     create_tag_parser.add_argument(
         "--kwarg",
@@ -168,40 +166,36 @@ def main():
 
     delete_tag_parser = subparsers.add_parser(
         "delete_tag",
-        help="Delete a tag. NOTE: For deleting multiple tags, use --kwarg tagId with a comma-separated string, like: 'id1,id2,etc'"
+        help="Delete a tag. NOTE: For deleting multiple tags, use --kwarg tagId with a comma-separated string, like: 'id1,id2,etc'",
     )
     delete_tag_parser.add_argument(
-        '-o',
-        '--output',
+        "-o",
+        "--output",
         help="Output (json) file to write results to",
         type=str,
-        default=None
+        default=None,
     )
     delete_tag_parser.add_argument(
         "-t",
         "--tagId",
         help="ID(s) of the tag to delete. Multiple values can be provided as a comma-separated string",
         type=str,
-        required=True
+        required=True,
     )
 
     update_tag_parser = subparsers.add_parser(
         "update_tag",
-        help="Update a tag. NOTE: For adding/removing children tags, use --kwarg add_children/remove_children with a comma-separated string, like: 'id1,id2,etc'"
+        help="Update a tag. NOTE: For adding/removing children tags, use --kwarg add_children/remove_children with a comma-separated string, like: 'id1,id2,etc'",
     )
     update_tag_parser.add_argument(
-        '-o',
-        '--output',
+        "-o",
+        "--output",
         help="Output (json) file to write results to",
         type=str,
-        default=None
+        default=None,
     )
     update_tag_parser.add_argument(
-        "-t",
-        "--tagId",
-        help="ID of the tag to update",
-        type=int,
-        required=True
+        "-t", "--tagId", help="ID of the tag to update", type=int, required=True
     )
     update_tag_parser.add_argument(
         "--kwarg",
@@ -234,8 +228,11 @@ def main():
         exit(1)
 
     if not args.output:
-        if isinstance(result, int): print(result)
-        else: print(result.dump_json(indent=2))
+        if isinstance(result, int):
+            print(result)
+        else:
+            print(result.dump_json(indent=2))
+
 
 if __name__ == "__main__":
     main()

@@ -199,7 +199,8 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
     print("No more results to fetch. Exiting...")
     return results
 
-def get_tag_details(auth: BasicAuth, tag_id: Union[int,str]) -> Tag:
+
+def get_tag_details(auth: BasicAuth, tag_id: Union[int, str]) -> Tag:
     """
     Get the details of a specific tag by its ID.
 
@@ -219,7 +220,8 @@ def get_tag_details(auth: BasicAuth, tag_id: Union[int,str]) -> Tag:
     tag = data[0].get("Tag", {})
     if tag:
         return Tag.from_dict(tag)
-    
+
+
 def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
     """
     Create a new tag with the given name and optional parameters.
@@ -268,20 +270,21 @@ def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
     jsonpayload = {
         "ServiceRequest": {
             "data": {
-                "Tag": {k: v for k, v in payload_template["ServiceRequest"]["data"]["Tag"].items() if v is not None}
+                "Tag": {
+                    k: v
+                    for k, v in payload_template["ServiceRequest"]["data"][
+                        "Tag"
+                    ].items()
+                    if v is not None
+                }
             }
         }
     }
 
     # Add children if provided
     if "children" in kwargs:
-
         jsonpayload["ServiceRequest"]["data"]["Tag"]["children"] = {
-            "set": {
-                "TagSimple": [
-                    {"name": child} for child in kwargs["children"]
-                ]
-            }
+            "set": {"TagSimple": [{"name": child} for child in kwargs["children"]]}
         }
 
     response = call_tags_api(auth, "create_tag", jsonpayload)
@@ -293,13 +296,16 @@ def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
     if tag:
         return Tag.from_dict(tag)
 
+
 @overload
 def delete_tag(auth: BasicAuth, tag_id: Union[int, str]) -> int:
     ...
 
+
 @overload
-def delete_tag(auth: BasicAuth, tag_id: list[Union[int,str]]) -> int:
+def delete_tag(auth: BasicAuth, tag_id: list[Union[int, str]]) -> int:
     ...
+
 
 def delete_tag(auth: BasicAuth, tag_id: Union[int, str, list[Union[int, str]]]) -> int:
     """
@@ -324,6 +330,7 @@ def delete_tag(auth: BasicAuth, tag_id: Union[int, str, list[Union[int, str]]]) 
         response = call_tags_api(auth, "delete_tag", tag)
         deleted += response.get("ServiceResponse", {}).get("count", 0)
     return deleted
+
 
 def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
     """
@@ -380,7 +387,13 @@ def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
     jsonpayload = {
         "ServiceRequest": {
             "data": {
-                "Tag": {k: v for k, v in payload_template["ServiceRequest"]["data"]["Tag"].items() if v is not None}
+                "Tag": {
+                    k: v
+                    for k, v in payload_template["ServiceRequest"]["data"][
+                        "Tag"
+                    ].items()
+                    if v is not None
+                }
             }
         }
     }
@@ -388,19 +401,13 @@ def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
     # Add children if provided
     if "add_children" in kwargs:
         jsonpayload["ServiceRequest"]["data"]["Tag"]["children"] = {
-            "set": {
-                "TagSimple": [
-                    {"name": child} for child in kwargs["add_children"]
-                ]
-            }
+            "set": {"TagSimple": [{"name": child} for child in kwargs["add_children"]]}
         }
     # Remove children if provided
     if "remove_children" in kwargs:
         jsonpayload["ServiceRequest"]["data"]["Tag"]["children"] = {
             "remove": {
-                "TagSimple": [
-                    {"id": child} for child in kwargs["remove_children"]
-                ]
+                "TagSimple": [{"id": child} for child in kwargs["remove_children"]]
             }
         }
 

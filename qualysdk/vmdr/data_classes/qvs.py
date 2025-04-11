@@ -10,6 +10,7 @@ from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
 from ...base import DONT_EXPAND
 
+
 @dataclass(order=True)
 class KBQVS(BaseClass):
     """
@@ -72,7 +73,9 @@ class KBQVS(BaseClass):
 
             if self.contributingFactors and isinstance(self.contributingFactors, dict):
                 if "epss" in self.contributingFactors.keys():
-                    setattr(self, "epss", float(self.contributingFactors.get("epss")[0]))
+                    setattr(
+                        self, "epss", float(self.contributingFactors.get("epss")[0])
+                    )
 
                 if "cvssVersion" in self.contributingFactors.keys():
                     setattr(
@@ -80,7 +83,9 @@ class KBQVS(BaseClass):
                     )
 
                 if "cvssString" in self.contributingFactors.keys():
-                    setattr(self, "cvssString", self.contributingFactors.get("cvssString"))
+                    setattr(
+                        self, "cvssString", self.contributingFactors.get("cvssString")
+                    )
 
                 if "cvss" in self.contributingFactors.keys():
                     setattr(self, "cvss", float(self.contributingFactors.get("cvss")))
@@ -94,7 +99,9 @@ class KBQVS(BaseClass):
                 for str_field in ONE_LONG_STR_FIELDS:
                     if str_field in self.contributingFactors.keys():
                         bl = BaseList()
-                        for item in self.contributingFactors.get(str_field)[0].split(","):
+                        for item in self.contributingFactors.get(str_field)[0].split(
+                            ","
+                        ):
                             if str_field == "trending":
                                 item = int(item)
                             bl.append(item)
@@ -102,9 +109,9 @@ class KBQVS(BaseClass):
 
                 if "mitigationControls" in self.contributingFactors.keys():
                     bl = BaseList()
-                    for control in self.contributingFactors.get("mitigationControls")[0][
+                    for control in self.contributingFactors.get("mitigationControls")[
                         0
-                    ].split(","):
+                    ][0].split(","):
                         bl.append(control)
                     setattr(self, "mitigationControls", bl)
 

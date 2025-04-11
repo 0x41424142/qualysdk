@@ -12,6 +12,7 @@ from ...base.base_list import BaseList
 from ..data_classes.CloudAgentTag import CloudAgentTag
 from ...base import DONT_EXPAND
 
+
 @dataclass
 class CloudAgent(BaseClass):
     """
@@ -229,7 +230,9 @@ class CloudAgent(BaseClass):
                             ) * 100
                         except ZeroDivisionError:
                             percent_free = 0
-                        volumes.append(f"{volume.get('name')} ({percent_free:.2f}% free)")
+                        volumes.append(
+                            f"{volume.get('name')} ({percent_free:.2f}% free)"
+                        )
 
                 if len(volumes) > 0:
                     setattr(self, "volume", volumes)

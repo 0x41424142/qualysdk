@@ -434,7 +434,9 @@ class AWSIAMUser(BaseResource):
                 "userDto_accessKey2LastUsed",
             ]
             for field in DT_FIELDS:
-                if getattr(self, field) and not isinstance(getattr(self, field), datetime):
+                if getattr(self, field) and not isinstance(
+                    getattr(self, field), datetime
+                ):
                     setattr(
                         self,
                         field,
@@ -619,7 +621,9 @@ class AWSLambdaFunction(BaseResource):
                     name = layer.get("name", None)
                     version = layer.get("version", None)
                     codeSize = layer.get("codeSize", None)
-                    bl.append(f"(name: {name}, version: {version}, codeSize: {codeSize})")
+                    bl.append(
+                        f"(name: {name}, version: {version}, codeSize: {codeSize})"
+                    )
                 setattr(self, "layers", bl)
 
             if self.functionVersions:
@@ -904,7 +908,9 @@ class AWSEC2Instance(BaseResource):
                 totalVulnerability = data.get("totalVulnerability", None)
                 if severity:
                     for key in severity.keys():
-                        setattr(self, f"vulnerabilityStats_severity_{key}", severity[key])
+                        setattr(
+                            self, f"vulnerabilityStats_severity_{key}", severity[key]
+                        )
                 if typeDetected:
                     for key in typeDetected.keys():
                         setattr(
@@ -927,7 +933,7 @@ class AWSEC2Instance(BaseResource):
                     for key, value in data.items():
                         setattr(self, f"{field}_{key}", value)
                     setattr(self, field, None)
-    
+
             if self.vulnerabilities:
                 data = self.vulnerabilities
                 if isinstance(data, dict):
@@ -1101,15 +1107,21 @@ class AWSEKSCluster(BaseResource):
                             for group in value:
                                 bl.append(group)
                             setattr(
-                                self, "associations_resourcesVpcConfig_securityGroupIds", bl
+                                self,
+                                "associations_resourcesVpcConfig_securityGroupIds",
+                                bl,
                             )
                         elif key == "subnetIds":
                             bl = BaseList()
                             for subnet in value:
                                 bl.append(subnet)
-                            setattr(self, "associations_resourcesVpcConfig_subnetIds", bl)
+                            setattr(
+                                self, "associations_resourcesVpcConfig_subnetIds", bl
+                            )
                         else:
-                            setattr(self, f"associations_resourcesVpcConfig_{key}", value)
+                            setattr(
+                                self, f"associations_resourcesVpcConfig_{key}", value
+                            )
                 setattr(self, "associations", None)
 
             if self.resourcesVpcConfig:
@@ -1204,7 +1216,9 @@ class AWSEKSNodeGroup(BaseResource):
             if self.scalingConfig:
                 data = self.scalingConfig
                 if data.get("maxSize", None):
-                    setattr(self, "scalingConfig_maxSize", int(data.get("maxSize", None)))
+                    setattr(
+                        self, "scalingConfig_maxSize", int(data.get("maxSize", None))
+                    )
                 if data.get("desiredSize", None):
                     setattr(
                         self,
@@ -1212,7 +1226,9 @@ class AWSEKSNodeGroup(BaseResource):
                         int(data.get("desiredSize", None)),
                     )
                 if data.get("minSize", None):
-                    setattr(self, "scalingConfig_minSize", int(data.get("minSize", None)))
+                    setattr(
+                        self, "scalingConfig_minSize", int(data.get("minSize", None))
+                    )
                 setattr(self, "scalingConfig", None)
 
             if self.labels:
@@ -1247,7 +1263,7 @@ class AWSEKSNodeGroup(BaseResource):
         if DONT_EXPAND.flag:
             # watch out for weirness with nulls:
             for field in ["tags", "qualysTags", "instanceTypes", "labels", "diskSize"]:
-                if getattr(self, field, []) in ["{}", "[]", [], {}, '', ['']]:
+                if getattr(self, field, []) in ["{}", "[]", [], {}, "", [""]]:
                     setattr(self, field, None)
 
         super().__post_init__()
@@ -1335,7 +1351,9 @@ class AWSVPCEndpoint(BaseResource):
     def __post_init__(self):
         if self.privateDnsEnabled:
             if not isinstance(self.privateDnsEnabled, bool):
-                setattr(self, "privateDnsEnabled", self.privateDnsEnabled.lower() == "true")
+                setattr(
+                    self, "privateDnsEnabled", self.privateDnsEnabled.lower() == "true"
+                )
         if not DONT_EXPAND.flag:
             STR_BL_FIELDS = ["routeTableIds", "networkInterfaceIds", "subnetIds"]
             for field in STR_BL_FIELDS:
@@ -1379,11 +1397,19 @@ class AWSVPCEndpoint(BaseResource):
                     dnsName = entry.get("dnsName", None)
                     bl.append(f"(hostedZoneId: {hostedZoneId}, dnsName: {dnsName})")
                 setattr(self, "dnsEntrySets", bl)
-        
+
         if DONT_EXPAND.flag:
-            #watch for empties
-            for field in ["tags", "qualysTags", "securityGroupSet", "routeTableId", "dnsEntrySets", "networkInterfaceIds", "subnetIds"]:
-                if getattr(self, field, []) in ["{}", "[]", [], {}, '', ['']]:
+            # watch for empties
+            for field in [
+                "tags",
+                "qualysTags",
+                "securityGroupSet",
+                "routeTableId",
+                "dnsEntrySets",
+                "networkInterfaceIds",
+                "subnetIds",
+            ]:
+                if getattr(self, field, []) in ["{}", "[]", [], {}, "", [""]]:
                     setattr(self, field, None)
 
         super().__post_init__()
@@ -1469,7 +1495,9 @@ class AWSIAMGroup(BaseResource):
                                     )
                             else:
                                 action = policyDocument_statement.get("Action", None)
-                                resource = policyDocument_statement.get("Resource", None)
+                                resource = policyDocument_statement.get(
+                                    "Resource", None
+                                )
                                 effect = policyDocument_statement.get("Effect", None)
                                 statementbl.append(
                                     f"(Action: {action}, Resource: {resource}, Effect: {effect})"
@@ -1525,7 +1553,9 @@ class AWSIAMPolicy(BaseResource):
         if not DONT_EXPAND.flag:
             if self.defaultPolicyVersion:
                 data = self.defaultPolicyVersion
-                setattr(self, "defaultPolicyVersion_VersionId", data.get("VersionId", None))
+                setattr(
+                    self, "defaultPolicyVersion_VersionId", data.get("VersionId", None)
+                )
                 setattr(
                     self,
                     "defaultPolicyVersion_IsDefaultVersion",
@@ -1724,7 +1754,9 @@ class AWSIAMRole(BaseResource):
                                 )
                             rolearn = role.get("Arn", None)
                             rolecreateDate = role.get("CreateDate", None)
-                            if rolecreateDate and not isinstance(rolecreateDate, datetime):
+                            if rolecreateDate and not isinstance(
+                                rolecreateDate, datetime
+                            ):
                                 rolecreateDate = datetime.fromtimestamp(rolecreateDate)
                             roleId = role.get("RoleId", None)
                             rolestr = f"(Path: {rolepath}, RoleName: {rolename}, Arn: {rolearn}, CreateDate: {rolecreateDate}, RoleId: {roleId}, AssumeRolePolicyDocument: {roleassumeRolePolicyDocument})"
@@ -1739,7 +1771,9 @@ class AWSIAMRole(BaseResource):
             if DONT_EXPAND.flag:
                 setattr(self, "AssumeRolePolicyDocument", data)
             else:
-                setattr(self, "AssumeRolePolicyDocument_Version", data.get("Version", None))
+                setattr(
+                    self, "AssumeRolePolicyDocument_Version", data.get("Version", None)
+                )
                 statement = data.get("Statement", None)
                 if statement:
                     bl = BaseList()
@@ -1860,7 +1894,9 @@ class AWSCloudfrontDistribution(BaseResource):
             if self.defaultCacheBehavior:
                 # Sigh...
                 data = self.defaultCacheBehavior
-                setattr(self, "defaultCacheBehavior_Compress", data.get("Compress", None))
+                setattr(
+                    self, "defaultCacheBehavior_Compress", data.get("Compress", None)
+                )
                 setattr(
                     self,
                     "defaultCacheBehavior_TargetOriginId",
@@ -1888,7 +1924,9 @@ class AWSCloudfrontDistribution(BaseResource):
                     data.get("FieldLevelEncryptionId", None),
                 )
                 setattr(
-                    self, "defaultCacheBehavior_DefaultTTL", data.get("DefaultTTL", None)
+                    self,
+                    "defaultCacheBehavior_DefaultTTL",
+                    data.get("DefaultTTL", None),
                 )
                 if data.get("TrustedKeyGroups", None):
                     setattr(
@@ -1912,7 +1950,9 @@ class AWSCloudfrontDistribution(BaseResource):
                         bl = BaseList()
                         for item in data["FunctionAssociations"]["Items"]:
                             bl.append(item)
-                        setattr(self, "defaultCacheBehavior_LambdaFunctionAssociations", bl)
+                        setattr(
+                            self, "defaultCacheBehavior_LambdaFunctionAssociations", bl
+                        )
 
                 if data.get("LambdaFunctionAssociations", None):
                     setattr(
@@ -1924,20 +1964,24 @@ class AWSCloudfrontDistribution(BaseResource):
                         bl = BaseList()
                         for item in data["LambdaFunctionAssociations"]["Items"]:
                             bl.append(item)
-                        setattr(self, "defaultCacheBehavior_LambdaFunctionAssociations", bl)
+                        setattr(
+                            self, "defaultCacheBehavior_LambdaFunctionAssociations", bl
+                        )
 
                 if data.get("AllowedMethods", None):
                     if data["AllowedMethods"].get("CachedMethods", None):
                         setattr(
                             self,
                             "defaultCacheBehavior_AllowedMethods_CachedMethods_Quantity",
-                            data["AllowedMethods"]["CachedMethods"].get("Quantity", None),
+                            data["AllowedMethods"]["CachedMethods"].get(
+                                "Quantity", None
+                            ),
                         )
                         if data["AllowedMethods"]["CachedMethods"].get("Items", None):
                             bl = BaseList()
-                            for item in data["AllowedMethods"]["CachedMethods"]["Items"][
-                                "Method"
-                            ]:
+                            for item in data["AllowedMethods"]["CachedMethods"][
+                                "Items"
+                            ]["Method"]:
                                 bl.append(item)
                             setattr(
                                 self,
@@ -1988,7 +2032,9 @@ class AWSCloudfrontDistribution(BaseResource):
                             bl.append(s)
                     else:
                         connectionTimeout = origin.get("ConnectionTimeout", None)
-                        originAccessControlId = origin.get("OriginAccessControlId", None)
+                        originAccessControlId = origin.get(
+                            "OriginAccessControlId", None
+                        )
                         connectionAttempts = origin.get("ConnectionAttempts", None)
                         domainName = origin.get("DomainName", None)
                         originPath = origin.get("OriginPath", None)

@@ -284,7 +284,11 @@ class Host(BaseClass):
                     "cpeType",
                 ]:
                     if self.operatingSystem.get(field):
-                        if self.operatingSystem.get(field) in [",", ",,", "Not Announced"]:
+                        if self.operatingSystem.get(field) in [
+                            ",",
+                            ",,",
+                            "Not Announced",
+                        ]:
                             setattr(self, f"operatingSystem_{field}", None)
                         else:
                             setattr(
@@ -492,7 +496,9 @@ class Host(BaseClass):
                                 self,
                                 "cloudProvider_launchDate",
                                 datetime.fromisoformat(
-                                    self.cloudProvider[cloudProvider][subkey]["launchDate"]
+                                    self.cloudProvider[cloudProvider][subkey][
+                                        "launchDate"
+                                    ]
                                 ),
                             )
 
@@ -542,9 +548,13 @@ class Host(BaseClass):
                     if self.agent.get(field):
                         setattr(self, f"agent_{field}", self.agent[field])
                 if self.agent.get("activations"):
-                    setattr(self, "agent_key", self.agent.get("activations")[0].get("key"))
                     setattr(
-                        self, "agent_status", self.agent.get("activations")[0].get("status")
+                        self, "agent_key", self.agent.get("activations")[0].get("key")
+                    )
+                    setattr(
+                        self,
+                        "agent_status",
+                        self.agent.get("activations")[0].get("status"),
                     )
                 for dt_field in ["lastActivity", "lastCheckedIn", "lastInventory"]:
                     if self.agent.get(dt_field) and not isinstance(
@@ -597,7 +607,9 @@ class Host(BaseClass):
                         setattr(self, f"container_{field}", self.container[field])
 
                 if self.container.get("hasSensor"):
-                    setattr(self, "container_hasSensor", bool(self.container["hasSensor"]))
+                    setattr(
+                        self, "container_hasSensor", bool(self.container["hasSensor"])
+                    )
                 else:
                     setattr(self, "container_hasSensor", False)
 

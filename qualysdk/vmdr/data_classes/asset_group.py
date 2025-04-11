@@ -143,7 +143,9 @@ class AssetGroup(BaseClass):
         if not DONT_EXPAND.flag:
             for str_field in STR_LISTS:
                 if getattr(self, str_field):
-                    setattr(self, str_field, BaseList(getattr(self, str_field).split(",")))
+                    setattr(
+                        self, str_field, BaseList(getattr(self, str_field).split(","))
+                    )
 
             for int_field in INT_LISTS:
                 if getattr(self, int_field):
@@ -151,7 +153,9 @@ class AssetGroup(BaseClass):
                         setattr(
                             self,
                             int_field,
-                            BaseList([int(x) for x in getattr(self, int_field).split(",")]),
+                            BaseList(
+                                [int(x) for x in getattr(self, int_field).split(",")]
+                            ),
                         )
                     else:
                         setattr(
@@ -205,7 +209,7 @@ class AssetGroup(BaseClass):
         for int_field in INT_FIELDS:
             if getattr(self, int_field):
                 setattr(self, int_field, int(getattr(self, int_field)))
-                
+
     def __str__(self):
         return self.TITLE
 

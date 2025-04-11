@@ -108,7 +108,9 @@ class StaticSearchList(BaseClass):
                 if isinstance(data, dict):
                     data = [data]
                 for profile in data:
-                    bl.append(f"{profile.get('ID', None)}: {profile.get('TITLE', None)}")
+                    bl.append(
+                        f"{profile.get('ID', None)}: {profile.get('TITLE', None)}"
+                    )
                 self.OPTION_PROFILES = bl
 
             if self.REPORT_TEMPLATES:
@@ -299,7 +301,9 @@ class DynamicSearchList(BaseClass):
                 if isinstance(data, dict):
                     data = [data]
                 for profile in data:
-                    bl.append(f"{profile.get('ID', None)}: {profile.get('TITLE', None)}")
+                    bl.append(
+                        f"{profile.get('ID', None)}: {profile.get('TITLE', None)}"
+                    )
                 self.OPTION_PROFILES = bl
 
             if self.REPORT_TEMPLATES:

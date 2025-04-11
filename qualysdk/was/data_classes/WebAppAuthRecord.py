@@ -282,7 +282,9 @@ class WebAppAuthRecord(BaseClass):
 
             for field in RECORD_FIELDS:
                 if getattr(self, field):
-                    handle_record_attrs(self, field if field != "comments" else "Comment")
+                    handle_record_attrs(
+                        self, field if field != "comments" else "Comment"
+                    )
 
             if self.oauth2Record:
                 build_oauth2_record(self)

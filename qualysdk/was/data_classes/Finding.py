@@ -128,7 +128,9 @@ class FindingItem(BaseClass):
                 if self.payloads_count > 0:
                     try:
                         data = (
-                            self.payloads.get("list").get("PayloadInstance").get("request")
+                            self.payloads.get("list")
+                            .get("PayloadInstance")
+                            .get("request")
                         )
                         if data:
                             self.payloads_list.append(PayloadRequest.from_dict(data))
@@ -337,9 +339,7 @@ class WASFinding(BaseClass):
                     if not isinstance(data, list):
                         data = [data]
                     for itm in data:
-                        owaspstr = (
-                            f"{itm.get('name')} - {itm.get('url')} - code={itm.get('code')}"
-                        )
+                        owaspstr = f"{itm.get('name')} - {itm.get('url')} - code={itm.get('code')}"
                         bl.append(owaspstr)
                 setattr(self, "owasp_list", bl)
                 setattr(self, "owasp", None)
@@ -419,20 +419,28 @@ class WASFinding(BaseClass):
                             match itm:
                                 case "sslDataCipherList":
                                     if val:
-                                        for cipher in val.get("list").get("SSLDataCipher"):
+                                        for cipher in val.get("list").get(
+                                            "SSLDataCipher"
+                                        ):
                                             # protocol, name, keyExchange, auth, mac, encryption, grade
                                             string = f"{cipher.get('protocol')}: {cipher.get('name')} (keyExchange: {cipher.get('keyExchange')}; auth: {cipher.get('auth')}; mac: {cipher.get('mac')}; encryption: {cipher.get('encryption')}; grade: {cipher.get('grade')})"
-                                            bl.append(string) if string not in bl else None
+                                            bl.append(
+                                                string
+                                            ) if string not in bl else None
                                 case "sslDataKexList":
                                     if val:
                                         for kex in val.get("list").get("SSLDataKex"):
                                             string = f"{kex.get('protocol')}: {kex.get('kex')} (keysize: {kex.get('keysize')}; fwdsec: {kex.get('fwdsec')}; classical: {kex.get('classical')}; quantum: {kex.get('quantum')})"
-                                            bl.append(string) if string not in bl else None
+                                            bl.append(
+                                                string
+                                            ) if string not in bl else None
                                 case "sslDataPropList":
                                     if val:
                                         for prop in val.get("list").get("SSLDataProp"):
                                             string = f"{prop.get('name')}: {prop.get('value')} ({prop.get('protocol')})"
-                                            bl.append(string) if string not in bl else None
+                                            bl.append(
+                                                string
+                                            ) if string not in bl else None
                                 case "certificateFingerprint":
                                     self.sslData_certificateFingerprint.append(val)
 

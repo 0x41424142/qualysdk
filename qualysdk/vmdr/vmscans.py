@@ -40,7 +40,7 @@ def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
         -client_name (str): Filter on client name. Defaults to None.
 
         SHOW/HIDE FIELDS:
-        
+
         -show_ags (bool): Whether to show AGs. Defaults to None.
         -show_op (bool): Whether to show OP. Defaults to None.
         -show_status (bool): Whether to show status. Defaults to None.

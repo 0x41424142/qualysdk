@@ -319,9 +319,13 @@ class WebApp(BaseClass):
                 summary = data.get("summary")
                 if summary:
                     setattr(
-                        self, "lastScan_summary_resultsStatus", summary.get("resultsStatus")
+                        self,
+                        "lastScan_summary_resultsStatus",
+                        summary.get("resultsStatus"),
                     )
-                    setattr(self, "lastScan_summary_authStatus", summary.get("authStatus"))
+                    setattr(
+                        self, "lastScan_summary_authStatus", summary.get("authStatus")
+                    )
                 else:
                     setattr(self, "lastScan_summary_resultsStatus", None)
                     setattr(self, "lastScan_summary_authStatus", None)

@@ -75,7 +75,7 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList | dict[str, BaseList[str]
 
     else:
         raise Exception(f"Failed to pull IP list. Status code: {response.status_code}")
-    
+
     if DONT_EXPAND.flag:
         # If DONT_EXPAND is set, convert the IPs to strings:
         return {

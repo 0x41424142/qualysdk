@@ -8,6 +8,7 @@ from .base_list import BaseList
 IP_TYPES = (IPv4Address, IPv6Address, IPv4Network, IPv6Network)
 DT_TYPES = (datetime, timedelta)
 
+
 def _process_value(value):
     if isinstance(value, DT_TYPES):
         return value.isoformat() if not isinstance(value, timedelta) else str(value)

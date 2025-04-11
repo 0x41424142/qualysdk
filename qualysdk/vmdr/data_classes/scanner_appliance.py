@@ -190,13 +190,17 @@ class ScannerCloudInfo(BaseClass):
                 self.INSTANCE_ADDRESS_PRIVATE = self.EC2_INFO.get(
                     "INSTANCE_ADDRESS_PRIVATE"
                 )
-                self.INSTANCE_ADDRESS_PUBLIC = self.EC2_INFO.get("INSTANCE_ADDRESS_PUBLIC")
+                self.INSTANCE_ADDRESS_PUBLIC = self.EC2_INFO.get(
+                    "INSTANCE_ADDRESS_PUBLIC"
+                )
                 self.HOSTNAME_PRIVATE = self.EC2_INFO.get("HOSTNAME_PRIVATE")
                 if self.EC2_INFO.get("SECURITY_GROUPS"):
                     self.SECURITY_GROUPS = SecurityGroup.from_dict(
                         self.EC2_INFO.get("SECURITY_GROUPS")
                     )
-                self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")["SETTING"]
+                self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")[
+                    "SETTING"
+                ]
 
         for int_field in INT_FIELDS:
             if getattr(self, int_field):
@@ -649,18 +653,23 @@ class ScannerAppliance(BaseClass):
             if self.PROXY_SETTINGS:
                 if isinstance(self.PROXY_SETTINGS, dict):
                     setattr(
-                        self, "PROXY_SETTINGS", ProxySettings.from_dict(self.PROXY_SETTINGS)
+                        self,
+                        "PROXY_SETTINGS",
+                        ProxySettings.from_dict(self.PROXY_SETTINGS),
                     )
                 else:
                     setattr(
                         self,
                         "PROXY_SETTINGS",
                         BaseList(
-                            [ProxySettings.from_dict(item) for item in self.PROXY_SETTINGS]
+                            [
+                                ProxySettings.from_dict(item)
+                                for item in self.PROXY_SETTINGS
+                            ]
                         ),
                     )
 
-        #check for empty dicts in the dataclass and set them to None:
+        # check for empty dicts in the dataclass and set them to None:
         if DONT_EXPAND.flag:
             for attr in self.__dataclass_fields__.keys():
                 if getattr(self, attr) == {}:

@@ -1,16 +1,17 @@
 from dataclasses import dataclass, asdict
 from json import dumps
-from datetime import datetime
+from datetime import datetime, timedelta
 from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
 from .base_list import BaseList
 
 IP_TYPES = (IPv4Address, IPv6Address, IPv4Network, IPv6Network)
+DT_TYPES = (datetime, timedelta)
 
 
 def _process_value(value):
-    if isinstance(value, datetime):
-        return value.isoformat()
+    if isinstance(value, DT_TYPES):
+        return value.isoformat() if not isinstance(value, timedelta) else str(value)
     elif isinstance(value, IP_TYPES):
         return str(value)
     # types that need recursive processing:

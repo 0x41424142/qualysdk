@@ -32,7 +32,7 @@ VMDR_SCHEMA = frozendict(
                     "discovery_method",
                     "discovery_auth_types",
                     # "show_pci_reasons",
-                    # "show_supported_modules_info",
+                    "show_supported_modules_info",
                     "show_disabled_flag",
                     # "show_qid_change_log",
                     # above are disabled for now.

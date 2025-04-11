@@ -10,6 +10,7 @@ from frozendict import frozendict
 
 from ..base.base_class import BaseClass
 from ..base.base_list import BaseList
+from ..base import DONT_EXPAND
 
 SOFTWARE_SCHEMA = frozendict(
     {
@@ -245,486 +246,499 @@ class Host(BaseClass):
             if getattr(self, field) and not isinstance(getattr(self, field), datetime):
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
-        if self.businessAppListData:
-            # EXPERIMENTAL! I DO NOT HAVE ANY BUSINESS APPS!
-            try:
-                data = handle_dict_or_list(self.businessAppListData["businessApp"])
-                bl = BaseList()
-                bl.extend([app.get("name") for app in data])
-                setattr(self, "businessAppListData", bl)
-            except KeyError:
-                # Best guesses here...
-                data = handle_dict_or_list(self.businessAppListData["app"])
-                bl = BaseList()
-                bl.extend([app.get("name") for app in data])
-                setattr(self, "businessAppListData", bl)
+        if not DONT_EXPAND.flag:
+            if self.businessAppListData:
+                # EXPERIMENTAL! I DO NOT HAVE ANY BUSINESS APPS!
+                try:
+                    data = handle_dict_or_list(self.businessAppListData["businessApp"])
+                    bl = BaseList()
+                    bl.extend([app.get("name") for app in data])
+                    setattr(self, "businessAppListData", bl)
+                except KeyError:
+                    # Best guesses here...
+                    data = handle_dict_or_list(self.businessAppListData["app"])
+                    bl = BaseList()
+                    bl.extend([app.get("name") for app in data])
+                    setattr(self, "businessAppListData", bl)
 
-        if self.operatingSystem:
-            for field in [
-                "osName",
-                "fullName",
-                "category",
-                "category1",
-                "category2",
-                "productName",
-                "publisher",
-                "edition",
-                "marketVersion",
-                "version",
-                "update",
-                "architecture",
-                "lifecycle",
-                "productUrl",
-                "productFamily",
-                "release",
-                "cpeId",
-                "cpe",
-                "cpeType",
-            ]:
-                if self.operatingSystem.get(field):
-                    if self.operatingSystem.get(field) in [",", ",,", "Not Announced"]:
-                        setattr(self, f"operatingSystem_{field}", None)
-                    else:
-                        setattr(
-                            self,
-                            f"operatingSystem_{field}",
-                            self.operatingSystem[field],
-                        )
-            # we will deal with installDate separately:
-            if self.operatingSystem.get("installDate"):
-                # Convert installDate to datetime object
-                setattr(
-                    self,
-                    "operatingSystem_installDate",
-                    datetime.fromisoformat(self.operatingSystem["installDate"]),
-                )
-
-            # Set the operatingSystem field to None
-            setattr(self, "operatingSystem", None)
-
-        if self.hardware:
-            for field in [
-                "fullName",
-                "category",
-                "category1",
-                "category2",
-                "manufacturer",
-                "productName",
-                "model",
-                "productUrl",
-                "productFamily",
-            ]:
-                if self.hardware.get(field):
-                    if self.hardware.get(field) in [",", ",,", "Not Announced"]:
-                        setattr(self, f"hardware_{field}", None)
-                    else:
-                        setattr(self, f"hardware_{field}", self.hardware[field])
-
-            # for field in ["introDate", "gaDate", "eosDate", "obsoleteDate"]:
-            #    if self.hardware.get(field):
-            #        setattr(
-            #            self,
-            #            f"hardware_{field}",
-            #            datetime.fromisoformat(self.hardware[field]),
-            #        )
-
-            if self.hardware.get("lifecycle"):
-                for field in ["introDate", "gaDate", "eosDate", "obsoleteDate"]:
-                    if self.hardware["lifecycle"].get(field):
-                        if self.hardware["lifecycle"].get(field) in [
+            if self.operatingSystem:
+                for field in [
+                    "osName",
+                    "fullName",
+                    "category",
+                    "category1",
+                    "category2",
+                    "productName",
+                    "publisher",
+                    "edition",
+                    "marketVersion",
+                    "version",
+                    "update",
+                    "architecture",
+                    "lifecycle",
+                    "productUrl",
+                    "productFamily",
+                    "release",
+                    "cpeId",
+                    "cpe",
+                    "cpeType",
+                ]:
+                    if self.operatingSystem.get(field):
+                        if self.operatingSystem.get(field) in [
                             ",",
                             ",,",
                             "Not Announced",
                         ]:
-                            setattr(self, f"hardware_lifecycle_{field}", None)
-
+                            setattr(self, f"operatingSystem_{field}", None)
                         else:
                             setattr(
                                 self,
+                                f"operatingSystem_{field}",
+                                self.operatingSystem[field],
+                            )
+                # we will deal with installDate separately:
+                if self.operatingSystem.get("installDate"):
+                    # Convert installDate to datetime object
+                    setattr(
+                        self,
+                        "operatingSystem_installDate",
+                        datetime.fromisoformat(self.operatingSystem["installDate"]),
+                    )
+
+                # Set the operatingSystem field to None
+                setattr(self, "operatingSystem", None)
+
+            if self.hardware:
+                for field in [
+                    "fullName",
+                    "category",
+                    "category1",
+                    "category2",
+                    "manufacturer",
+                    "productName",
+                    "model",
+                    "productUrl",
+                    "productFamily",
+                ]:
+                    if self.hardware.get(field):
+                        if self.hardware.get(field) in [",", ",,", "Not Announced"]:
+                            setattr(self, f"hardware_{field}", None)
+                        else:
+                            setattr(self, f"hardware_{field}", self.hardware[field])
+
+                # for field in ["introDate", "gaDate", "eosDate", "obsoleteDate"]:
+                #    if self.hardware.get(field):
+                #        setattr(
+                #            self,
+                #            f"hardware_{field}",
+                #            datetime.fromisoformat(self.hardware[field]),
+                #        )
+
+                if self.hardware.get("lifecycle"):
+                    for field in ["introDate", "gaDate", "eosDate", "obsoleteDate"]:
+                        if self.hardware["lifecycle"].get(field):
+                            if self.hardware["lifecycle"].get(field) in [
+                                ",",
+                                ",,",
+                                "Not Announced",
+                            ]:
+                                setattr(self, f"hardware_lifecycle_{field}", None)
+
+                            else:
+                                setattr(
+                                    self,
+                                    f"hardware_lifecycle_{field}",
+                                    datetime.fromisoformat(
+                                        self.hardware["lifecycle"][field]
+                                    ),
+                                )
+                    for field in ["stage", "lifeCycleConfidence"]:
+                        if self.hardware["lifecycle"].get(field):
+                            setattr(
+                                self,
                                 f"hardware_lifecycle_{field}",
+                                self.hardware["lifecycle"][field],
+                            )
+
+                # Set the hardware field to None
+                setattr(self, "hardware", None)
+
+            if self.userAccountListData:
+                # Check for a dict or a list of dicts:
+                data = handle_dict_or_list(self.userAccountListData["userAccount"])
+                bl = BaseList()
+                for user in data:
+                    bl.append(user.get("name"))
+                setattr(self, "userAccountListData", bl)
+
+            if self.openPortListData:
+                # Check for a dict or a list of dicts:
+                data = self.openPortListData["openPort"]
+                bl = BaseList()
+                for port in data:
+                    bl.append(
+                        f"{port.get('port')}-{port.get('protocol')} ({port.get('detectedService')})"
+                    )
+                setattr(self, "openPortListData", bl)
+
+            if self.volumeListData:
+                # Check for a dict or a list of dicts:
+                data = handle_dict_or_list(self.volumeListData["volume"])
+                bl = BaseList()
+                for vol in data:
+                    try:
+                        if vol.get("size") == 0:
+                            bl.append(f"{vol.get('name')}: 0.0% filled")
+                            continue
+
+                        percent_filled = (
+                            (vol.get("size") - vol.get("free")) / vol.get("size") * 100
+                        )
+                    except ZeroDivisionError:
+                        percent_filled = 0.0
+                    bl.append(f"{vol.get('name')}: {percent_filled:.2f}% filled")
+                setattr(self, "volumeListData", bl)
+
+            if self.networkInterfaceListData:
+                # Check for a dict or a list of dicts:
+                data = handle_dict_or_list(
+                    self.networkInterfaceListData["networkInterface"]
+                )
+                bl = BaseList()
+                for iface in data:
+                    bl.append(
+                        f"{iface.get('interfaceName').replace('      ', ' ')} - {iface.get('manufacturer')}"
+                    )  # Replace multi-spaces with single spaces for easier reading
+                setattr(self, "networkInterfaceListData", bl)
+
+            if self.softwareListData:
+                data = handle_dict_or_list(self.softwareListData["software"])
+                bl = BaseList()
+                for sw in data:
+                    #                bl.append(
+                    #                    f"{sw.get('fullName')} ({sw.get('category')}) ({sw.get('ignoredReason')})"
+                    #                )
+                    sw_info = {}
+                    for k, v in SOFTWARE_SCHEMA["software"].items():
+                        # If the key doesn't exist, don't add.
+                        # This helps with SQL inserts by not adding
+                        # null values.
+                        if sw.get(k):
+                            if isinstance(v, list):
+                                for sub_k in v:
+                                    if sw[k].get(sub_k):
+                                        sw_info[sub_k] = sw[k][sub_k]
+                            else:
+                                sw_info[k] = sw[k]
+                    bl.append(sw_info)
+                setattr(self, "softwareListData", bl)
+
+            if self.cloudProvider:
+                # A bit different. This is a dictionary with all cloud providers.
+                # The valid one will have a dictionary underneath of it.
+                # First, find the one that is not a NoneType:
+                for provider, data in self.cloudProvider.items():
+                    if data:
+                        cloudProvider = provider
+                        subkeys = list(data.keys())
+                        break
+
+                for subkey in subkeys:
+                    if subkey != "tags":
+                        for attr in [
+                            "accountId",
+                            "availabilityZone",
+                            "hasAgent",
+                            "hostname",
+                            "imageId",
+                            "instanceId",
+                            "instanceState",
+                            "instanceType",
+                            "qualyScanner",
+                            "kernelId",
+                            "privateDNS",
+                            "privateIpAddress",
+                            "publicDNS",
+                            "publicIpAddress",
+                            "spotInstance",
+                            "subnetId",
+                            "vpcId",
+                            "imageOffer",
+                            "imagePublisher",
+                            "imageVersion",
+                            "location",
+                            "macAddress",
+                            "name",
+                            "platform",
+                            "resourceGroupName",
+                            "size",
+                            "state",
+                            "subnet",
+                            "subscriptionId",
+                            "virtualNetwork",
+                            "vmId",
+                        ]:
+                            if self.cloudProvider[cloudProvider].get(subkey).get(attr):
+                                setattr(
+                                    self,
+                                    f"cloudProvider_{attr}",
+                                    self.cloudProvider[cloudProvider][subkey].get(attr),
+                                )
+
+                        # Convert launchdate to datetime object
+                        if self.cloudProvider[cloudProvider].get(subkey).get(
+                            "launchDate"
+                        ) and not isinstance(
+                            self.cloudProvider[cloudProvider][subkey]["launchDate"],
+                            datetime,
+                        ):
+                            setattr(
+                                self,
+                                "cloudProvider_launchDate",
                                 datetime.fromisoformat(
-                                    self.hardware["lifecycle"][field]
+                                    self.cloudProvider[cloudProvider][subkey][
+                                        "launchDate"
+                                    ]
                                 ),
                             )
-                for field in ["stage", "lifeCycleConfidence"]:
-                    if self.hardware["lifecycle"].get(field):
+
+                        # Parse out region:
+                        if self.cloudProvider[cloudProvider].get(subkey).get(
+                            "region"
+                        ) and not isinstance(
+                            self.cloudProvider[cloudProvider][subkey]["region"], str
+                        ):
+                            setattr(
+                                self,
+                                "cloudProvider_region",
+                                self.cloudProvider[cloudProvider][subkey]
+                                .get("region")
+                                .get("code"),
+                            )
+
+                    elif subkey == "tags":
+                        data = handle_dict_or_list(
+                            self.cloudProvider[cloudProvider][subkey]
+                        )
+                        bl = BaseList()
+                        if data:
+                            for tag in data:
+                                s = (
+                                    f"{tag.get('key')}:{tag.get('value')}"
+                                    if tag.get("key")
+                                    else f"{tag.get('name')}:{tag.get('value')}"
+                                )
+                                bl.append(s)
+                            setattr(self, "cloudProvider_tags", bl)
+
+                    else:
+                        print(f"Unknown subkey: {subkey}")
+
+                    # Set the cloudProvider field to the valid provider
+                setattr(self, "cloudProvider", cloudProvider)
+
+            if self.agent:
+                for field in [
+                    "version",
+                    "configurationProfile",
+                    "connectedFrom",
+                    "udcManifestAssigned",
+                    "errorStatus",
+                ]:
+                    if self.agent.get(field):
+                        setattr(self, f"agent_{field}", self.agent[field])
+                if self.agent.get("activations"):
+                    setattr(
+                        self, "agent_key", self.agent.get("activations")[0].get("key")
+                    )
+                    setattr(
+                        self,
+                        "agent_status",
+                        self.agent.get("activations")[0].get("status"),
+                    )
+                for dt_field in ["lastActivity", "lastCheckedIn", "lastInventory"]:
+                    if self.agent.get(dt_field) and not isinstance(
+                        self.agent.get(dt_field), datetime
+                    ):
+                        if self.agent.get(dt_field) != -1:
+                            setattr(
+                                self,
+                                f"agent_{dt_field}",
+                                datetime.fromtimestamp(self.agent[dt_field] / 1000),
+                            )
+                        else:
+                            setattr(self, f"agent_{dt_field}", None)
+
+                # Set the agent field to None
+                setattr(self, "agent", None)
+
+            if self.sensor:
+                for field in ["activatedForModules", "pendingActivationForModules"]:
+                    bl = BaseList()
+                    if self.sensor.get(field):
+                        bl.extend(self.sensor[field])
+                        setattr(self, f"sensor_{field}", bl)
+                for dt_field in [
+                    "lastVMScan",
+                    "lastComplianceScan",
+                    "lastFullScan",
+                    "lastVmScanDateScanner",
+                    "lastVmScanDateAgent",
+                    "lastPcScanDateScanner",
+                    "lastPcScanDateAgent",
+                    "firstEasmScanDate",
+                    "lastEasmScanDate",
+                ]:
+                    if self.sensor.get(dt_field) and not isinstance(
+                        self.sensor.get(dt_field), datetime
+                    ):
                         setattr(
                             self,
-                            f"hardware_lifecycle_{field}",
-                            self.hardware["lifecycle"][field],
+                            f"sensor_{dt_field}",
+                            datetime.fromtimestamp(self.sensor[dt_field] / 1000),
                         )
 
-            # Set the hardware field to None
-            setattr(self, "hardware", None)
+                # Set the sensor field to None
+                setattr(self, "sensor", None)
 
-        if self.userAccountListData:
-            # Check for a dict or a list of dicts:
-            data = handle_dict_or_list(self.userAccountListData["userAccount"])
-            bl = BaseList()
-            for user in data:
-                bl.append(user.get("name"))
-            setattr(self, "userAccountListData", bl)
+            if self.container:
+                for field in ["product", "version", "noOfContainers", "noOfImages"]:
+                    if self.container.get(field):
+                        setattr(self, f"container_{field}", self.container[field])
 
-        if self.openPortListData:
-            # Check for a dict or a list of dicts:
-            data = self.openPortListData["openPort"]
-            bl = BaseList()
-            for port in data:
-                bl.append(
-                    f"{port.get('port')}-{port.get('protocol')} ({port.get('detectedService')})"
-                )
-            setattr(self, "openPortListData", bl)
-
-        if self.volumeListData:
-            # Check for a dict or a list of dicts:
-            data = handle_dict_or_list(self.volumeListData["volume"])
-            bl = BaseList()
-            for vol in data:
-                try:
-                    if vol.get("size") == 0:
-                        bl.append(f"{vol.get('name')}: 0.0% filled")
-                        continue
-
-                    percent_filled = (
-                        (vol.get("size") - vol.get("free")) / vol.get("size") * 100
+                if self.container.get("hasSensor"):
+                    setattr(
+                        self, "container_hasSensor", bool(self.container["hasSensor"])
                     )
-                except ZeroDivisionError:
-                    percent_filled = 0.0
-                bl.append(f"{vol.get('name')}: {percent_filled:.2f}% filled")
-            setattr(self, "volumeListData", bl)
+                else:
+                    setattr(self, "container_hasSensor", False)
 
-        if self.networkInterfaceListData:
-            # Check for a dict or a list of dicts:
-            data = handle_dict_or_list(
-                self.networkInterfaceListData["networkInterface"]
-            )
-            bl = BaseList()
-            for iface in data:
-                bl.append(
-                    f"{iface.get('interfaceName').replace('      ', ' ')} - {iface.get('manufacturer')}"
-                )  # Replace multi-spaces with single spaces for easier reading
-            setattr(self, "networkInterfaceListData", bl)
+                # Set the container field to None
+                setattr(self, "container", None)
 
-        if self.softwareListData:
-            data = handle_dict_or_list(self.softwareListData["software"])
-            bl = BaseList()
-            for sw in data:
-                #                bl.append(
-                #                    f"{sw.get('fullName')} ({sw.get('category')}) ({sw.get('ignoredReason')})"
-                #                )
-                sw_info = {}
-                for k, v in SOFTWARE_SCHEMA["software"].items():
-                    # If the key doesn't exist, don't add.
-                    # This helps with SQL inserts by not adding
-                    # null values.
-                    if sw.get(k):
-                        if isinstance(v, list):
-                            for sub_k in v:
-                                if sw[k].get(sub_k):
-                                    sw_info[sub_k] = sw[k][sub_k]
+            if self.inventory:
+                setattr(self, "inventory_source", self.inventory.get("source"))
+                setattr(
+                    self,
+                    "inventory_created",
+                    datetime.fromtimestamp(self.inventory.get("created") / 1000),
+                )
+                setattr(
+                    self,
+                    "inventory_lastUpdated",
+                    datetime.fromtimestamp(self.inventory.get("lastUpdated") / 1000),
+                )
+
+                # Set the inventory field to None
+                setattr(self, "inventory", None)
+
+            if self.activity:
+                setattr(self, "activity_source", self.activity.get("source"))
+                setattr(
+                    self,
+                    "activity_lastScannedDate",
+                    datetime.fromtimestamp(self.activity.get("lastScannedDate") / 1000),
+                )
+
+                # Set the activity field to None
+                setattr(self, "activity", None)
+
+            if self.tagList:
+                data = handle_dict_or_list(self.tagList["tag"])
+                bl = BaseList()
+                bl.extend([tag.get("tagName") for tag in data])
+                setattr(self, "tagList", bl)
+
+            if self.serviceList:
+                data = handle_dict_or_list(self.serviceList["service"])
+                bl = BaseList()
+                for service in data:
+                    bl.append(f"{service.get('name')} ({service.get('status')})")
+                setattr(self, "serviceList", bl)
+
+            if self.lastLocation and not isinstance(self.lastLocation, str):
+                setattr(self, "lastLocation", self.lastLocation.get("name"))
+
+            if self.criticality:
+                score = self.criticality.get("score")
+                if not score:
+                    score = 0
+                setattr(self, "criticality", score)
+
+            if self.missingSoftware:
+                data = handle_dict_or_list(self.missingSoftware)
+                bl = BaseList()
+                if data:
+                    for sw in data:
+                        full_category = f"{sw.get('category1')} / {sw.get('category2')}"
+                        bl.append(f"{sw.get('name')} ({full_category})")
+
+                    setattr(self, "missingSoftware", bl)
+                else:
+                    setattr(self, "missingSoftware", None)
+
+            if self.easmTags:
+                data = handle_dict_or_list(self.tagList)
+                bl = BaseList()
+                bl.extend([tag for tag in data])
+                setattr(self, "easmTags", bl)
+
+            if self.customAttributes:
+                print(self.customAttributes)
+
+            if self.processor and not isinstance(self.processor, str):
+                setattr(self, "processor", self.processor.get("description"))
+
+            if self.operatingSystem_lifecycle:
+                for field in [
+                    "gaDate",
+                    "eolDate",
+                    "eosDate",
+                ]:
+                    if self.operatingSystem_lifecycle.get(field):
+                        if self.operatingSystem_lifecycle.get(field) != "Not Announced":
+                            setattr(
+                                self,
+                                f"operatingSystem_lifecycle_{field}",
+                                datetime.fromisoformat(
+                                    self.operatingSystem_lifecycle[field]
+                                ),
+                            )
                         else:
-                            sw_info[k] = sw[k]
-                bl.append(sw_info)
-            setattr(self, "softwareListData", bl)
+                            setattr(self, f"operatingSystem_lifecycle_{field}", None)
+
+                for field in [
+                    "stage",
+                    "lifeCycleConfidence",
+                    "eolSupportStage",
+                    "eosSupportStage",
+                ]:
+                    if self.operatingSystem_lifecycle.get(field):
+                        if self.operatingSystem_lifecycle.get(field) in [
+                            ",",
+                            ",,",
+                            "Not Announced",
+                            " ",
+                        ]:
+                            setattr(self, f"operatingSystem_lifecycle_{field}", None)
+                        setattr(
+                            self,
+                            f"operatingSystem_lifecycle_{field}",
+                            self.operatingSystem_lifecycle[field],
+                        )
+
+                if self.operatingSystem_lifecycle.get("detectionScore"):
+                    setattr(
+                        self,
+                        "operatingSystem_lifecycle_detectionScore",
+                        self.operatingSystem_lifecycle["detectionScore"],
+                    )
+
+                setattr(self, "operatingSystem_lifecycle", None)
 
         if self.softwareComponent:
             if not isinstance(self.softwareComponent, str):
                 raise Exception("SoftwareComponent must be a string.")
-
-        if self.cloudProvider:
-            # A bit different. This is a dictionary with all cloud providers.
-            # The valid one will have a dictionary underneath of it.
-            # First, find the one that is not a NoneType:
-            for provider, data in self.cloudProvider.items():
-                if data:
-                    cloudProvider = provider
-                    subkeys = list(data.keys())
-                    break
-
-            for subkey in subkeys:
-                if subkey != "tags":
-                    for attr in [
-                        "accountId",
-                        "availabilityZone",
-                        "hasAgent",
-                        "hostname",
-                        "imageId",
-                        "instanceId",
-                        "instanceState",
-                        "instanceType",
-                        "qualyScanner",
-                        "kernelId",
-                        "privateDNS",
-                        "privateIpAddress",
-                        "publicDNS",
-                        "publicIpAddress",
-                        "spotInstance",
-                        "subnetId",
-                        "vpcId",
-                        "imageOffer",
-                        "imagePublisher",
-                        "imageVersion",
-                        "location",
-                        "macAddress",
-                        "name",
-                        "platform",
-                        "resourceGroupName",
-                        "size",
-                        "state",
-                        "subnet",
-                        "subscriptionId",
-                        "virtualNetwork",
-                        "vmId",
-                    ]:
-                        if self.cloudProvider[cloudProvider].get(subkey).get(attr):
-                            setattr(
-                                self,
-                                f"cloudProvider_{attr}",
-                                self.cloudProvider[cloudProvider][subkey].get(attr),
-                            )
-
-                    # Convert launchdate to datetime object
-                    if self.cloudProvider[cloudProvider].get(subkey).get(
-                        "launchDate"
-                    ) and not isinstance(
-                        self.cloudProvider[cloudProvider][subkey]["launchDate"],
-                        datetime,
-                    ):
-                        setattr(
-                            self,
-                            "cloudProvider_launchDate",
-                            datetime.fromisoformat(
-                                self.cloudProvider[cloudProvider][subkey]["launchDate"]
-                            ),
-                        )
-
-                    # Parse out region:
-                    if self.cloudProvider[cloudProvider].get(subkey).get(
-                        "region"
-                    ) and not isinstance(
-                        self.cloudProvider[cloudProvider][subkey]["region"], str
-                    ):
-                        setattr(
-                            self,
-                            "cloudProvider_region",
-                            self.cloudProvider[cloudProvider][subkey]
-                            .get("region")
-                            .get("code"),
-                        )
-
-                elif subkey == "tags":
-                    data = handle_dict_or_list(
-                        self.cloudProvider[cloudProvider][subkey]
-                    )
-                    bl = BaseList()
-                    if data:
-                        for tag in data:
-                            s = (
-                                f"{tag.get('key')}:{tag.get('value')}"
-                                if tag.get("key")
-                                else f"{tag.get('name')}:{tag.get('value')}"
-                            )
-                            bl.append(s)
-                        setattr(self, "cloudProvider_tags", bl)
-
-                else:
-                    print(f"Unknown subkey: {subkey}")
-
-                # Set the cloudProvider field to the valid provider
-            setattr(self, "cloudProvider", cloudProvider)
-
-        if self.agent:
-            for field in [
-                "version",
-                "configurationProfile",
-                "connectedFrom",
-                "udcManifestAssigned",
-                "errorStatus",
-            ]:
-                if self.agent.get(field):
-                    setattr(self, f"agent_{field}", self.agent[field])
-            if self.agent.get("activations"):
-                setattr(self, "agent_key", self.agent.get("activations")[0].get("key"))
-                setattr(
-                    self, "agent_status", self.agent.get("activations")[0].get("status")
-                )
-            for dt_field in ["lastActivity", "lastCheckedIn", "lastInventory"]:
-                if self.agent.get(dt_field) and not isinstance(
-                    self.agent.get(dt_field), datetime
-                ):
-                    if self.agent.get(dt_field) != -1:
-                        setattr(
-                            self,
-                            f"agent_{dt_field}",
-                            datetime.fromtimestamp(self.agent[dt_field] / 1000),
-                        )
-                    else:
-                        setattr(self, f"agent_{dt_field}", None)
-
-            # Set the agent field to None
-            setattr(self, "agent", None)
-
-        if self.sensor:
-            for field in ["activatedForModules", "pendingActivationForModules"]:
-                bl = BaseList()
-                if self.sensor.get(field):
-                    bl.extend(self.sensor[field])
-                    setattr(self, f"sensor_{field}", bl)
-            for dt_field in [
-                "lastVMScan",
-                "lastComplianceScan",
-                "lastFullScan",
-                "lastVmScanDateScanner",
-                "lastVmScanDateAgent",
-                "lastPcScanDateScanner",
-                "lastPcScanDateAgent",
-                "firstEasmScanDate",
-                "lastEasmScanDate",
-            ]:
-                if self.sensor.get(dt_field) and not isinstance(
-                    self.sensor.get(dt_field), datetime
-                ):
-                    setattr(
-                        self,
-                        f"sensor_{dt_field}",
-                        datetime.fromtimestamp(self.sensor[dt_field] / 1000),
-                    )
-
-            # Set the sensor field to None
-            setattr(self, "sensor", None)
-
-        if self.container:
-            for field in ["product", "version", "noOfContainers", "noOfImages"]:
-                if self.container.get(field):
-                    setattr(self, f"container_{field}", self.container[field])
-
-            if self.container.get("hasSensor"):
-                setattr(self, "container_hasSensor", bool(self.container["hasSensor"]))
-            else:
-                setattr(self, "container_hasSensor", False)
-
-            # Set the container field to None
-            setattr(self, "container", None)
-
-        if self.inventory:
-            setattr(self, "inventory_source", self.inventory.get("source"))
-            setattr(
-                self,
-                "inventory_created",
-                datetime.fromtimestamp(self.inventory.get("created") / 1000),
-            )
-            setattr(
-                self,
-                "inventory_lastUpdated",
-                datetime.fromtimestamp(self.inventory.get("lastUpdated") / 1000),
-            )
-
-            # Set the inventory field to None
-            setattr(self, "inventory", None)
-
-        if self.activity:
-            setattr(self, "activity_source", self.activity.get("source"))
-            setattr(
-                self,
-                "activity_lastScannedDate",
-                datetime.fromtimestamp(self.activity.get("lastScannedDate") / 1000),
-            )
-
-            # Set the activity field to None
-            setattr(self, "activity", None)
-
-        if self.tagList:
-            data = handle_dict_or_list(self.tagList["tag"])
-            bl = BaseList()
-            bl.extend([tag.get("tagName") for tag in data])
-            setattr(self, "tagList", bl)
-
-        if self.serviceList:
-            data = handle_dict_or_list(self.serviceList["service"])
-            bl = BaseList()
-            for service in data:
-                bl.append(f"{service.get('name')} ({service.get('status')})")
-            setattr(self, "serviceList", bl)
-
-        if self.lastLocation and not isinstance(self.lastLocation, str):
-            setattr(self, "lastLocation", self.lastLocation.get("name"))
-
-        if self.criticality:
-            score = self.criticality.get("score")
-            if not score:
-                score = 0
-            setattr(self, "criticality", score)
-
-        if self.missingSoftware:
-            data = handle_dict_or_list(self.missingSoftware)
-            bl = BaseList()
-            if data:
-                for sw in data:
-                    full_category = f"{sw.get('category1')} / {sw.get('category2')}"
-                    bl.append(f"{sw.get('name')} ({full_category})")
-
-                setattr(self, "missingSoftware", bl)
-            else:
-                setattr(self, "missingSoftware", None)
-
-        if self.easmTags:
-            data = handle_dict_or_list(self.tagList)
-            bl = BaseList()
-            bl.extend([tag for tag in data])
-            setattr(self, "easmTags", bl)
-
-        if self.customAttributes:
-            print(self.customAttributes)
-
-        if self.processor and not isinstance(self.processor, str):
-            setattr(self, "processor", self.processor.get("description"))
-
-        if self.operatingSystem_lifecycle:
-            for field in [
-                "gaDate",
-                "eolDate",
-                "eosDate",
-            ]:
-                if self.operatingSystem_lifecycle.get(field):
-                    if self.operatingSystem_lifecycle.get(field) != "Not Announced":
-                        setattr(
-                            self,
-                            f"operatingSystem_lifecycle_{field}",
-                            datetime.fromisoformat(
-                                self.operatingSystem_lifecycle[field]
-                            ),
-                        )
-                    else:
-                        setattr(self, f"operatingSystem_lifecycle_{field}", None)
-
-            for field in [
-                "stage",
-                "lifeCycleConfidence",
-                "eolSupportStage",
-                "eosSupportStage",
-            ]:
-                if self.operatingSystem_lifecycle.get(field):
-                    if self.operatingSystem_lifecycle.get(field) in [
-                        ",",
-                        ",,",
-                        "Not Announced",
-                        " ",
-                    ]:
-                        setattr(self, f"operatingSystem_lifecycle_{field}", None)
-                    setattr(
-                        self,
-                        f"operatingSystem_lifecycle_{field}",
-                        self.operatingSystem_lifecycle[field],
-                    )
-
-            if self.operatingSystem_lifecycle.get("detectionScore"):
-                setattr(
-                    self,
-                    "operatingSystem_lifecycle_detectionScore",
-                    self.operatingSystem_lifecycle["detectionScore"],
-                )
-
-            setattr(self, "operatingSystem_lifecycle", None)
 
     def is_cloud_host(self) -> bool:
         """

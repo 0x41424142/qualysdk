@@ -18,9 +18,10 @@ def get_user_list(auth: BasicAuth, **kwargs) -> BaseList[User]:
     Args:
         auth (BasicAuth): The authentication object.
 
-    :Kwargs:
-        external_id__contains (str): Filter by external ID containing this string.
-        external_id_assigned (bool): Filter by external ID assigned.
+    ## Kwargs:
+
+        - external_id__contains (str): Filter by external ID containing this string.
+        - external_id_assigned (bool): Filter by external ID assigned.
 
     Returns:
         BaseList[User]: BaseList of User objects.

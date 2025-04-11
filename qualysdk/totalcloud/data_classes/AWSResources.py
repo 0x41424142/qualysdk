@@ -11,6 +11,7 @@ from urllib.parse import unquote
 from .QID import QID
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -37,6 +38,7 @@ class BaseResource(BaseClass):
     accountAlias: str = None
     controlsFailed: int = None
     qualysTags: BaseList[str] = None
+    isSnapshotScanEnabled: bool = None
 
     def __post_init__(self):
         """
@@ -50,30 +52,31 @@ class BaseResource(BaseClass):
         if self.additionalDetails:
             setattr(self, "additionalDetails", str(self.additionalDetails))
 
-        if self.connectorUuids:
-            data = self.connectorUuids
-            bl = BaseList()
-            for uuid in data:
-                bl.append(uuid)
-            setattr(self, "connectorUuids", bl)
+        if not DONT_EXPAND.flag:
+            if self.connectorUuids:
+                data = self.connectorUuids
+                bl = BaseList()
+                for uuid in data:
+                    bl.append(uuid)
+                setattr(self, "connectorUuids", bl)
 
-        if self.tags:
-            data = self.tags
-            bl = BaseList()
-            if isinstance(data, dict):
-                data = [data]
-            for tag in data:
-                bl.append(f"{tag.get('key', None)}:{tag.get('value', None)}")
-            setattr(self, "tags", bl)
+            if self.tags:
+                data = self.tags
+                bl = BaseList()
+                if isinstance(data, dict):
+                    data = [data]
+                for tag in data:
+                    bl.append(f"{tag.get('key', None)}:{tag.get('value', None)}")
+                setattr(self, "tags", bl)
 
-        if self.qualysTags:
-            data = self.qualysTags
-            bl = BaseList()
-            if isinstance(data, dict):
-                data = [data]
-            for tag in data:
-                bl.append(tag["tagName"])
-            setattr(self, "qualysTags", bl)
+            if self.qualysTags:
+                data = self.qualysTags
+                bl = BaseList()
+                if isinstance(data, dict):
+                    data = [data]
+                for tag in data:
+                    bl.append(tag["tagName"])
+                setattr(self, "qualysTags", bl)
 
         if self.cloudAccountId:
             setattr(self, "cloudAccountId", int(self.cloudAccountId))
@@ -107,14 +110,15 @@ class AWSBucket(BaseResource):
             if getattr(self, field) and not isinstance(getattr(self, field), datetime):
                 setattr(self, field, datetime.fromisoformat(getattr(self, field)))
 
-        if self.s3GrantList:
-            data = self.s3GrantList
-            bl = BaseList()
-            for grant in data:
-                bl.append(
-                    f"(email: {grant.get('emailAddress', None)}, groupUri: {grant.get('groupUri', None)}, displayName: {grant.get('displayName', None)}, permission: {grant.get('permission', None)}, id: {grant.get('id', None)})"
-                )
-            setattr(self, "s3GrantList", bl)
+        if not DONT_EXPAND.flag:
+            if self.s3GrantList:
+                data = self.s3GrantList
+                bl = BaseList()
+                for grant in data:
+                    bl.append(
+                        f"(email: {grant.get('emailAddress', None)}, groupUri: {grant.get('groupUri', None)}, displayName: {grant.get('displayName', None)}, permission: {grant.get('permission', None)}, id: {grant.get('id', None)})"
+                    )
+                setattr(self, "s3GrantList", bl)
 
         # For some reason, Qualys returns bool fields as strings for certain resources?
         BOOL_FIELDS = ["remediationEnabled"]
@@ -140,40 +144,41 @@ class AWSNetworkACL(BaseResource):
     networkAclId: str = None
 
     def __post_init__(self):
-        if self.associations:
-            data = self.associations
-            bl = BaseList()
-            for association in data:
-                bl.append(
-                    f"(subnetId: {association.get('subnetId', None)}, networkAclAssociationId: {association.get('networkAclAssociationId', None)}, networkAclId: {association.get('networkAclId', None)})"
-                )
-            setattr(self, "associations", bl)
+        if not DONT_EXPAND.flag:
+            if self.associations:
+                data = self.associations
+                bl = BaseList()
+                for association in data:
+                    bl.append(
+                        f"(subnetId: {association.get('subnetId', None)}, networkAclAssociationId: {association.get('networkAclAssociationId', None)}, networkAclId: {association.get('networkAclId', None)})"
+                    )
+                setattr(self, "associations", bl)
 
-        if self.ipPermissionEgressList:
-            data = self.ipPermissionEgressList
-            bl = BaseList()
-            for permission in data:
-                portRange = permission.get("portRange", None)
-                ruleAction = permission.get("ruleAction", None)
-                protocol = permission.get("protocol", None)
-                source = permission.get("source", None)
-                _type = permission.get("type", None)
-                s = f"(portRange: {portRange}, ruleAction: {ruleAction}, protocol: {protocol}, source: {source}, type: {_type})"
-                bl.append(s)
-            setattr(self, "ipPermissionEgressList", bl)
+            if self.ipPermissionEgressList:
+                data = self.ipPermissionEgressList
+                bl = BaseList()
+                for permission in data:
+                    portRange = permission.get("portRange", None)
+                    ruleAction = permission.get("ruleAction", None)
+                    protocol = permission.get("protocol", None)
+                    source = permission.get("source", None)
+                    _type = permission.get("type", None)
+                    s = f"(portRange: {portRange}, ruleAction: {ruleAction}, protocol: {protocol}, source: {source}, type: {_type})"
+                    bl.append(s)
+                setattr(self, "ipPermissionEgressList", bl)
 
-        if self.ipPermissionList:
-            data = self.ipPermissionList
-            bl = BaseList()
-            for permission in data:
-                portRange = permission.get("portRange", None)
-                ruleAction = permission.get("ruleAction", None)
-                protocol = permission.get("protocol", None)
-                source = permission.get("source", None)
-                _type = permission.get("type", None)
-                s = f"(portRange: {portRange}, ruleAction: {ruleAction}, protocol: {protocol}, source: {source}, type: {_type})"
-                bl.append(s)
-            setattr(self, "ipPermissionList", bl)
+            if self.ipPermissionList:
+                data = self.ipPermissionList
+                bl = BaseList()
+                for permission in data:
+                    portRange = permission.get("portRange", None)
+                    ruleAction = permission.get("ruleAction", None)
+                    protocol = permission.get("protocol", None)
+                    source = permission.get("source", None)
+                    _type = permission.get("type", None)
+                    s = f"(portRange: {portRange}, ruleAction: {ruleAction}, protocol: {protocol}, source: {source}, type: {_type})"
+                    bl.append(s)
+                setattr(self, "ipPermissionList", bl)
 
         BOOL_FIELDS = ["isDefault"]
         for field in BOOL_FIELDS:
@@ -236,46 +241,47 @@ class AWSRDS(BaseResource):
     storageType: str = None
 
     def __post_init__(self):
-        if self.subnetId:
-            data = self.subnetId
-            bl = BaseList()
-            for subnet in data:
-                bl.append(subnet)
-            setattr(self, "subnetId", bl)
+        if not DONT_EXPAND.flag:
+            if self.subnetId:
+                data = self.subnetId
+                bl = BaseList()
+                for subnet in data:
+                    bl.append(subnet)
+                setattr(self, "subnetId", bl)
 
-        if self.subnetGroup:
-            data = self.subnetGroup
-            for key, value in data.items():
-                if key == "subnetList":
-                    bl = BaseList()
-                    for subnet in value:
-                        bl.append(
-                            f"(identifier: {subnet.get('identifier', None)}, availabilityZone: {subnet.get('availabilityZone', None)}, status: {subnet.get('status', None)})"
-                        )
-                    setattr(self, "subnetGroup_subnetList", bl)
-                else:
-                    setattr(self, f"subnetGroup_{key}", value)
-            setattr(self, "subnetGroup", None)
+            if self.subnetGroup:
+                data = self.subnetGroup
+                for key, value in data.items():
+                    if key == "subnetList":
+                        bl = BaseList()
+                        for subnet in value:
+                            bl.append(
+                                f"(identifier: {subnet.get('identifier', None)}, availabilityZone: {subnet.get('availabilityZone', None)}, status: {subnet.get('status', None)})"
+                            )
+                        setattr(self, "subnetGroup_subnetList", bl)
+                    else:
+                        setattr(self, f"subnetGroup_{key}", value)
+                setattr(self, "subnetGroup", None)
 
-        if self.securityGroupId:
-            data = self.securityGroupId
-            bl = BaseList()
-            for group in data:
-                bl.append(group)
-            setattr(self, "securityGroupId", bl)
+            if self.securityGroupId:
+                data = self.securityGroupId
+                bl = BaseList()
+                for group in data:
+                    bl.append(group)
+                setattr(self, "securityGroupId", bl)
 
-        if self.dbSecurityGroupList:
-            data = self.dbSecurityGroupList
-            bl = BaseList()
-            for group in data:
-                bl.append(group)
-            setattr(self, "dbSecurityGroupList", bl)
+            if self.dbSecurityGroupList:
+                data = self.dbSecurityGroupList
+                bl = BaseList()
+                for group in data:
+                    bl.append(group)
+                setattr(self, "dbSecurityGroupList", bl)
 
-        if self.endpoint:
-            data = self.endpoint
-            for key, value in data.items():
-                setattr(self, f"endpoint_{key}", value)
-            setattr(self, "endpoint", None)
+            if self.endpoint:
+                data = self.endpoint
+                for key, value in data.items():
+                    setattr(self, f"endpoint_{key}", value)
+                setattr(self, "endpoint", None)
 
         DT_FIELDS = ["latestRestorableTime", "instanceCreatedTime"]
         for field in DT_FIELDS:
@@ -340,112 +346,115 @@ class AWSIAMUser(BaseResource):
     user: str = None
 
     def __post_init__(self):
-        POLICY_FIELDS = ["userPolicies", "userAttachedPolicies"]
-        for field in POLICY_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
+        if not DONT_EXPAND.flag:
+            POLICY_FIELDS = ["userPolicies", "userAttachedPolicies"]
+            for field in POLICY_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    bl = BaseList()
+                    for policy in data:
+                        if field == "userAttachedPolicies":
+                            bl.append(
+                                f"(policyArn: {policy.get('policyArn', None)}, policyName: {policy.get('policyName', None)})"
+                            )
+                        else:
+                            bl.append(policy)
+
+                    setattr(self, field, bl)
+
+            if self.userDto:
+                data = self.userDto
+                bl = BaseList()
+                # First, parse out accessKeys:
+                accessKeys = data.get("accessKeys", None)
+                accessKeysbl = BaseList()
+                for key in accessKeys:
+                    timestamp = key.get("createDate", None)
+                    if timestamp:  # format: 1703001007000
+                        timestamp = datetime.fromtimestamp(int(timestamp) / 1000)
+                    status = key.get("status", None)
+                    accessKeyId = key.get("accessKeyId", None)
+                    accessKeysbl.append(
+                        f"(accessKeyId: {accessKeyId}, createDate: {timestamp}, status: {status})"
+                    )
+                setattr(self, "userDto_accessKeys", accessKeysbl)
+                # Now we can parse the rest of the fields
+                for key, value in data.items():
+                    if key == "accessKeys":
+                        continue
+                    else:
+                        setattr(self, f"userDto_{key}", value)
+                setattr(self, "userDto", None)
+
+            if self.userGroups:
+                data = self.userGroups
+                bl = BaseList()
+                for group in data:
+                    groupArn = group.get("groupArn", None)
+                    path = group.get("path", None)
+                    groupName = group.get("groupName", None)
+                    createdDate = group.get("createdDate", None)
+                    if createdDate:
+                        createdDate = datetime.fromtimestamp(int(createdDate) / 1000)
+                    groupId = group.get("groupId", None)
+                    bl.append(
+                        f"(groupArn: {groupArn}, path: {path}, groupName: {groupName}, createdDate: {createdDate}, groupId: {groupId})"
+                    )
+                setattr(self, "userGroups", bl)
+
+            if self.classifications:
+                data = self.classifications
+                bl = BaseList()
+                for classification in data:
+                    bl.append(classification)
+                setattr(self, "classifications", bl)
+
+            if self.userInlinePolicies:
+                data = self.userInlinePolicies
                 bl = BaseList()
                 for policy in data:
-                    if field == "userAttachedPolicies":
-                        bl.append(
-                            f"(policyArn: {policy.get('policyArn', None)}, policyName: {policy.get('policyName', None)})"
-                        )
-                    else:
-                        bl.append(policy)
+                    policyDocument = policy.get("policyDocument", None)
+                    policyName = policy.get("policyName", None)
+                    bl.append(
+                        f"(policyDocument: {policyDocument}, policyName: {policyName})"
+                    )
+                setattr(self, "userInlinePolicies", bl)
 
-                setattr(self, field, bl)
+            DT_FIELDS = [
+                "userDto_cert2LastRotated",
+                "userDto_accessKey2LastRotated",
+                "userDto_passwordLastUsed",
+                "userDto_passwordNextRotation",
+                "userDto_userCreationTime",
+                "userDto_accessKey1LastRotated",
+                "userDto_createdDate",
+                "userDto_passwordLastChanged",
+                "userDto_cert1LastRotated",
+                "userDto_accessKey1LastUsed",
+                "userDto_accessKey2LastUsed",
+            ]
+            for field in DT_FIELDS:
+                if getattr(self, field) and not isinstance(
+                    getattr(self, field), datetime
+                ):
+                    setattr(
+                        self,
+                        field,
+                        datetime.fromtimestamp(int(getattr(self, field)) / 1000),
+                    )
 
-        if self.userDto:
-            data = self.userDto
-            bl = BaseList()
-            # First, parse out accessKeys:
-            accessKeys = data.get("accessKeys", None)
-            accessKeysbl = BaseList()
-            for key in accessKeys:
-                timestamp = key.get("createDate", None)
-                if timestamp:  # format: 1703001007000
-                    timestamp = datetime.fromtimestamp(int(timestamp) / 1000)
-                status = key.get("status", None)
-                accessKeyId = key.get("accessKeyId", None)
-                accessKeysbl.append(
-                    f"(accessKeyId: {accessKeyId}, createDate: {timestamp}, status: {status})"
-                )
-            setattr(self, "userDto_accessKeys", accessKeysbl)
-            # Now we can parse the rest of the fields
-            for key, value in data.items():
-                if key == "accessKeys":
-                    continue
-                else:
-                    setattr(self, f"userDto_{key}", value)
-            setattr(self, "userDto", None)
-
-        if self.userGroups:
-            data = self.userGroups
-            bl = BaseList()
-            for group in data:
-                groupArn = group.get("groupArn", None)
-                path = group.get("path", None)
-                groupName = group.get("groupName", None)
-                createdDate = group.get("createdDate", None)
-                if createdDate:
-                    createdDate = datetime.fromtimestamp(int(createdDate) / 1000)
-                groupId = group.get("groupId", None)
-                bl.append(
-                    f"(groupArn: {groupArn}, path: {path}, groupName: {groupName}, createdDate: {createdDate}, groupId: {groupId})"
-                )
-            setattr(self, "userGroups", bl)
-
-        if self.classifications:
-            data = self.classifications
-            bl = BaseList()
-            for classification in data:
-                bl.append(classification)
-            setattr(self, "classifications", bl)
-
-        if self.userInlinePolicies:
-            data = self.userInlinePolicies
-            bl = BaseList()
-            for policy in data:
-                policyDocument = policy.get("policyDocument", None)
-                policyName = policy.get("policyName", None)
-                bl.append(
-                    f"(policyDocument: {policyDocument}, policyName: {policyName})"
-                )
-            setattr(self, "userInlinePolicies", bl)
-
-        DT_FIELDS = [
-            "userDto_cert2LastRotated",
-            "userDto_accessKey2LastRotated",
-            "userDto_passwordLastUsed",
-            "userDto_passwordNextRotation",
-            "userDto_userCreationTime",
-            "userDto_accessKey1LastRotated",
-            "userDto_createdDate",
-            "userDto_passwordLastChanged",
-            "userDto_cert1LastRotated",
-            "userDto_accessKey1LastUsed",
-            "userDto_accessKey2LastUsed",
-        ]
-        for field in DT_FIELDS:
-            if getattr(self, field) and not isinstance(getattr(self, field), datetime):
-                setattr(
-                    self,
-                    field,
-                    datetime.fromtimestamp(int(getattr(self, field)) / 1000),
-                )
-
-        BOOL_FIELDS = [
-            "userDto_accessKey2Active",
-            "userDto_cert2Active",
-            "userDto_cert1Active",
-            "userDto_mfaActive",
-            "userDto_passwordEnabled",
-            "userDto_accessKey1Active",
-        ]
-        for field in BOOL_FIELDS:
-            data = getattr(self, field)
-            if data and not isinstance(data, bool):
-                setattr(self, field, data.lower() == "true")
+            BOOL_FIELDS = [
+                "userDto_accessKey2Active",
+                "userDto_cert2Active",
+                "userDto_cert1Active",
+                "userDto_mfaActive",
+                "userDto_passwordEnabled",
+                "userDto_accessKey1Active",
+            ]
+            for field in BOOL_FIELDS:
+                data = getattr(self, field)
+                if data and not isinstance(data, bool):
+                    setattr(self, field, data.lower() == "true")
 
         super().__post_init__()
 
@@ -463,17 +472,18 @@ class AWSVPC(BaseResource):
     ipv6CidrBlockAssociationSet: BaseList[str] = None
 
     def __post_init__(self):
-        if self.ipv6CidrBlockAssociationSet:
-            data = self.ipv6CidrBlockAssociationSet
-            bl = BaseList()
-            for association in data:
-                associationId = association.get("associationId", None)
-                ipv6CidrBlockState = association.get("ipv6CidrBlockState", None)
-                ipv6CidrBlock = association.get("ipv6CidrBlock", None)
-                bl.append(
-                    f"(associationId: {associationId}, ipv6CidrBlockState: {ipv6CidrBlockState}, ipv6CidrBlock: {ipv6CidrBlock})"
-                )
-            setattr(self, "ipv6CidrBlockAssociationSet", bl)
+        if not DONT_EXPAND.flag:
+            if self.ipv6CidrBlockAssociationSet:
+                data = self.ipv6CidrBlockAssociationSet
+                bl = BaseList()
+                for association in data:
+                    associationId = association.get("associationId", None)
+                    ipv6CidrBlockState = association.get("ipv6CidrBlockState", None)
+                    ipv6CidrBlock = association.get("ipv6CidrBlock", None)
+                    bl.append(
+                        f"(associationId: {associationId}, ipv6CidrBlockState: {ipv6CidrBlockState}, ipv6CidrBlock: {ipv6CidrBlock})"
+                    )
+                setattr(self, "ipv6CidrBlockAssociationSet", bl)
 
         BOOL_FIELDS = ["isDefault"]
         for field in BOOL_FIELDS:
@@ -499,31 +509,32 @@ class AWSSecurityGroup(BaseResource):
     groupName: str = None
 
     def __post_init__(self):
-        if self.ipPermissionList:
-            data = self.ipPermissionList
-            bl = BaseList()
-            for permission in data:
-                portRange = permission.get("portRange", None)
-                ruleAction = permission.get("ruleAction", None)
-                protocol = permission.get("protocol", None)
-                source = permission.get("source", None)
-                _type = permission.get("type", None)
-                s = f"(portRange: {portRange}, ruleAction: {ruleAction}, protocol: {protocol}, source: {source}, type: {_type})"
-                bl.append(s)
-            setattr(self, "ipPermissionList", bl)
+        if not DONT_EXPAND.flag:
+            if self.ipPermissionList:
+                data = self.ipPermissionList
+                bl = BaseList()
+                for permission in data:
+                    portRange = permission.get("portRange", None)
+                    ruleAction = permission.get("ruleAction", None)
+                    protocol = permission.get("protocol", None)
+                    source = permission.get("source", None)
+                    _type = permission.get("type", None)
+                    s = f"(portRange: {portRange}, ruleAction: {ruleAction}, protocol: {protocol}, source: {source}, type: {_type})"
+                    bl.append(s)
+                setattr(self, "ipPermissionList", bl)
 
-        if self.ipPermissionEgressList:
-            data = self.ipPermissionEgressList
-            bl = BaseList()
-            for permission in data:
-                portRange = permission.get("portRange", None)
-                ruleAction = permission.get("ruleAction", None)
-                protocol = permission.get("protocol", None)
-                source = permission.get("source", None)
-                _type = permission.get("type", None)
-                s = f"(portRange: {portRange}, ruleAction: {ruleAction}, protocol: {protocol}, source: {source}, type: {_type})"
-                bl.append(s)
-            setattr(self, "ipPermissionEgressList", bl)
+            if self.ipPermissionEgressList:
+                data = self.ipPermissionEgressList
+                bl = BaseList()
+                for permission in data:
+                    portRange = permission.get("portRange", None)
+                    ruleAction = permission.get("ruleAction", None)
+                    protocol = permission.get("protocol", None)
+                    source = permission.get("source", None)
+                    _type = permission.get("type", None)
+                    s = f"(portRange: {portRange}, ruleAction: {ruleAction}, protocol: {protocol}, source: {source}, type: {_type})"
+                    bl.append(s)
+                setattr(self, "ipPermissionEgressList", bl)
 
         # For some reason, Qualys returns bool fields as strings for certain resources?
         BOOL_FIELDS = ["vulnerable"]
@@ -572,110 +583,111 @@ class AWSLambdaFunction(BaseResource):
     version: str = None
 
     def __post_init__(self):
-        # all fields above with a comment should be investigated!
+        if not DONT_EXPAND.flag:
+            if self.aliases:
+                data = self.aliases
+                bl = BaseList()
+                for alias in data:
+                    revisionId = alias.get("revisionId", None)
+                    aliasArn = alias.get("aliasArn", None)
+                    routingConfigAdditionalVersion = alias.get(
+                        "routingConfigAdditionalVersion", None
+                    )
+                    functionVersion = alias.get("functionVersion", None)
+                    name = alias.get("name", None)
+                    description = alias.get("description", None)
+                    routingConfigAdditionalVersionWeight = alias.get(
+                        "routingConfigAdditionalVersionWeight", None
+                    )
+                    bl.append(
+                        f"(revisionId: {revisionId}, aliasArn: {aliasArn}, routingConfigAdditionalVersion: {routingConfigAdditionalVersion}, functionVersion: {functionVersion}, name: {name}, description: {description}, routingConfigAdditionalVersionWeight: {routingConfigAdditionalVersionWeight})"
+                    )
+                setattr(self, "aliases", bl)
 
-        if self.aliases:
-            data = self.aliases
-            bl = BaseList()
-            for alias in data:
-                revisionId = alias.get("revisionId", None)
-                aliasArn = alias.get("aliasArn", None)
-                routingConfigAdditionalVersion = alias.get(
-                    "routingConfigAdditionalVersion", None
-                )
-                functionVersion = alias.get("functionVersion", None)
-                name = alias.get("name", None)
-                description = alias.get("description", None)
-                routingConfigAdditionalVersionWeight = alias.get(
-                    "routingConfigAdditionalVersionWeight", None
-                )
-                bl.append(
-                    f"(revisionId: {revisionId}, aliasArn: {aliasArn}, routingConfigAdditionalVersion: {routingConfigAdditionalVersion}, functionVersion: {functionVersion}, name: {name}, description: {description}, routingConfigAdditionalVersionWeight: {routingConfigAdditionalVersionWeight})"
-                )
-            setattr(self, "aliases", bl)
+            if self.inlinePolicies:
+                data = self.inlinePolicies
+                bl = BaseList()
+                for policy in data:
+                    policyDocument_version = policy["policyDocument"]
+                    policyDocument_policyName = policy.get("policyName", None)
+                    policyDocument = f"(version: {policyDocument_version}, policyName: {policyDocument_policyName})"
+                    bl.append(policyDocument)
+                setattr(self, "inlinePolicies", bl)
 
-        if self.inlinePolicies:
-            data = self.inlinePolicies
-            bl = BaseList()
-            for policy in data:
-                policyDocument_version = policy["policyDocument"]
-                policyDocument_policyName = policy.get("policyName", None)
-                policyDocument = f"(version: {policyDocument_version}, policyName: {policyDocument_policyName})"
-                bl.append(policyDocument)
-            setattr(self, "inlinePolicies", bl)
+            if self.layers:
+                data = self.layers
+                bl = BaseList()
+                for layer in data:
+                    name = layer.get("name", None)
+                    version = layer.get("version", None)
+                    codeSize = layer.get("codeSize", None)
+                    bl.append(
+                        f"(name: {name}, version: {version}, codeSize: {codeSize})"
+                    )
+                setattr(self, "layers", bl)
 
-        if self.layers:
-            data = self.layers
-            bl = BaseList()
-            for layer in data:
-                name = layer.get("name", None)
-                version = layer.get("version", None)
-                codeSize = layer.get("codeSize", None)
-                bl.append(f"(name: {name}, version: {version}, codeSize: {codeSize})")
-            setattr(self, "layers", bl)
+            if self.functionVersions:
+                data = self.functionVersions
+                bl = BaseList()
+                for version in data:
+                    role = version.get("role", None)
+                    memorySize = version.get("memorySize", None)
+                    runtime = version.get("runtime", None)
+                    lastModified = version.get("lastModified", None)
+                    _version = version.get("version", None)
+                    codeSize = version.get("codeSize", None)
+                    bl.append(
+                        f"(role: {role}, memorySize: {memorySize}, runtime: {runtime}, lastModified: {lastModified}, version: {_version}, codeSize: {codeSize})"
+                    )
+                setattr(self, "functionVersions", bl)
 
-        if self.functionVersions:
-            data = self.functionVersions
-            bl = BaseList()
-            for version in data:
-                role = version.get("role", None)
-                memorySize = version.get("memorySize", None)
-                runtime = version.get("runtime", None)
-                lastModified = version.get("lastModified", None)
-                _version = version.get("version", None)
-                codeSize = version.get("codeSize", None)
-                bl.append(
-                    f"(role: {role}, memorySize: {memorySize}, runtime: {runtime}, lastModified: {lastModified}, version: {_version}, codeSize: {codeSize})"
-                )
-            setattr(self, "functionVersions", bl)
+            if self.functionUrlConfigs:
+                data = self.functionUrlConfigs
+                bl = BaseList()
+                for config in data:
+                    lastModifiedTime = config.get("lastModifiedTime", None)
+                    cors = config.get("cors", None)
+                    creationTime = config.get("creationTime", None)
+                    functionUrl = config.get("functionUrl", None)
+                    authType = config.get("authType", None)
+                    functionArn = config.get("functionArn", None)
+                    bl.append(
+                        f"(lastModifiedTime: {lastModifiedTime}, cors: {cors}, creationTime: {creationTime}, functionUrl: {functionUrl}, authType: {authType}, functionArn: {functionArn})"
+                    )
+                setattr(self, "functionUrlConfigs", bl)
 
-        if self.functionUrlConfigs:
-            data = self.functionUrlConfigs
-            bl = BaseList()
-            for config in data:
-                lastModifiedTime = config.get("lastModifiedTime", None)
-                cors = config.get("cors", None)
-                creationTime = config.get("creationTime", None)
-                functionUrl = config.get("functionUrl", None)
-                authType = config.get("authType", None)
-                functionArn = config.get("functionArn", None)
-                bl.append(
-                    f"(lastModifiedTime: {lastModifiedTime}, cors: {cors}, creationTime: {creationTime}, functionUrl: {functionUrl}, authType: {authType}, functionArn: {functionArn})"
-                )
-            setattr(self, "functionUrlConfigs", bl)
+            if self.classifications:
+                data = self.classifications
+                bl = BaseList()
+                for classification in data:
+                    bl.append(classification)
+                setattr(self, "classifications", bl)
 
-        if self.classifications:
-            data = self.classifications
-            bl = BaseList()
-            for classification in data:
-                bl.append(classification)
-            setattr(self, "classifications", bl)
+            if self.managedPolicies:
+                data = self.managedPolicies
+                bl = BaseList()
+                for policy in data:
+                    policyArn = policy.get("policyArn", None)
+                    policyDocument = policy.get("policyDocument", None)
+                    policyName = policy.get("policyName", None)
+                    bl.append(
+                        f"(policyArn: {policyArn}, policyDocument: {policyDocument}, policyName: {policyName})"
+                    )
+                setattr(self, "managedPolicies", bl)
 
-        if self.managedPolicies:
-            data = self.managedPolicies
-            bl = BaseList()
-            for policy in data:
-                policyArn = policy.get("policyArn", None)
-                policyDocument = policy.get("policyDocument", None)
-                policyName = policy.get("policyName", None)
-                bl.append(
-                    f"(policyArn: {policyArn}, policyDocument: {policyDocument}, policyName: {policyName})"
-                )
-            setattr(self, "managedPolicies", bl)
-
-        if self.eventSourceMappings:
-            data = self.eventSourceMappings
-            bl = BaseList()
-            for mapping in data:
-                eventSourceArn = mapping.get("eventSourceArn", None)
-                lastProcessingResult = mapping.get("lastProcessingResult", None)
-                state = mapping.get("state", None)
-                lastModified = mapping.get("lastModified", None)
-                _type = mapping.get("type", None)
-                bl.append(
-                    f"(eventSourceArn: {eventSourceArn}, lastProcessingResult: {lastProcessingResult}, state: {state}, lastModified: {lastModified}, type: {_type})"
-                )
-            setattr(self, "eventSourceMappings", bl)
+            if self.eventSourceMappings:
+                data = self.eventSourceMappings
+                bl = BaseList()
+                for mapping in data:
+                    eventSourceArn = mapping.get("eventSourceArn", None)
+                    lastProcessingResult = mapping.get("lastProcessingResult", None)
+                    state = mapping.get("state", None)
+                    lastModified = mapping.get("lastModified", None)
+                    _type = mapping.get("type", None)
+                    bl.append(
+                        f"(eventSourceArn: {eventSourceArn}, lastProcessingResult: {lastProcessingResult}, state: {state}, lastModified: {lastModified}, type: {_type})"
+                    )
+                setattr(self, "eventSourceMappings", bl)
 
         if self.lastModified:
             if not isinstance(self.lastModified, datetime):
@@ -701,23 +713,24 @@ class AWSSubnet(BaseResource):
     defaultForAz: bool = None
 
     def __post_init__(self):
-        if self.ipv6CidrBlockAssociationSet:
-            data = self.ipv6CidrBlockAssociationSet
-            bl = BaseList()
-            for association in data:
-                if isinstance(association, dict):
-                    # None of the subnets i have seen have this field,
-                    # but we can take a guess?
-                    # Get the keys, and add to a string
-                    s = ""
-                    for key in association.keys():
-                        s += f"{key}: {association[key]}, "
-                    # Take out the last comma and space, and wrap s in ()s
-                    s = f"({s[:-2]})"
-                    bl.append(s)
-                else:
-                    bl.append(str(association))
-            setattr(self, "ipv6CidrBlockAssociationSet", bl)
+        if not DONT_EXPAND.flag:
+            if self.ipv6CidrBlockAssociationSet:
+                data = self.ipv6CidrBlockAssociationSet
+                bl = BaseList()
+                for association in data:
+                    if isinstance(association, dict):
+                        # None of the subnets i have seen have this field,
+                        # but we can take a guess?
+                        # Get the keys, and add to a string
+                        s = ""
+                        for key in association.keys():
+                            s += f"{key}: {association[key]}, "
+                        # Take out the last comma and space, and wrap s in ()s
+                        s = f"({s[:-2]})"
+                        bl.append(s)
+                    else:
+                        bl.append(str(association))
+                setattr(self, "ipv6CidrBlockAssociationSet", bl)
 
         super().__post_init__()
 
@@ -732,16 +745,17 @@ class AWSInternetGateway(BaseResource):
     internetGatewayId: str = None
 
     def __post_init__(self):
-        if self.attachments:
-            data = self.attachments
-            bl = BaseList()
-            for attachment in data:
-                s = ""
-                for key in attachment.keys():
-                    s += f"{key}: {attachment[key]}, "
-                s = f"({s[:-2]})"
-                bl.append(s)
-            setattr(self, "attachments", bl)
+        if not DONT_EXPAND.flag:
+            if self.attachments:
+                data = self.attachments
+                bl = BaseList()
+                for attachment in data:
+                    s = ""
+                    for key in attachment.keys():
+                        s += f"{key}: {attachment[key]}, "
+                    s = f"({s[:-2]})"
+                    bl.append(s)
+                setattr(self, "attachments", bl)
 
         super().__post_init__()
 
@@ -776,24 +790,25 @@ class AWSLoadBalancer(BaseResource):
             "instances",
             "securityGroups",
         ]
-        for field in BL_STR_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
-                bl = BaseList()
-                for item in data:
-                    bl.append(item)
-                setattr(self, field, bl)
+        if not DONT_EXPAND.flag:
+            for field in BL_STR_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    bl = BaseList()
+                    for item in data:
+                        bl.append(item)
+                    setattr(self, field, bl)
 
-        if self.listeners:
-            data = self.listeners
-            bl = BaseList()
-            for listener in data:
-                s = ""
-                for key in listener.keys():
-                    s += f"{key}: {listener[key]}, "
-                s = f"({s[:-2]})"
-                bl.append(s)
-            setattr(self, "listeners", bl)
+            if self.listeners:
+                data = self.listeners
+                bl = BaseList()
+                for listener in data:
+                    s = ""
+                    for key in listener.keys():
+                        s += f"{key}: {listener[key]}, "
+                    s = f"({s[:-2]})"
+                    bl.append(s)
+                setattr(self, "listeners", bl)
 
         if self.createdTime:
             if not isinstance(self.createdTime, datetime):
@@ -858,75 +873,79 @@ class AWSEC2Instance(BaseResource):
     criticalityScore: int = None
     # vulns are an empty list unless resource details API is called:
     vulnerabilities: BaseList[str] = None
+    sev3Sev4Sev5VulnCount: int = None
 
     def __post_init__(self):
         DICT_BL_FIELDS = ["networkInterfaceAddresses", "securityGroups"]
         STR_BL_FIELDS = ["events", "classifications"]
         PARSE_OUT_FIELDS = ["iamInstanceProfileRoleDetails", "iamInstanceProfile"]
 
-        for field in DICT_BL_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
-                bl = BaseList()
-                for item in data:
-                    s = ""
-                    for key in item.keys():
-                        s += f"{key}: {item[key]}, "
-                    s = f"({s[:-2]})"
-                    bl.append(s)
-                setattr(self, field, bl)
+        if not DONT_EXPAND.flag:
+            for field in DICT_BL_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    bl = BaseList()
+                    for item in data:
+                        s = ""
+                        for key in item.keys():
+                            s += f"{key}: {item[key]}, "
+                        s = f"({s[:-2]})"
+                        bl.append(s)
+                    setattr(self, field, bl)
 
-        for field in STR_BL_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
-                bl = BaseList()
-                for item in data:
-                    bl.append(item)
-                setattr(self, field, bl)
+            for field in STR_BL_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    bl = BaseList()
+                    for item in data:
+                        bl.append(item)
+                    setattr(self, field, bl)
 
-        if self.vulnerabilityStats:
-            data = self.vulnerabilityStats
-            severity = data.get("severity", None)
-            typeDetected = data.get("typeDetected", None)
-            totalVulnerability = data.get("totalVulnerability", None)
-            if severity:
-                for key in severity.keys():
-                    setattr(self, f"vulnerabilityStats_severity_{key}", severity[key])
-            if typeDetected:
-                for key in typeDetected.keys():
+            if self.vulnerabilityStats:
+                data = self.vulnerabilityStats
+                severity = data.get("severity", None)
+                typeDetected = data.get("typeDetected", None)
+                totalVulnerability = data.get("totalVulnerability", None)
+                if severity:
+                    for key in severity.keys():
+                        setattr(
+                            self, f"vulnerabilityStats_severity_{key}", severity[key]
+                        )
+                if typeDetected:
+                    for key in typeDetected.keys():
+                        setattr(
+                            self,
+                            f"vulnerabilityStats_typeDetected_{key}",
+                            typeDetected[key],
+                        )
+                if totalVulnerability:
                     setattr(
                         self,
-                        f"vulnerabilityStats_typeDetected_{key}",
-                        typeDetected[key],
+                        "vulnerabilityStats_typeDetected_totalVulnerability",
+                        totalVulnerability,
                     )
-            if totalVulnerability:
-                setattr(
-                    self,
-                    "vulnerabilityStats_typeDetected_totalVulnerability",
-                    totalVulnerability,
-                )
 
-            setattr(self, "vulnerabilityStats", None)
+                setattr(self, "vulnerabilityStats", None)
 
-        for field in PARSE_OUT_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
-                for key, value in data.items():
-                    setattr(self, f"{field}_{key}", value)
-                setattr(self, field, None)
+            for field in PARSE_OUT_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    for key, value in data.items():
+                        setattr(self, f"{field}_{key}", value)
+                    setattr(self, field, None)
+
+            if self.vulnerabilities:
+                data = self.vulnerabilities
+                if isinstance(data, dict):
+                    data = [data]
+                bl = BaseList()
+                for vuln in data:
+                    bl.append(QID(**vuln))
+                setattr(self, "vulnerabilities", bl)
 
         if self.launchTime:
             if not isinstance(self.launchTime, datetime):
                 setattr(self, "launchTime", datetime.fromisoformat(self.launchTime))
-
-        if self.vulnerabilities:
-            data = self.vulnerabilities
-            if isinstance(data, dict):
-                data = [data]
-            bl = BaseList()
-            for vuln in data:
-                bl.append(QID(**vuln))
-            setattr(self, "vulnerabilities", bl)
 
         super().__post_init__()
 
@@ -944,19 +963,19 @@ class AWSRouteTable(BaseResource):
     routeTableId: str = None
 
     def __post_init__(self):
-        BL_FIELDS = ["associations", "routeDtos", "routes"]
-
-        for field in BL_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
-                bl = BaseList()
-                for item in data:
-                    s = ""
-                    for key in item.keys():
-                        s += f"{key}: {item[key]}, "
-                    s = f"({s[:-2]})"
-                    bl.append(s)
-                setattr(self, field, bl)
+        if not DONT_EXPAND.flag:
+            BL_FIELDS = ["associations", "routeDtos", "routes"]
+            for field in BL_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    bl = BaseList()
+                    for item in data:
+                        s = ""
+                        for key in item.keys():
+                            s += f"{key}: {item[key]}, "
+                        s = f"({s[:-2]})"
+                        bl.append(s)
+                    setattr(self, field, bl)
 
         super().__post_init__()
 
@@ -980,16 +999,17 @@ class AWSEBSVolume(BaseResource):
     kmsKeyId: str = None
 
     def __post_init__(self):
-        if self.attachments:
-            data = self.attachments
-            bl = BaseList()
-            for attachment in data:
-                s = ""
-                for key in attachment.keys():
-                    s += f"{key}: {attachment[key]}, "
-                s = f"({s[:-2]})"
-                bl.append(s)
-            setattr(self, "attachments", bl)
+        if not DONT_EXPAND.flag:
+            if self.attachments:
+                data = self.attachments
+                bl = BaseList()
+                for attachment in data:
+                    s = ""
+                    for key in attachment.keys():
+                        s += f"{key}: {attachment[key]}, "
+                    s = f"({s[:-2]})"
+                    bl.append(s)
+                setattr(self, "attachments", bl)
 
         if self.createTime:
             if not isinstance(self.createTime, datetime):
@@ -1020,14 +1040,14 @@ class AWSAutoScalingGroup(BaseResource):
             "loadBalancerNames",
             "loadBalancerNames",
         ]
-
-        for field in STR_BL_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
-                bl = BaseList()
-                for item in data:
-                    bl.append(item)
-                setattr(self, field, bl)
+        if not DONT_EXPAND.flag:
+            for field in STR_BL_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    bl = BaseList()
+                    for item in data:
+                        bl.append(item)
+                    setattr(self, field, bl)
 
         if self.createdTime:
             if not isinstance(self.createdTime, datetime):
@@ -1077,49 +1097,56 @@ class AWSEKSCluster(BaseResource):
         if self.version:
             setattr(self, "version", float(self.version))
 
-        if self.associations:
-            data = self.associations.get("resourcesVpcConfig", None)
-            if data:
-                for key, value in data.items():
-                    if key == "securityGroupIds":
-                        bl = BaseList()
-                        for group in value:
-                            bl.append(group)
-                        setattr(
-                            self, "associations_resourcesVpcConfig_securityGroupIds", bl
-                        )
-                    elif key == "subnetIds":
-                        bl = BaseList()
-                        for subnet in value:
-                            bl.append(subnet)
-                        setattr(self, "associations_resourcesVpcConfig_subnetIds", bl)
-                    else:
-                        setattr(self, f"associations_resourcesVpcConfig_{key}", value)
-            setattr(self, "associations", None)
-
-        if self.resourcesVpcConfig:
-            data = self.resourcesVpcConfig
-            for key, value in data.items():
-                setattr(self, f"resourcesVpcConfig_{key}", value)
-            setattr(self, "resourcesVpcConfig", None)
-
-        if self.identity:
-            data = self.identity.get("oidc", None)
-            if data:
-                data = data.get("issuer", None)
+        if not DONT_EXPAND.flag:
+            if self.associations:
+                data = self.associations.get("resourcesVpcConfig", None)
                 if data:
-                    setattr(self, "identity_oidc_issuer", data)
-            setattr(self, "identity", None)
+                    for key, value in data.items():
+                        if key == "securityGroupIds":
+                            bl = BaseList()
+                            for group in value:
+                                bl.append(group)
+                            setattr(
+                                self,
+                                "associations_resourcesVpcConfig_securityGroupIds",
+                                bl,
+                            )
+                        elif key == "subnetIds":
+                            bl = BaseList()
+                            for subnet in value:
+                                bl.append(subnet)
+                            setattr(
+                                self, "associations_resourcesVpcConfig_subnetIds", bl
+                            )
+                        else:
+                            setattr(
+                                self, f"associations_resourcesVpcConfig_{key}", value
+                            )
+                setattr(self, "associations", None)
 
-        if self.logging:
-            data = self.logging.get("clusterLogging", None)[0]
-            if data:
-                bl = BaseList()
-                i = data.get("types", None)
-                for item in i:
-                    bl.append(item)
-                setattr(self, "logging_clusterLogging", bl)
-            setattr(self, "logging", None)
+            if self.resourcesVpcConfig:
+                data = self.resourcesVpcConfig
+                for key, value in data.items():
+                    setattr(self, f"resourcesVpcConfig_{key}", value)
+                setattr(self, "resourcesVpcConfig", None)
+
+            if self.identity:
+                data = self.identity.get("oidc", None)
+                if data:
+                    data = data.get("issuer", None)
+                    if data:
+                        setattr(self, "identity_oidc_issuer", data)
+                setattr(self, "identity", None)
+
+            if self.logging:
+                data = self.logging.get("clusterLogging", None)[0]
+                if data:
+                    bl = BaseList()
+                    i = data.get("types", None)
+                    for item in i:
+                        bl.append(item)
+                    setattr(self, "logging_clusterLogging", bl)
+                setattr(self, "logging", None)
 
         super().__post_init__()
 
@@ -1151,7 +1178,7 @@ class AWSEKSNodeGroup(BaseResource):
     capacityType: str = None
     instanceTypes: BaseList[str] = None
     releaseVersion: str = None
-    version: float = None
+    version: str = None
     labels: BaseList[str] = None
     diskSize: int = None
     nodeRole: str = None
@@ -1166,70 +1193,78 @@ class AWSEKSNodeGroup(BaseResource):
     health: BaseList[str] = None
 
     def __post_init__(self):
-        if self.version:
-            setattr(self, "version", float(self.version))
-
-        if self.associations:
-            data = self.associations
-            setattr(self, "associations_clusterArn", data.get("clusterArn", None))
-            setattr(self, "associations_clusterName", data.get("clusterName", None))
-            subnets = data.get("subnets", None)
-            if subnets:
-                bl = BaseList()
-                for subnet in subnets:
-                    bl.append(subnet)
-                setattr(self, "associations_subnets", bl)
-            resources = data.get("resources", None)
-            if resources:
-                if resources.get("autoScalingGroups", None):
+        if not DONT_EXPAND.flag:
+            if self.associations:
+                data = self.associations
+                setattr(self, "associations_clusterArn", data.get("clusterArn", None))
+                setattr(self, "associations_clusterName", data.get("clusterName", None))
+                subnets = data.get("subnets", None)
+                if subnets:
                     bl = BaseList()
-                    for group in resources["autoScalingGroups"]:
-                        bl.append(group.get("name", None))
-                    setattr(self, "associations_resources_autoScalingGroups", bl)
-            setattr(self, "associations", None)
+                    for subnet in subnets:
+                        bl.append(subnet)
+                    setattr(self, "associations_subnets", bl)
+                resources = data.get("resources", None)
+                if resources:
+                    if resources.get("autoScalingGroups", None):
+                        bl = BaseList()
+                        for group in resources["autoScalingGroups"]:
+                            bl.append(group.get("name", None))
+                        setattr(self, "associations_resources_autoScalingGroups", bl)
+                setattr(self, "associations", None)
 
-        if self.scalingConfig:
-            data = self.scalingConfig
-            if data.get("maxSize", None):
-                setattr(self, "scalingConfig_maxSize", int(data.get("maxSize", None)))
-            if data.get("desiredSize", None):
-                setattr(
-                    self,
-                    "scalingConfig_desiredSize",
-                    int(data.get("desiredSize", None)),
-                )
-            if data.get("minSize", None):
-                setattr(self, "scalingConfig_minSize", int(data.get("minSize", None)))
-            setattr(self, "scalingConfig", None)
-
-        if self.labels:
-            data = self.labels
-            bl = BaseList()
-            for k, v in data.items():
-                bl.append(f"({k}: {v})")
-
-        if self.launchTemplate:
-            data = self.launchTemplate
-            setattr(self, "launchTemplate_name", data.get("name", None))
-            setattr(self, "launchTemplate_id", data.get("id", None))
-            setattr(self, "launchTemplate_version", data.get("version", None))
-            setattr(self, "launchTemplate", None)
-
-        if self.health:
-            data = self.health.get("issues", None)
-            if data:
-                bl = BaseList()
-                for issue in data:
-                    code = issue.get("code", None)
-                    message = issue.get("message", None)
-                    resourceIds = issue.get("resourceIds", None)
-                    resourcebl = BaseList()
-                    if resourceIds:
-                        for resourceId in resourceIds:
-                            resourcebl.append(resourceId)
-                    bl.append(
-                        f"(code: {code}, message: {message}, resourceIds: {resourcebl})"
+            if self.scalingConfig:
+                data = self.scalingConfig
+                if data.get("maxSize", None):
+                    setattr(
+                        self, "scalingConfig_maxSize", int(data.get("maxSize", None))
                     )
+                if data.get("desiredSize", None):
+                    setattr(
+                        self,
+                        "scalingConfig_desiredSize",
+                        int(data.get("desiredSize", None)),
+                    )
+                if data.get("minSize", None):
+                    setattr(
+                        self, "scalingConfig_minSize", int(data.get("minSize", None))
+                    )
+                setattr(self, "scalingConfig", None)
+
+            if self.labels:
+                data = self.labels
+                bl = BaseList()
+                for k, v in data.items():
+                    bl.append(f"({k}: {v})")
+
+            if self.launchTemplate:
+                data = self.launchTemplate
+                setattr(self, "launchTemplate_name", data.get("name", None))
+                setattr(self, "launchTemplate_id", data.get("id", None))
+                setattr(self, "launchTemplate_version", data.get("version", None))
+                setattr(self, "launchTemplate", None)
+
+            if self.health:
+                data = self.health.get("issues", None)
+                if data:
+                    bl = BaseList()
+                    for issue in data:
+                        code = issue.get("code", None)
+                        message = issue.get("message", None)
+                        resourceIds = issue.get("resourceIds", None)
+                        resourcebl = BaseList()
+                        if resourceIds:
+                            for resourceId in resourceIds:
+                                resourcebl.append(resourceId)
+                        bl.append(
+                            f"(code: {code}, message: {message}, resourceIds: {resourcebl})"
+                        )
+
+        if DONT_EXPAND.flag:
+            # watch out for weirness with nulls:
+            for field in ["tags", "qualysTags", "instanceTypes", "labels", "diskSize"]:
+                if getattr(self, field, []) in ["{}", "[]", [], {}, "", [""]]:
+                    setattr(self, field, None)
 
         super().__post_init__()
 
@@ -1256,33 +1291,34 @@ class AWSEKSFargateProfile(BaseResource):
     status: str = None
 
     def __post_init__(self):
-        if self.associations:
-            data = self.associations
-            setattr(self, "associations_clusterArn", data.get("clusterArn", None))
-            setattr(self, "associations_clusterName", data.get("clusterName", None))
-            subnets = data.get("subnets", None)
-            if subnets:
+        if not DONT_EXPAND.flag:
+            if self.associations:
+                data = self.associations
+                setattr(self, "associations_clusterArn", data.get("clusterArn", None))
+                setattr(self, "associations_clusterName", data.get("clusterName", None))
+                subnets = data.get("subnets", None)
+                if subnets:
+                    bl = BaseList()
+                    for subnet in subnets:
+                        bl.append(subnet)
+                    setattr(self, "associations_subnets", bl)
+                setattr(self, "associations", None)
+
+            if self.selectors:
+                data = self.selectors
                 bl = BaseList()
-                for subnet in subnets:
-                    bl.append(subnet)
-                setattr(self, "associations_subnets", bl)
-            setattr(self, "associations", None)
+                for selector in data:
+                    s = ""
+                    namespace = selector.get("namespace", None)
+                    labels = selector.get("labels", None)
+                    if labels:
+                        for k, v in labels.items():
+                            s += f"{k}: {v}, "
+                        # Take out the last comma and space
+                        s = f"[{s[:-2]}]"
 
-        if self.selectors:
-            data = self.selectors
-            bl = BaseList()
-            for selector in data:
-                s = ""
-                namespace = selector.get("namespace", None)
-                labels = selector.get("labels", None)
-                if labels:
-                    for k, v in labels.items():
-                        s += f"{k}: {v}, "
-                    # Take out the last comma and space
-                    s = f"[{s[:-2]}]"
-
-                bl.append(f"(namespace: {namespace}, labels: {s})")
-            setattr(self, "selectors", bl)
+                    bl.append(f"(namespace: {namespace}, labels: {s})")
+                setattr(self, "selectors", bl)
 
         super().__post_init__()
 
@@ -1313,45 +1349,68 @@ class AWSVPCEndpoint(BaseResource):
     subnetIds: BaseList[str] = None  # list of strs
 
     def __post_init__(self):
-        STR_BL_FIELDS = ["routeTableIds", "networkInterfaceIds", "subnetIds"]
-
-        for field in STR_BL_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
-                bl = BaseList()
-                for item in data:
-                    bl.append(item)
-                setattr(self, field, bl)
+        if self.privateDnsEnabled:
+            if not isinstance(self.privateDnsEnabled, bool):
+                setattr(
+                    self, "privateDnsEnabled", self.privateDnsEnabled.lower() == "true"
+                )
+        if not DONT_EXPAND.flag:
+            STR_BL_FIELDS = ["routeTableIds", "networkInterfaceIds", "subnetIds"]
+            for field in STR_BL_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    bl = BaseList()
+                    for item in data:
+                        bl.append(item)
+                    setattr(self, field, bl)
 
         if self.policyDocument:
-            data = loads(self.policyDocument).get("Statement", None)
-            if data:
+            if not DONT_EXPAND.flag:
+                data = loads(self.policyDocument).get("Statement", None)
+                if data:
+                    bl = BaseList()
+                    for statement in data:
+                        s = ""
+                        for key in statement.keys():
+                            s += f"{key}: {statement[key]}, "
+                        s = f"({s[:-2]})"
+                        bl.append(s)
+                    setattr(self, "policyDocument", bl)
+            else:
+                setattr(self, "policyDocument", loads(self.policyDocument))
+
+        if not DONT_EXPAND.flag:
+            if self.securityGroupSet:
+                data = self.securityGroupSet
                 bl = BaseList()
-                for statement in data:
-                    s = ""
-                    for key in statement.keys():
-                        s += f"{key}: {statement[key]}, "
-                    s = f"({s[:-2]})"
-                    bl.append(s)
-                setattr(self, "policyDocument", bl)
+                for group in data:
+                    groupName = group.get("groupName", None)
+                    groupId = group.get("groupId", None)
+                    bl.append(f"(groupName: {groupName}, groupId: {groupId})")
+                setattr(self, "securityGroupSet", bl)
 
-        if self.securityGroupSet:
-            data = self.securityGroupSet
-            bl = BaseList()
-            for group in data:
-                groupName = group.get("groupName", None)
-                groupId = group.get("groupId", None)
-                bl.append(f"(groupName: {groupName}, groupId: {groupId})")
-            setattr(self, "securityGroupSet", bl)
+            if self.dnsEntrySets:
+                data = self.dnsEntrySets
+                bl = BaseList()
+                for entry in data:
+                    hostedZoneId = entry.get("hostedZoneId", None)
+                    dnsName = entry.get("dnsName", None)
+                    bl.append(f"(hostedZoneId: {hostedZoneId}, dnsName: {dnsName})")
+                setattr(self, "dnsEntrySets", bl)
 
-        if self.dnsEntrySets:
-            data = self.dnsEntrySets
-            bl = BaseList()
-            for entry in data:
-                hostedZoneId = entry.get("hostedZoneId", None)
-                dnsName = entry.get("dnsName", None)
-                bl.append(f"(hostedZoneId: {hostedZoneId}, dnsName: {dnsName})")
-            setattr(self, "dnsEntrySets", bl)
+        if DONT_EXPAND.flag:
+            # watch for empties
+            for field in [
+                "tags",
+                "qualysTags",
+                "securityGroupSet",
+                "routeTableId",
+                "dnsEntrySets",
+                "networkInterfaceIds",
+                "subnetIds",
+            ]:
+                if getattr(self, field, []) in ["{}", "[]", [], {}, "", [""]]:
+                    setattr(self, field, None)
 
         super().__post_init__()
 
@@ -1378,15 +1437,15 @@ class AWSVPCEndpointService(BaseResource):
     vpcEndpointPolicySupported: bool = None
 
     def __post_init__(self):
-        STR_BL_FIELDS = ["availabilityZone", "baseEndpointDnsName"]
-
-        for field in STR_BL_FIELDS:
-            if getattr(self, field):
-                data = getattr(self, field)
-                bl = BaseList()
-                for item in data:
-                    bl.append(item)
-                setattr(self, field, bl)
+        if not DONT_EXPAND.flag:
+            STR_BL_FIELDS = ["availabilityZone", "baseEndpointDnsName"]
+            for field in STR_BL_FIELDS:
+                if getattr(self, field):
+                    data = getattr(self, field)
+                    bl = BaseList()
+                    for item in data:
+                        bl.append(item)
+                    setattr(self, field, bl)
 
         super().__post_init__()
 
@@ -1408,53 +1467,56 @@ class AWSIAMGroup(BaseResource):
     arn: str = None
 
     def __post_init__(self):
-        if self.classifications:
-            data = self.classifications
-            bl = BaseList()
-            for classification in data:
-                bl.append(classification)
+        if not DONT_EXPAND.flag:
+            if self.classifications:
+                data = self.classifications
+                bl = BaseList()
+                for classification in data:
+                    bl.append(classification)
 
-        if self.GroupPolicyList:
-            data = self.GroupPolicyList
-            bl = BaseList()
-            for policy in data:
-                policyName = policy.get("PolicyName", None)
-                policyDocument = loads(policy.get("PolicyDocument", None))
-                if policyDocument:
-                    policyDocument_version = policyDocument.get("Version", None)
-                    policyDocument_statement = policyDocument.get("Statement", None)
-                    if policyDocument_statement:
-                        statementbl = BaseList()
-                        if isinstance(policyDocument_statement, list):
-                            for statement in policyDocument_statement:
-                                action = statement.get("Action", None)
-                                resource = statement.get("Resource", None)
-                                effect = statement.get("Effect", None)
+            if self.GroupPolicyList:
+                data = self.GroupPolicyList
+                bl = BaseList()
+                for policy in data:
+                    policyName = policy.get("PolicyName", None)
+                    policyDocument = loads(policy.get("PolicyDocument", None))
+                    if policyDocument:
+                        policyDocument_version = policyDocument.get("Version", None)
+                        policyDocument_statement = policyDocument.get("Statement", None)
+                        if policyDocument_statement:
+                            statementbl = BaseList()
+                            if isinstance(policyDocument_statement, list):
+                                for statement in policyDocument_statement:
+                                    action = statement.get("Action", None)
+                                    resource = statement.get("Resource", None)
+                                    effect = statement.get("Effect", None)
+                                    statementbl.append(
+                                        f"(Action: {action}, Resource: {resource}, Effect: {effect})"
+                                    )
+                            else:
+                                action = policyDocument_statement.get("Action", None)
+                                resource = policyDocument_statement.get(
+                                    "Resource", None
+                                )
+                                effect = policyDocument_statement.get("Effect", None)
                                 statementbl.append(
                                     f"(Action: {action}, Resource: {resource}, Effect: {effect})"
                                 )
-                        else:
-                            action = policyDocument_statement.get("Action", None)
-                            resource = policyDocument_statement.get("Resource", None)
-                            effect = policyDocument_statement.get("Effect", None)
-                            statementbl.append(
-                                f"(Action: {action}, Resource: {resource}, Effect: {effect})"
-                            )
 
-                        policyDocument = f"(Version: {policyDocument_version}, Statement: {statementbl})"
-                bl.append(
-                    f"(policyName: {policyName}, policyDocument: {policyDocument})"
-                )
-            setattr(self, "GroupPolicyList", bl)
+                            policyDocument = f"(Version: {policyDocument_version}, Statement: {statementbl})"
+                    bl.append(
+                        f"(policyName: {policyName}, policyDocument: {policyDocument})"
+                    )
+                setattr(self, "GroupPolicyList", bl)
 
-        if self.AttachedManagedPolicies:
-            data = self.AttachedManagedPolicies
-            bl = BaseList()
-            for policy in data:
-                policyArn = policy.get("PolicyArn", None)
-                policyName = policy.get("PolicyName", None)
-                bl.append(f"(PolicyArn: {policyArn}, PolicyName: {policyName})")
-            setattr(self, "AttachedManagedPolicies", bl)
+            if self.AttachedManagedPolicies:
+                data = self.AttachedManagedPolicies
+                bl = BaseList()
+                for policy in data:
+                    policyArn = policy.get("PolicyArn", None)
+                    policyName = policy.get("PolicyName", None)
+                    bl.append(f"(PolicyArn: {policyArn}, PolicyName: {policyName})")
+                setattr(self, "AttachedManagedPolicies", bl)
 
         super().__post_init__()
 
@@ -1488,82 +1550,85 @@ class AWSIAMPolicy(BaseResource):
     arn: str = None
 
     def __post_init__(self):
-        if self.defaultPolicyVersion:
-            data = self.defaultPolicyVersion
-            setattr(self, "defaultPolicyVersion_VersionId", data.get("VersionId", None))
-            setattr(
-                self,
-                "defaultPolicyVersion_IsDefaultVersion",
-                data.get("IsDefaultVersion", None),
-            )
-            createDate = data.get("CreateDate", None)
-            if createDate:
+        if not DONT_EXPAND.flag:
+            if self.defaultPolicyVersion:
+                data = self.defaultPolicyVersion
+                setattr(
+                    self, "defaultPolicyVersion_VersionId", data.get("VersionId", None)
+                )
                 setattr(
                     self,
-                    "defaultPolicyVersion_CreateDate",
-                    datetime.fromtimestamp(createDate),
+                    "defaultPolicyVersion_IsDefaultVersion",
+                    data.get("IsDefaultVersion", None),
                 )
-            document = data.get("Document", None)
-            if document:
-                document = loads(document)
-                setattr(
-                    self,
-                    "defaultPolicyVersion_Document_Version",
-                    document.get("Version", None),
-                )
-                statement = document.get("Statement", None)
-                if statement:
-                    bl = BaseList()
-                    if isinstance(statement, list):
-                        for stmt in statement:
-                            resource = stmt.get("Resource", None)
-                            stmt.pop("Resource", None)
-                            effect = stmt.get("Effect", None)
-                            stmt.pop("Effect", None)
-                            # For the remaining key (either Action or Condition),
-                            # it is a list of strings. We need to convert to BaseList
-                            # for consistency
-                            is_action = True if "Action" in stmt else False
-                            rule = stmt.get("Action", None)
-                            stmt.pop("Action", None)
+                createDate = data.get("CreateDate", None)
+                if createDate:
+                    setattr(
+                        self,
+                        "defaultPolicyVersion_CreateDate",
+                        datetime.fromtimestamp(createDate),
+                    )
+                document = data.get("Document", None)
+                if document:
+                    document = loads(document)
+                    setattr(
+                        self,
+                        "defaultPolicyVersion_Document_Version",
+                        document.get("Version", None),
+                    )
+                    statement = document.get("Statement", None)
+                    if statement:
+                        bl = BaseList()
+                        if isinstance(statement, list):
+                            for stmt in statement:
+                                resource = stmt.get("Resource", None)
+                                stmt.pop("Resource", None)
+                                effect = stmt.get("Effect", None)
+                                stmt.pop("Effect", None)
+                                # For the remaining key (either Action or Condition),
+                                # it is a list of strings. We need to convert to BaseList
+                                # for consistency
+                                is_action = True if "Action" in stmt else False
+                                rule = stmt.get("Action", None)
+                                stmt.pop("Action", None)
+                                if not rule:
+                                    rule = stmt.get("Condition", None)
+                                    stmt.pop("Condition", None)
+                                if rule:
+                                    rulebl = BaseList()
+                                    for r in rule:
+                                        rulebl.append(r)
+                                    rule = rulebl
+                        else:
+                            resource = statement.get("Resource", None)
+                            statement.pop("Resource", None)
+                            effect = statement.get("Effect", None)
+                            statement.pop("Effect", None)
+                            is_action = True if "Action" in statement else False
+                            rule = statement.get("Action", None)
+                            statement.pop("Action", None)
                             if not rule:
-                                rule = stmt.get("Condition", None)
-                                stmt.pop("Condition", None)
+                                rule = statement.get("Condition", None)
+                                statement.pop("Condition", None)
                             if rule:
                                 rulebl = BaseList()
                                 for r in rule:
                                     rulebl.append(r)
                                 rule = rulebl
-                    else:
-                        resource = statement.get("Resource", None)
-                        statement.pop("Resource", None)
-                        effect = statement.get("Effect", None)
-                        statement.pop("Effect", None)
-                        is_action = True if "Action" in statement else False
-                        rule = statement.get("Action", None)
-                        statement.pop("Action", None)
-                        if not rule:
-                            rule = statement.get("Condition", None)
-                            statement.pop("Condition", None)
-                        if rule:
-                            rulebl = BaseList()
-                            for r in rule:
-                                rulebl.append(r)
-                            rule = rulebl
 
-                        # Now we have the resource, effect, and rule
-                        # Add them to the statement
-                        s = f"(Resource: {resource}, Effect: {effect}, {'Action' if is_action else 'Condition'}: {str(rule)})"
-                        bl.append(s)
-                    setattr(self, "defaultPolicyVersion_Document_Statement", bl)
-            setattr(self, "defaultPolicyVersion", None)
+                            # Now we have the resource, effect, and rule
+                            # Add them to the statement
+                            s = f"(Resource: {resource}, Effect: {effect}, {'Action' if is_action else 'Condition'}: {str(rule)})"
+                            bl.append(s)
+                        setattr(self, "defaultPolicyVersion_Document_Statement", bl)
+                setattr(self, "defaultPolicyVersion", None)
 
-        if self.classifications:
-            data = self.classifications
-            bl = BaseList()
-            for classification in data:
-                bl.append(classification)
-            setattr(self, "classifications", bl)
+            if self.classifications:
+                data = self.classifications
+                bl = BaseList()
+                for classification in data:
+                    bl.append(classification)
+                setattr(self, "classifications", bl)
 
         super().__post_init__()
 
@@ -1599,124 +1664,132 @@ class AWSIAMRole(BaseResource):
     InstanceProfileList: BaseList[str] = None  # list of dicts
 
     def __post_init__(self):
-        if self.AttachedManagedPolicies:
-            data = self.AttachedManagedPolicies
-            bl = BaseList()
-            for policy in data:
-                policyArn = policy.get("PolicyArn", None)
-                policyName = policy.get("PolicyName", None)
-                bl.append(f"(PolicyArn: {policyArn}, PolicyName: {policyName})")
-            setattr(self, "AttachedManagedPolicies", bl)
+        if not DONT_EXPAND.flag:
+            if self.AttachedManagedPolicies:
+                data = self.AttachedManagedPolicies
+                bl = BaseList()
+                for policy in data:
+                    policyArn = policy.get("PolicyArn", None)
+                    policyName = policy.get("PolicyName", None)
+                    bl.append(f"(PolicyArn: {policyArn}, PolicyName: {policyName})")
+                setattr(self, "AttachedManagedPolicies", bl)
 
-        if self.PermissionsBoundary:
-            data = self.PermissionsBoundary
-            setattr(
-                self,
-                "PermissionsBoundary_PermissionsBoundaryArn",
-                data.get("PermissionsBoundaryArn", None),
-            )
-            setattr(
-                self,
-                "PermissionsBoundary_PermissionsBoundaryType",
-                data.get("PermissionsBoundaryType", None),
-            )
-            setattr(self, "PermissionsBoundary", None)
+            if self.PermissionsBoundary:
+                data = self.PermissionsBoundary
+                setattr(
+                    self,
+                    "PermissionsBoundary_PermissionsBoundaryArn",
+                    data.get("PermissionsBoundaryArn", None),
+                )
+                setattr(
+                    self,
+                    "PermissionsBoundary_PermissionsBoundaryType",
+                    data.get("PermissionsBoundaryType", None),
+                )
+                setattr(self, "PermissionsBoundary", None)
 
-        if self.classifications:
-            data = self.classifications
-            bl = BaseList()
-            for classification in data:
-                bl.append(classification)
-            setattr(self, "classifications", bl)
+            if self.classifications:
+                data = self.classifications
+                bl = BaseList()
+                for classification in data:
+                    bl.append(classification)
+                setattr(self, "classifications", bl)
+
+            if self.trustedEntities:
+                data = self.trustedEntities
+                for k, v in data.items():
+                    formatted = f"{k}: {v}"
+                setattr(self, "trustedEntities", formatted)
+
+            if self.RolePolicyList:
+                data = self.RolePolicyList
+                bl = BaseList()
+                for policy in data:
+                    policyName = policy.get("PolicyName", None)
+                    policyDocument = loads(policy.get("PolicyDocument", None))
+                    if policyDocument:
+                        policyDocument_version = policyDocument.get("Version", None)
+                        policyDocument_statement = policyDocument.get("Statement", None)
+                        if policyDocument_statement:
+                            if isinstance(policyDocument_statement, list):
+                                statementbl = BaseList()
+                                for statement in policyDocument_statement:
+                                    action = statement.get("Action", None)
+                                    resource = statement.get("Resource", None)
+                                    effect = statement.get("Effect", None)
+                                    statementbl.append(
+                                        f"(Action: {action}, Resource: {resource}, Effect: {effect})"
+                                    )
+                                policyDocument = f"(Version: {policyDocument_version}, Statement: {statementbl})"
+                            else:
+                                policyDocument = f"(Version: {policyDocument_version}, Statement: {policyDocument_statement})"
+                    bl.append(
+                        f"(policyName: {policyName}, policyDocument: {policyDocument})"
+                    )
+                setattr(self, "RolePolicyList", bl)
+
+            if self.InstanceProfileList:
+                data = self.InstanceProfileList
+                bl = BaseList()
+                for profile in data:
+                    path = profile.get("Path", None)
+                    instanceProfileName = profile.get("InstanceProfileName", None)
+                    InstanceProfileId = profile.get("InstanceProfileId", None)
+                    arn = profile.get("Arn", None)
+                    CreateDate = profile.get("CreateDate", None)  # timestamp
+                    if CreateDate and not isinstance(CreateDate, datetime):
+                        CreateDate = datetime.fromtimestamp(CreateDate)
+                    roles = profile.get("Roles", None)
+                    if roles:
+                        rolebl = BaseList()
+                        for role in roles:
+                            rolepath = role.get("Path", None)
+                            rolename = role.get("RoleName", None)
+                            roleassumeRolePolicyDocument = role.get(
+                                "AssumeRolePolicyDocument", None
+                            )
+                            if roleassumeRolePolicyDocument:
+                                roleassumeRolePolicyDocument = unquote(
+                                    roleassumeRolePolicyDocument
+                                )
+                            rolearn = role.get("Arn", None)
+                            rolecreateDate = role.get("CreateDate", None)
+                            if rolecreateDate and not isinstance(
+                                rolecreateDate, datetime
+                            ):
+                                rolecreateDate = datetime.fromtimestamp(rolecreateDate)
+                            roleId = role.get("RoleId", None)
+                            rolestr = f"(Path: {rolepath}, RoleName: {rolename}, Arn: {rolearn}, CreateDate: {rolecreateDate}, RoleId: {roleId}, AssumeRolePolicyDocument: {roleassumeRolePolicyDocument})"
+                            rolebl.append(rolestr)
+                        roles = rolebl
+                    s = f"(Path: {path}, InstanceProfileName: {instanceProfileName}, InstanceProfileId: {InstanceProfileId}, Arn: {arn}, CreateDate: {CreateDate}, Roles: {roles})"
+                    bl.append(s)
+                setattr(self, "InstanceProfileList", bl)
 
         if self.AssumeRolePolicyDocument:
             data = loads(self.AssumeRolePolicyDocument)
-            setattr(self, "AssumeRolePolicyDocument_Version", data.get("Version", None))
-            statement = data.get("Statement", None)
-            if statement:
-                bl = BaseList()
-                for stmt in statement:
-                    effect = stmt.get("Effect", None)
-                    stmt.pop("Effect", None)
-                    principal = stmt.get("Principal", None)
-                    stmt.pop("Principal", None)
-                    action = stmt.get("Action", None)
-                    stmt.pop("Action", None)
-                    resource = stmt.get("Resource", None)
-                    stmt.pop("Resource", None)
-                    s = f"(Effect: {effect}, Principal: {principal}, Action: {action}, Resource: {resource})"
-                    bl.append(s)
-                setattr(self, "AssumeRolePolicyDocument_Statement", bl)
-            setattr(self, "AssumeRolePolicyDocument", None)
-
-        if self.trustedEntities:
-            data = self.trustedEntities
-            for k, v in data.items():
-                formatted = f"{k}: {v}"
-            setattr(self, "trustedEntities", formatted)
-
-        if self.RolePolicyList:
-            data = self.RolePolicyList
-            bl = BaseList()
-            for policy in data:
-                policyName = policy.get("PolicyName", None)
-                policyDocument = loads(policy.get("PolicyDocument", None))
-                if policyDocument:
-                    policyDocument_version = policyDocument.get("Version", None)
-                    policyDocument_statement = policyDocument.get("Statement", None)
-                    if policyDocument_statement:
-                        if isinstance(policyDocument_statement, list):
-                            statementbl = BaseList()
-                            for statement in policyDocument_statement:
-                                action = statement.get("Action", None)
-                                resource = statement.get("Resource", None)
-                                effect = statement.get("Effect", None)
-                                statementbl.append(
-                                    f"(Action: {action}, Resource: {resource}, Effect: {effect})"
-                                )
-                            policyDocument = f"(Version: {policyDocument_version}, Statement: {statementbl})"
-                        else:
-                            policyDocument = f"(Version: {policyDocument_version}, Statement: {policyDocument_statement})"
-                bl.append(
-                    f"(policyName: {policyName}, policyDocument: {policyDocument})"
+            if DONT_EXPAND.flag:
+                setattr(self, "AssumeRolePolicyDocument", data)
+            else:
+                setattr(
+                    self, "AssumeRolePolicyDocument_Version", data.get("Version", None)
                 )
-            setattr(self, "RolePolicyList", bl)
-
-        if self.InstanceProfileList:
-            data = self.InstanceProfileList
-            bl = BaseList()
-            for profile in data:
-                path = profile.get("Path", None)
-                instanceProfileName = profile.get("InstanceProfileName", None)
-                InstanceProfileId = profile.get("InstanceProfileId", None)
-                arn = profile.get("Arn", None)
-                CreateDate = profile.get("CreateDate", None)  # timestamp
-                if CreateDate and not isinstance(CreateDate, datetime):
-                    CreateDate = datetime.fromtimestamp(CreateDate)
-                roles = profile.get("Roles", None)
-                if roles:
-                    rolebl = BaseList()
-                    for role in roles:
-                        rolepath = role.get("Path", None)
-                        rolename = role.get("RoleName", None)
-                        roleassumeRolePolicyDocument = role.get(
-                            "AssumeRolePolicyDocument", None
-                        )
-                        if roleassumeRolePolicyDocument:
-                            roleassumeRolePolicyDocument = unquote(
-                                roleassumeRolePolicyDocument
-                            )
-                        rolearn = role.get("Arn", None)
-                        rolecreateDate = role.get("CreateDate", None)
-                        if rolecreateDate and not isinstance(rolecreateDate, datetime):
-                            rolecreateDate = datetime.fromtimestamp(rolecreateDate)
-                        roleId = role.get("RoleId", None)
-                        rolestr = f"(Path: {rolepath}, RoleName: {rolename}, Arn: {rolearn}, CreateDate: {rolecreateDate}, RoleId: {roleId}, AssumeRolePolicyDocument: {roleassumeRolePolicyDocument})"
-                        rolebl.append(rolestr)
-                    roles = rolebl
-                s = f"(Path: {path}, InstanceProfileName: {instanceProfileName}, InstanceProfileId: {InstanceProfileId}, Arn: {arn}, CreateDate: {CreateDate}, Roles: {roles})"
-                bl.append(s)
-            setattr(self, "InstanceProfileList", bl)
+                statement = data.get("Statement", None)
+                if statement:
+                    bl = BaseList()
+                    for stmt in statement:
+                        effect = stmt.get("Effect", None)
+                        stmt.pop("Effect", None)
+                        principal = stmt.get("Principal", None)
+                        stmt.pop("Principal", None)
+                        action = stmt.get("Action", None)
+                        stmt.pop("Action", None)
+                        resource = stmt.get("Resource", None)
+                        stmt.pop("Resource", None)
+                        s = f"(Effect: {effect}, Principal: {principal}, Action: {action}, Resource: {resource})"
+                        bl.append(s)
+                    setattr(self, "AssumeRolePolicyDocument_Statement", bl)
+                setattr(self, "AssumeRolePolicyDocument", None)
 
         super().__post_init__()
 
@@ -1746,14 +1819,15 @@ class AWSSagemakerNotebook(BaseResource):
     kmsKeyId: str = None
 
     def __post_init__(self):
-        if self.securityGroups:
-            data = self.securityGroups
-            bl = BaseList()
-            for group in data:
-                bl.append(group)
-            setattr(self, "securityGroups", bl)
+        if not DONT_EXPAND.flag:
+            if self.securityGroups:
+                data = self.securityGroups
+                bl = BaseList()
+                for group in data:
+                    bl.append(group)
+                setattr(self, "securityGroups", bl)
 
-        super().__post_init__()
+            super().__post_init__()
 
 
 @dataclass
@@ -1816,144 +1890,157 @@ class AWSCloudfrontDistribution(BaseResource):
     acmCertificateARN: str = None
 
     def __post_init__(self):
-        if self.defaultCacheBehavior:
-            # Sigh...
-            data = self.defaultCacheBehavior
-            setattr(self, "defaultCacheBehavior_Compress", data.get("Compress", None))
-            setattr(
-                self,
-                "defaultCacheBehavior_TargetOriginId",
-                data.get("TargetOriginId", None),
-            )
-            setattr(
-                self,
-                "defaultCacheBehavior_ViewerProtocolPolicy",
-                data.get("ViewerProtocolPolicy", None),
-            )
-            if data.get("TrustedSigners", None):
+        if not DONT_EXPAND.flag:
+            if self.defaultCacheBehavior:
+                # Sigh...
+                data = self.defaultCacheBehavior
                 setattr(
-                    self,
-                    "defaultCacheBehavior_TrustedSigners_Enabled",
-                    data["TrustedSigners"].get("Enabled", None),
+                    self, "defaultCacheBehavior_Compress", data.get("Compress", None)
                 )
                 setattr(
                     self,
-                    "defaultCacheBehavior_TrustedSigners_Quantity",
-                    data["TrustedSigners"].get("Quantity", None),
-                )
-            setattr(
-                self,
-                "defaultCacheBehavior_FieldLevelEncryptionId",
-                data.get("FieldLevelEncryptionId", None),
-            )
-            setattr(
-                self, "defaultCacheBehavior_DefaultTTL", data.get("DefaultTTL", None)
-            )
-            if data.get("TrustedKeyGroups", None):
-                setattr(
-                    self,
-                    "defaultCacheBehavior_TrustedKeyGroups_Enabled",
-                    data["TrustedKeyGroups"].get("Enabled", None),
+                    "defaultCacheBehavior_TargetOriginId",
+                    data.get("TargetOriginId", None),
                 )
                 setattr(
                     self,
-                    "defaultCacheBehavior_TrustedKeyGroups_Quantity",
-                    data["TrustedKeyGroups"].get("Quantity", None),
+                    "defaultCacheBehavior_ViewerProtocolPolicy",
+                    data.get("ViewerProtocolPolicy", None),
                 )
-
-            if data.get("FunctionAssociations", None):
-                setattr(
-                    self,
-                    "defaultCacheBehavior_FunctionAssociations_Quantity",
-                    data["FunctionAssociations"].get("Quantity", None),
-                )
-                if data["FunctionAssociations"].get("Items", None):
-                    bl = BaseList()
-                    for item in data["FunctionAssociations"]["Items"]:
-                        bl.append(item)
-                    setattr(self, "defaultCacheBehavior_LambdaFunctionAssociations", bl)
-
-            if data.get("LambdaFunctionAssociations", None):
-                setattr(
-                    self,
-                    "defaultCacheBehavior_LambdaFunctionAssociations_Quantity",
-                    data["LambdaFunctionAssociations"].get("Quantity", None),
-                )
-                if data["LambdaFunctionAssociations"].get("Items", None):
-                    bl = BaseList()
-                    for item in data["LambdaFunctionAssociations"]["Items"]:
-                        bl.append(item)
-                    setattr(self, "defaultCacheBehavior_LambdaFunctionAssociations", bl)
-
-            if data.get("AllowedMethods", None):
-                if data["AllowedMethods"].get("CachedMethods", None):
+                if data.get("TrustedSigners", None):
                     setattr(
                         self,
-                        "defaultCacheBehavior_AllowedMethods_CachedMethods_Quantity",
-                        data["AllowedMethods"]["CachedMethods"].get("Quantity", None),
+                        "defaultCacheBehavior_TrustedSigners_Enabled",
+                        data["TrustedSigners"].get("Enabled", None),
                     )
-                    if data["AllowedMethods"]["CachedMethods"].get("Items", None):
+                    setattr(
+                        self,
+                        "defaultCacheBehavior_TrustedSigners_Quantity",
+                        data["TrustedSigners"].get("Quantity", None),
+                    )
+                setattr(
+                    self,
+                    "defaultCacheBehavior_FieldLevelEncryptionId",
+                    data.get("FieldLevelEncryptionId", None),
+                )
+                setattr(
+                    self,
+                    "defaultCacheBehavior_DefaultTTL",
+                    data.get("DefaultTTL", None),
+                )
+                if data.get("TrustedKeyGroups", None):
+                    setattr(
+                        self,
+                        "defaultCacheBehavior_TrustedKeyGroups_Enabled",
+                        data["TrustedKeyGroups"].get("Enabled", None),
+                    )
+                    setattr(
+                        self,
+                        "defaultCacheBehavior_TrustedKeyGroups_Quantity",
+                        data["TrustedKeyGroups"].get("Quantity", None),
+                    )
+
+                if data.get("FunctionAssociations", None):
+                    setattr(
+                        self,
+                        "defaultCacheBehavior_FunctionAssociations_Quantity",
+                        data["FunctionAssociations"].get("Quantity", None),
+                    )
+                    if data["FunctionAssociations"].get("Items", None):
                         bl = BaseList()
-                        for item in data["AllowedMethods"]["CachedMethods"]["Items"][
-                            "Method"
-                        ]:
+                        for item in data["FunctionAssociations"]["Items"]:
                             bl.append(item)
                         setattr(
-                            self,
-                            "defaultCacheBehavior_AllowedMethods_CachedMethods_Items",
-                            bl,
+                            self, "defaultCacheBehavior_LambdaFunctionAssociations", bl
                         )
-                if data["AllowedMethods"].get("Items", None):
-                    bl = BaseList()
-                    for item in data["AllowedMethods"]["Items"]["Method"]:
-                        bl.append(item)
+
+                if data.get("LambdaFunctionAssociations", None):
                     setattr(
-                        self, "defaultCacheBehavior_AllowedMethods_Items_Method", bl
+                        self,
+                        "defaultCacheBehavior_LambdaFunctionAssociations_Quantity",
+                        data["LambdaFunctionAssociations"].get("Quantity", None),
                     )
+                    if data["LambdaFunctionAssociations"].get("Items", None):
+                        bl = BaseList()
+                        for item in data["LambdaFunctionAssociations"]["Items"]:
+                            bl.append(item)
+                        setattr(
+                            self, "defaultCacheBehavior_LambdaFunctionAssociations", bl
+                        )
 
-            setattr(
-                self,
-                "defaultCacheBehavior_SmoothStreaming",
-                data.get("SmoothStreaming", None),
-            )
-            setattr(self, "defaultCacheBehavior_MinTTL", data.get("MinTTL", None))
-            setattr(self, "defaultCacheBehavior_MaxTTL", data.get("MaxTTL", None))
-            setattr(self, "defaultCacheBehavior", None)
+                if data.get("AllowedMethods", None):
+                    if data["AllowedMethods"].get("CachedMethods", None):
+                        setattr(
+                            self,
+                            "defaultCacheBehavior_AllowedMethods_CachedMethods_Quantity",
+                            data["AllowedMethods"]["CachedMethods"].get(
+                                "Quantity", None
+                            ),
+                        )
+                        if data["AllowedMethods"]["CachedMethods"].get("Items", None):
+                            bl = BaseList()
+                            for item in data["AllowedMethods"]["CachedMethods"][
+                                "Items"
+                            ]["Method"]:
+                                bl.append(item)
+                            setattr(
+                                self,
+                                "defaultCacheBehavior_AllowedMethods_CachedMethods_Items",
+                                bl,
+                            )
+                    if data["AllowedMethods"].get("Items", None):
+                        bl = BaseList()
+                        for item in data["AllowedMethods"]["Items"]["Method"]:
+                            bl.append(item)
+                        setattr(
+                            self, "defaultCacheBehavior_AllowedMethods_Items_Method", bl
+                        )
 
-        if self.geoRestriction:
-            restriction = (
-                self,
-                "geoRestriction_RestrictionType",
-                self.geoRestriction.get("RestrictionType", None),
-            )
-            if restriction == "none":
-                restriction = None
-            setattr(self, "geoRestriction_RestrictionType", restriction)
-            setattr(self, "geoRestriction", None)
+                setattr(
+                    self,
+                    "defaultCacheBehavior_SmoothStreaming",
+                    data.get("SmoothStreaming", None),
+                )
+                setattr(self, "defaultCacheBehavior_MinTTL", data.get("MinTTL", None))
+                setattr(self, "defaultCacheBehavior_MaxTTL", data.get("MaxTTL", None))
+                setattr(self, "defaultCacheBehavior", None)
 
-        if self.origins:
-            data = self.origins
-            bl = BaseList()
-            for origin in data:
-                if isinstance(origin, list):
-                    for o in origin:
-                        connectionTimeout = o.get("ConnectionTimeout", None)
-                        originAccessControlId = o.get("OriginAccessControlId", None)
-                        connectionAttempts = o.get("ConnectionAttempts", None)
-                        domainName = o.get("DomainName", None)
-                        originPath = o.get("OriginPath", None)
-                        Id = o.get("Id", None)
+            if self.geoRestriction:
+                restriction = (
+                    self,
+                    "geoRestriction_RestrictionType",
+                    self.geoRestriction.get("RestrictionType", None),
+                )
+                if restriction == "none":
+                    restriction = None
+                setattr(self, "geoRestriction_RestrictionType", restriction)
+                setattr(self, "geoRestriction", None)
+
+            if self.origins:
+                data = self.origins
+                bl = BaseList()
+                for origin in data:
+                    if isinstance(origin, list):
+                        for o in origin:
+                            connectionTimeout = o.get("ConnectionTimeout", None)
+                            originAccessControlId = o.get("OriginAccessControlId", None)
+                            connectionAttempts = o.get("ConnectionAttempts", None)
+                            domainName = o.get("DomainName", None)
+                            originPath = o.get("OriginPath", None)
+                            Id = o.get("Id", None)
+                            s = f"(ConnectionTimeout: {connectionTimeout}, OriginAccessControlId: {originAccessControlId}, ConnectionAttempts: {connectionAttempts}, DomainName: {domainName}, OriginPath: {originPath}, Id: {Id})"
+                            bl.append(s)
+                    else:
+                        connectionTimeout = origin.get("ConnectionTimeout", None)
+                        originAccessControlId = origin.get(
+                            "OriginAccessControlId", None
+                        )
+                        connectionAttempts = origin.get("ConnectionAttempts", None)
+                        domainName = origin.get("DomainName", None)
+                        originPath = origin.get("OriginPath", None)
+                        Id = origin.get("Id", None)
                         s = f"(ConnectionTimeout: {connectionTimeout}, OriginAccessControlId: {originAccessControlId}, ConnectionAttempts: {connectionAttempts}, DomainName: {domainName}, OriginPath: {originPath}, Id: {Id})"
                         bl.append(s)
-                else:
-                    connectionTimeout = origin.get("ConnectionTimeout", None)
-                    originAccessControlId = origin.get("OriginAccessControlId", None)
-                    connectionAttempts = origin.get("ConnectionAttempts", None)
-                    domainName = origin.get("DomainName", None)
-                    originPath = origin.get("OriginPath", None)
-                    Id = origin.get("Id", None)
-                    s = f"(ConnectionTimeout: {connectionTimeout}, OriginAccessControlId: {originAccessControlId}, ConnectionAttempts: {connectionAttempts}, DomainName: {domainName}, OriginPath: {originPath}, Id: {Id})"
-                    bl.append(s)
-            setattr(self, "origins", bl)
+                setattr(self, "origins", bl)
 
         super().__post_init__()

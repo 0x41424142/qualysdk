@@ -5,11 +5,12 @@ base.py - contains the base functionality for the SQL module of qualysdk.
 from datetime import datetime
 from dataclasses import dataclass
 from typing import Literal
+from json import dumps
 
 from pandas import DataFrame
 from sqlalchemy import create_engine, Connection, types
 
-from ..base.base_class import IP_TYPES
+from ..base.base_class import IP_TYPES, DT_TYPES
 from ..base.base_list import BaseList
 
 
@@ -246,7 +247,7 @@ def upload_json(
         elif isinstance(data, list):
             for item in data:
                 check_nested_types(item)
-        elif isinstance(data, datetime):
+        elif isinstance(data, DT_TYPES):
             raise ValueError(
                 f"Datetime object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function."
             )
@@ -268,10 +269,13 @@ def upload_json(
 
     # Convert all dict and list columns to strings:
     for col in df.select_dtypes(include=["object"]).columns:
-        df[col] = df[col].apply(lambda x: str(x) if isinstance(x, (dict, list)) else x)
+        df[col] = df[col].apply(
+            lambda x: dumps(x) if isinstance(x, (dict, list, BaseList)) else x
+        )
 
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table_name}...")
-    df.to_sql(table_name, cnxn, if_exists="append", index=False, chunksize=4000)
+    with cnxn.begin():
+        df.to_sql(table_name, cnxn, if_exists="append", index=False, chunksize=4000)
 
     return len(df)

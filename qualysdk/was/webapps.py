@@ -125,7 +125,7 @@ def count_webapps(auth: BasicAuth, **kwargs) -> int:
 
 def get_webapps(
     auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
-) -> WebApp:
+) -> BaseList[WebApp]:
     """
     Get a list of web applications in the Qualys WAS module
     according to the provided filters.
@@ -161,7 +161,7 @@ def get_webapps(
         - verbose (bool): If True, returns tag information in the response.
 
     Returns:
-        WebApp: The web applications that match the filters.
+        BaseList[WebApp]: A list of web applications that match the filters.
     """
 
     # Ensure that page_count is either the string 'all' or an integer >= 1:

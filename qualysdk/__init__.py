@@ -26,5 +26,7 @@ from . import tagging
 
 from .sql import db_connect
 
+from .base import DONT_EXPAND
+
 # surprise!
 __surprise__ = b"\xe2\x9c\xa8\xe2\x9c\xa8\xe2\x9c\xa8 Have a great day!".decode("utf-8")

@@ -4,6 +4,7 @@ from datetime import datetime
 
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -45,11 +46,12 @@ class Tag(BaseClass):
                     datetime.strptime(getattr(self, field), "%Y-%m-%dT%H:%M:%SZ"),
                 )
 
-        if self.children:
-            bl = BaseList()
-            for childTag in self.children.get("list", {}):
-                bl.append(TagSimple.from_dict(childTag["TagSimple"]))
-            self.children = bl
+        if not DONT_EXPAND.flag:
+            if self.children:
+                bl = BaseList()
+                for childTag in self.children.get("list", {}):
+                    bl.append(TagSimple.from_dict(childTag["TagSimple"]))
+                self.children = bl
 
     def __int__(self):
         return self.id

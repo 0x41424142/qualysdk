@@ -1287,6 +1287,7 @@ count = count_scans(
 ## List Scans API
 
 ```get_scans``` returns a list of scans in the subscription that match given kwargs.
+
 | Parameter | Possible Values | Description | Required |
 | -- | -- | -- | -- |
 | ```auth``` | ```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |

@@ -13,6 +13,7 @@ from .qds_factor import QDSFactor
 from .qds import QDS as qds
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 def parse_datetime_fields(obj, DATETIME_FIELDS: list[str]) -> None:
@@ -198,24 +199,27 @@ class Detection(BaseDetection):
         parse_int_fields(self, INT_FIELDS)
 
         # convert the QDS to a QDS object
-        if self.QDS:
-            self.QDS = qds(SEVERITY=self.QDS["@severity"], SCORE=int(self.QDS["#text"]))
-
-        # convert the QDS factors to QDSFactor objects
-        if self.QDS_FACTORS:
-            factors_bl = BaseList()
-            data = self.QDS_FACTORS["QDS_FACTOR"]
-
-            # Normalize QDS factors to a list for easier processing
-            if isinstance(data, dict):
-                data = [data]
-
-            for factor in data:
-                factors_bl.append(
-                    QDSFactor(NAME=factor["@name"], VALUE=factor["#text"])
+        if not DONT_EXPAND.flag:
+            if self.QDS:
+                self.QDS = qds(
+                    SEVERITY=self.QDS["@severity"], SCORE=int(self.QDS["#text"])
                 )
 
-            self.QDS_FACTORS = factors_bl
+            # convert the QDS factors to QDSFactor objects
+            if self.QDS_FACTORS:
+                factors_bl = BaseList()
+                data = self.QDS_FACTORS["QDS_FACTOR"]
+
+                # Normalize QDS factors to a list for easier processing
+                if isinstance(data, dict):
+                    data = [data]
+
+                for factor in data:
+                    factors_bl.append(
+                        QDSFactor(NAME=factor["@name"], VALUE=factor["#text"])
+                    )
+
+                self.QDS_FACTORS = factors_bl
 
         super().__post_init__()
 

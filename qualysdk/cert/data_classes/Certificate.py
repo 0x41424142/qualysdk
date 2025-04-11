@@ -2,13 +2,14 @@
 Certificate data class
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Union, Literal
 from datetime import datetime
 
 from ...base.base_class import BaseClass
 from .Asset import Asset
 from ...base.base_list import BaseList
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -88,50 +89,51 @@ class Certificate(BaseClass):
                 else:
                     raise ValueError(f"Field {field} is not a valid datetime field.")
 
-        if self.subject:
-            setattr(self, "subject_organization", self.subject.get("organization"))
-            setattr(self, "subject_locality", self.subject.get("locality"))
-            setattr(self, "subject_name", self.subject.get("name"))
-            setattr(self, "subject_country", self.subject.get("country"))
-            setattr(
-                self,
-                "subject_organizationUnit",
-                BaseList(self.subject.get("organizationUnit", [])),
-            )
-            setattr(self, "subject", None)
+        if not DONT_EXPAND.flag:
+            if self.subject:
+                setattr(self, "subject_organization", self.subject.get("organization"))
+                setattr(self, "subject_locality", self.subject.get("locality"))
+                setattr(self, "subject_name", self.subject.get("name"))
+                setattr(self, "subject_country", self.subject.get("country"))
+                setattr(
+                    self,
+                    "subject_organizationUnit",
+                    BaseList(self.subject.get("organizationUnit", [])),
+                )
+                setattr(self, "subject", None)
 
-        if self.issuer:
-            setattr(self, "issuer_organization", self.issuer.get("organization"))
-            setattr(
-                self,
-                "issuer_organizationUnit",
-                BaseList(self.issuer.get("organizationUnit", [])),
-            )
-            setattr(self, "issuer_name", self.issuer.get("name"))
-            setattr(self, "issuer_country", self.issuer.get("country"))
-            setattr(self, "issuer_state", self.issuer.get("state"))
-            setattr(self, "issuer_certhash", self.issuer.get("certhash"))
-            setattr(self, "issuer_locality", self.issuer.get("locality"))
-            setattr(self, "issuer", None)
+            if self.issuer:
+                setattr(self, "issuer_organization", self.issuer.get("organization"))
+                setattr(
+                    self,
+                    "issuer_organizationUnit",
+                    BaseList(self.issuer.get("organizationUnit", [])),
+                )
+                setattr(self, "issuer_name", self.issuer.get("name"))
+                setattr(self, "issuer_country", self.issuer.get("country"))
+                setattr(self, "issuer_state", self.issuer.get("state"))
+                setattr(self, "issuer_certhash", self.issuer.get("certhash"))
+                setattr(self, "issuer_locality", self.issuer.get("locality"))
+                setattr(self, "issuer", None)
 
-        if self.rootissuer:
-            setattr(
-                self, "rootissuer_organization", self.rootissuer.get("organization")
-            )
-            setattr(
-                self,
-                "rootissuer_organizationUnit",
-                BaseList(self.rootissuer.get("organizationUnit", [])),
-            )
-            setattr(self, "rootissuer_name", self.rootissuer.get("name"))
-            setattr(self, "rootissuer_country", self.rootissuer.get("country"))
-            setattr(self, "rootissuer_state", self.rootissuer.get("state"))
-            setattr(self, "rootissuer_certhash", self.rootissuer.get("certhash"))
-            setattr(self, "rootissuer_locality", self.rootissuer.get("locality"))
-            setattr(self, "rootissuer", None)
+            if self.rootissuer:
+                setattr(
+                    self, "rootissuer_organization", self.rootissuer.get("organization")
+                )
+                setattr(
+                    self,
+                    "rootissuer_organizationUnit",
+                    BaseList(self.rootissuer.get("organizationUnit", [])),
+                )
+                setattr(self, "rootissuer_name", self.rootissuer.get("name"))
+                setattr(self, "rootissuer_country", self.rootissuer.get("country"))
+                setattr(self, "rootissuer_state", self.rootissuer.get("state"))
+                setattr(self, "rootissuer_certhash", self.rootissuer.get("certhash"))
+                setattr(self, "rootissuer_locality", self.rootissuer.get("locality"))
+                setattr(self, "rootissuer", None)
 
-        if self.sources:
-            setattr(self, "sources", BaseList(self.sources))
+            if self.sources:
+                setattr(self, "sources", BaseList(self.sources))
 
-        if self.assets:
-            setattr(self, "assets", BaseList([Asset(**x) for x in self.assets]))
+            if self.assets:
+                setattr(self, "assets", BaseList([Asset(**x) for x in self.assets]))

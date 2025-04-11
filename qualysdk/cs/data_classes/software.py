@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from ...base.base_class import BaseClass
 from ...exceptions.Exceptions import *
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -29,18 +30,19 @@ class csSoftware(BaseClass):
 
     def __post_init__(self):
         # Parse the vulnerabilities field into its components:
-        if self.vulnerabilities:
-            for key in [
-                "vulnerabilities_severity5Count",
-                "vulnerabilities_severity4Count",
-                "vulnerabilities_severity3Count",
-                "vulnerabilities_severity2Count",
-                "vulnerabilities_severity1Count",
-            ]:
-                if key in self.vulnerabilities:
-                    setattr(self, key, self.vulnerabilities[key])
+        if not DONT_EXPAND.flag:
+            if self.vulnerabilities:
+                for key in [
+                    "vulnerabilities_severity5Count",
+                    "vulnerabilities_severity4Count",
+                    "vulnerabilities_severity3Count",
+                    "vulnerabilities_severity2Count",
+                    "vulnerabilities_severity1Count",
+                ]:
+                    if key in self.vulnerabilities:
+                        setattr(self, key, self.vulnerabilities[key])
 
-            del self.vulnerabilities
+                del self.vulnerabilities
 
     def __str__(self):
         return self.name

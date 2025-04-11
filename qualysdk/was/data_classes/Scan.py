@@ -9,6 +9,7 @@ from datetime import datetime
 from ...base.post_init_parser import parse_fields
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -70,71 +71,72 @@ class WASScan(BaseClass):
     progressiveScanning: str = None
 
     def __post_init__(self):
-        parse_fields(
-            self,
-            self.launchedBy,
-            "launchedBy",
-            ["id", "username", "firstname", "lastname"],
-        )
-        parse_fields(
-            self,
-            self.summary,
-            "summary",
-            [
-                "crawlDuration",
-                "testDuration",
-                "linksCrawled",
-                "nbRequests",
-                "resultsStatus",
-                "authStatus",
-            ],
-        )
-        parse_fields(self, self.canceledBy, "canceledBy", ["id", "username"])
-        parse_fields(self, self.profile, "profile", ["id", "name"])
-        parse_fields(self, self.target.get("webApp"), "target", ["id", "name"])
-        parse_fields(self, self.options, "options", ["count", "list"])
-        parse_fields(
-            self,
-            self.launchedBy,
-            "launchedBy",
-            ["id", "username", "firstName", "lastName"],
-        )
+        if not DONT_EXPAND.flag:
+            parse_fields(
+                self,
+                self.launchedBy,
+                "launchedBy",
+                ["id", "username", "firstname", "lastname"],
+            )
+            parse_fields(
+                self,
+                self.summary,
+                "summary",
+                [
+                    "crawlDuration",
+                    "testDuration",
+                    "linksCrawled",
+                    "nbRequests",
+                    "resultsStatus",
+                    "authStatus",
+                ],
+            )
+            parse_fields(self, self.canceledBy, "canceledBy", ["id", "username"])
+            parse_fields(self, self.profile, "profile", ["id", "name"])
+            parse_fields(self, self.target.get("webApp"), "target", ["id", "name"])
+            parse_fields(self, self.options, "options", ["count", "list"])
+            parse_fields(
+                self,
+                self.launchedBy,
+                "launchedBy",
+                ["id", "username", "firstName", "lastName"],
+            )
 
-        FIELD_TYPES = {
-            "id": int,
-            "launchedBy_id": int,
-            "canceledBy_id": int,
-            "profile_id": int,
-            "multi": bool,
-            "launchedDate": lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ")
-            if x
-            else None,
-            "target_id": int,
-            "summary_crawlDuration": int,
-            "summary_testDuration": int,
-            "summary_linksCrawled": int,
-            "summary_nbRequests": int,
-            "options_count": int,
-            "scanDuration": int,
-            "sendMail": bool,
-            "sendOneMail": bool,
-            "enableWAFAuth": bool,
-        }
+            FIELD_TYPES = {
+                "id": int,
+                "launchedBy_id": int,
+                "canceledBy_id": int,
+                "profile_id": int,
+                "multi": bool,
+                "launchedDate": lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ")
+                if x
+                else None,
+                "target_id": int,
+                "summary_crawlDuration": int,
+                "summary_testDuration": int,
+                "summary_linksCrawled": int,
+                "summary_nbRequests": int,
+                "options_count": int,
+                "scanDuration": int,
+                "sendMail": bool,
+                "sendOneMail": bool,
+                "enableWAFAuth": bool,
+            }
 
-        for field, field_type in FIELD_TYPES.items():
-            value = getattr(self, field)
-            if value:
-                setattr(self, field, field_type(value))
+            for field, field_type in FIELD_TYPES.items():
+                value = getattr(self, field)
+                if value:
+                    setattr(self, field, field_type(value))
 
-        if self.options_list:
-            # raise data:
-            options_list = self.options_list
-            if isinstance(options_list, dict):
-                options_list = options_list.get("WasScanOption")
-            bl = BaseList()
-            for option in options_list:
-                bl.append(f"{option.get('name')}:{option.get('value')}")
-            setattr(self, "options_list", bl)
+            if self.options_list:
+                # raise data:
+                options_list = self.options_list
+                if isinstance(options_list, dict):
+                    options_list = options_list.get("WasScanOption")
+                bl = BaseList()
+                for option in options_list:
+                    bl.append(f"{option.get('name')}:{option.get('value')}")
+                setattr(self, "options_list", bl)
 
     def __str__(self) -> str:
         return self.name

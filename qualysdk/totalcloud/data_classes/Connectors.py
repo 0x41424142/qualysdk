@@ -9,6 +9,7 @@ from datetime import datetime
 
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -45,18 +46,28 @@ class Connector(BaseClass):
         """
         __post_init__ - post initialization method for the Connector dataclass
         """
-        if self.pollingFrequency:
-            s = f"{self.pollingFrequency.get('hours', 0)}h, {self.pollingFrequency.get('minutes', 0)}m"
-            setattr(self, "pollingFrequency", s)
+        if not DONT_EXPAND.flag:
+            if self.pollingFrequency:
+                s = f"{self.pollingFrequency.get('hours', 0)}h, {self.pollingFrequency.get('minutes', 0)}m"
+                setattr(self, "pollingFrequency", s)
 
-        if self.qualysTags:
-            bl = BaseList()
-            data = self.qualysTags
-            if isinstance(data, dict):
-                data = [data]
-            for tag in data:
-                bl.append(tag["tagName"])
-            setattr(self, "qualysTags", bl)
+            if self.qualysTags:
+                bl = BaseList()
+                data = self.qualysTags
+                if isinstance(data, dict):
+                    data = [data]
+                for tag in data:
+                    bl.append(tag["tagName"])
+                setattr(self, "qualysTags", bl)
+
+            if self.groups:
+                bl = BaseList()
+                data = self.groups
+                if isinstance(data, dict):
+                    data = [data]
+                for group in data:
+                    bl.append(group["name"])
+                setattr(self, "groups", bl)
 
         DT_FIELDS = ["lastSyncedOn", "nextSyncedOn"]
 
@@ -72,15 +83,6 @@ class Connector(BaseClass):
                             getattr(self, field), "%a %b %d %H:%M:%S %Z %Y"
                         ),
                     )
-
-        if self.groups:
-            bl = BaseList()
-            data = self.groups
-            if isinstance(data, dict):
-                data = [data]
-            for group in data:
-                bl.append(group["name"])
-            setattr(self, "groups", bl)
 
     def __int__(self):
         return self.connectorId

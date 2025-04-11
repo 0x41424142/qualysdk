@@ -4,6 +4,7 @@ from typing import Union
 
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
+from ...base import DONT_EXPAND
 
 DT_FIELDS = [
     "syncDateTime",
@@ -95,18 +96,19 @@ class CatalogPatch(BaseClass):
                 except (TypeError, OSError, ValueError):
                     setattr(self, field, None)
 
-        for field in BL_STR_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, BaseList(getattr(self, field)))
+        if not DONT_EXPAND.flag:
+            for field in BL_STR_FIELDS:
+                if getattr(self, field):
+                    setattr(self, field, BaseList(getattr(self, field)))
 
-        if self.notification:
-            print(
-                "CatalogPatch's notification attribute is currently not parsed and is set to a string. Please submit a PR adding the functionality to parse this attribute."
-            )
-            setattr(self, "notification", str(self.notification))
+            if self.notification:
+                print(
+                    "CatalogPatch's notification attribute is currently not parsed and is set to a string. Please submit a PR adding the functionality to parse this attribute."
+                )
+                setattr(self, "notification", str(self.notification))
 
-        if self.packageDetails:
-            bl = BaseList()
-            for pd in self.packageDetails:
-                bl.append(PackageDetail(**pd))
-            setattr(self, "packageDetails", bl)
+            if self.packageDetails:
+                bl = BaseList()
+                for pd in self.packageDetails:
+                    bl.append(PackageDetail(**pd))
+                setattr(self, "packageDetails", bl)

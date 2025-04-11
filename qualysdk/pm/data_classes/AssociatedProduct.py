@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -27,5 +28,5 @@ class AssociatedProduct(BaseClass):
         return f"{str(self.product)}"
 
     def __post_init__(self):
-        if self.product:
+        if self.product and not DONT_EXPAND.flag:
             setattr(self, "product", BaseList(self.product))

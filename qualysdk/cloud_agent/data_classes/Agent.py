@@ -10,6 +10,7 @@ from ipaddress import ip_address
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
 from ..data_classes.CloudAgentTag import CloudAgentTag
+from ...base import DONT_EXPAND
 
 
 @dataclass
@@ -129,163 +130,166 @@ class CloudAgent(BaseClass):
             if getattr(self, float_field):
                 setattr(self, float_field, float(getattr(self, float_field)))
 
-        for ip_field in IP_ADDRESS_FIELDS:
-            if getattr(self, ip_field):
-                setattr(self, field, ip_address(getattr(self, ip_field)))
+        if not DONT_EXPAND.flag:
+            for ip_field in IP_ADDRESS_FIELDS:
+                if getattr(self, ip_field):
+                    setattr(self, field, ip_address(getattr(self, ip_field)))
 
-        # Before setting none fields, let's build the BaseList objects
-        if self.tags:
-            tags = BaseList()
-            data = self.tags.get("list")
-            if data:
-                data = data.get("TagSimple")
-                if data and not isinstance(data, list):
-                    data = [data]
-                for tag in data:
-                    tags.append(CloudAgentTag(**tag))
+            # Before setting none fields, let's build the BaseList objects
+            if self.tags:
+                tags = BaseList()
+                data = self.tags.get("list")
+                if data:
+                    data = data.get("TagSimple")
+                    if data and not isinstance(data, list):
+                        data = [data]
+                    for tag in data:
+                        tags.append(CloudAgentTag(**tag))
 
-            if len(tags) > 0:
-                setattr(self, "tags", tags)
-            else:
-                setattr(self, "tags", None)
+                if len(tags) > 0:
+                    setattr(self, "tags", tags)
+                else:
+                    setattr(self, "tags", None)
 
-        if self.openPort:
-            open_ports = BaseList()
-            data = self.openPort.get("list")
-            if data:
-                data = data.get("HostAssetOpenPort")
-                if data and not isinstance(data, list):
-                    data = [data]
-                for port in data:
-                    open_ports.append(
-                        f"{port.get('port')}-{port.get('protocol')} ({port.get('serviceName')})"
-                    )
+            if self.openPort:
+                open_ports = BaseList()
+                data = self.openPort.get("list")
+                if data:
+                    data = data.get("HostAssetOpenPort")
+                    if data and not isinstance(data, list):
+                        data = [data]
+                    for port in data:
+                        open_ports.append(
+                            f"{port.get('port')}-{port.get('protocol')} ({port.get('serviceName')})"
+                        )
 
-            if len(open_ports) > 0:
-                setattr(self, "openPort", open_ports)
-            else:
-                setattr(self, "openPort", None)
+                if len(open_ports) > 0:
+                    setattr(self, "openPort", open_ports)
+                else:
+                    setattr(self, "openPort", None)
 
-        if self.software:
-            software = BaseList()
-            data = self.software.get("list")
-            if data:
-                data = data.get("HostAssetSoftware")
-                if data and not isinstance(data, list):
-                    data = [data]
-                for software_item in data:
-                    software.append(f"{software_item.get('name')}")
+            if self.software:
+                software = BaseList()
+                data = self.software.get("list")
+                if data:
+                    data = data.get("HostAssetSoftware")
+                    if data and not isinstance(data, list):
+                        data = [data]
+                    for software_item in data:
+                        software.append(f"{software_item.get('name')}")
 
-            if len(software) > 0:
-                setattr(self, "software", software)
-            else:
-                setattr(self, "software", None)
+                if len(software) > 0:
+                    setattr(self, "software", software)
+                else:
+                    setattr(self, "software", None)
 
-        if self.vuln:
-            vulns = BaseList()
-            data = self.vuln.get("list")
-            if data:
-                data = data.get("HostAssetVuln")
-                if data and not isinstance(data, list):
-                    data = [data]
-                for vuln in data:
-                    vulns.append(
-                        f"{vuln.get('qid')} ({vuln.get('hostInstanveVulnId')}) First found: {vuln.get('firstFound')} Last found: {vuln.get('lastFound')}"
-                    )
+            if self.vuln:
+                vulns = BaseList()
+                data = self.vuln.get("list")
+                if data:
+                    data = data.get("HostAssetVuln")
+                    if data and not isinstance(data, list):
+                        data = [data]
+                    for vuln in data:
+                        vulns.append(
+                            f"{vuln.get('qid')} ({vuln.get('hostInstanveVulnId')}) First found: {vuln.get('firstFound')} Last found: {vuln.get('lastFound')}"
+                        )
 
-            if len(vulns) > 0:
-                setattr(self, "vuln", vulns)
-            else:
-                setattr(self, "vuln", None)
+                if len(vulns) > 0:
+                    setattr(self, "vuln", vulns)
+                else:
+                    setattr(self, "vuln", None)
 
-        if self.processor:
-            temp = []
-            data = self.processor.get("list")
-            if data:
-                data = data.get("HostAssetProcessor")
-                if data and not isinstance(data, list):
-                    data = [data]
-                for processor_item in data:
-                    temp.append(f"{processor_item.get('name')}")
+            if self.processor:
+                temp = []
+                data = self.processor.get("list")
+                if data:
+                    data = data.get("HostAssetProcessor")
+                    if data and not isinstance(data, list):
+                        data = [data]
+                    for processor_item in data:
+                        temp.append(f"{processor_item.get('name')}")
 
-            if len(temp) > 0:
-                setattr(self, "processor", temp[0])
-            else:
-                setattr(self, "processor", None)
+                if len(temp) > 0:
+                    setattr(self, "processor", temp[0])
+                else:
+                    setattr(self, "processor", None)
 
-        if self.volume:
-            volumes = BaseList()
-            data = self.volume.get("list")
-            if data:
-                data = data.get("HostAssetVolume")
-                if data and not isinstance(data, list):
-                    data = [data]
-                for volume in data:
-                    # Calculate the % free space on the volume. Account for 0 division!
-                    try:
-                        percent_free = (
-                            int(volume.get("free")) / int(volume.get("size"))
-                        ) * 100
-                    except ZeroDivisionError:
-                        percent_free = 0
-                    volumes.append(f"{volume.get('name')} ({percent_free:.2f}% free)")
+            if self.volume:
+                volumes = BaseList()
+                data = self.volume.get("list")
+                if data:
+                    data = data.get("HostAssetVolume")
+                    if data and not isinstance(data, list):
+                        data = [data]
+                    for volume in data:
+                        # Calculate the % free space on the volume. Account for 0 division!
+                        try:
+                            percent_free = (
+                                int(volume.get("free")) / int(volume.get("size"))
+                            ) * 100
+                        except ZeroDivisionError:
+                            percent_free = 0
+                        volumes.append(
+                            f"{volume.get('name')} ({percent_free:.2f}% free)"
+                        )
 
-            if len(volumes) > 0:
-                setattr(self, "volume", volumes)
-            else:
-                setattr(self, "volume", None)
+                if len(volumes) > 0:
+                    setattr(self, "volume", volumes)
+                else:
+                    setattr(self, "volume", None)
 
-        if self.account:
-            accounts = BaseList()
-            data = self.account.get("list")
-            if data:
-                data = data.get("HostAssetAccount")
-                if data and not isinstance(data, list):
-                    data = [data]
-                for account in data:
-                    accounts.append(account.get("username"))
+            if self.account:
+                accounts = BaseList()
+                data = self.account.get("list")
+                if data:
+                    data = data.get("HostAssetAccount")
+                    if data and not isinstance(data, list):
+                        data = [data]
+                    for account in data:
+                        accounts.append(account.get("username"))
 
-            if len(accounts) > 0:
-                setattr(self, "account", accounts)
-            else:
-                setattr(self, "account", None)
+                if len(accounts) > 0:
+                    setattr(self, "account", accounts)
+                else:
+                    setattr(self, "account", None)
 
-        if self.networkInterface:
-            interfaces = BaseList()
-            data = self.networkInterface.get("list")
-            if data:
-                data = data.get("HostAssetInterface")
-                if data and not isinstance(data, list):
-                    data = [data]
-                for interface in data:
-                    interfaces.append(
-                        f"{interface.get('interfaceName')} ({interface.get('macAddress')})"
-                    )
+            if self.networkInterface:
+                interfaces = BaseList()
+                data = self.networkInterface.get("list")
+                if data:
+                    data = data.get("HostAssetInterface")
+                    if data and not isinstance(data, list):
+                        data = [data]
+                    for interface in data:
+                        interfaces.append(
+                            f"{interface.get('interfaceName')} ({interface.get('macAddress')})"
+                        )
 
-            if len(interfaces) > 0:
-                setattr(self, "networkInterface", interfaces)
-            else:
-                setattr(self, "networkInterface", None)
+                if len(interfaces) > 0:
+                    setattr(self, "networkInterface", interfaces)
+                else:
+                    setattr(self, "networkInterface", None)
 
-        for none_field in TO_NONE_FIELDS:
-            if getattr(self, none_field) == {}:
-                setattr(self, none_field, None)
+            for none_field in TO_NONE_FIELDS:
+                if getattr(self, none_field) == {}:
+                    setattr(self, none_field, None)
+
+            if self.dockerInfo:
+                # dockerInfo is a dictionary with various keys and values.
+                # Since we never know how many keys there are, we will
+                # have to dynamically build the string.
+                s = ""
+                for key, value in self.dockerInfo.items():
+                    s += f"{key}: {value}"
+                    # if this is not the last key, add a comma and space
+                    if key != list(self.dockerInfo.keys())[-1]:
+                        s += ", "
+
+                setattr(self, "dockerInfo", s)
 
         if "isDockerHost" in asdict(self).keys():
             setattr(self, "isDockerHost", self.isDockerHost == "true")
-
-        if self.dockerInfo:
-            # dockerInfo is a dictionary with various keys and values.
-            # Since we never know how many keys there are, we will
-            # have to dynamically build the string.
-            s = ""
-            for key, value in self.dockerInfo.items():
-                s += f"{key}: {value}"
-                # if this is not the last key, add a comma and space
-                if key != list(self.dockerInfo.keys())[-1]:
-                    s += ", "
-
-            setattr(self, "dockerInfo", s)
 
     def __int__(self):
         return self.id

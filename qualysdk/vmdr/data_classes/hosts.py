@@ -12,6 +12,7 @@ from .tag import Tag, CloudTag
 from .detection import Detection, CVEDetection
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 
 @dataclass(order=True)
@@ -331,9 +332,10 @@ class VMDRHost(BaseClass):
             "ASSET_CRITICALITY_SCORE",
         ]
 
-        if self.DNS_DATA:
-            for field in DNS_DATA_FIELDS:
-                setattr(self, field, self.DNS_DATA.get(field))
+        if not DONT_EXPAND.flag:
+            if self.DNS_DATA:
+                for field in DNS_DATA_FIELDS:
+                    setattr(self, field, self.DNS_DATA.get(field))
 
         if self.IP and not isinstance(self.IP, IPv4Address):
             self.IP = IPv4Address(self.IP)
@@ -349,123 +351,129 @@ class VMDRHost(BaseClass):
                     self, DATE_FIELD, datetime.fromisoformat(getattr(self, DATE_FIELD))
                 )
 
-        if self.TRURISK_SCORE_FACTORS:
-            s = ""
-            for sev_level in self.TRURISK_SCORE_FACTORS.get("VULN_COUNT"):
-                s += f"sev_{sev_level.get('@qds_severity')}: {sev_level.get('#text')}, "
-            # Pinch off the trailing comma and space:
-            s = s[:-2]
-            self.TRURISK_SCORE_FACTORS = s
+        if not DONT_EXPAND.flag:
+            if self.TRURISK_SCORE_FACTORS:
+                s = ""
+                for sev_level in self.TRURISK_SCORE_FACTORS.get("VULN_COUNT"):
+                    s += f"sev_{sev_level.get('@qds_severity')}: {sev_level.get('#text')}, "
+                # Pinch off the trailing comma and space:
+                s = s[:-2]
+                self.TRURISK_SCORE_FACTORS = s
 
-        if self.TAGS:
-            # if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
-            if isinstance(self.TAGS["TAG"], list):
-                self.TAGS = BaseList([Tag.from_dict(tag) for tag in self.TAGS["TAG"]])
-            else:  # if it is a single tag dict:
-                self.TAGS = BaseList([Tag.from_dict(self.TAGS["TAG"])])
+            if self.TAGS:
+                # if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
+                if isinstance(self.TAGS["TAG"], list):
+                    self.TAGS = BaseList(
+                        [Tag.from_dict(tag) for tag in self.TAGS["TAG"]]
+                    )
+                else:  # if it is a single tag dict:
+                    self.TAGS = BaseList([Tag.from_dict(self.TAGS["TAG"])])
 
-        if self.CLOUD_PROVIDER_TAGS:
-            # if 'CLOUD_TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
-            if isinstance(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"], list):
-                self.CLOUD_PROVIDER_TAGS = BaseList(
-                    [
-                        CloudTag.from_dict(tag)
-                        for tag in self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"]
-                    ]
-                )
-            else:  # if it is a single tag dict:
-                self.CLOUD_PROVIDER_TAGS = BaseList(
-                    [CloudTag.from_dict(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"])]
-                )
+            if self.CLOUD_PROVIDER_TAGS:
+                # if 'CLOUD_TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
+                if isinstance(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"], list):
+                    self.CLOUD_PROVIDER_TAGS = BaseList(
+                        [
+                            CloudTag.from_dict(tag)
+                            for tag in self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"]
+                        ]
+                    )
+                else:  # if it is a single tag dict:
+                    self.CLOUD_PROVIDER_TAGS = BaseList(
+                        [CloudTag.from_dict(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"])]
+                    )
 
-        # CLOUD SPECIFIC FIELDS:
-        if self.METADATA:
-            match self.CLOUD_PROVIDER:
-                case "AWS":
-                    key_selector = "EC2"
-                case "Azure":
-                    key_selector = "AZURE"
-                case "GCP":
-                    key_selector = "GCP"
-                case _:
-                    # Fallback in the off-chance that cloud provider is blank but there
-                    # is still metadata. This has happened once or twice in testing.
-                    # Using a walrus operator for the ensuing match statement:
-                    if meta_key := list(self.METADATA.keys()):
-                        match meta_key[0]:
-                            case "EC2":
-                                key_selector = "EC2"
-                            case "AZURE":
-                                key_selector = "AZURE"
-                            case "GCP":
-                                key_selector = "GCP"
-                            case _:
-                                raise ValueError(
-                                    f"Cloud provider {self.METADATA.keys()[0]} (inferred from metadata) is not supported."
-                                )
+            # CLOUD SPECIFIC FIELDS:
+            if self.METADATA:
+                match self.CLOUD_PROVIDER:
+                    case "AWS":
+                        key_selector = "EC2"
+                    case "Azure":
+                        key_selector = "AZURE"
+                    case "GCP":
+                        key_selector = "GCP"
+                    case _:
+                        # Fallback in the off-chance that cloud provider is blank but there
+                        # is still metadata. This has happened once or twice in testing.
+                        # Using a walrus operator for the ensuing match statement:
+                        if meta_key := list(self.METADATA.keys()):
+                            match meta_key[0]:
+                                case "EC2":
+                                    key_selector = "EC2"
+                                case "AZURE":
+                                    key_selector = "AZURE"
+                                case "GCP":
+                                    key_selector = "GCP"
+                                case _:
+                                    raise ValueError(
+                                        f"Cloud provider {self.METADATA.keys()[0]} (inferred from metadata) is not supported."
+                                    )
+                        else:
+                            raise ValueError(
+                                f"Cloud provider {self.CLOUD_PROVIDER} is not supported."
+                            )
+
+                # for each tuple, [0] is the dataclass attribute name, [1] is how it is represented in the metadata dict.
+                VALID_EC2_KEYS = [
+                    ("GROUP_NAME", "groupName"),
+                    ("INSTANCE_STATE", "instanceState"),
+                    ("INSTANCE_TYPE", "latest/meta-data/instance-type"),
+                    ("IS_SPOT_INSTANCE", "isSpotInstance"),
+                    (
+                        "ARCHITECTURE",
+                        "latest/dynamic/instance-identity/document/architecture",
+                    ),
+                    ("IMAGE_ID", "latest/dynamic/instance-identity/document/imageId"),
+                    ("REGION", "latest/dynamic/instance-identity/document/region"),
+                    ("AMI_ID", "latest/meta-data/ami-id"),
+                    ("PUBLIC_HOSTNAME", "latest/meta-data/public-hostname"),
+                    ("PUBLIC_IPV4", "latest/meta-data/public-ipv4"),
+                    (
+                        "ACCOUNT_ID",
+                        "latest/dynamic/instance-identity/document/accountId",
+                    ),
+                ]
+                VALID_AZURE_KEYS = [
+                    ("PUBLIC_IPV4", "latest/meta-data/public-ipv4"),
+                    ("INSTANCE_STATE", "state"),
+                    ("GROUP_NAME", "resourceGroupName"),
+                    ("INSTANCE_TYPE", "vmSize"),
+                    ("REGION", "location"),
+                    ("ACCOUNT_ID", "subscriptionId"),
+                ]
+                VALID_GCP_KEYS = ...
+                # map key_selector to the valid keys list:
+                VALID_KEYS = {
+                    "EC2": VALID_EC2_KEYS,
+                    "AZURE": VALID_AZURE_KEYS,
+                    # "GCP": VALID_GCP_KEYS #not implemented as i have no access to a GCP environment.
+                }
+
+                for key in VALID_KEYS[key_selector]:
+                    # check for if self.METADATA[key_selector]['ATTRIBUTE'] is a list of dicts. if not, it is just a single dict.
+                    if isinstance(self.METADATA[key_selector]["ATTRIBUTE"], list):
+                        for item in self.METADATA[key_selector]["ATTRIBUTE"]:
+                            if item["NAME"] == key[1]:
+                                setattr(
+                                    self,
+                                    f"CLOUD_{key[0]}",
+                                    (
+                                        item["VALUE"]
+                                        if item["VALUE"] not in ["", {}, []]
+                                        else None
+                                    ),
+                                )  # if item['VALUE'] seems to leave behind empties, hence the list
+                                break
                     else:
-                        raise ValueError(
-                            f"Cloud provider {self.CLOUD_PROVIDER} is not supported."
-                        )
-
-            # for each tuple, [0] is the dataclass attribute name, [1] is how it is represented in the metadata dict.
-            VALID_EC2_KEYS = [
-                ("GROUP_NAME", "groupName"),
-                ("INSTANCE_STATE", "instanceState"),
-                ("INSTANCE_TYPE", "latest/meta-data/instance-type"),
-                ("IS_SPOT_INSTANCE", "isSpotInstance"),
-                (
-                    "ARCHITECTURE",
-                    "latest/dynamic/instance-identity/document/architecture",
-                ),
-                ("IMAGE_ID", "latest/dynamic/instance-identity/document/imageId"),
-                ("REGION", "latest/dynamic/instance-identity/document/region"),
-                ("AMI_ID", "latest/meta-data/ami-id"),
-                ("PUBLIC_HOSTNAME", "latest/meta-data/public-hostname"),
-                ("PUBLIC_IPV4", "latest/meta-data/public-ipv4"),
-                ("ACCOUNT_ID", "latest/dynamic/instance-identity/document/accountId"),
-            ]
-            VALID_AZURE_KEYS = [
-                ("PUBLIC_IPV4", "latest/meta-data/public-ipv4"),
-                ("INSTANCE_STATE", "state"),
-                ("GROUP_NAME", "resourceGroupName"),
-                ("INSTANCE_TYPE", "vmSize"),
-                ("REGION", "location"),
-                ("ACCOUNT_ID", "subscriptionId"),
-            ]
-            VALID_GCP_KEYS = ...
-            # map key_selector to the valid keys list:
-            VALID_KEYS = {
-                "EC2": VALID_EC2_KEYS,
-                "AZURE": VALID_AZURE_KEYS,
-                # "GCP": VALID_GCP_KEYS #not implemented as i have no access to a GCP environment.
-            }
-
-            for key in VALID_KEYS[key_selector]:
-                # check for if self.METADATA[key_selector]['ATTRIBUTE'] is a list of dicts. if not, it is just a single dict.
-                if isinstance(self.METADATA[key_selector]["ATTRIBUTE"], list):
-                    for item in self.METADATA[key_selector]["ATTRIBUTE"]:
-                        if item["NAME"] == key[1]:
+                        if (
+                            self.METADATA[key_selector]["ATTRIBUTE"]["NAME"]
+                            and self.METADATA[key_selector]["ATTRIBUTE"]["NAME"] == key
+                        ):
                             setattr(
                                 self,
                                 f"CLOUD_{key[0]}",
-                                (
-                                    item["VALUE"]
-                                    if item["VALUE"] not in ["", {}, []]
-                                    else None
-                                ),
-                            )  # if item['VALUE'] seems to leave behind empties, hence the list
-                            break
-                else:
-                    if (
-                        self.METADATA[key_selector]["ATTRIBUTE"]["NAME"]
-                        and self.METADATA[key_selector]["ATTRIBUTE"]["NAME"] == key
-                    ):
-                        setattr(
-                            self,
-                            f"CLOUD_{key[0]}",
-                            self.METADATA[key_selector]["ATTRIBUTE"]["VALUE"],
-                        )
+                                self.METADATA[key_selector]["ATTRIBUTE"]["VALUE"],
+                            )
 
         for INT_FIELD in INT_FIELDS:
             if getattr(self, INT_FIELD) and not isinstance(
@@ -485,34 +493,35 @@ class VMDRHost(BaseClass):
             self.CLOUD_IS_SPOT_INSTANCE = bool(self.CLOUD_IS_SPOT_INSTANCE)
 
         # check for a detections list and convert it to a BaseList of Detection objects (used in hld):
-        if self.DETECTION_LIST:
-            detections_bl = BaseList()
-            # Probe if the data is for QIDs or CVEs:
-            VULN_TYPE = "QID"
-            if "CVE_DETECTION" in self.DETECTION_LIST.keys():
-                VULN_TYPE = "CVE"
-                data = self.DETECTION_LIST["CVE_DETECTION"]
-            else:
-                data = self.DETECTION_LIST["DETECTION"]
-
-            if isinstance(data, dict):
-                data = [data]
-
-            for detection in data:
-                # Append the host's ID attr to the detection dictionary
-                # to allow for a relationship:
-                detection["ID"] = self.ID
-                if VULN_TYPE == "QID":
-                    detections_bl.append(Detection.from_dict(detection))
+        if not DONT_EXPAND.flag:
+            if self.DETECTION_LIST:
+                detections_bl = BaseList()
+                # Probe if the data is for QIDs or CVEs:
+                VULN_TYPE = "QID"
+                if "CVE_DETECTION" in self.DETECTION_LIST.keys():
+                    VULN_TYPE = "CVE"
+                    data = self.DETECTION_LIST["CVE_DETECTION"]
                 else:
-                    detection["CVSS_31"] = detection.pop("CVSS3.1")
-                    detection["CVSS_31_BASE"] = detection.pop("CVSS3.1_BASE", None)
-                    detection["CVSS_31_TEMPORAL"] = detection.pop(
-                        "CVSS3.1_TEMPORAL", None
-                    )
-                    detections_bl.append(CVEDetection.from_dict(detection))
+                    data = self.DETECTION_LIST["DETECTION"]
 
-            self.DETECTION_LIST = detections_bl
+                if isinstance(data, dict):
+                    data = [data]
+
+                for detection in data:
+                    # Append the host's ID attr to the detection dictionary
+                    # to allow for a relationship:
+                    detection["ID"] = self.ID
+                    if VULN_TYPE == "QID":
+                        detections_bl.append(Detection.from_dict(detection))
+                    else:
+                        detection["CVSS_31"] = detection.pop("CVSS3.1")
+                        detection["CVSS_31_BASE"] = detection.pop("CVSS3.1_BASE", None)
+                        detection["CVSS_31_TEMPORAL"] = detection.pop(
+                            "CVSS3.1_TEMPORAL", None
+                        )
+                        detections_bl.append(CVEDetection.from_dict(detection))
+
+                self.DETECTION_LIST = detections_bl
 
     def __str__(self) -> str:
         """

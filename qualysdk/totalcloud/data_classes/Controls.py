@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 
 from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
+from ...base import DONT_EXPAND
 
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
@@ -61,25 +62,28 @@ class Control(BaseClass):
         if self.modified:
             setattr(self, "modified", datetime.fromisoformat(self.modified))
 
-        if self.evaluation:
-            FIELDS = ["description", "passMessage", "failMessage"]
-            for field in FIELDS:
-                if self.evaluation.get(field):
+        if not DONT_EXPAND.flag:
+            if self.evaluation:
+                FIELDS = ["description", "passMessage", "failMessage"]
+                for field in FIELDS:
+                    if self.evaluation.get(field):
+                        setattr(
+                            self,
+                            f"evaluation_{field}",
+                            self.evaluation.get(field, None),
+                        )
+                if self.evaluation.get("criteria"):
                     setattr(
-                        self, f"evaluation_{field}", self.evaluation.get(field, None)
+                        self,
+                        "evaluation_criteria",
+                        BaseList(self.evaluation.get("criteria")),
                     )
-            if self.evaluation.get("criteria"):
-                setattr(
-                    self,
-                    "evaluation_criteria",
-                    BaseList(self.evaluation.get("criteria")),
-                )
-            self.evaluation = None
+                self.evaluation = None
 
-        BL_FIELDS = ["policyNames", "templateType"]
-        for field in BL_FIELDS:
-            if getattr(self, field):
-                setattr(self, field, BaseList(getattr(self, field)))
+            BL_FIELDS = ["policyNames", "templateType"]
+            for field in BL_FIELDS:
+                if getattr(self, field):
+                    setattr(self, field, BaseList(getattr(self, field)))
 
         BS4_FIELDS = [
             "specification",
@@ -124,13 +128,14 @@ class AccountLevelControl(BaseClass):
         ):
             setattr(self, "controlId", int(getattr(self, "controlId")))
 
-        if self.policyNames:
-            data = self.policyNames
-            bl = BaseList()
-            if isinstance(data, dict):
-                data = [data]
-            for name in data:
-                bl.append(name)
+        if not DONT_EXPAND.flag:
+            if self.policyNames:
+                data = self.policyNames
+                bl = BaseList()
+                if isinstance(data, dict):
+                    data = [data]
+                for name in data:
+                    bl.append(name)
 
     def __int__(self):
         return self.controlId

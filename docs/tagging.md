@@ -16,6 +16,7 @@ You can use any of the endpoints currently supported:
 | ```get_tags``` | Returns a list of tags in the subscription that match given kwargs. |
 | ```get_tag_details``` | Returns details about a single tag. |
 | ```create_tag``` | Creates a new tag, optionally with a parent tag and child tags. |
+| ```delete_tag``` | Deletes one or more tags. |
 
 
 ## Count Tags API
@@ -210,6 +211,53 @@ create_tag(
     ],
     parentTagId=123456789
 )
+```
+
+## Delete Tag API
+
+```delete_tag``` deletes one or more tags.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```tag_id``` | ``` Union[list[Union[str,int], Union[str,int]]``` | The ID(s) of a tag to delete. Multiple values can be provided as a list of strings | ✅ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.tagging import delete_tag
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+# Delete a single tag:
+delete_tag(
+    auth,
+    tag_id=123456789
+)
+>>>1
+# Delete multiple tags:
+delete_tag(
+    auth,
+    tag_id=[
+        123456789,
+        987654321
+    ]
+)
+>>>2
+
+# Delete all tags with a name containing "prod":
+from qualysdk.tagging import get_tags
+
+tags = get_tags(
+    auth,
+    name='prod',
+    name_operator='CONTAINS'
+)
+
+delete_tag(
+    auth,
+    tag_id=[tag.id for tag in tags]
+)
+>>>5
 ```
 
 ## ```qualysdk-tag``` CLI tool

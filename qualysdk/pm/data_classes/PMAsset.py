@@ -11,6 +11,7 @@ from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
 from ...base import DONT_EXPAND
 
+
 @dataclass
 class PMInterface(BaseClass):
     """
@@ -194,7 +195,9 @@ class Asset(BaseClass):
 
             if self.hardware:
                 setattr(self, "hardware_model", self.hardware.get("model"))
-                setattr(self, "hardware_manufacturer", self.hardware.get("manufacturer"))
+                setattr(
+                    self, "hardware_manufacturer", self.hardware.get("manufacturer")
+                )
                 setattr(self, "hardware", None)
 
         for timestamp_field in FROM_TIMESTAMP_FIELDS:

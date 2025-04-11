@@ -8,6 +8,7 @@ from typing import Union
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
 
+
 @dataclass
 class hostInstance(BaseClass):
     id: int = None

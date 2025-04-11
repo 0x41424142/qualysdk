@@ -18,7 +18,7 @@ def get_scanner_list(auth: BasicAuth, **kwargs) -> BaseList[ScannerAppliance]:
         **kwargs: Additional keyword arguments to filter the Scanner Appliances by.
 
     ## Kwargs:
-    
+
         - output_mode (Literal['brief', 'full']): The output mode. Defaults to 'brief'.
         - scan_detail (bool): Whether to include details on currently running scans. Defaults to False. Details include ID, title, scan_ref, type, and date.
         - show_tags (bool): Whether to include tags. Defaults to False.

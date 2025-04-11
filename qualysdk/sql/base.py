@@ -269,7 +269,9 @@ def upload_json(
 
     # Convert all dict and list columns to strings:
     for col in df.select_dtypes(include=["object"]).columns:
-        df[col] = df[col].apply(lambda x: dumps(x) if isinstance(x, (dict, list, BaseList)) else x)
+        df[col] = df[col].apply(
+            lambda x: dumps(x) if isinstance(x, (dict, list, BaseList)) else x
+        )
 
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table_name}...")

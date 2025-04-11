@@ -89,7 +89,9 @@ class Patch(BaseClass):
                     setattr(self, field, BaseList(getattr(self, field)))
                 elif field == "qid" and getattr(self, field):
                     setattr(
-                        self, field, BaseList([int(qid) for qid in getattr(self, field)])
+                        self,
+                        field,
+                        BaseList([int(qid) for qid in getattr(self, field)]),
                     )
 
             if getattr(self, "packageDetails"):

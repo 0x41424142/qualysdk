@@ -68,7 +68,9 @@ class Control(BaseClass):
                 for field in FIELDS:
                     if self.evaluation.get(field):
                         setattr(
-                            self, f"evaluation_{field}", self.evaluation.get(field, None)
+                            self,
+                            f"evaluation_{field}",
+                            self.evaluation.get(field, None),
                         )
                 if self.evaluation.get("criteria"):
                     setattr(

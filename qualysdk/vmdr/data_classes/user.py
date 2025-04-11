@@ -10,6 +10,7 @@ from ...base.base_list import BaseList
 from ...base.base_class import BaseClass
 from ...base import DONT_EXPAND
 
+
 @dataclass
 class User(BaseClass):
     """

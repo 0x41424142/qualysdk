@@ -274,7 +274,12 @@ class AzureStorageAccount(BaseResource):
 
         if not DONT_EXPAND.flag:
             if self.networkAcls:
-                dict_keys = ["bypass", "defaultAction", "ipRules", "virtualNetworkRules"]
+                dict_keys = [
+                    "bypass",
+                    "defaultAction",
+                    "ipRules",
+                    "virtualNetworkRules",
+                ]
                 ipRules_list = BaseList()
                 virtualNetworkRules_list = BaseList()
                 for field in dict_keys:
@@ -290,10 +295,14 @@ class AzureStorageAccount(BaseResource):
                                 virtualNetworkRules_list.append(virtualNetworkRule)
                         else:
                             setattr(
-                                self, f"networkAcls_{field}", self.networkAcls.get(field)
+                                self,
+                                f"networkAcls_{field}",
+                                self.networkAcls.get(field),
                             )
                 setattr(self, "networkAcls_ipRules", ipRules_list)
-                setattr(self, "networkAcls_virtualNetworkRules", virtualNetworkRules_list)
+                setattr(
+                    self, "networkAcls_virtualNetworkRules", virtualNetworkRules_list
+                )
                 setattr(self, "networkAcls", None)
 
         for field in DT_FIELDS:

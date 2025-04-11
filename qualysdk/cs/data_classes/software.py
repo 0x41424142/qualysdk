@@ -6,6 +6,7 @@ from ...base.base_class import BaseClass
 from ...exceptions.Exceptions import *
 from ...base import DONT_EXPAND
 
+
 @dataclass
 class csSoftware(BaseClass):
     """

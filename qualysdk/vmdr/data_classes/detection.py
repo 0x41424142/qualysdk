@@ -201,7 +201,9 @@ class Detection(BaseDetection):
         # convert the QDS to a QDS object
         if not DONT_EXPAND.flag:
             if self.QDS:
-                self.QDS = qds(SEVERITY=self.QDS["@severity"], SCORE=int(self.QDS["#text"]))
+                self.QDS = qds(
+                    SEVERITY=self.QDS["@severity"], SCORE=int(self.QDS["#text"])
+                )
 
             # convert the QDS factors to QDSFactor objects
             if self.QDS_FACTORS:

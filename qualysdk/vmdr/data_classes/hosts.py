@@ -363,7 +363,9 @@ class VMDRHost(BaseClass):
             if self.TAGS:
                 # if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
                 if isinstance(self.TAGS["TAG"], list):
-                    self.TAGS = BaseList([Tag.from_dict(tag) for tag in self.TAGS["TAG"]])
+                    self.TAGS = BaseList(
+                        [Tag.from_dict(tag) for tag in self.TAGS["TAG"]]
+                    )
                 else:  # if it is a single tag dict:
                     self.TAGS = BaseList([Tag.from_dict(self.TAGS["TAG"])])
 
@@ -426,7 +428,10 @@ class VMDRHost(BaseClass):
                     ("AMI_ID", "latest/meta-data/ami-id"),
                     ("PUBLIC_HOSTNAME", "latest/meta-data/public-hostname"),
                     ("PUBLIC_IPV4", "latest/meta-data/public-ipv4"),
-                    ("ACCOUNT_ID", "latest/dynamic/instance-identity/document/accountId"),
+                    (
+                        "ACCOUNT_ID",
+                        "latest/dynamic/instance-identity/document/accountId",
+                    ),
                 ]
                 VALID_AZURE_KEYS = [
                     ("PUBLIC_IPV4", "latest/meta-data/public-ipv4"),

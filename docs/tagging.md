@@ -14,6 +14,7 @@ You can use any of the endpoints currently supported:
 |--|--|
 | ```count_tags``` | Returns the number of tags in the subscription that match given kwargs. |
 | ```get_tags``` | Returns a list of tags in the subscription that match given kwargs. |
+| ```get_tag_details``` | Returns details about a single tag. |
 
 
 ## Count Tags API
@@ -22,7 +23,7 @@ You can use any of the endpoints currently supported:
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
-|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```id``` | ``` Union[str, int]``` | The ID(s) of a tag to return | ❌ |
 | ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | The operator to use for the id | ❌ |
 | ```name``` | ```str``` | The name of a tag to return | ❌ |
@@ -36,10 +37,10 @@ You can use any of the endpoints currently supported:
 | ```color``` | ```str``` | The color of the tag as a hex code, such as #FFFFFF | ❌ |
 
 ```py
-from qualysdk.auth import TokenAuth
+from qualysdk.auth import BasicAuth
 from qualysdk.tagging import count_tags
 
-auth = TokenAuth(<username>, <password>, platform='qg1')
+auth = BasicAuth(<username>, <password>, platform='qg1')
 
 # Get the total count of tags:
 tags = count_tags(auth)
@@ -72,7 +73,7 @@ tags = count_tags(
 
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
-|```auth```|```qualysdk.auth.TokenAuth``` | Authentication object | ✅ |
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
 | ```id``` | ``` Union[str, int]``` | The ID(s) of a tag to return | ❌ |
 | ```id_operator``` | ```Literal["EQUALS", "NOT EQUALS", "GREATER", "LESSER", "IN"]``` | The operator to use for the id | ❌ |
 | ```name``` | ```str``` | The name of a tag to return | ❌ |
@@ -86,9 +87,9 @@ tags = count_tags(
 | ```color``` | ```str``` | The color of the tag as a hex code, such as #FFFFFF | ❌ |
 
 ```py
-from qualysdk.auth import TokenAuth
+from qualysdk.auth import BasicAuth
 from qualysdk.tagging import get_tags
-auth = TokenAuth(<username>, <password>, platform='qg1')
+auth = BasicAuth(<username>, <password>, platform='qg1')
 
 # Get all tags:
 tags = get_tags(auth)
@@ -112,6 +113,50 @@ tags = get_tags(
 ]
 ```
 
+## Get Tag Details API
+
+```get_tag_details``` returns details about a single tag.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```tag_id``` | ``` Union[str, int]``` | The ID(s) of a tag to return | ✅ |
+
+```py
+from qualysdk import BaseList
+from qualysdk.auth import BasicAuth
+from qualysdk.tagging import get_tags, get_tag_details
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+# Get some tags:
+tags = get_tags(
+  auth,
+  name="Production_",
+  name_operator='CONTAINS",
+)
+# for each of the tags, get their details:
+tag_list = BaseList()
+for tag in tags:
+  details = get_tag_details(
+    auth,
+    tag.id
+  )
+  tag_list.append(details)
+>>>[
+  Tag(
+    id=123456789, 
+    name='Production_on_prem_servers', 
+    ...
+  ),
+  Tag(
+    id=987654321, 
+    name='Production_cloud_servers',
+  ),
+  ...
+]
+
+```
+
 ## ```qualysdk-tag``` CLI tool
 
 The ```qualysdk-tag``` CLI tool is a command-line interface for the tagging portion of the SDK. It allows you to quickly pull down results from tagging APIs and save them to an XLSX file and optionally print to stdout.
@@ -119,15 +164,16 @@ The ```qualysdk-tag``` CLI tool is a command-line interface for the tagging port
 ### Usage
 
 ```bash
-usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags,get_tags} ...
+usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags,get_tags,get_tag_details} ...
 
 CLI script to quickly perform tagging operations using qualysdk
 
 positional arguments:
-  {count_tags,get_tags}
+  {count_tags,get_tags,get_tag_details}
                         Action to perform
     count_tags          Count how many tags match the given criteria.
     get_tags            Get the tags that match the given criteria.
+    get_tag_details     Get all details of a single tag.
 
 options:
   -h, --help            show this help message and exit
@@ -159,4 +205,15 @@ options:
   -h, --help           show this help message and exit
   -o, --output OUTPUT  Output (xlsx) file to write results to
   --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
+```
+
+### Get Tag Details
+
+```bash
+usage: qualysdk-tag get_tag_details [-h] [-o OUTPUT] -t TAGID
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output (json) file to write results to
+  -t, --tagId TAGID    ID of the tag to pull details for
 ```

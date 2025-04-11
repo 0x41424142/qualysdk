@@ -8,9 +8,11 @@ from argparse import ArgumentParser, Namespace
 from qualysdk import BasicAuth, write_json, write_excel
 from qualysdk.tagging import *
 
-
 def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
-    kwargs = dict(args.kwarg) if args.kwarg else {}
+    if getattr(args, 'kwarg'):
+        kwargs = dict(args.kwarg)
+    else:
+        kwargs = {}
     if "page_count" in kwargs:
         kwargs["page_count"] = int(kwargs["page_count"])
     for kwarg in kwargs:
@@ -24,13 +26,19 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             result = count_tags(auth, **kwargs)
         case "get_tags":
             result = get_tags(auth, **kwargs)
+        case "get_tag_details":
+            result = get_tag_details(auth, tag_id=args.tagId)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
     if args.output:
-        write_json(result, args.output) if endpoint == "count_tags" else write_excel(
-            result, args.output
-        )
+        if endpoint == 'get_tag_details':
+            result = result.to_serializable_dict()
+            write_json(result, args.output)
+        else:
+            write_json(result, args.output) if endpoint == "count_tags" else write_excel(
+                result, args.output
+            )
     return result
 
 
@@ -94,6 +102,27 @@ def main():
         metavar=("key", "value"),
     )
 
+    get_details_parser = subparsers.add_parser(
+        "get_tag_details",
+        help="Get all details of a single tag."
+    )
+
+    get_details_parser.add_argument(
+        '-o',
+        '--output',
+        help="Output (json) file to write results to",
+        type=str,
+        default=None
+    )
+
+    get_details_parser.add_argument(
+        "-t",
+        "--tagId",
+        help="ID of the tag to pull details for",
+        type=int,
+        required=True
+    )
+
     args = parser.parse_args()
 
     # create BasicAuth object
@@ -104,13 +133,17 @@ def main():
         result = cli_findings(auth=auth, args=args, endpoint="count_tags")
     elif args.action == "get_tags":
         result = cli_findings(auth=auth, args=args, endpoint="get_tags")
+    elif args.action == "get_tag_details":
+        result = cli_findings(auth=auth, args=args, endpoint="get_tag_details")
     else:
         parser.print_help()
         exit(1)
 
-    if not args.output:
-        print(result)
+    if args.action == 'get_tag_details' and not args.output:
+        print(result.to_dict())
 
+    elif not args.output:
+        print(result)
 
 if __name__ == "__main__":
     main()

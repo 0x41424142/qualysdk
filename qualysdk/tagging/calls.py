@@ -1,6 +1,7 @@
 """
 Contains the middleware API call formatting for tagging APIs
 """
+from typing import Union
 
 from .base.kwarg_validation import validate_kwargs
 from .data_classes.Tag import Tag
@@ -28,6 +29,8 @@ def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
             params = {"placeholder": "count", "tagId": ""}
         case "get_tags":
             params = {"placeholder": "search", "tagId": ""}
+        case "get_tag_info":
+            params = {"placeholder": "get", "tagId": payload}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -189,3 +192,24 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
 
     print("No more results to fetch. Exiting...")
     return results
+
+def get_tag_details(auth: BasicAuth, tag_id: Union[int,str]) -> Tag:
+    """
+    Get the details of a specific tag by its ID.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        tag_id (str): The ID of the tag to retrieve.
+
+    Returns:
+        Tag: The details of the specified tag.
+    """
+
+    response = call_tags_api(auth, "get_tag_info", tag_id)
+    data = response.get("ServiceResponse", {}).get("data", {})
+    if not data:
+        raise ValueError(f"No data found for tag ID {tag_id}")
+
+    tag = data[0].get("Tag", {})
+    if tag:
+        return Tag.from_dict(tag)

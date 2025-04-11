@@ -31,6 +31,8 @@ def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
             params = {"placeholder": "search", "tagId": ""}
         case "get_tag_info":
             params = {"placeholder": "get", "tagId": payload}
+        case "create_tag":
+            params = {"placeholder": "create", "tagId": ""}
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}")
 
@@ -209,6 +211,77 @@ def get_tag_details(auth: BasicAuth, tag_id: Union[int,str]) -> Tag:
     data = response.get("ServiceResponse", {}).get("data", {})
     if not data:
         raise ValueError(f"No data found for tag ID {tag_id}")
+
+    tag = data[0].get("Tag", {})
+    if tag:
+        return Tag.from_dict(tag)
+    
+def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
+    """
+    Create a new tag with the given name and optional parameters.
+
+    Args:
+        auth (BasicAuth): The authentication object.
+        name (str): The name of the tag to create.
+        **kwargs: Optional parameters for the tag.
+
+    ## Kwargs:
+
+        ruleType (Literal["GROOVY", "OS_REGEX", "NETWORK_RANGE", "NAME_CONTAINS", "INSTALLED_SOFTWARE", "OPEN_PORTS", "VULN_EXIST", "ASSET_SEARCH", "NETWORK_TAG", "NETWORK", "NETWORK_RANGE_ENHANCED", "CLOUD_ASSET", "GLOBAL_ASSET_VIEW", "TAGSET", "BUSINESS_INFORMATION", "VULN_DETECTION"]): The rule type for the tag.
+        ruleText (str): The rule text for a new dynamic tag.
+        children (list[str]): A list of child tag names to also create.
+        parentTagId (int): The ID of the parent tag.
+        criticalityScore (int): The criticality score for the tag.
+        color (str): The hex color code for the tag, such as #FFFFFF.
+        description (str): A description for the tag.
+        provider (Literal["EC2", "AZURE", "GCP", "IBM", "OCI"]): The cloud provider for the tag.
+
+    Returns:
+        Tag: The created tag object.
+    """
+
+    # Build the service request:
+    payload_template = {
+        "ServiceRequest": {
+            "data": {
+                "Tag": {
+                    "name": name,
+                    "ruleType": kwargs.get("ruleType"),
+                    "ruleText": kwargs.get("ruleText"),
+                    "parentTagId": kwargs.get("parentTagId"),
+                    "criticalityScore": kwargs.get("criticalityScore"),
+                    "color": kwargs.get("color"),
+                    "description": kwargs.get("description"),
+                    "provider": kwargs.get("provider"),
+                }
+            }
+        }
+    }
+
+    # Remove any None values from the payload
+    jsonpayload = {
+        "ServiceRequest": {
+            "data": {
+                "Tag": {k: v for k, v in payload_template["ServiceRequest"]["data"]["Tag"].items() if v is not None}
+            }
+        }
+    }
+
+    # Add children if provided
+    if "children" in kwargs:
+
+        jsonpayload["ServiceRequest"]["data"]["Tag"]["children"] = {
+            "set": {
+                "TagSimple": [
+                    {"name": child} for child in kwargs["children"]
+                ]
+            }
+        }
+
+    response = call_tags_api(auth, "create_tag", jsonpayload)
+    data = response.get("ServiceResponse", {}).get("data", {})
+    if not data:
+        raise ValueError(f"No data found for tag creation")
 
     tag = data[0].get("Tag", {})
     if tag:

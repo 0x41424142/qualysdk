@@ -5,7 +5,7 @@ operations using qualysdk.
 
 from argparse import ArgumentParser, Namespace
 
-from qualysdk import BasicAuth, write_json, write_excel
+from qualysdk import BasicAuth, write_json, write_excel, BaseList
 from qualysdk.tagging import *
 
 def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
@@ -28,6 +28,11 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             result = get_tags(auth, **kwargs)
         case "get_tag_details":
             result = get_tag_details(auth, tag_id=args.tagId)
+        case "create_tag":
+            # parse out children into a list:
+            if "children" in kwargs:
+                kwargs["children"] = BaseList(kwargs["children"].split(","))
+            result = create_tag(auth, args.name, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
 
@@ -123,6 +128,32 @@ def main():
         required=True
     )
 
+    create_tag_parser = subparsers.add_parser(
+        "create_tag",
+        help='Create a new tag. NOTE: For creating children tags, use --kwarg children with a comma-separated string, like: "child1,child2,etc"'
+    )
+    create_tag_parser.add_argument(
+        '-o',
+        '--output',
+        help="Output (json) file to write results to",
+        type=str,
+        default=None
+    )
+    create_tag_parser.add_argument(
+        "-n",
+        "--name",
+        help="Name of the tag to create",
+        type=str,
+        required=True
+    )
+    create_tag_parser.add_argument(
+        "--kwarg",
+        help="Specify a keyword argument to pass to the action. Can be used multiple times",
+        action="append",
+        nargs=2,
+        metavar=("key", "value"),
+    )
+
     args = parser.parse_args()
 
     # create BasicAuth object
@@ -135,15 +166,15 @@ def main():
         result = cli_findings(auth=auth, args=args, endpoint="get_tags")
     elif args.action == "get_tag_details":
         result = cli_findings(auth=auth, args=args, endpoint="get_tag_details")
+    elif args.action == "create_tag":
+        result = cli_findings(auth=auth, args=args, endpoint="create_tag")
     else:
         parser.print_help()
         exit(1)
 
-    if args.action == 'get_tag_details' and not args.output:
-        print(result.to_dict())
-
-    elif not args.output:
-        print(result)
+    if not args.output:
+        if args.action == 'count_tags': print(result)
+        else: print(result.dump_json(indent=2))
 
 if __name__ == "__main__":
     main()

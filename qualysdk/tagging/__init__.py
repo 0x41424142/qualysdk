@@ -1,1 +1,1 @@
-from .calls import count_tags, get_tags, get_tag_details
+from .calls import count_tags, get_tags, get_tag_details, create_tag

@@ -15,6 +15,7 @@ You can use any of the endpoints currently supported:
 | ```count_tags``` | Returns the number of tags in the subscription that match given kwargs. |
 | ```get_tags``` | Returns a list of tags in the subscription that match given kwargs. |
 | ```get_tag_details``` | Returns details about a single tag. |
+| ```create_tag``` | Creates a new tag, optionally with a parent tag and child tags. |
 
 
 ## Count Tags API
@@ -154,7 +155,61 @@ for tag in tags:
   ),
   ...
 ]
+```
 
+## Create Tag API
+
+```create_tag``` creates a new tag, optionally with a parent tag and child tags.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```name``` | ```str``` | The name of the tag to create | ✅ |
+| ```ruleType``` | ```Literal["GROOVY", "OS_REGEX", "NETWORK_RANGE", "NAME_CONTAINS", "INSTALLED_SOFTWARE", "OPEN_PORTS", "VULN_EXIST", "ASSET_SEARCH", "NETWORK_TAG", "NETWORK", "NETWORK_RANGE_ENHANCED", "CLOUD_ASSET", "GLOBAL_ASSET_VIEW", "TAGSET", "BUSINESS_INFORMATION", "VULN_DETECTION"]``` | The type of rule the tag uses. If not provided, the tag will be static. | ❌ |
+| ```ruleText``` | ```str``` | If `ruleType` is set, this string contains the logic for the rule. | ❌ |
+| ```children``` | ```List[str]``` | A list of child tag names to create. | ❌ |
+| ```parentTagId``` | ```int``` | The ID of the parent tag to create the tag under. | ❌ |
+| ```criticalityScore``` | ```int``` | The criticality that assets with this tag should be assigned. | ❌ |
+| ```color``` | ```str``` (hex code, such as `#FFFFFF`) | The color of the tag. | ❌ |
+| ```description``` | ```str``` | A description of the tag. | ❌ |
+| ```provider``` | ```Literal["EC2", "AZURE", "GCP", "IBM", "OCI"]``` | The cloud provider the tag is for. | ❌ |
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.tagging import create_tag
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+# Create a new static tag:
+create_tag(
+    auth,
+    name='My Static Tag',
+    color='#FF0000',
+    description='This is a static tag'
+)
+
+# Create a new dynamic tag identifying all Windows servers:
+create_tag(
+    auth,
+    name='My Dynamic Tag',
+    ruleType='GLOBAL_ASSET_VIEW',
+    ruleText="operatingSystem:Windows and hardware.category:Server",
+    color='#00FF00',
+    description='This is a dynamic tag for Windows servers'
+)
+
+# create a new tag with a parent tag and child tags:
+create_tag(
+    auth,
+    name='My Parent Tag',
+    color='#0000FF',
+    description='This is a parent tag',
+    children=[
+        'My Child Tag 1',
+        'My Child Tag 2'
+    ],
+    parentTagId=123456789
+)
 ```
 
 ## ```qualysdk-tag``` CLI tool
@@ -164,16 +219,17 @@ The ```qualysdk-tag``` CLI tool is a command-line interface for the tagging port
 ### Usage
 
 ```bash
-usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags,get_tags,get_tag_details} ...
+usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags,get_tags,get_tag_details,create_tag} ...
 
 CLI script to quickly perform tagging operations using qualysdk
 
 positional arguments:
-  {count_tags,get_tags,get_tag_details}
+  {count_tags,get_tags,get_tag_details,create_tag}
                         Action to perform
     count_tags          Count how many tags match the given criteria.
     get_tags            Get the tags that match the given criteria.
     get_tag_details     Get all details of a single tag.
+    create_tag          Create a new tag.
 
 options:
   -h, --help            show this help message and exit
@@ -216,4 +272,24 @@ options:
   -h, --help           show this help message and exit
   -o, --output OUTPUT  Output (json) file to write results to
   -t, --tagId TAGID    ID of the tag to pull details for
+```
+
+### Create Tag
+
+```bash
+usage: qualysdk-tag create_tag [-h] [-o OUTPUT] -n NAME [--kwarg key value]
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output (json) file to write results to
+  -n, --name NAME      Name of the tag to create
+  --kwarg key value    Specify a keyword argument to pass to the action. Can be used multiple times
+```
+
+#### Example Tag Creation
+
+Below shows how to create a dynamic tag with children tags underneath.
+
+```bash
+qualysdk-tag -u <username> -p <password> create_tag -n "My servers tag" --kwarg ruleType GLOBAL_ASSET_VIEW --kwarg ruleText "hardware.category:Server" --kwarg color "#FFFF00" --kwarg children "CHILD1,CHILD2,CHILD3"
 ```

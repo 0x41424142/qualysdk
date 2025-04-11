@@ -17,6 +17,7 @@ You can use any of the endpoints currently supported:
 | ```get_tag_details``` | Returns details about a single tag. |
 | ```create_tag``` | Creates a new tag, optionally with a parent tag and child tags. |
 | ```delete_tag``` | Deletes one or more tags. |
+| ```update_tag``` | Updates a tag. |
 
 
 ## Count Tags API
@@ -266,6 +267,8 @@ delete_tag(
 
 ```update_tag``` updates a tag.
 
+Note - you should not add and remove children tags in the same command. You should run two separate commands to do this.
+
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
@@ -306,13 +309,12 @@ update_tag(
     description='This is a dynamic tag for Windows servers'
 )
 
-# Update a tag to add children tags and 
-# remove some pre-existing children tags
+# Update a tag to remove some 
+# pre-existing children tags
 # as well as adding a parent tag:
 update_tag(
     auth,
     tag_id=123456789,
-    add_children=['My New Child Tag 1', 'My New Child Tag 2'],
     remove_children=[987654321, 123456799],
     parentTagId=123459789
 )

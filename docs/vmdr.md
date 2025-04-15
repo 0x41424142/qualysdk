@@ -78,15 +78,13 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 
 # Example pulling all hosts with all details and kwargs
 # with default threading and chunking settings:
-hosts = get_host_list(
+hosts = get_hld(
         auth,         
         details='All/AGs', 
         show_asset_id=True, 
         show_tags=True, 
-        show_ars=True, 
-        show_ars_factors=True, 
-        show_trurisk=True, 
-        show_trurisk_factors=True, 
+        show_qds=True, 
+        show_qds_factors=True, 
         host_metadata='all', 
         show_cloud_tags=True,
 )

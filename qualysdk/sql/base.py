@@ -16,6 +16,7 @@ from ..base.base_list import BaseList
 IP_TYPES = (IPv4Address, IPv6Address, IPv4Network, IPv6Network)
 DT_TYPES = (datetime, timedelta)
 
+
 def db_connect(
     host: str = "localhost",
     db: str = "qualysdk",
@@ -261,7 +262,7 @@ def upload_json(
     if isinstance(json_data, BaseList):
         # Convert BaseList to a regular list
         json_data = json_data.serialized()
-        
+
     # Perform the check on the provided json_data
     check_nested_types(json_data)
 

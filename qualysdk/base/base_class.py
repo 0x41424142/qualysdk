@@ -2,6 +2,7 @@ from dataclasses import dataclass, asdict
 
 from .serializable_mixin import SerializableMixin
 
+
 @dataclass
 class BaseClass(SerializableMixin):
     """

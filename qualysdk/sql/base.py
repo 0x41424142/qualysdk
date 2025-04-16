@@ -2,17 +2,19 @@
 base.py - contains the base functionality for the SQL module of qualysdk.
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from dataclasses import dataclass
 from typing import Literal
 from json import dumps
+from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
 from pandas import DataFrame
 from sqlalchemy import create_engine, Connection, types
 
-from ..base.base_class import IP_TYPES, DT_TYPES
 from ..base.base_list import BaseList
 
+IP_TYPES = (IPv4Address, IPv6Address, IPv4Network, IPv6Network)
+DT_TYPES = (datetime, timedelta)
 
 def db_connect(
     host: str = "localhost",
@@ -249,13 +251,17 @@ def upload_json(
                 check_nested_types(item)
         elif isinstance(data, DT_TYPES):
             raise ValueError(
-                f"Datetime object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function."
+                f"Datetime object found. Please run <object>.serialized() before passing data to this function."
             )
         elif isinstance(data, IP_TYPES):
             raise ValueError(
-                "IP address object found. Please run to_serializable_dict() or to_serializable_list() before passing data to this function."
+                "IP address object found. Please run <object>.serialized() before passing data to this function."
             )
 
+    if isinstance(json_data, BaseList):
+        # Convert BaseList to a regular list
+        json_data = json_data.serialized()
+        
     # Perform the check on the provided json_data
     check_nested_types(json_data)
 

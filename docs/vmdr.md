@@ -78,19 +78,42 @@ auth = BasicAuth(<username>, <password>, platform='qg1')
 
 # Example pulling all hosts with all details and kwargs
 # with default threading and chunking settings:
-hosts = get_host_list(
+hosts = get_hld(
         auth,         
         details='All/AGs', 
         show_asset_id=True, 
         show_tags=True, 
-        show_ars=True, 
-        show_ars_factors=True, 
-        show_trurisk=True, 
-        show_trurisk_factors=True, 
+        show_qds=True, 
+        show_qds_factors=True, 
         host_metadata='all', 
         show_cloud_tags=True,
 )
 >>>BaseList[VMDRHost(12345), ...]
+hosts[0].DETECTION_LIST[0]
+>>>Detection(
+    UNIQUE_VULN_ID=1234567890, 
+    TYPE='Confirmed', 
+    SSL=True, 
+    RESULTS='Some Vulnerability.', 
+    STATUS='Active', 
+    PROTOCOL=None, 
+    FIRST_FOUND_DATETIME=datetime.datetime(2025, 1, 1, 1, 30, 45, tzinfo=datetime.timezone.utc), 
+    LAST_FOUND_DATETIME=datetime.datetime(2025, 1, 2, 3, 34, 40, tzinfo=datetime.timezone.utc), 
+    TIMES_FOUND=123, 
+    LAST_TEST_DATETIME=datetime.datetime(2025, 1, 2, 3, 34, 40, tzinfo=datetime.timezone.utc), 
+    LAST_UPDATE_DATETIME=datetime.datetime(2025, 1, 2, 3, 34, 41, tzinfo=datetime.timezone.utc), 
+    PORT=None, 
+    FQDN=None, 
+    IS_IGNORED=False, 
+    IS_DISABLED=False, 
+    LAST_PROCESSED_DATETIME=datetime.datetime(2025, 1, 2, 3, 34, 41, tzinfo=datetime.timezone.utc), 
+    LAST_FIXED_DATETIME=None, 
+    ID=987654321, 
+    QID=90007, 
+    SEVERITY='2', 
+    QDS=30, 
+    QDS_FACTORS=None
+)
 ```
 
 ## VMDR CVE Host List Detection

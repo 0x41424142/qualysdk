@@ -31,7 +31,7 @@ def get_host_list(
         - chunk_count (Union[int, "all"]): The number of chunks to get. If "all", get all chunks. Defaults to "all".
 
     ## Kwargs:
-
+        - retries (Optional[int]): The number of times to retry the request if it fails. Default is 3.
         - action (Optional[str]): The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
         - echo_request (Optional[bool]): Whether to show the request. Default is 'False'. ends up being passed to API as 0 or 1.
         - show_asset_id (Optional[bool]): Whether to show the asset IDs. Default is 'False'. ends up being passed to API as 0 or 1.

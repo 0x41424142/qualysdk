@@ -292,7 +292,7 @@ def hld_backend(
             auth=auth,
             module="vmdr",
             endpoint="get_hld",
-            params=kwargs,
+            payload=kwargs,
             headers={"X-Requested-With": "qualysdk SDK"},
         )
 
@@ -330,9 +330,7 @@ def hld_backend(
                     ]
                 ]
 
-            for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-                "HOST"
-            ]:
+            for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]:
                 host_obj = VMDRHost.from_dict(host)
                 responses.append(host_obj)
 
@@ -344,7 +342,7 @@ def hld_backend(
         if "WARNING" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
             if "URL" in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]:
                 # get the id_min parameter from the URL to pass into kwargs:
-                params = parse_qs(
+                payload = parse_qs(
                     urlparse(
                         xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"][
                             "URL"
@@ -353,9 +351,9 @@ def hld_backend(
                 )
                 with LOCK:
                     print(
-                        f"{current_thread().name} (get_hld) - Pagination detected. Pulling next page with id_min: {params['id_min'][0]}"
+                        f"{current_thread().name} (get_hld) - Pagination detected. Pulling next page with id_min: {payload['id_min'][0]}"
                     )
-                kwargs["id_min"] = params["id_min"][0]
+                kwargs["id_min"] = payload["id_min"][0]
 
             else:
                 break
@@ -489,65 +487,85 @@ def thread_worker(
         endpoint_called (Union['get_hld', 'get_host_list', 'get_cve_hld']): The function that was called.
         **kwargs: Additional keyword arguments to pass to the API. See get_hld() for details.
     """
-
+    if 'retries' in kwargs.keys():
+        RETRIES = kwargs.pop('retries')
+    else:
+        RETRIES = 3
+    attempts = 0
     while True:
+        ids = None
         pages_pulled = 0
         chunks_pulled = 0
         try:
-            ids = (
-                id_queue.get_nowait()
-            )  # nowait allows us to check if the queue is empty without blocking
-        except Empty:
-            with LOCK:
-                print(f"{current_thread().name} - Queue is empty. Terminating thread.")
-            break
+            try:
+                ids = (
+                    id_queue.get_nowait()
+                )  # nowait allows us to check if the queue is empty without blocking
+            except Empty:
+                with LOCK:
+                    print(f"{current_thread().name} - Queue is empty. Terminating thread.")
+                id_queue.task_done()
+                break
 
-        if not ids:
-            with LOCK:
-                print(f"{current_thread().name} - No IDs to pull. Terminating thread.")
-            break
+            if not ids:
+                with LOCK:
+                    print(f"{current_thread().name} - No IDs to pull. Terminating thread.")
+                id_queue.task_done()
+                break
 
-        if len(ids) != 1:
-            kwargs["ids"] = f"{ids[0]}-{ids[-1]}"
-        else:
-            kwargs["ids"] = ids[0]
+            if len(ids) != 1:
+                kwargs["ids"] = f"{ids[0]}-{ids[-1]}"
+            else:
+                kwargs["ids"] = ids[0]
 
-        if endpoint_called == "get_hld":
-            responses.extend(hld_backend(auth, page_count=page_count, **kwargs))
-        elif endpoint_called == "get_host_list":
-            responses.extend(
-                get_host_list_backend(auth, page_count=page_count, **kwargs)
-            )
-        elif endpoint_called == "get_cve_hld":
-            responses.extend(get_cve_hld_backend(auth, page_count=page_count, **kwargs))
-        else:
-            raise ValueError(
-                "endpoint_called must be either 'get_hld' or 'get_host_list'."
-            )
-        id_queue.task_done()
-        with LOCK:
-            print(f"{current_thread().name} ({endpoint_called}) - Chunk complete.")
-        pages_pulled += 1
-        chunks_pulled += 1
-        # check if the queue is empty, or if the threads are done (via pulled var)
-        if id_queue.empty():
-            with LOCK:
-                print(
-                    f"{current_thread().name} ({endpoint_called}) - Queue is empty. Terminating thread."
+            if endpoint_called == "get_hld":
+                responses.extend(hld_backend(auth, page_count=page_count, **kwargs))
+            elif endpoint_called == "get_host_list":
+                responses.extend(
+                    get_host_list_backend(auth, page_count=page_count, **kwargs)
                 )
-            break
-        if pages_pulled == page_count:
-            with LOCK:
-                print(
-                    f"{current_thread().name} - Thread has pulled all pages. Terminating thread."
+            elif endpoint_called == "get_cve_hld":
+                responses.extend(get_cve_hld_backend(auth, page_count=page_count, **kwargs))
+            else:
+                id_queue.put_nowait(ids)
+                id_queue.task_done()
+                raise ValueError(
+                    "endpoint_called must be either 'get_hld' or 'get_host_list'."
                 )
-            break
-        if chunks_pulled == chunk_count:
+            id_queue.task_done()
             with LOCK:
-                print(
-                    f"{current_thread().name} - Thread has pulled all chunks. Terminating thread."
-                )
-            break
+                print(f"{current_thread().name} ({endpoint_called}) - Chunk complete.")
+            pages_pulled += 1
+            chunks_pulled += 1
+            # check if the queue is empty, or if the threads are done (via pulled var)
+            if id_queue.empty():
+                with LOCK:
+                    print(f"{current_thread().name} ({endpoint_called}) - Queue is empty. Terminating thread.")
+                break
+            if pages_pulled == page_count:
+                with LOCK:
+                    print(
+                        f"{current_thread().name} - Thread has pulled all pages. Terminating thread."
+                    )
+                break
+            if chunks_pulled == chunk_count:
+                with LOCK:
+                    print(f"{current_thread().name} - Thread has pulled all chunks. Terminating thread.")
+                break
+        except Exception as e:
+            # If anything goes bad, put the ids back in the queue
+            # and try again.
+            with LOCK:
+                print(f"{current_thread().name} - Error: {e}. Attempting to requeue {len(ids)} IDs ({min(ids)}-{max(ids)}).")
+                id_queue.put_nowait(ids)
+                print(f"{current_thread().name} - IDs ({min(ids)}-{max(ids)}) requeued. Attempting again.")
+            attempts += 1
+            if attempts > RETRIES:
+                with LOCK:
+                    print(
+                        f"{current_thread().name} - Reached maximum attempts ({RETRIES}). Terminating thread."
+                    )
+                break
 
 
 def get_host_list_backend(
@@ -651,7 +669,7 @@ def get_host_list_backend(
             auth=auth,
             module="vmdr",
             endpoint="get_host_list",
-            params=kwargs,
+            payload=kwargs,
             headers={"X-Requested-With": "qualysdk SDK"},
         )
         if response.status_code != 200:
@@ -717,12 +735,12 @@ def get_host_list_backend(
                         f"{current_thread().name} (get_host_list) Pagination detected. Pulling next page from url: {xml['HOST_LIST_OUTPUT']['RESPONSE']['WARNING']['URL']}"
                     )
                 # get the id_min parameter from the URL to pass into kwargs:
-                params = parse_qs(
+                payload = parse_qs(
                     urlparse(
                         xml["HOST_LIST_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
                     ).query
                 )
-                kwargs["id_min"] = params["id_min"][0]
+                kwargs["id_min"] = payload["id_min"][0]
 
             else:
                 break

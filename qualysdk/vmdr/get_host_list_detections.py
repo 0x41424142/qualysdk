@@ -33,7 +33,7 @@ def get_hld(
         **kwargs: Additional keyword arguments to pass to the API.
 
     Kwargs:
-
+        retries (Optional[int]) #The number of retries to attempt on a call should it fail. Default is 3.
         action (Optional[str]) #The action to perform. Default is 'list'. WARNING: any value you pass is overwritten with 'list'. It is just recognized as valid for the sake of completeness.
         echo_request (Optional[bool]) #Whether to echo the request. Default is False. Ends up being passed to the API as 0 or 1. WARNING: this SDK does not include this field in the data.
         show_asset_id (Optional[bool]) #Whether to show the asset IDs. Default is 'False'. ends up being passed to API as 0 or 1.
@@ -176,7 +176,8 @@ def get_cve_hld(
         **kwargs: Additional keyword arguments to pass to the API.
 
     Kwargs:
-
+        
+        retries (Optional[int]): The number of times to retry the request if it fails. Default is 3.
         show_asset_id (Optional[bool]) #Whether to show the asset IDs. Default is 'False'.
         include_vuln_type (Optional[Literal["confirmed", "potential"]]) #The type of vulnerability to include. If not specified, both types are included.
         show_qvs (Optional[bool]) #Whether to show QVS. Default is False.

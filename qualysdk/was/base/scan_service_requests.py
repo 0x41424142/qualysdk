@@ -35,9 +35,7 @@ def build_scan_service_request(
                         },
                         "webApps": {
                             "set": {
-                                "WebApp": format_xml_list(
-                                    kwargs.get("web.app.ids", []), "id"
-                                ),
+                                "WebApp": format_xml_list(kwargs.get("web.app.ids", []), "id"),
                             },
                         }
                         if kwargs.get("web.app.ids")

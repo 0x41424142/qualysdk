@@ -42,17 +42,13 @@ class KBEntry(BaseClass):
         metadata={"description": "The severity level of the vulnerability."},
         default=None,
     )
-    TITLE: str = field(
-        metadata={"description": "The title of the vulnerability."}, default=None
-    )
+    TITLE: str = field(metadata={"description": "The title of the vulnerability."}, default=None)
     CATEGORY: str = field(
         metadata={"description": "The category of the vulnerability."},
         default=None,
     )
     LAST_SERVICE_MODIFICATION_DATETIME: Optional[datetime] = field(
-        metadata={
-            "description": "The date the vulnerability was last modified by the service."
-        },
+        metadata={"description": "The date the vulnerability was last modified by the service."},
         default=None,
     )
     PUBLISHED_DATETIME: Optional[datetime] = field(
@@ -64,9 +60,7 @@ class KBEntry(BaseClass):
         default=None,
     )
     BUGTRAQ_LIST: Optional[BaseList] = field(
-        metadata={
-            "description": "A list of Bugtraq IDs affected by the vulnerability."
-        },
+        metadata={"description": "A list of Bugtraq IDs affected by the vulnerability."},
         default=None,
     )
     PATCHABLE: Optional[bool] = field(
@@ -78,9 +72,7 @@ class KBEntry(BaseClass):
         default=None,
     )
     VENDOR_REFERENCE_LIST: Optional[BaseList] = field(
-        metadata={
-            "description": "A list of vendor bulletin references for the vulnerability."
-        },
+        metadata={"description": "A list of vendor bulletin references for the vulnerability."},
         default=None,
     )
     CVE_LIST: Optional[BaseList] = field(
@@ -112,15 +104,11 @@ class KBEntry(BaseClass):
         default=False,
     )
     PCI_REASONS: Optional[dict] = field(
-        metadata={
-            "description": "The reasons the vulnerability is valid for PCI requirements."
-        },
+        metadata={"description": "The reasons the vulnerability is valid for PCI requirements."},
         default=None,
     )
     THREAT_INTELLIGENCE: Optional[BaseList] = field(
-        metadata={
-            "description": "The threat intelligence details of the vulnerability."
-        },
+        metadata={"description": "The threat intelligence details of the vulnerability."},
         default=None,
     )
     SUPPORTED_MODULES: Optional[str] = field(
@@ -143,9 +131,7 @@ class KBEntry(BaseClass):
         default=None,
     )
     COMPLIANCE_LIST: Optional[BaseList] = field(
-        metadata={
-            "description": "The list of compliance frameworks for the vulnerability."
-        },
+        metadata={"description": "The list of compliance frameworks for the vulnerability."},
         default=None,
     )
     LAST_CUSTOMIZATION: Optional[datetime] = field(
@@ -200,14 +186,10 @@ class KBEntry(BaseClass):
                             datetime.fromisoformat(getattr(self, dt_field)),
                         )
                 else:
-                    setattr(
-                        self, dt_field, datetime.fromisoformat(getattr(self, dt_field))
-                    )
+                    setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
         for bool_field in BOOL_FIELDS:
-            if getattr(self, bool_field) and not isinstance(
-                getattr(self, bool_field), bool
-            ):
+            if getattr(self, bool_field) and not isinstance(getattr(self, bool_field), bool):
                 setattr(self, bool_field, bool(getattr(self, bool_field)))
 
         with catch_warnings():
@@ -261,9 +243,7 @@ class KBEntry(BaseClass):
                     data = [data]
 
                 for vendor_ref in data:
-                    final_vendor_reference_list.append(
-                        VendorReference.from_dict(vendor_ref)
-                    )
+                    final_vendor_reference_list.append(VendorReference.from_dict(vendor_ref))
 
                 self.VENDOR_REFERENCE_LIST = final_vendor_reference_list
 

@@ -126,9 +126,7 @@ def pull_id_set(auth: BasicAuth, ids: str = None) -> BaseList[VMDRID]:
     return [str(i) for i in res]
 
 
-def create_id_queue(
-    auth: BasicAuth, chunk_size: int = 100, ids: str = None
-) -> BaseList:
+def create_id_queue(auth: BasicAuth, chunk_size: int = 100, ids: str = None) -> BaseList:
     """
     create_id_queue - create a queue of host IDs to pull. the queue contains chunks (lists) of chunk_size
     length with host IDs.
@@ -322,12 +320,8 @@ def hld_backend(
                 xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"],
                 list,
             ):
-                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-                    "HOST"
-                ] = [
-                    xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-                        "HOST"
-                    ]
+                xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
+                    xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
                 ]
 
             for host in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]:
@@ -344,9 +338,7 @@ def hld_backend(
                 # get the id_min parameter from the URL to pass into kwargs:
                 payload = parse_qs(
                     urlparse(
-                        xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"][
-                            "URL"
-                        ]
+                        xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
                     ).query
                 )
                 with LOCK:
@@ -416,22 +408,14 @@ def get_cve_hld_backend(
             # check if ["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
             # or just a dictionary. if it is just one, put it inside a list
             if not isinstance(
-                xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-                    "HOST"
-                ],
+                xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"],
                 list,
             ):
-                xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-                    "HOST"
-                ] = [
-                    xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"][
-                        "HOST"
-                    ]
+                xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
+                    xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
                 ]
 
-            for host in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"][
-                "HOST_LIST"
-            ]["HOST"]:
+            for host in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]:
                 # Ensure compatability:
                 host["DETECTION_LIST"] = host.pop("CVE_DETECTION_LIST")
                 host_obj = VMDRHost.from_dict(host)
@@ -447,9 +431,7 @@ def get_cve_hld_backend(
                 # get the id_min parameter from the URL to pass into kwargs:
                 params = parse_qs(
                     urlparse(
-                        xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"][
-                            "URL"
-                        ]
+                        xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
                     ).query
                 )
                 with LOCK:
@@ -487,8 +469,8 @@ def thread_worker(
         endpoint_called (Union['get_hld', 'get_host_list', 'get_cve_hld']): The function that was called.
         **kwargs: Additional keyword arguments to pass to the API. See get_hld() for details.
     """
-    if 'retries' in kwargs.keys():
-        RETRIES = kwargs.pop('retries')
+    if "retries" in kwargs.keys():
+        RETRIES = kwargs.pop("retries")
     else:
         RETRIES = 3
     attempts = 0
@@ -521,17 +503,13 @@ def thread_worker(
             if endpoint_called == "get_hld":
                 responses.extend(hld_backend(auth, page_count=page_count, **kwargs))
             elif endpoint_called == "get_host_list":
-                responses.extend(
-                    get_host_list_backend(auth, page_count=page_count, **kwargs)
-                )
+                responses.extend(get_host_list_backend(auth, page_count=page_count, **kwargs))
             elif endpoint_called == "get_cve_hld":
                 responses.extend(get_cve_hld_backend(auth, page_count=page_count, **kwargs))
             else:
                 id_queue.put_nowait(ids)
                 id_queue.task_done()
-                raise ValueError(
-                    "endpoint_called must be either 'get_hld' or 'get_host_list'."
-                )
+                raise ValueError("endpoint_called must be either 'get_hld' or 'get_host_list'.")
             id_queue.task_done()
             with LOCK:
                 print(f"{current_thread().name} ({endpoint_called}) - Chunk complete.")
@@ -540,7 +518,9 @@ def thread_worker(
             # check if the queue is empty, or if the threads are done (via pulled var)
             if id_queue.empty():
                 with LOCK:
-                    print(f"{current_thread().name} ({endpoint_called}) - Queue is empty. Terminating thread.")
+                    print(
+                        f"{current_thread().name} ({endpoint_called}) - Queue is empty. Terminating thread."
+                    )
                 break
             if pages_pulled == page_count:
                 with LOCK:
@@ -550,15 +530,21 @@ def thread_worker(
                 break
             if chunks_pulled == chunk_count:
                 with LOCK:
-                    print(f"{current_thread().name} - Thread has pulled all chunks. Terminating thread.")
+                    print(
+                        f"{current_thread().name} - Thread has pulled all chunks. Terminating thread."
+                    )
                 break
         except Exception as e:
             # If anything goes bad, put the ids back in the queue
             # and try again.
             with LOCK:
-                print(f"{current_thread().name} - Error: {e}. Attempting to requeue {len(ids)} IDs ({min(ids)}-{max(ids)}).")
+                print(
+                    f"{current_thread().name} - Error: {e}. Attempting to requeue {len(ids)} IDs ({min(ids)}-{max(ids)})."
+                )
                 id_queue.put_nowait(ids)
-                print(f"{current_thread().name} - IDs ({min(ids)}-{max(ids)}) requeued. Attempting again.")
+                print(
+                    f"{current_thread().name} - IDs ({min(ids)}-{max(ids)}) requeued. Attempting again."
+                )
             attempts += 1
             if attempts > RETRIES:
                 with LOCK:
@@ -568,9 +554,7 @@ def thread_worker(
                 break
 
 
-def get_host_list_backend(
-    auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
-) -> list:
+def get_host_list_backend(auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs) -> list:
     """
     Get the host list from the VMDR API.
     For a full list of parameters, see the Qualys API documentation: [Qualys API VMPc User Guide](https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf)
@@ -655,8 +639,7 @@ def get_host_list_backend(
     kwargs["action"] = "list"
 
     if kwargs.get("truncation_limit") and (
-        kwargs["truncation_limit"] in [0, "0"]
-        and kwargs["details"] not in ["None", None]
+        kwargs["truncation_limit"] in [0, "0"] and kwargs["details"] not in ["None", None]
     ):
         with LOCK:
             print(
@@ -690,9 +673,7 @@ def get_host_list_backend(
         # If details is none, ID_SET will be returned instead of HOST_LIST
         if "ID_SET" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:
             # check if ID_SET is a list of dicts/str or a single dict/str:
-            if isinstance(
-                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"], (dict, str)
-            ):
+            if isinstance(xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"], (dict, str)):
                 # if it's a single dict, convert it to a list of dicts:
                 xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"] = [
                     xml["HOST_LIST_OUTPUT"]["RESPONSE"]["ID_SET"]["ID"]
@@ -709,9 +690,7 @@ def get_host_list_backend(
             # HOST_LIST will be returned
             # first, check if xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
             # is a list of dicts or a single dict:
-            if isinstance(
-                xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], dict
-            ):
+            if isinstance(xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"], dict):
                 # if it's a single dict, convert it to a list of dicts:
                 xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] = [
                     xml["HOST_LIST_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"]
@@ -736,9 +715,7 @@ def get_host_list_backend(
                     )
                 # get the id_min parameter from the URL to pass into kwargs:
                 payload = parse_qs(
-                    urlparse(
-                        xml["HOST_LIST_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
-                    ).query
+                    urlparse(xml["HOST_LIST_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]).query
                 )
                 kwargs["id_min"] = payload["id_min"][0]
 

@@ -75,9 +75,7 @@ def prepare_criteria(**kwargs):
             operator = kwargs.get(
                 f"{kwarg}_operator", "EQUALS"
             )  # Fallback to EQUALS if not provided for date fields
-            criteria = (
-                f'<Criteria field="{kwarg}" operator="{operator}">{value}</Criteria>'
-            )
+            criteria = f'<Criteria field="{kwarg}" operator="{operator}">{value}</Criteria>'
 
         elif isinstance(value, list):
             # Otherwise, if the value is a list, use the IN operator

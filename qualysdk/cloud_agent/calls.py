@@ -121,9 +121,7 @@ def list_agents(
         else:
             # Grab the last asset ID to use as the pagination ID
             last_id = parsed["ServiceResponse"]["lastId"]
-            payload["_xml_data"] = prepare_criteria(
-                pagination_id=int(last_id) - 1, **kwargs
-            )
+            payload["_xml_data"] = prepare_criteria(pagination_id=int(last_id) - 1, **kwargs)
 
     return results
 
@@ -153,9 +151,7 @@ def launch_ods(
             f'Invalid scan type {scan}. Valid types are: {["inv", "vuln", "pc", "udc", "sca", "swca"]}.'
         )
 
-    xml_data = (
-        '<?xml version="1.0" encoding="UTF-8" ?> <ServiceRequest></ServiceRequest>'
-    )
+    xml_data = '<?xml version="1.0" encoding="UTF-8" ?> <ServiceRequest></ServiceRequest>'
 
     payload = {
         "placeholder": asset_id,  # For formatting the URL
@@ -180,9 +176,7 @@ def launch_ods(
     return (
         parsed.get("ServiceResponse").get("responseCode")
         if response.status_code == 200
-        else parsed.get("ServiceResponse")
-        .get("responseErrorDetails")
-        .get("errorMessage")
+        else parsed.get("ServiceResponse").get("responseErrorDetails").get("errorMessage")
         + f": {parsed.get('ServiceResponse').get('responseErrorDetails').get('errorResolution')}"
     )
 

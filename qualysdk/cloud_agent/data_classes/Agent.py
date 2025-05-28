@@ -68,9 +68,9 @@ class CloudAgent(BaseClass):
     os: str = field(default=None)
     networkGuid: str = field(default=None)
     address: ip_address = field(default=None)
-    trackingMethod: Literal[
-        "NONE", "IP", "DNSNAME", "NETBIOS", "INSTANCE_ID", "QAGENT"
-    ] = field(default=None)
+    trackingMethod: Literal["NONE", "IP", "DNSNAME", "NETBIOS", "INSTANCE_ID", "QAGENT"] = field(
+        default=None
+    )
     manufacturer: str = field(default=None)
     model: str = field(default=None)
     totalMemory: int = field(default=None)
@@ -118,9 +118,7 @@ class CloudAgent(BaseClass):
 
         for date_field in DATE_FIELDS:
             if getattr(self, date_field):
-                setattr(
-                    self, date_field, datetime.fromisoformat(getattr(self, date_field))
-                )
+                setattr(self, date_field, datetime.fromisoformat(getattr(self, date_field)))
 
         for int_field in INT_FIELDS:
             if getattr(self, int_field):
@@ -225,14 +223,10 @@ class CloudAgent(BaseClass):
                     for volume in data:
                         # Calculate the % free space on the volume. Account for 0 division!
                         try:
-                            percent_free = (
-                                int(volume.get("free")) / int(volume.get("size"))
-                            ) * 100
+                            percent_free = (int(volume.get("free")) / int(volume.get("size"))) * 100
                         except ZeroDivisionError:
                             percent_free = 0
-                        volumes.append(
-                            f"{volume.get('name')} ({percent_free:.2f}% free)"
-                        )
+                        volumes.append(f"{volume.get('name')} ({percent_free:.2f}% free)")
 
                 if len(volumes) > 0:
                     setattr(self, "volume", volumes)

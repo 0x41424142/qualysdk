@@ -12,9 +12,7 @@ from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import QualysAPIError
 
 
-def list_certs(
-    auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs
-) -> dict:
+def list_certs(auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs) -> dict:
     """
     Return a list of certificates that match the given kwargs.
 
@@ -78,9 +76,7 @@ def list_certs(
         if key.endswith("_operator"):
             continue
         operator = (
-            kwargs.get(f"{key}_operator", "IS_NOT_EMPTY")
-            if key != "validFromDate"
-            else "GREATER"
+            kwargs.get(f"{key}_operator", "IS_NOT_EMPTY") if key != "validFromDate" else "GREATER"
         )
         if operator not in [
             "IN",
@@ -106,9 +102,7 @@ def list_certs(
             )
 
     while True:
-        response = call_api(
-            auth=auth, module="cert", endpoint="list_certs", jsonbody=payload
-        )
+        response = call_api(auth=auth, module="cert", endpoint="list_certs", jsonbody=payload)
 
         response_json = response.json()
         if response.status_code != 200:

@@ -334,9 +334,7 @@ def fetch_report(
                         ~0
                     ]  # maxsplit lets us ignore newlines except for the table separator
                 else:
-                    content = split_content[
-                        ~0
-                    ]  # get the last element, which is the actual data...
+                    content = split_content[~0]  # get the last element, which is the actual data...
             data = read_csv(StringIO(content))
             return_data = True
 
@@ -406,9 +404,7 @@ def get_scheduled_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]
     bl = BaseList()
 
     try:
-        reports = data["SCHEDULE_REPORT_LIST_OUTPUT"]["RESPONSE"][
-            "SCHEDULE_REPORT_LIST"
-        ]["REPORT"]
+        reports = data["SCHEDULE_REPORT_LIST_OUTPUT"]["RESPONSE"]["SCHEDULE_REPORT_LIST"]["REPORT"]
         # Check if there are multiple reports or just one
         if isinstance(reports, dict):
             reports = [reports]

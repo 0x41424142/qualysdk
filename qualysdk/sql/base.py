@@ -44,14 +44,8 @@ def db_connect(
     """
 
     # Check if user AND password are provided, or trusted connection is used:
-    if (
-        not (username and password)
-        and not trusted_cnxn
-        and db_type not in ["sqlite", "sqlite3"]
-    ):
-        raise ValueError(
-            "You must provide a username and password, or use trusted connection."
-        )
+    if not (username and password) and not trusted_cnxn and db_type not in ["sqlite", "sqlite3"]:
+        raise ValueError("You must provide a username and password, or use trusted connection.")
 
     if trusted_cnxn and db_type != "mssql":
         raise ValueError("Trusted connection is only available for MSSQL.")
@@ -98,9 +92,7 @@ def upload_data(
     """
 
     # Add an import_datetime column:
-    df["import_datetime"] = (
-        datetime.now() if not override_import_dt else override_import_dt
-    )
+    df["import_datetime"] = datetime.now() if not override_import_dt else override_import_dt
     dtype["import_datetime"] = types.DateTime()
 
     # Change any timezone-aware datetime columns to timezone-naive.
@@ -187,9 +179,7 @@ def prepare_dataclass(dataclass: dataclass) -> dict:
             if attr in TO_STR_FIELDS:
                 setattr(dataclass, attr, str(getattr(dataclass, attr)))
             elif attr in DICT_FIELDS and isinstance(getattr(dataclass, attr), dict):
-                setattr(
-                    dataclass, attr, flatten_dict_to_string(getattr(dataclass, attr))
-                )
+                setattr(dataclass, attr, flatten_dict_to_string(getattr(dataclass, attr)))
 
     # If there are any leftover empties or ipv4/ipv6 addresses,
     # convert them to None/str as a failsafe: #NOTE: Refactor at some point!
@@ -269,16 +259,12 @@ def upload_json(
     df = DataFrame.from_records(json_data)
 
     # Add an import_datetime column:
-    df["import_datetime"] = (
-        datetime.now() if not override_import_dt else override_import_dt
-    )
+    df["import_datetime"] = datetime.now() if not override_import_dt else override_import_dt
     df["import_datetime"] = df["import_datetime"].dt.tz_localize(None)
 
     # Convert all dict and list columns to strings:
     for col in df.select_dtypes(include=["object"]).columns:
-        df[col] = df[col].apply(
-            lambda x: dumps(x) if isinstance(x, (dict, list, BaseList)) else x
-        )
+        df[col] = df[col].apply(lambda x: dumps(x) if isinstance(x, (dict, list, BaseList)) else x)
 
     # Upload the data:
     print(f"Uploading {len(df)} rows to {table_name}...")

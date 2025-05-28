@@ -63,12 +63,8 @@ def main():
     parser = ArgumentParser(
         description="CLI script to quickly perform Patch Management (PM) operations using qualysdk"
     )
-    parser.add_argument(
-        "-u", "--username", required=True, help="Qualys username", type=str
-    )
-    parser.add_argument(
-        "-p", "--password", required=True, help="Qualys password", type=str
-    )
+    parser.add_argument("-u", "--username", required=True, help="Qualys username", type=str)
+    parser.add_argument("-p", "--password", required=True, help="Qualys password", type=str)
     parser.add_argument(
         "-P",
         "--platform",
@@ -97,9 +93,7 @@ def main():
         metavar=("key", "value"),
     )
 
-    job_results_parser = subparsers.add_parser(
-        "get_job_results", help="Get results for a PM job."
-    )
+    job_results_parser = subparsers.add_parser("get_job_results", help="Get results for a PM job.")
     job_results_parser.add_argument(
         "-o",
         "--output",
@@ -123,9 +117,7 @@ def main():
         metavar=("key", "value"),
     )
 
-    job_runs_parser = subparsers.add_parser(
-        "get_job_runs", help="Get runs for a PM job."
-    )
+    job_runs_parser = subparsers.add_parser("get_job_runs", help="Get runs for a PM job.")
     job_runs_parser.add_argument(
         "-o",
         "--output",
@@ -241,9 +233,7 @@ def main():
         default="pm_patch_count.txt",
     )
 
-    get_assets_parser = subparsers.add_parser(
-        "get_assets", help="Get assets for a given platform."
-    )
+    get_assets_parser = subparsers.add_parser("get_assets", help="Get assets for a given platform.")
 
     get_assets_parser.add_argument(
         "--os",

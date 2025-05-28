@@ -63,9 +63,7 @@ def get_user_list(auth: BasicAuth, **kwargs) -> BaseList[User]:
 
 def add_user(
     auth: BasicAuth,
-    user_role: Literal[
-        "manager", "unit_manager", "scanner", "reader", "contact", "administrator"
-    ],
+    user_role: Literal["manager", "unit_manager", "scanner", "reader", "contact", "administrator"],
     business_unit: Union[Literal["Unassigned"], str],
     first_name: str,
     last_name: str,

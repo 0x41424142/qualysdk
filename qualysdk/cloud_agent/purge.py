@@ -20,9 +20,7 @@ def purge_agent(auth: BasicAuth, asset_id: str) -> str:
         str: The response from the API call.
     """
 
-    xml_data = (
-        '<?xml version="1.0" encoding="UTF-8" ?> <ServiceRequest></ServiceRequest>'
-    )
+    xml_data = '<?xml version="1.0" encoding="UTF-8" ?> <ServiceRequest></ServiceRequest>'
 
     payload = {
         "placeholder": asset_id,  # For formatting the URL

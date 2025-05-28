@@ -160,11 +160,7 @@ class Container(BaseClass):
         if not parent_data:
             return
 
-        if (
-            transform
-            and callable(transform.get("func"))
-            and parent_data.get(transform["key"])
-        ):
+        if transform and callable(transform.get("func")) and parent_data.get(transform["key"]):
             setattr(
                 self,
                 f"{target_prefix}_{transform['key']}",

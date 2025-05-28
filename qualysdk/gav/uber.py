@@ -43,9 +43,7 @@ class GAVUber:
 
     def get(
         self,
-        endpoint: Literal[
-            "count_assets", "get_all_assets", "get_asset", "query_assets"
-        ],
+        endpoint: Literal["count_assets", "get_all_assets", "get_asset", "query_assets"],
         **kwargs,
     ):
         """

@@ -53,9 +53,7 @@ class VMScan(BaseClass):
         default=None,
     )
     TITLE: str = field(metadata={"description": "Title of the scan."}, default=None)
-    USER_LOGIN: str = field(
-        metadata={"description": "Owner of the scan."}, default=None
-    )
+    USER_LOGIN: str = field(metadata={"description": "Owner of the scan."}, default=None)
     LAUNCH_DATETIME: Union[str, datetime] = field(
         metadata={"description": "Datetime the scan was launched."}, default=None
     )  # post init to convert to datetime
@@ -89,9 +87,7 @@ class VMScan(BaseClass):
         Post init function to convert the LAUNCH_DATETIME and DURATION fields to datetime and timedelta objects.
         """
         if self.LAUNCH_DATETIME:
-            self.LAUNCH_DATETIME = datetime.strptime(
-                self.LAUNCH_DATETIME, "%Y-%m-%dT%H:%M:%SZ"
-            )
+            self.LAUNCH_DATETIME = datetime.strptime(self.LAUNCH_DATETIME, "%Y-%m-%dT%H:%M:%SZ")
         if self.DURATION:
             self.DURATION = (
                 parse_duration(self.DURATION)

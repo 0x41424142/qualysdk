@@ -35,32 +35,20 @@ def upload_pm_jobs(
     COLS = {
         "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "coAuthorUserIds": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "subCategory": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "coAuthorUserIds": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "subCategory": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "dynamicQQLType": types.Integer(),
-        "matchAllTags": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "matchAllTags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "recurringWeekDays": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "recurringWeekDays": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "totalAssetCount": types.Integer(),
         "isDynamicPatchesQQL": types.Boolean(),
         "assetCount": types.Integer(),
         "customPatchUrlConfigured": types.Boolean(),
         "linkedJobReferenceCount": types.Integer(),
         "created_date": types.DateTime(),
-        "created_user_name": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "created_user_id": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "created_user_name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "created_user_id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "triggerStatus": types.Integer(),
         "recurringDayOfMonth": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
@@ -68,50 +56,26 @@ def upload_pm_jobs(
         "jobSource": types.Integer(),
         "readOnly": types.Boolean(),
         "tags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "exclusionAssetIds": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "scheduleType": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "dayOfMonth": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "disabledPatches": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "filterType": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "exclusionAssetIds": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "scheduleType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "dayOfMonth": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "disabledPatches": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "filterType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "updated_date": types.DateTime(),
-        "updated_user_name": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "updated_user_id": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "additionalQQLS": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "updated_user_name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "updated_user_id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "additionalQQLS": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "timezone": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "timezone": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "exclusionFilterType": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "nextScheduleDateTime": types.DateTime(),
-        "platform": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "platform": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "mitigationActionCount": types.Integer(),
         "isPriorityJob": types.Boolean(),
-        "customerId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "exclusionTags": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "customerId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "exclusionTags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "taggedAssetCount": types.Integer(),
         "patchCount": types.Integer(),
         "applicableAssetCount": types.Integer(),
@@ -123,26 +87,18 @@ def upload_pm_jobs(
         ),
         "isRecurring": types.Boolean(),
         "lastScheduleDateTime": types.DateTime(),
-        "dynamicPatchesQQL": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "dynamicPatchesQQL": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "startDateTime": types.DateTime(),
-        "timezoneType": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "timezoneType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "deleted": types.Boolean(),
         "monthlyRecurringType": types.Integer(),
         "completionPercent": types.Float(),
         "category": types.Integer(),
-        "linkedJobId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "linkedJobId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "assetResultReceivedCount": types.Integer(),
         "isVulnContext": types.Boolean(),
         "isAssetImported": types.Boolean(),
-        "remediationQids": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "remediationQids": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:
@@ -215,9 +171,7 @@ def upload_pm_job_results(
         "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "assetCount": types.Integer(),
         "patchCount": types.Integer(),
-        "createdBy": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "createdBy": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "createdOn": types.DateTime(),
         "assets": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
@@ -226,21 +180,15 @@ def upload_pm_job_results(
         job_results_df, jobs_table_name, cnxn, COLS, override_import_dt
     )
 
-    print(
-        f"Uploaded {job_summaries_uploaded} to {jobs_table_name}. Moving to assets..."
-    )
+    print(f"Uploaded {job_summaries_uploaded} to {jobs_table_name}. Moving to assets...")
 
     COLS = {
         "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "operatingSystem": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "operatingSystem": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "jobId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "tags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "lastLoggedOnUser": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "lastLoggedOnUser": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "successPatches": types.Integer(),
         "installedPatches": types.Integer(),
         "failedPatches": types.Integer(),
@@ -250,37 +198,21 @@ def upload_pm_job_results(
         "pendingExecution": types.Boolean(),
         "pendingReboot": types.Boolean(),
         "pendingVerification": types.Boolean(),
-        "jobInstanceId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "interfaces": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "jobInstanceId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "interfaces": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "skipPatchCount": types.Integer(),
-        "additionalFields": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "additionalFields": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "endDateTime": types.DateTime(),
         "startDateTime": types.DateTime(),
         "statusDateTime": types.DateTime(),
         "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "statusCode": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "statusCode": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "jobSentOn": types.DateTime(),
-        "installed": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "installed": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "failed": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "success": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "superseded": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "notApplicable": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "success": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "superseded": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "notApplicable": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "failedActionsCount": types.Integer(),
         "successfulActionsCount": types.Integer(),
         "skippedActionsCount": types.Integer(),
@@ -294,14 +226,10 @@ def upload_pm_job_results(
         "pendingForRebootInAnotherJobName": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "osIdentifier": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "osIdentifier": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
-    assets_uploaded = upload_data(
-        assets_df, assets_table_name, cnxn, COLS, override_import_dt
-    )
+    assets_uploaded = upload_data(assets_df, assets_table_name, cnxn, COLS, override_import_dt)
 
     return assets_uploaded
 
@@ -330,9 +258,7 @@ def upload_pm_job_runs(
         "jobInstanceId": types.Integer(),
         "jobId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "scheduledDateTime": types.DateTime(),
-        "timezoneType": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "timezoneType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:
@@ -368,9 +294,7 @@ def upload_pm_cves(
         "cves": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "detectedDate": types.DateTime(),
         "severity": types.Integer(),
-        "vulnType": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "vulnType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:
@@ -404,52 +328,28 @@ def upload_pm_patches(
         "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "title": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "platform": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "architecture": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "bulletin": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "category": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "platform": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "architecture": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "bulletin": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "category": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "cve": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "kb": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "modifiedDate": types.DateTime(),
-        "appFamily": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "product": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "appFamily": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "product": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "publishedDate": types.DateTime(),
         "qid": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "rebootRequired": types.Boolean(),
-        "supersededBy": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "supersedes": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "supersededBy": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "supersedes": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "vendor": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "vendorSeverity": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "vendorlink": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "vendorSeverity": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "vendorlink": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "missingCount": types.Integer(),
         "installedCount": types.Integer(),
-        "advisory": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "advisory": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "enabled": types.Boolean(),
-        "packageDetails": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "packageDetails": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "isSecurity": types.Boolean(),
         "isSuperseded": types.Boolean(),
         "isRollback": types.Boolean(),
@@ -485,47 +385,27 @@ def upload_pm_assets(
     COLS = {
         "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "operatingSystem": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "version": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "platform": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "osIdentifier": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "operatingSystem": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "version": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "platform": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "osIdentifier": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "tags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "interfaces": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "scanStatus": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "interfaces": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "scanStatus": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "statusCode": types.Integer(),
         "installedPatchCount": types.Integer(),
         "missingPatchCount": types.Integer(),
         "nonSupersededMissingPatchCount": types.Integer(),
-        "activatedModules": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "lastLoggedOnUser": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "activatedModules": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "lastLoggedOnUser": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "scanDateTime": types.DateTime(),
         "statusDateTime": types.DateTime(),
-        "hardware_model": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "hardware_model": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "hardware_manufacturer": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "architecture": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "architecture": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "osNotSupportedForModules": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -561,9 +441,7 @@ def upload_pm_assetids_to_uuids(
     """
 
     COLS = {
-        "assetId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "assetId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "uuid": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
@@ -598,85 +476,45 @@ def upload_pm_patch_catalog(
     """
 
     COLS = {
-        "patchId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "patchId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "title": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "appFamily": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "appFamily": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "vendor": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "product": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "platform": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "product": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "platform": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "kb": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "isSuperseded": types.Boolean(),
         "isSecurity": types.Boolean(),
         "isRollback": types.Boolean(),
         "servicePack": types.Boolean(),
-        "advisory": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "vendorlink": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "osIdentifier": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "advisoryLink": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "advisory": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "vendorlink": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "osIdentifier": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "advisoryLink": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "deleted": types.Boolean(),
         "rebootRequired": types.Boolean(),
-        "vendorSeverity": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "description": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "vendorSeverity": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "description": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "qid": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "enabled": types.Boolean(),
-        "downloadMethod": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "supportedOs": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "supersedes": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "notification": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "downloadMethod": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "supportedOs": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "supersedes": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "notification": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "cve": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "architecture": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "packageDetails": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "architecture": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "packageDetails": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "patchFeedProviderId": types.Integer(),
         "syncDateTime": types.DateTime(),
-        "vendorPatchId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "vendorPatchId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "modifiedDate": types.DateTime(),
         "publishedDate": types.DateTime(),
-        "category": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "category": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "isEsuPatch": types.Boolean(),
-        "supersededBy": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "bulletin": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "supersededBy": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "bulletin": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:
@@ -707,12 +545,8 @@ def upload_pm_windows_products(
     """
 
     COLS = {
-        "patchId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "product": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "patchId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "product": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:
@@ -743,15 +577,9 @@ def upload_pm_linux_packages(
     """
 
     COLS = {
-        "patchId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "packageName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "architecture": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "patchId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "packageName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "architecture": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:
@@ -798,13 +626,9 @@ class ProductVulnCount(BaseClass):
         "totalQIDCount": types.Integer(),
         "patchableQIDCount": types.Integer(),
         "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "patchableQIDs": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "patchableQIDs": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "totalQIDs": types.Integer(),
-        "severity": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "severity": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:

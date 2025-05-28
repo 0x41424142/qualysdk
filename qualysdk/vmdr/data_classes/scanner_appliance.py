@@ -15,9 +15,7 @@ from ...base.base_class import BaseClass
 from ...base import DONT_EXPAND
 
 
-def build_dataclass_baselist(
-    data: list[dict], class_type: Literal["ag", "tag"]
-) -> BaseList:
+def build_dataclass_baselist(data: list[dict], class_type: Literal["ag", "tag"]) -> BaseList:
     """
     Helps to normalize and build a BaseList of dataclasses from a list of dictionaries
     for the various fields in the ScannerAppliance dataclass.
@@ -181,26 +179,18 @@ class ScannerCloudInfo(BaseClass):
                 self.AMI_ID = self.EC2_INFO.get("AMI_ID")
                 self.ACCOUNT_ID = self.EC2_INFO.get("ACCOUNT_ID")
                 self.INSTANCE_REGION = self.EC2_INFO.get("INSTANCE_REGION")
-                self.INSTANVE_AVAILABILITY_ZONE = self.EC2_INFO.get(
-                    "INSTANVE_AVAILABILITY_ZONE"
-                )
+                self.INSTANVE_AVAILABILITY_ZONE = self.EC2_INFO.get("INSTANVE_AVAILABILITY_ZONE")
                 self.INSTANCE_ZONE_TYPE = self.EC2_INFO.get("INSTANCE_ZONE_TYPE")
                 self.INSTANCE_VPC_ID = self.EC2_INFO.get("INSTANCE_VPC_ID")
                 self.INSTANCE_SUBNET_ID = self.EC2_INFO.get("INSTANCE_SUBNET_ID")
-                self.INSTANCE_ADDRESS_PRIVATE = self.EC2_INFO.get(
-                    "INSTANCE_ADDRESS_PRIVATE"
-                )
-                self.INSTANCE_ADDRESS_PUBLIC = self.EC2_INFO.get(
-                    "INSTANCE_ADDRESS_PUBLIC"
-                )
+                self.INSTANCE_ADDRESS_PRIVATE = self.EC2_INFO.get("INSTANCE_ADDRESS_PRIVATE")
+                self.INSTANCE_ADDRESS_PUBLIC = self.EC2_INFO.get("INSTANCE_ADDRESS_PUBLIC")
                 self.HOSTNAME_PRIVATE = self.EC2_INFO.get("HOSTNAME_PRIVATE")
                 if self.EC2_INFO.get("SECURITY_GROUPS"):
                     self.SECURITY_GROUPS = SecurityGroup.from_dict(
                         self.EC2_INFO.get("SECURITY_GROUPS")
                     )
-                self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")[
-                    "SETTING"
-                ]
+                self.API_PROXY_SETTINGS = self.EC2_INFO.get("API_PROXY_SETTINGS")["SETTING"]
 
         for int_field in INT_FIELDS:
             if getattr(self, int_field):
@@ -387,9 +377,7 @@ class ScannerAppliance(BaseClass):
     )
 
     RUNNING_SCAN_COUNT: int = field(
-        metadata={
-            "description": "Number of scans currently running on the scanner appliance."
-        },
+        metadata={"description": "Number of scans currently running on the scanner appliance."},
         default=0,
     )
 
@@ -404,9 +392,7 @@ class ScannerAppliance(BaseClass):
     )
 
     RUNNING_SLICES_COUNT: int = field(
-        metadata={
-            "description": "Number of slices currently running on the scanner appliance."
-        },
+        metadata={"description": "Number of slices currently running on the scanner appliance."},
         default=0,
     )
 
@@ -461,9 +447,7 @@ class ScannerAppliance(BaseClass):
     )
 
     ML_LATEST: str = field(
-        metadata={
-            "description": "Latest machine learning model of the scanner appliance."
-        },
+        metadata={"description": "Latest machine learning model of the scanner appliance."},
         default=None,
     )
 
@@ -473,37 +457,27 @@ class ScannerAppliance(BaseClass):
     )
 
     VULNSIGS_LATEST: str = field(
-        metadata={
-            "description": "Latest vulnerability signature of the scanner appliance."
-        },
+        metadata={"description": "Latest vulnerability signature of the scanner appliance."},
         default=None,
     )
 
     VULNSIGS_VERSION: dict = field(
-        metadata={
-            "description": "Vulnerability signature version of the scanner appliance."
-        },
+        metadata={"description": "Vulnerability signature version of the scanner appliance."},
         default=None,
     )
 
     ASSET_GROUP_COUNT: int = field(
-        metadata={
-            "description": "Number of asset groups associated with the scanner appliance."
-        },
+        metadata={"description": "Number of asset groups associated with the scanner appliance."},
         default=0,
     )
 
     ASSET_GROUP_LIST: BaseList[AssetGroup] = field(
-        metadata={
-            "description": "List of asset groups associated with the scanner appliance."
-        },
+        metadata={"description": "List of asset groups associated with the scanner appliance."},
         default=None,
     )
 
     ASSET_TAGS_LIST: BaseList[Tag] = field(
-        metadata={
-            "description": "List of asset tags associated with the scanner appliance."
-        },
+        metadata={"description": "List of asset tags associated with the scanner appliance."},
         default=None,
     )
 
@@ -523,9 +497,7 @@ class ScannerAppliance(BaseClass):
     )
 
     HEARTBEATS_MISSED: int = field(
-        metadata={
-            "description": "Number of heartbeats missed by the scanner appliance."
-        },
+        metadata={"description": "Number of heartbeats missed by the scanner appliance."},
         default=None,
     )
 
@@ -544,9 +516,7 @@ class ScannerAppliance(BaseClass):
     )
 
     USER_LIST: dict = field(
-        metadata={
-            "description": "List of users associated with the scanner appliance."
-        },
+        metadata={"description": "List of users associated with the scanner appliance."},
         default=None,
     )
 
@@ -611,9 +581,7 @@ class ScannerAppliance(BaseClass):
                     setattr(
                         self,
                         custom_field[0],
-                        build_dataclass_baselist(
-                            getattr(self, custom_field[0]), custom_field[1]
-                        ),
+                        build_dataclass_baselist(getattr(self, custom_field[0]), custom_field[1]),
                     )
 
             if self.CLOUD_INFO:
@@ -643,10 +611,7 @@ class ScannerAppliance(BaseClass):
                         self,
                         "INTERFACE_SETTINGS",
                         BaseList(
-                            [
-                                InterfaceSettings.from_dict(item)
-                                for item in self.INTERFACE_SETTINGS
-                            ]
+                            [InterfaceSettings.from_dict(item) for item in self.INTERFACE_SETTINGS]
                         ),
                     )
 
@@ -661,12 +626,7 @@ class ScannerAppliance(BaseClass):
                     setattr(
                         self,
                         "PROXY_SETTINGS",
-                        BaseList(
-                            [
-                                ProxySettings.from_dict(item)
-                                for item in self.PROXY_SETTINGS
-                            ]
-                        ),
+                        BaseList([ProxySettings.from_dict(item) for item in self.PROXY_SETTINGS]),
                     )
 
         # check for empty dicts in the dataclass and set them to None:

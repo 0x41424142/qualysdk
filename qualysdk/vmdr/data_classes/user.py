@@ -23,9 +23,7 @@ class User(BaseClass):
 
     EXTERNAL_ID: str = field(metadata={"description": "External ID."}, default=None)
 
-    CONTACT_INFO: dict = field(
-        metadata={"description": "Contact information."}, default=None
-    )
+    CONTACT_INFO: dict = field(metadata={"description": "Contact information."}, default=None)
 
     # BELOW ARE PARSED OUT OF CONTACT_INFO
 
@@ -55,9 +53,7 @@ class User(BaseClass):
 
     ZIP_CODE: str = field(metadata={"description": "Zip code."}, default=None)
 
-    TIME_ZONE_CODE: str = field(
-        metadata={"description": "Time zone code."}, default=None
-    )
+    TIME_ZONE_CODE: str = field(metadata={"description": "Time zone code."}, default=None)
 
     # END PARSED OUT OF CONTACT_INFO
 
@@ -79,13 +75,9 @@ class User(BaseClass):
         metadata={"description": "Unit manager point of contact."}, default=None
     )
 
-    MANAGER_POC: int = field(
-        metadata={"description": "Manager point of contact."}, default=None
-    )
+    MANAGER_POC: int = field(metadata={"description": "Manager point of contact."}, default=None)
 
-    UI_INTERFACE_STYLE: str = field(
-        metadata={"description": "UI interface style."}, default=None
-    )
+    UI_INTERFACE_STYLE: str = field(metadata={"description": "UI interface style."}, default=None)
 
     PERMISSIONS: dict = field(metadata={"description": "Permissions."}, default=None)
 
@@ -95,9 +87,7 @@ class User(BaseClass):
         metadata={"description": "Create option profiles."}, default=None
     )
 
-    PURGE_INFO: bool = field(
-        metadata={"description": "Purge information."}, default=None
-    )
+    PURGE_INFO: bool = field(metadata={"description": "Purge information."}, default=None)
 
     ADD_ASSETS: bool = field(metadata={"description": "Add assets."}, default=None)
 
@@ -111,22 +101,16 @@ class User(BaseClass):
 
     # END PARSED OUT OF PERMISSIONS
 
-    NOTIFICATIONS: dict = field(
-        metadata={"description": "Notifications."}, default=None
-    )
+    NOTIFICATIONS: dict = field(metadata={"description": "Notifications."}, default=None)
 
     # BELOW ARE PARSED OUT OF NOTIFICATIONS
-    LATEST_VULN: str = field(
-        metadata={"description": "Latest vulnerability."}, default=None
-    )
+    LATEST_VULN: str = field(metadata={"description": "Latest vulnerability."}, default=None)
 
     MAP: str = field(metadata={"description": "Map."}, default=None)
 
     SCAN: str = field(metadata={"description": "Scan."}, default=None)
 
-    DAILY_TICKETS: bool = field(
-        metadata={"description": "Daily tickets."}, default=None
-    )
+    DAILY_TICKETS: bool = field(metadata={"description": "Daily tickets."}, default=None)
 
     # END PARSED OUT OF NOTIFICATIONS
 
@@ -182,9 +166,7 @@ class User(BaseClass):
                     setattr(
                         self,
                         dt_field,
-                        datetime.strptime(
-                            getattr(self, dt_field), "%Y-%m-%dT%H:%M:%S%z"
-                        ),
+                        datetime.strptime(getattr(self, dt_field), "%Y-%m-%dT%H:%M:%S%z"),
                     )
 
         for int_field in INT_FIELDS:

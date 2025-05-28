@@ -44,9 +44,7 @@ def get_resource_details(
     # Check cloud provider is valid
     provider = provider.lower()
     if provider not in ["aws", "azure"]:
-        raise QualysAPIError(
-            f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
-        )
+        raise QualysAPIError(f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'")
 
     resourceType = resourceType.upper()
 
@@ -70,9 +68,7 @@ def get_resource_details(
         case "AZURE":
             kwargs["cloudprovider"] = "Azure"
         case _:
-            raise ValueError(
-                f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
-            )
+            raise ValueError(f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'")
 
     response = call_api(
         auth=auth,

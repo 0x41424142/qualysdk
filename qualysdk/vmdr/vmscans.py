@@ -293,9 +293,7 @@ def manage_scan(
             "application/json; charset=UTF-8",
             "text/html; charset=UTF-8",
         ]:
-            raise QualysAPIError(
-                xml_parser(response.text)["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
-            )
+            raise QualysAPIError(xml_parser(response.text)["SIMPLE_RETURN"]["RESPONSE"]["TEXT"])
 
         # Parse the JSON response:
         result = read_json(StringIO(response.text))

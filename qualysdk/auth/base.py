@@ -53,13 +53,9 @@ class BaseAuthentication:
                 )
         elif self.auth_type == "token":
             if self.token is None:
-                raise InvalidTokenError(
-                    "Token must be provided for token authentication."
-                )
+                raise InvalidTokenError("Token must be provided for token authentication.")
         else:
-            raise InvalidAuthTypeError(
-                "Invalid authentication type. Must be 'basic' or 'token'."
-            )
+            raise InvalidAuthTypeError("Invalid authentication type. Must be 'basic' or 'token'.")
 
     def to_dict(self) -> dict:
         """

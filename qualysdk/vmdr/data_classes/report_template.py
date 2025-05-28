@@ -15,22 +15,16 @@ class ReportTemplate(BaseClass):
     A single report template in VMDR
     """
 
-    ID: int = field(
-        metadata={"description": "The unique ID of the report template."}, default=None
-    )
+    ID: int = field(metadata={"description": "The unique ID of the report template."}, default=None)
 
-    TYPE: str = field(
-        metadata={"description": "The type of the report template."}, default=None
-    )
+    TYPE: str = field(metadata={"description": "The type of the report template."}, default=None)
 
     TEMPLATE_TYPE: str = field(
         metadata={"description": "The template type of the report template."},
         default=None,
     )
 
-    TITLE: str = field(
-        metadata={"description": "The title of the report template."}, default=None
-    )
+    TITLE: str = field(metadata={"description": "The title of the report template."}, default=None)
 
     USER: dict = field(
         metadata={"description": "The user that created the report template."},

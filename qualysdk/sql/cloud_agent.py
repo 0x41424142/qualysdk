@@ -37,45 +37,29 @@ def upload_cloud_agents(
         "created": types.DateTime(),
         "modified": types.DateTime(),
         "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "tags": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),  # BaseList
-        "sourceInfo": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),  # list
+        "tags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),  # BaseList
+        "sourceInfo": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),  # list
         "qwebHostId": types.Integer(),
         "lastComplianceScan": types.DateTime(),
         "lastSystemBoot": types.DateTime(),
-        "lastLoggedOnUser": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "dnsHostName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "lastLoggedOnUser": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "dnsHostName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "agentInfo_agentVersion": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "agentInfo_agentId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "agentInfo_status": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "agentInfo_agentId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "agentInfo_status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "agentInfo_lastCheckedIn": types.DateTime(),
         "agentInfo_connectedFrom": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "agentInfo_location": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "agentInfo_location": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "agentInfo_locationGeoLatitude": types.Float(),
         "agentInfo_locationGeoLongitude": types.Float(),
         "agentInfo_chirpStatus": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "agentInfo_platform": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "agentInfo_platform": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "agentInfo_activatedModule": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -92,9 +76,7 @@ def upload_cloud_agents(
         "agentInfo_activationKey_title": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "netbiosName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "netbiosName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "criticalityScore": types.Integer(),
         "lastVulnScan": types.DateTime(),
         "vulnsUpdated": types.DateTime(),
@@ -102,41 +84,25 @@ def upload_cloud_agents(
         "domain": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "fqdn": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "os": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "networkGuid": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "address": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "trackingMethod": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "manufacturer": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "networkGuid": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "address": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "trackingMethod": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "manufacturer": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "model": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "totalMemory": types.Integer(),
-        "timezone": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "biosDescription": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "timezone": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "biosDescription": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "openPort": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList
         "software": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList
-        "vuln": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),  # BaseList
+        "vuln": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),  # BaseList
         "processor": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList
-        "volume": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),  # BaseList
+        "volume": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),  # BaseList
         "account": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList
@@ -144,12 +110,8 @@ def upload_cloud_agents(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList
         "isDockerHost": types.Boolean(),
-        "dockerInfo": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),  # list
-        "cloudProvider": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "dockerInfo": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),  # list
+        "cloudProvider": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:

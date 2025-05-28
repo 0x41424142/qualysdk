@@ -11,9 +11,7 @@ from ..base.base_list import BaseList
 from .data_classes import StaticSearchList, DynamicSearchList
 
 
-def get_static_searchlists(
-    auth: BasicAuth, ids: str = None
-) -> BaseList[StaticSearchList]:
+def get_static_searchlists(auth: BasicAuth, ids: str = None) -> BaseList[StaticSearchList]:
     """
     Get a list of Static Searchlists in VMDR.
 
@@ -47,22 +45,16 @@ def get_static_searchlists(
 
     # If there is only one searchlist, it will not be in a list.
     if isinstance(
-        searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"][
-            "STATIC_LIST"
-        ],
+        searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"]["STATIC_LIST"],
         dict,
     ):
-        searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"][
-            "STATIC_LIST"
-        ] = [
-            searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"][
-                "STATIC_LIST"
-            ]
+        searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"]["STATIC_LIST"] = [
+            searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"]["STATIC_LIST"]
         ]
 
-    for searchlist in searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"][
-        "STATIC_LISTS"
-    ]["STATIC_LIST"]:
+    for searchlist in searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["STATIC_LISTS"][
+        "STATIC_LIST"
+    ]:
         responses.append(StaticSearchList(**searchlist))
 
     return responses
@@ -113,22 +105,16 @@ def get_dynamic_searchlists(
         return responses
 
     if isinstance(
-        searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["DYNAMIC_LISTS"][
-            "DYNAMIC_LIST"
-        ],
+        searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["DYNAMIC_LISTS"]["DYNAMIC_LIST"],
         dict,
     ):
-        searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["DYNAMIC_LISTS"][
-            "DYNAMIC_LIST"
-        ] = [
-            searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["DYNAMIC_LISTS"][
-                "DYNAMIC_LIST"
-            ]
+        searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["DYNAMIC_LISTS"]["DYNAMIC_LIST"] = [
+            searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["DYNAMIC_LISTS"]["DYNAMIC_LIST"]
         ]
 
-    for searchlist in searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"][
-        "DYNAMIC_LISTS"
-    ]["DYNAMIC_LIST"]:
+    for searchlist in searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]["DYNAMIC_LISTS"][
+        "DYNAMIC_LIST"
+    ]:
         responses.append(DynamicSearchList(**searchlist))
 
     return responses

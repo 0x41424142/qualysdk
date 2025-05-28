@@ -11,9 +11,7 @@ from ..exceptions.Exceptions import *
 from .data_classes.Controls import Control
 
 
-def get_control_metadata(
-    auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs
-):
+def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs):
     """
     Get controls Qualys checks a cloud provider for.
 
@@ -69,9 +67,7 @@ def get_control_metadata(
         ]
 
         if kwargs["filter"].split(":")[0] not in valid_controls:
-            raise QualysAPIError(
-                f"Invalid filter key. Valid keys: {', '.join(valid_controls)}"
-            )
+            raise QualysAPIError(f"Invalid filter key. Valid keys: {', '.join(valid_controls)}")
 
         # If provider, resource.type, control.criticality,
         # service.type, control.type is used in the filter, uppercase the value.
@@ -118,9 +114,7 @@ def get_control_metadata(
         currentPage += 1
 
         # Break the loop if all pages are retrieved or the requested number of pages are retrieved
-        if (
-            page_count != "all" and (currentPage + 1 > page_count)
-        ) or "warning" not in j.keys():
+        if (page_count != "all" and (currentPage + 1 > page_count)) or "warning" not in j.keys():
             break
 
     # Print a message indicating all pages have been retrieved

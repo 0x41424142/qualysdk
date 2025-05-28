@@ -19,9 +19,7 @@ class StaticSearchList(BaseClass):
     StaticSearchList - represents a single Static Search List in VMDR.
     """
 
-    ID: int = field(
-        metadata={"description": "The ID of the Static Search List."}, default=None
-    )
+    ID: int = field(metadata={"description": "The ID of the Static Search List."}, default=None)
     TITLE: str = field(
         metadata={"description": "The title of the Static Search List."}, default=None
     )
@@ -50,16 +48,12 @@ class StaticSearchList(BaseClass):
     )
 
     OPTION_PROFILES: BaseList[str] = field(
-        metadata={
-            "description": "The option profiles associated with the Static Search List."
-        },
+        metadata={"description": "The option profiles associated with the Static Search List."},
         default=None,
     )
 
     REPORT_TEMPLATES: BaseList[str] = field(
-        metadata={
-            "description": "The report templates associated with the Static Search List."
-        },
+        metadata={"description": "The report templates associated with the Static Search List."},
         default=None,
     )
 
@@ -71,16 +65,12 @@ class StaticSearchList(BaseClass):
     )
 
     DISTRIBUTION_GROUPS: BaseList[str] = field(
-        metadata={
-            "description": "The distribution groups associated with the Static Search List."
-        },
+        metadata={"description": "The distribution groups associated with the Static Search List."},
         default=None,
     )
 
     COMMENTS: str = field(
-        metadata={
-            "description": "The comments associated with the Static Search List."
-        },
+        metadata={"description": "The comments associated with the Static Search List."},
         default=None,
     )
 
@@ -108,9 +98,7 @@ class StaticSearchList(BaseClass):
                 if isinstance(data, dict):
                     data = [data]
                 for profile in data:
-                    bl.append(
-                        f"{profile.get('ID', None)}: {profile.get('TITLE', None)}"
-                    )
+                    bl.append(f"{profile.get('ID', None)}: {profile.get('TITLE', None)}")
                 self.OPTION_PROFILES = bl
 
             if self.REPORT_TEMPLATES:
@@ -146,9 +134,7 @@ class StaticSearchList(BaseClass):
         DT_FIELDS = ["CREATED", "MODIFIED"]
 
         for dt_field in DT_FIELDS:
-            if getattr(self, dt_field) and not isinstance(
-                getattr(self, dt_field), datetime
-            ):
+            if getattr(self, dt_field) and not isinstance(getattr(self, dt_field), datetime):
                 setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
         self.ID = int(self.ID)
@@ -180,9 +166,7 @@ class DynamicSearchList(BaseClass):
     Dynamic Search List in VMDR.
     """
 
-    ID: int = field(
-        metadata={"description": "The ID of the Dynamic Search List."}, default=None
-    )
+    ID: int = field(metadata={"description": "The ID of the Dynamic Search List."}, default=None)
     TITLE: str = field(
         metadata={"description": "The title of the Dynamic Search List."}, default=None
     )
@@ -212,23 +196,17 @@ class DynamicSearchList(BaseClass):
     )
 
     CRITERIA: BaseList[str] = field(
-        metadata={
-            "description": "The criteria associated with the Dynamic Search List."
-        },
+        metadata={"description": "The criteria associated with the Dynamic Search List."},
         default=None,
     )
 
     OPTION_PROFILES: BaseList[str] = field(
-        metadata={
-            "description": "The option profiles associated with the Dynamic Search List."
-        },
+        metadata={"description": "The option profiles associated with the Dynamic Search List."},
         default=None,
     )
 
     REPORT_TEMPLATES: BaseList[ReportTemplate] = field(
-        metadata={
-            "description": "The report templates associated with the Dynamic Search List."
-        },
+        metadata={"description": "The report templates associated with the Dynamic Search List."},
         default=None,
     )
 
@@ -247,9 +225,7 @@ class DynamicSearchList(BaseClass):
     )
 
     COMMENTS: str = field(
-        metadata={
-            "description": "The comments associated with the Dynamic Search List."
-        },
+        metadata={"description": "The comments associated with the Dynamic Search List."},
         default=None,
     )
 
@@ -257,9 +233,7 @@ class DynamicSearchList(BaseClass):
         DT_FIELDS = ["CREATED", "MODIFIED"]
 
         for dt_field in DT_FIELDS:
-            if getattr(self, dt_field) and not isinstance(
-                getattr(self, dt_field), datetime
-            ):
+            if getattr(self, dt_field) and not isinstance(getattr(self, dt_field), datetime):
                 setattr(self, dt_field, datetime.fromisoformat(getattr(self, dt_field)))
 
         self.ID = int(self.ID)
@@ -301,9 +275,7 @@ class DynamicSearchList(BaseClass):
                 if isinstance(data, dict):
                     data = [data]
                 for profile in data:
-                    bl.append(
-                        f"{profile.get('ID', None)}: {profile.get('TITLE', None)}"
-                    )
+                    bl.append(f"{profile.get('ID', None)}: {profile.get('TITLE', None)}")
                 self.OPTION_PROFILES = bl
 
             if self.REPORT_TEMPLATES:

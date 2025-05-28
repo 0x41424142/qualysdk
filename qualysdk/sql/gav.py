@@ -419,6 +419,9 @@ def upload_gav_hosts(
         "processor": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
+        "lparId": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Prepare the softwareListData column:

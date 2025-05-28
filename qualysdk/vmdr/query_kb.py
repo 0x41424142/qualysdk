@@ -170,7 +170,7 @@ def get_kb_qvs(
         auth=auth,
         module="vmdr",
         endpoint="get_kb_qvs",
-        params=kwargs,
+        payload=kwargs,
         headers={"X-Requested-With": "qualysdk SDK"},
     )
     # TODO: Format has changed... need to update this

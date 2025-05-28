@@ -233,6 +233,7 @@ class Host(BaseClass):
     hostingCategory1: Optional[str] = None
     customAttributes: Optional[dict] = None
     processor: Optional[Union[dict, str]] = None
+    lparId: Optional[str] = None
 
     def __post_init__(self):
         DT_FIELDS = [

@@ -114,9 +114,7 @@ def get_container_details(auth: TokenAuth, containerSha: str) -> Container:
     return Container.from_dict(response.json())
 
 
-def get_software_on_container(
-    auth: TokenAuth, containerSha: str, **kwargs
-) -> BaseList[Container]:
+def get_software_on_container(auth: TokenAuth, containerSha: str, **kwargs) -> BaseList[Container]:
     """
     Get software on a container.
 
@@ -185,9 +183,7 @@ def get_container_vuln_count(auth: TokenAuth, containerSha: str) -> dict[str, in
     return response.json().get("data", {})
 
 
-def get_container_vulns(
-    auth: TokenAuth, containerSha: str, **kwargs
-) -> BaseList[csVuln]:
+def get_container_vulns(auth: TokenAuth, containerSha: str, **kwargs) -> BaseList[csVuln]:
     """
     Get a list of vulnerabilities on a container.
 

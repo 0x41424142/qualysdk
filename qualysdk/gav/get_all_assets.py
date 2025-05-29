@@ -37,9 +37,7 @@ def get_all_assets(
 
     while True:
         # make the request:
-        response = call_api(
-            auth=auth, module="gav", endpoint="get_all_assets", params=kwargs
-        )
+        response = call_api(auth=auth, module="gav", endpoint="get_all_assets", params=kwargs)
         j = response.json()
 
         if "responseCode" not in j.keys() or j["responseCode"] == "FAILED":

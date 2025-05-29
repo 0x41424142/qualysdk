@@ -130,9 +130,7 @@ class PMJob(BaseClass):
         if self.schemaVersion:
             setattr(self, "schemaVersion", float(self.schemaVersion))
 
-        if self.completionPercent and all(
-            [char in digits for char in str(self.completionPercent)]
-        ):
+        if self.completionPercent and all([char in digits for char in str(self.completionPercent)]):
             setattr(self, "completionPercent", float(self.completionPercent))
 
         if self.startDateTime:
@@ -152,9 +150,7 @@ class PMJob(BaseClass):
 
             for base_list_field in NON_STR_OR_OBJ_BASELIST_FIELDS:
                 if getattr(self, base_list_field):
-                    setattr(
-                        self, base_list_field, BaseList(getattr(self, base_list_field))
-                    )
+                    setattr(self, base_list_field, BaseList(getattr(self, base_list_field)))
 
             for tag_obj in TAG_OBJ_FIELDS:
                 obj_bl = BaseList()

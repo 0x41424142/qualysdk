@@ -19,9 +19,7 @@ def parse_software_list_data(software_list_data):
     if software_list_data:
         for sw in software_list_data:
             if sw.get("productName") not in [None, "Unknown"]:
-                bl.append(
-                    f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')})"
-                )
+                bl.append(f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')})")
             else:
                 bl.append(
                     f"{sw.get('productName')} ({sw.get('category')}) ({sw.get('version')}) ({sw.get('ignoredReason')})"
@@ -50,53 +48,27 @@ def upload_gav_hosts(
 
     COLS = {
         "assetId": types.Integer(),
-        "assetUUID": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "assetUUID": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "hostId": types.Integer(),
         "lastModifiedDate": types.DateTime(),
-        "agentId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "agentId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "createdDate": types.DateTime(),
         "sensorLastUpdatedDate": types.DateTime(),
-        "assetType": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "address": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "dnsName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "assetName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "netbiosName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "timeZone": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "biosDescription": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "assetType": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "address": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "dnsName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "assetName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "netbiosName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "timeZone": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "biosDescription": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "lastBoot": types.DateTime(),
         "totalMemory": types.Integer(),
         "cpuCount": types.Integer(),
-        "lastLoggedOnUser": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "domainRole": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "lastLoggedOnUser": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "domainRole": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "hwUUID": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "biosSerialNumber": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "biosAssetTag": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "biosSerialNumber": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "biosAssetTag": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "isContainerHost": types.Boolean(),
         "operatingSystem_osName": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
@@ -169,33 +141,19 @@ def upload_gav_hosts(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "operatingSystem_installDate": types.DateTime(),
-        "hardwareVendor": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "hardware_fullName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "hardware_category": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "hardware_category1": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "hardware_category2": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "hardwareVendor": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "hardware_fullName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "hardware_category": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "hardware_category1": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "hardware_category2": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "hardware_manufacturer": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "hardware_productName": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "hardware_model": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "hardware_lifecycle": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "hardware_model": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "hardware_lifecycle": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "hardware_productUrl": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -206,9 +164,7 @@ def upload_gav_hosts(
         "hardware_gaDate": types.DateTime(),
         "hardware_eosDate": types.DateTime(),
         "hardware_obsoleteDate": types.DateTime(),
-        "hardware_stage": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "hardware_stage": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "hardware_lifeCycleConfidence": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -227,12 +183,8 @@ def upload_gav_hosts(
         "softwareListData": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList[str]
-        "softwareComponent": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "cloudProvider": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "softwareComponent": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "cloudProvider": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "cloudProvider_accountId": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -294,18 +246,14 @@ def upload_gav_hosts(
         "cloudProvider_macAddress": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "cloudProvider_name": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "cloudProvider_name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "cloudProvider_platform": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
         "cloudProvider_resourceGroupName": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "cloudProvider_size": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "cloudProvider_size": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "cloudProvider_state": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -318,12 +266,8 @@ def upload_gav_hosts(
         "cloudProvider_virtualNetwork": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "cloudProvider_vmId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "agent_version": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "cloudProvider_vmId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "agent_version": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "agent_configurationProfile": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -335,12 +279,8 @@ def upload_gav_hosts(
         "agent_lastInventory": types.DateTime(),
         "agent_udcManifestAssigned": types.Boolean(),
         "agent_errorStatus": types.Boolean(),
-        "agent_key": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "agent_status": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "agent_key": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "agent_status": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "sensor_activatedForModules": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList[str]
@@ -356,18 +296,12 @@ def upload_gav_hosts(
         "sensor_lastPcScanDateAgent": types.DateTime(),
         "sensor_firstEasmScanDate": types.DateTime(),
         "sensor_lastEasmScanDate": types.DateTime(),
-        "container_product": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "container_version": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "container_product": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "container_version": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "container_noOfContainers": types.Integer(),
         "container_noOfImages": types.Integer(),
         "container_hasSensor": types.Boolean(),
-        "inventory_source": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "inventory_source": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "inventory_created": types.DateTime(),
         "inventory_lastUpdated": types.DateTime(),
         "activity_lastScannedDate": types.DateTime(),
@@ -377,16 +311,12 @@ def upload_gav_hosts(
         "serviceList": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList[str]
-        "lastLocation": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "lastLocation": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "criticality": types.Integer(),
         "businessInformation": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "assignedLocation": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "assignedLocation": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "businessAppListData": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList[str]
@@ -395,33 +325,23 @@ def upload_gav_hosts(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # ???
         "domain": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "subdomain": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "subdomain": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "missingSoftware": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList[str]
         "whois": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "organizationName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "organizationName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "isp": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "asn": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "easmTags": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList[str]
-        "hostingCategory1": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "hostingCategory1": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "customAttributes": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),  # BaseList[str]
-        "processor": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "lparId": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "processor": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "lparId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the softwareListData column:

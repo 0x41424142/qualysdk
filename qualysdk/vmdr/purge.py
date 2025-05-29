@@ -42,14 +42,12 @@ def purge_hosts(
 
     # If no_<scan_type>_scan_since is a datetime object, convert it to a str:
     if kwargs.get("no_vm_scan_since"):
-        kwargs["no_vm_scan_since"] = kwargs["no_vm_scan_since"].strftime(
-            "%Y-%m-%dT%H:%M:%SZ"
-        )
+        kwargs["no_vm_scan_since"] = kwargs["no_vm_scan_since"].strftime("%Y-%m-%dT%H:%M:%SZ")
 
     if kwargs.get("no_compliance_scan_since"):
-        kwargs["no_compliance_scan_since"] = kwargs[
-            "no_compliance_scan_since"
-        ].strftime("%Y-%m-%dT%H:%M:%SZ")
+        kwargs["no_compliance_scan_since"] = kwargs["no_compliance_scan_since"].strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
 
     # if data_scope is specified, play it safe and lowercase it:
     if kwargs.get("data_scope"):

@@ -15,9 +15,7 @@ class Bugtraq(BaseClass):
     """
 
     ID: int = field(metadata={"description": "The BugTraq ID."})
-    URL: str = field(
-        metadata={"description": "The URL of the BugTraq."}, default="", compare=False
-    )
+    URL: str = field(metadata={"description": "The URL of the BugTraq."}, default="", compare=False)
 
     def __post_init__(self):
         # make sure that the ID is an integer:

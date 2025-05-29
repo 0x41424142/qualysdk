@@ -39,9 +39,7 @@ def get_connectors(
     # Check cloud provider is valid
     provider = provider.lower()
     if provider not in ["aws", "azure"]:
-        raise QualysAPIError(
-            f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
-        )
+        raise QualysAPIError(f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'")
 
     responses = BaseList()
     currentPage = 0
@@ -70,9 +68,7 @@ def get_connectors(
         kwargs["cloudprovider"] = provider
 
         # Make the API request to retrieve the connectors
-        response = call_api(
-            auth=auth, module="cloudview", endpoint="get_connectors", params=kwargs
-        )
+        response = call_api(auth=auth, module="cloudview", endpoint="get_connectors", params=kwargs)
 
         if response.status_code != 200:
             raise QualysAPIError(
@@ -102,9 +98,7 @@ def get_connectors(
             break
 
     # Print a message indicating all pages have been retrieved
-    print(
-        f"All pages complete. {str(len(responses))} {provider} connector records retrieved."
-    )
+    print(f"All pages complete. {str(len(responses))} {provider} connector records retrieved.")
 
     return responses
 
@@ -127,9 +121,7 @@ def get_connector_details(
     # Check cloud provider is valid
     provider = provider.lower()
     if provider not in ["aws", "azure"]:
-        raise QualysAPIError(
-            f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
-        )
+        raise QualysAPIError(f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'")
 
     response = call_api(
         auth=auth,
@@ -154,9 +146,7 @@ def get_connector_details(
         case "azure":
             return AzureConnector(**j)
         case _:
-            raise QualysAPIError(
-                f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'"
-            )
+            raise QualysAPIError(f"Invalid provider {provider}. Valid providers: 'aws' or 'azure'")
 
 
 # BEGIN PLATFORM SPECIFIC FUNCTIONS:

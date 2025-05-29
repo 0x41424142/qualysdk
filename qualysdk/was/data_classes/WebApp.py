@@ -323,9 +323,7 @@ class WebApp(BaseClass):
                         "lastScan_summary_resultsStatus",
                         summary.get("resultsStatus"),
                     )
-                    setattr(
-                        self, "lastScan_summary_authStatus", summary.get("authStatus")
-                    )
+                    setattr(self, "lastScan_summary_authStatus", summary.get("authStatus"))
                 else:
                     setattr(self, "lastScan_summary_resultsStatus", None)
                     setattr(self, "lastScan_summary_authStatus", None)
@@ -412,9 +410,7 @@ class WebApp(BaseClass):
         """
 
         if type(self.riskScore) not in [int, float]:
-            raise ValueError(
-                f"riskScore must be an integer or float, not {type(self.riskScore)}"
-            )
+            raise ValueError(f"riskScore must be an integer or float, not {type(self.riskScore)}")
 
         if self.riskScore < 251:
             return "Low"

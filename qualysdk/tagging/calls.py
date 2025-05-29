@@ -1,6 +1,7 @@
 """
 Contains the middleware API call formatting for tagging APIs
 """
+
 from typing import Union, overload
 
 from .base.kwarg_validation import validate_kwargs
@@ -272,9 +273,7 @@ def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
             "data": {
                 "Tag": {
                     k: v
-                    for k, v in payload_template["ServiceRequest"]["data"][
-                        "Tag"
-                    ].items()
+                    for k, v in payload_template["ServiceRequest"]["data"]["Tag"].items()
                     if v is not None
                 }
             }
@@ -298,13 +297,11 @@ def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
 
 
 @overload
-def delete_tag(auth: BasicAuth, tag_id: Union[int, str]) -> int:
-    ...
+def delete_tag(auth: BasicAuth, tag_id: Union[int, str]) -> int: ...
 
 
 @overload
-def delete_tag(auth: BasicAuth, tag_id: list[Union[int, str]]) -> int:
-    ...
+def delete_tag(auth: BasicAuth, tag_id: list[Union[int, str]]) -> int: ...
 
 
 def delete_tag(auth: BasicAuth, tag_id: Union[int, str, list[Union[int, str]]]) -> int:
@@ -389,9 +386,7 @@ def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
             "data": {
                 "Tag": {
                     k: v
-                    for k, v in payload_template["ServiceRequest"]["data"][
-                        "Tag"
-                    ].items()
+                    for k, v in payload_template["ServiceRequest"]["data"]["Tag"].items()
                     if v is not None
                 }
             }
@@ -406,9 +401,7 @@ def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
     # Remove children if provided
     if "remove_children" in kwargs:
         jsonpayload["ServiceRequest"]["data"]["Tag"]["children"] = {
-            "remove": {
-                "TagSimple": [{"id": child} for child in kwargs["remove_children"]]
-            }
+            "remove": {"TagSimple": [{"id": child} for child in kwargs["remove_children"]]}
         }
 
     response = call_tags_api(auth, "update_tag", jsonpayload)

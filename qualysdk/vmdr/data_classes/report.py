@@ -16,13 +16,9 @@ class VMDRReport(BaseClass):
     Represents a VMDR report.
     """
 
-    ID: int = field(
-        metadata={"description": "The unique ID of the report."}, default=None
-    )
+    ID: int = field(metadata={"description": "The unique ID of the report."}, default=None)
 
-    TITLE: str = field(
-        metadata={"description": "The title of the report."}, default=None
-    )
+    TITLE: str = field(metadata={"description": "The title of the report."}, default=None)
 
     TYPE: str = field(metadata={"description": "The type of the report."}, default=None)
 
@@ -48,9 +44,7 @@ class VMDRReport(BaseClass):
         metadata={"description": "The status of the report."}, default=None
     )
 
-    STATE: str = field(
-        metadata={"description": "The state of the report."}, default=None
-    )
+    STATE: str = field(metadata={"description": "The state of the report."}, default=None)
 
     EXPIRATION_DATETIME: Union[str, datetime] = field(
         metadata={"description": "The date and time the report will expire."},
@@ -118,13 +112,9 @@ class VMDRScheduledReport(BaseClass):
     Represents a VMDR scheduled report.
     """
 
-    ID: int = field(
-        metadata={"description": "The unique ID of the report."}, default=None
-    )
+    ID: int = field(metadata={"description": "The unique ID of the report."}, default=None)
 
-    TITLE: str = field(
-        metadata={"description": "The title of the report."}, default=None
-    )
+    TITLE: str = field(metadata={"description": "The title of the report."}, default=None)
 
     OUTPUT_FORMAT: str = field(
         metadata={"description": "The output format of the report."}, default=None
@@ -138,25 +128,19 @@ class VMDRScheduledReport(BaseClass):
         metadata={"description": "Whether the report is active."}, default=None
     )
 
-    SCHEDULE: dict = field(
-        metadata={"description": "The schedule of the report."}, default=None
-    )
+    SCHEDULE: dict = field(metadata={"description": "The schedule of the report."}, default=None)
 
     START_DATE_UTC: Union[str, datetime] = field(
         metadata={"description": "The start date of the report."}, default=None
     )
 
-    START_HOUR: int = field(
-        metadata={"description": "The start hour of the report."}, default=None
-    )
+    START_HOUR: int = field(metadata={"description": "The start hour of the report."}, default=None)
 
     START_MINUTE: int = field(
         metadata={"description": "The start minute of the report."}, default=None
     )
 
-    TIME_ZONE: dict = field(
-        metadata={"description": "The time zone of the report."}, default=None
-    )
+    TIME_ZONE: dict = field(metadata={"description": "The time zone of the report."}, default=None)
 
     TIME_ZONE_CODE: str = field(
         metadata={"description": "The time zone code of the report."}, default=None
@@ -179,9 +163,7 @@ class VMDRScheduledReport(BaseClass):
         if not DONT_EXPAND.flag:
             if self.SCHEDULE:
                 # First, do all the conversions.
-                self.START_DATE_UTC = datetime.fromisoformat(
-                    self.SCHEDULE["START_DATE_UTC"]
-                )
+                self.START_DATE_UTC = datetime.fromisoformat(self.SCHEDULE["START_DATE_UTC"])
                 self.START_HOUR = int(self.SCHEDULE["START_HOUR"])
                 self.START_MINUTE = int(self.SCHEDULE["START_MINUTE"])
                 self.TIME_ZONE = self.SCHEDULE["TIME_ZONE"]

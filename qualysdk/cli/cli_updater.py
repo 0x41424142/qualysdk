@@ -87,9 +87,7 @@ def show_update_info(pypi_data: dict) -> None:
     print(
         f"🐈 {GREEN}GitHub Release Notes:{RESET}{BLUE} https://github.com/0x41424142/qualysdk/releases/tag/v{vsn} {RESET}"
     )
-    print(
-        f"🐍 {GREEN}PyPI Page:{RESET}{BLUE} https://pypi.org/project/qualysdk/{vsn}/ {RESET}"
-    )
+    print(f"🐍 {GREEN}PyPI Page:{RESET}{BLUE} https://pypi.org/project/qualysdk/{vsn}/ {RESET}")
 
 
 def check_installed_version() -> version.Version:
@@ -174,9 +172,7 @@ def main() -> int:
         exit(0)
 
     if args.version:
-        print(
-            f"{YELLOW}Qualysdk version currently installed: v{check_installed_version()}{RESET}"
-        )
+        print(f"{YELLOW}Qualysdk version currently installed: v{check_installed_version()}{RESET}")
         exit(0)
 
     if args.check or args.install:
@@ -203,9 +199,7 @@ def main() -> int:
                             ],
                             stdout=DEVNULL,
                         )
-                        print(
-                            f"✅ {GREEN}Qualysdk has been updated to v{latest_version}{RESET}"
-                        )
+                        print(f"✅ {GREEN}Qualysdk has been updated to v{latest_version}{RESET}")
                     except Exception as e:
                         print(f"{RED}Qualysdk update failed: {type(e).__name__}{RESET}")
                         exit(1)

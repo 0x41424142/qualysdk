@@ -76,15 +76,9 @@ class Certificate(BaseClass):
 
         for field in DT_FIELDS:
             if getattr(self, field):
-                if field in INT_TO_DT_FIELDS and not isinstance(
-                    getattr(self, field), datetime
-                ):
-                    setattr(
-                        self, field, datetime.fromtimestamp(getattr(self, field) / 1000)
-                    )
-                elif field in STR_TO_DT_FIELDS and not isinstance(
-                    getattr(self, field), datetime
-                ):
+                if field in INT_TO_DT_FIELDS and not isinstance(getattr(self, field), datetime):
+                    setattr(self, field, datetime.fromtimestamp(getattr(self, field) / 1000))
+                elif field in STR_TO_DT_FIELDS and not isinstance(getattr(self, field), datetime):
                     setattr(self, field, datetime.fromisoformat(getattr(self, field)))
                 else:
                     raise ValueError(f"Field {field} is not a valid datetime field.")
@@ -117,9 +111,7 @@ class Certificate(BaseClass):
                 setattr(self, "issuer", None)
 
             if self.rootissuer:
-                setattr(
-                    self, "rootissuer_organization", self.rootissuer.get("organization")
-                )
+                setattr(self, "rootissuer_organization", self.rootissuer.get("organization"))
                 setattr(
                     self,
                     "rootissuer_organizationUnit",

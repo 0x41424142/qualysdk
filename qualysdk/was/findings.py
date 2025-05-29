@@ -306,9 +306,7 @@ def get_finding_details(auth: BasicAuth, findingId: Union[str, int]) -> WASFindi
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
 
@@ -318,9 +316,7 @@ def get_finding_details(auth: BasicAuth, findingId: Union[str, int]) -> WASFindi
     return WASFinding.from_dict(data)
 
 
-def get_findings_verbose(
-    auth: BasicAuth, thread_count: int = 5, **kwargs
-) -> BaseList[WASFinding]:
+def get_findings_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseList[WASFinding]:
     """
     Uses ```was.get_findings()``` and ```was.get_finding_details()``` to return a ```BaseList``` of ```WASFinding```s with
     all attributes populated.
@@ -427,18 +423,14 @@ def get_findings_verbose(
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        print(
-                            f"({current_thread().name}) Queue is empty. Thread exiting."
-                        )
+                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 finding = q.get()
                 # Exit condition 2: authrecord is None (because Queue is empty)
                 if not finding:
                     with LOCK:
-                        print(
-                            f"({current_thread().name}) Queue is empty. Thread exiting."
-                        )
+                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -453,9 +445,7 @@ def get_findings_verbose(
 
             except Exception as e:
                 with LOCK:
-                    print(
-                        f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}"
-                    )
+                    print(f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}")
                 q.task_done()
                 break
 

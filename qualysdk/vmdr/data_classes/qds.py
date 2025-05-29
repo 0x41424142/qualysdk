@@ -16,9 +16,7 @@ class QDS(BaseClass):
     made with order=True to allow for sorting of QDS scores.
     """
 
-    SEVERITY: str = field(
-        metadata={"description": "The rating of the QDS score."}, compare=False
-    )
+    SEVERITY: str = field(metadata={"description": "The rating of the QDS score."}, compare=False)
     SCORE: int = field(
         metadata={"description": "The actual score itself as an int."},
         default=0,

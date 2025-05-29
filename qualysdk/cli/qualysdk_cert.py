@@ -39,12 +39,8 @@ def main():
     parser = ArgumentParser(
         description="CLI script to quickly perform Certificate View (CERT) operations using qualysdk"
     )
-    parser.add_argument(
-        "-u", "--username", required=True, help="Qualys username", type=str
-    )
-    parser.add_argument(
-        "-p", "--password", required=True, help="Qualys password", type=str
-    )
+    parser.add_argument("-u", "--username", required=True, help="Qualys username", type=str)
+    parser.add_argument("-p", "--password", required=True, help="Qualys password", type=str)
     parser.add_argument(
         "-P",
         "--platform",

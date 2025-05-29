@@ -46,14 +46,10 @@ class AssetGroup(BaseClass):
         default=None,
     )
     NETWORK_ID: Optional[int] = field(
-        metadata={
-            "description": "The ID of the network of the asset group, if enabled in Qualys."
-        },
+        metadata={"description": "The ID of the network of the asset group, if enabled in Qualys."},
         default=None,
     )
-    IP_SET: Optional[
-        BaseList[Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]]
-    ] = field(
+    IP_SET: Optional[BaseList[Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]]] = field(
         metadata={"description": "The IP set of the asset group."},
         default=None,
     )
@@ -78,9 +74,7 @@ class AssetGroup(BaseClass):
         default=None,
     )
     HOST_IDS: Optional[BaseList[VMDRID]] = field(
-        metadata={
-            "description": "The host IDs of the asset group. BaseList of VMDRID objects."
-        },
+        metadata={"description": "The host IDs of the asset group. BaseList of VMDRID objects."},
         default=None,
     )
     ASSIGNED_USER_IDS: Optional[BaseList[int]] = field(
@@ -143,9 +137,7 @@ class AssetGroup(BaseClass):
         if not DONT_EXPAND.flag:
             for str_field in STR_LISTS:
                 if getattr(self, str_field):
-                    setattr(
-                        self, str_field, BaseList(getattr(self, str_field).split(","))
-                    )
+                    setattr(self, str_field, BaseList(getattr(self, str_field).split(",")))
 
             for int_field in INT_LISTS:
                 if getattr(self, int_field):
@@ -153,9 +145,7 @@ class AssetGroup(BaseClass):
                         setattr(
                             self,
                             int_field,
-                            BaseList(
-                                [int(x) for x in getattr(self, int_field).split(",")]
-                            ),
+                            BaseList([int(x) for x in getattr(self, int_field).split(",")]),
                         )
                     else:
                         setattr(
@@ -190,10 +180,7 @@ class AssetGroup(BaseClass):
                 final_host_ids = BaseList()
                 if isinstance(self.HOST_IDS, str):
                     final_host_ids.extend(
-                        [
-                            VMDRID(ID=host_id, TYPE="host")
-                            for host_id in self.HOST_IDS.split(",")
-                        ]
+                        [VMDRID(ID=host_id, TYPE="host") for host_id in self.HOST_IDS.split(",")]
                     )
                 else:
                     final_host_ids.extend(
@@ -254,9 +241,7 @@ class AssetGroup(BaseClass):
     def is_network_id(self, network_id: int):
         return self.NETWORK_ID == network_id
 
-    def contains_ip(
-        self, ip: Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]
-    ):
+    def contains_ip(self, ip: Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]):
         return ip in self.IP_SET
 
     def add_ip(self, ip: Union[IPv4Address, IPv6Address, IPv4Network, IPv6Network]):

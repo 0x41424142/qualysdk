@@ -176,7 +176,7 @@ def get_cve_hld(
         **kwargs: Additional keyword arguments to pass to the API.
 
     Kwargs:
-        
+
         retries (Optional[int]): The number of times to retry the request if it fails. Default is 3.
         show_asset_id (Optional[bool]) #Whether to show the asset IDs. Default is 'False'.
         include_vuln_type (Optional[Literal["confirmed", "potential"]]) #The type of vulnerability to include. If not specified, both types are included.
@@ -234,9 +234,7 @@ def get_cve_hld(
     )
 
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
-    print(
-        f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'}"
-    )
+    print(f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
 
     threads_list = []
 

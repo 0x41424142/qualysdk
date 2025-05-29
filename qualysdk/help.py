@@ -8,9 +8,7 @@ from typing import Union
 from .base.call_schema import CALL_SCHEMA
 
 
-def schema_query(
-    module: str, endpoint: str = None, pretty: bool = False
-) -> Union[str, dict]:
+def schema_query(module: str, endpoint: str = None, pretty: bool = False) -> Union[str, dict]:
     """
     Using the CALL_SCHEMA dictionary, this function will return the information for
     either a qualys module as a whole or a specific endpoint within a module.
@@ -26,9 +24,7 @@ def schema_query(
 
     # check if the module is in the CALL_SCHEMA:
     if module not in CALL_SCHEMA.keys():
-        raise ValueError(
-            f"Invalid module {module}. Available modules are: {CALL_SCHEMA.keys()}"
-        )
+        raise ValueError(f"Invalid module {module}. Available modules are: {CALL_SCHEMA.keys()}")
 
     # if the endpoint is not provided, return the entire module schema:
     if endpoint is None:

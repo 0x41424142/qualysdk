@@ -72,9 +72,11 @@ def call_scan_api(
 
     response = call_api(
         auth=auth,
-        override_method="GET"
-        if endpoint in ["get_scan_details", "get_scan_status", "download_results"]
-        else "POST",
+        override_method=(
+            "GET"
+            if endpoint in ["get_scan_details", "get_scan_status", "download_results"]
+            else "POST"
+        ),
         module="was",
         endpoint="call_scans_api",
         payload=payload,
@@ -281,9 +283,7 @@ def get_scan_details(auth: BasicAuth, scanId: Union[str, int]) -> WASScan:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
 
@@ -293,9 +293,7 @@ def get_scan_details(auth: BasicAuth, scanId: Union[str, int]) -> WASScan:
     return WASScan.from_dict(data)
 
 
-def get_scans_verbose(
-    auth: BasicAuth, thread_count: int = 5, **kwargs
-) -> BaseList[WASScan]:
+def get_scans_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseList[WASScan]:
     """
     Uses ```was.get_scans()``` and ```was.get_scan_details()``` to return a ```BaseList``` of ```WASScan```s with
     all attributes populated.
@@ -374,18 +372,14 @@ def get_scans_verbose(
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        print(
-                            f"({current_thread().name}) Queue is empty. Thread exiting."
-                        )
+                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 scan = q.get()
                 # Exit condition 2: scan is None (because Queue is empty)
                 if not scan:
                     with LOCK:
-                        print(
-                            f"({current_thread().name}) Queue is empty. Thread exiting."
-                        )
+                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -400,9 +394,7 @@ def get_scans_verbose(
 
             except Exception as e:
                 with LOCK:
-                    print(
-                        f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}"
-                    )
+                    print(f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}")
                 q.task_done()
                 break
 
@@ -485,9 +477,7 @@ def launch_scan(
     return int(data.get("id"))
 
 
-def cancel_scan(
-    auth: BasicAuth, scanId: Union[str, int], retain_results: bool = False
-) -> str:
+def cancel_scan(auth: BasicAuth, scanId: Union[str, int], retain_results: bool = False) -> str:
     """
     Cancel an ongoing scan in Qualys WAS.
 
@@ -505,14 +495,10 @@ def cancel_scan(
 
     payload = {"scanId": scanId}
 
-    parsed = call_scan_api(
-        auth, "cancel_scan", payload, cancel_with_results=retain_results
-    )
+    parsed = call_scan_api(auth, "cancel_scan", payload, cancel_with_results=retain_results)
 
     if parsed.get("ServiceResponse", dict()).get("responseCode") != "SUCCESS":
-        fullMessage = parsed.get("ServiceResponse", dict()).get(
-            "responseErrorDetails", dict()
-        )
+        fullMessage = parsed.get("ServiceResponse", dict()).get("responseErrorDetails", dict())
         return f"Error cancelling scan: {fullMessage.get('errorMessage')} - {fullMessage.get('errorResolution')}"
 
     return parsed.get("ServiceResponse", dict()).get("responseCode", "UNKNOWN")
@@ -649,9 +635,7 @@ def delete_scan(auth: BasicAuth, **kwargs) -> list[int]:
     return deleted
 
 
-def get_scan_results(
-    auth: BasicAuth, scanId: Union[str, int], writeToFile: str = None
-) -> dict:
+def get_scan_results(auth: BasicAuth, scanId: Union[str, int], writeToFile: str = None) -> dict:
     """
     Download the results of a scan.
 

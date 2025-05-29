@@ -14,9 +14,7 @@ from ..exceptions.Exceptions import QualysAPIError
 from ..base.base_list import BaseList
 
 
-def call_webapp_api(
-    auth: BasicAuth, endpoint: str, payload: dict
-) -> Union[int, WebApp]:
+def call_webapp_api(auth: BasicAuth, endpoint: str, payload: dict) -> Union[int, WebApp]:
     """
     Call a Qualys WAS API endpoint and return the parsed response. This is
     a backend function and should not be called directly.
@@ -116,9 +114,7 @@ def count_webapps(auth: BasicAuth, **kwargs) -> int:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     return int(serviceResponse.get("count"))
 
@@ -233,9 +229,7 @@ def get_webapps(
     return appList
 
 
-def get_webapp_details(
-    auth: BasicAuth, webappId: Union[int, str]
-) -> Union[WebApp, None]:
+def get_webapp_details(auth: BasicAuth, webappId: Union[int, str]) -> Union[WebApp, None]:
     """
     Get the details of a single web application in the Qualys WAS module.
 
@@ -255,9 +249,7 @@ def get_webapp_details(
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
     if data.get("WebApp"):
@@ -267,9 +259,7 @@ def get_webapp_details(
         print(f"No data found for web application ID {webappId}. Exiting.")
 
 
-def get_webapps_verbose(
-    auth: BasicAuth, thread_count: int = 5, **kwargs
-) -> BaseList[WebApp]:
+def get_webapps_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseList[WebApp]:
     """
     Uses ```was.get_webapps()``` and ```was.get_webapp_details()``` to return a ```BaseList``` of ```WebApp```s with
     all attributes populated.
@@ -345,18 +335,14 @@ def get_webapps_verbose(
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        print(
-                            f"({current_thread().name}) Queue is empty. Thread exiting."
-                        )
+                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 webapp = q.get()
                 # Exit condition 2: webapp is None (because Queue is empty)
                 if not webapp:
                     with LOCK:
-                        print(
-                            f"({current_thread().name}) Queue is empty. Thread exiting."
-                        )
+                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -371,9 +357,7 @@ def get_webapps_verbose(
 
             except Exception as e:
                 with LOCK:
-                    print(
-                        f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}"
-                    )
+                    print(f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}")
                 q.task_done()
                 break
 
@@ -437,9 +421,7 @@ def create_webapp(auth: BasicAuth, name: str, url: str, **kwargs) -> WebApp:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
     if data.get("WebApp"):
@@ -501,9 +483,7 @@ def update_webapp(auth: BasicAuth, webappId: Union[int, str], **kwargs) -> str:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
     if data.get("WebApp"):
@@ -513,9 +493,7 @@ def update_webapp(auth: BasicAuth, webappId: Union[int, str], **kwargs) -> str:
         print("No data found. Exiting.")
 
 
-def delete_webapp(
-    auth: BasicAuth, removeFromSubscription: bool = True, **kwargs
-) -> list[str]:
+def delete_webapp(auth: BasicAuth, removeFromSubscription: bool = True, **kwargs) -> list[str]:
     """
     Delete webapps out of Qualys WAS.
 
@@ -590,9 +568,7 @@ def delete_webapp(
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     if serviceResponse.get("count") == "0":
         print("No applicable web apps found. Exiting.")
@@ -683,9 +659,7 @@ def purge_webapp(auth: BasicAuth, **kwargs) -> list[str]:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     if serviceResponse.get("count") == "0":
         print("No applicable web apps found. Exiting.")
@@ -739,9 +713,7 @@ def get_selenium_script(
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
     print(

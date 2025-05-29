@@ -22,8 +22,7 @@ def get_patch_catalog(
     patchId: Union[int, str],
     platform: Literal["windows", "linux"] = "windows",
     **kwargs,
-) -> BaseList[CatalogPatch]:
-    ...
+) -> BaseList[CatalogPatch]: ...
 
 
 @overload
@@ -32,8 +31,7 @@ def get_patch_catalog(
     patchId: Union[BaseList[str, int], list[str, int]],
     platform: Literal["windows", "linux"] = "windows",
     **kwargs,
-) -> BaseList[CatalogPatch]:
-    ...
+) -> BaseList[CatalogPatch]: ...
 
 
 def get_patch_catalog(
@@ -199,9 +197,7 @@ def _thread_worker(
                     if response.text:
                         raise QualysAPIError(response.json())
                     elif response.status_code == 429:
-                        raise QualysAPIError(
-                            "Qualys has rate limited you. Please try again later."
-                        )
+                        raise QualysAPIError("Qualys has rate limited you. Please try again later.")
                     else:
                         raise QualysAPIError(
                             f"Qualys returned status code {response.status_code}. {response.text}"
@@ -252,8 +248,7 @@ def validate_threads_and_patches(patchId, threads):
 @overload
 def get_packages_in_linux_patch(
     auth: TokenAuth, patchId: str, threads: int = 5, **kwargs
-) -> BaseList[PackageDetail]:
-    ...
+) -> BaseList[PackageDetail]: ...
 
 
 @overload
@@ -262,8 +257,7 @@ def get_packages_in_linux_patch(
     patchId: Union[BaseList[str], list[str]],
     threads: int = 5,
     **kwargs,
-) -> BaseList[PackageDetail]:
-    ...
+) -> BaseList[PackageDetail]: ...
 
 
 def get_packages_in_linux_patch(
@@ -327,8 +321,7 @@ def get_products_in_windows_patch(
     auth: TokenAuth,
     patchId: str,
     threads: int = 5,
-) -> BaseList[AssociatedProduct]:
-    ...
+) -> BaseList[AssociatedProduct]: ...
 
 
 @overload
@@ -336,8 +329,7 @@ def get_products_in_windows_patch(
     auth: TokenAuth,
     patchId: Union[BaseList[str], list[str]],
     threads: int = 5,
-) -> BaseList[AssociatedProduct]:
-    ...
+) -> BaseList[AssociatedProduct]: ...
 
 
 def get_products_in_windows_patch(
@@ -399,8 +391,7 @@ def count_product_vulns(
         List[Literal["Critical", "Important", "Moderate", "Low", "None"]],
     ] = None,
     tagUUIDs: str = None,
-) -> BaseList[ProductVulnCount]:
-    ...
+) -> BaseList[ProductVulnCount]: ...
 
 
 @overload
@@ -411,8 +402,7 @@ def count_product_vulns(
         List[Literal["Critical", "Important", "Moderate", "Low", "None"]],
     ] = None,
     tagUUIDs: List[str] = None,
-) -> BaseList[ProductVulnCount]:
-    ...
+) -> BaseList[ProductVulnCount]: ...
 
 
 def count_product_vulns(
@@ -441,9 +431,9 @@ def count_product_vulns(
     if severityList is None:
         severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
     # check if the string or list contains all of the valid values
-    elif isinstance(severityList, str) and set(
-        [i.title() for i in severityList.split(",")]
-    ) == set(["Critical", "Important", "Moderate", "Low", "None"]):
+    elif isinstance(severityList, str) and set([i.title() for i in severityList.split(",")]) == set(
+        ["Critical", "Important", "Moderate", "Low", "None"]
+    ):
         severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
 
     elif isinstance(severityList, (list, BaseList)) and set(severityList) == set(
@@ -458,9 +448,7 @@ def count_product_vulns(
         severity_values = severityList
 
     else:
-        raise ValueError(
-            "Invalid severityList format. Must be a string or a list of strings."
-        )
+        raise ValueError("Invalid severityList format. Must be a string or a list of strings.")
 
     results = BaseList()
 

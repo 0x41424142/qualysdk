@@ -41,9 +41,7 @@ def query_assets(
 
     while True:
         # make the request:
-        response = call_api(
-            auth=auth, module="gav", endpoint="query_assets", params=kwargs
-        )
+        response = call_api(auth=auth, module="gav", endpoint="query_assets", params=kwargs)
         # if there is no response, break the loop
         if not response.text:
             print("No Results returned.")
@@ -52,7 +50,7 @@ def query_assets(
         j = response.json()
 
         if "responseCode" not in j.keys() or j["responseCode"] == "FAILED":
-            raise QualysAPIError(j["responseMessage"])
+            raise QualysAPIError(j)
 
         for record in j["assetListData"]["asset"]:
             responses.append(Host(**record))

@@ -114,9 +114,7 @@ ENDPOINT_MAPPINGS["update_webapp"]["useSitemap"] = "BOOLEAN"
 ENDPOINT_MAPPINGS["update_webapp"]["headers"] = "TEXT"
 
 # get_authentication_records is the same as count_authentication_records:
-ENDPOINT_MAPPINGS["get_authentication_records"] = ENDPOINT_MAPPINGS[
-    "count_authentication_records"
-]
+ENDPOINT_MAPPINGS["get_authentication_records"] = ENDPOINT_MAPPINGS["count_authentication_records"]
 
 ENDPOINT_MAPPINGS["delete_authentication_record"] = {
     "id": "INTEGER",

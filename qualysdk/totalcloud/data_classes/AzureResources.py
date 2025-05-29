@@ -286,9 +286,7 @@ class AzureStorageAccount(BaseResource):
                     if self.networkAcls.get(field):
                         if field == "ipRules":
                             for ipRule in self.networkAcls.get(field):
-                                ipRules_list.append(
-                                    f"{ipRule.get('action')} {ipRule.get('value')}"
-                                )
+                                ipRules_list.append(f"{ipRule.get('action')} {ipRule.get('value')}")
                         elif field == "virtualNetworkRules":
                             for virtualNetworkRule in self.networkAcls.get(field):
                                 # TODO: parse virtualNetworkRule
@@ -300,9 +298,7 @@ class AzureStorageAccount(BaseResource):
                                 self.networkAcls.get(field),
                             )
                 setattr(self, "networkAcls_ipRules", ipRules_list)
-                setattr(
-                    self, "networkAcls_virtualNetworkRules", virtualNetworkRules_list
-                )
+                setattr(self, "networkAcls_virtualNetworkRules", virtualNetworkRules_list)
                 setattr(self, "networkAcls", None)
 
         for field in DT_FIELDS:

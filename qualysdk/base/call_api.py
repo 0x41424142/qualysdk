@@ -49,9 +49,7 @@ def call_api(
     while True:  # loop to handle hitting the rate limit
         # check module and endpoint:
         if module.lower() not in CALL_SCHEMA.keys():
-            raise ValueError(
-                f"Invalid module {module}. Valid modules are: {CALL_SCHEMA.keys()}."
-            )
+            raise ValueError(f"Invalid module {module}. Valid modules are: {CALL_SCHEMA.keys()}.")
         if endpoint.lower() not in CALL_SCHEMA[module].keys():
             raise ValueError(
                 f"Invalid endpoint {endpoint} for module {module}. Valid endpoints are: {[i for i in CALL_SCHEMA[module].keys() if i != 'url_type']}."
@@ -110,9 +108,7 @@ def call_api(
         if payload:
             for key in payload.keys():
                 if key not in SCHEMA["valid_POST_data"]:
-                    raise ValueError(
-                        f"Invalid payload key {key} for {module}-{endpoint}."
-                    )
+                    raise ValueError(f"Invalid payload key {key} for {module}-{endpoint}.")
 
         # check if data should be POSTed as requests.post(json=):
         if SCHEMA["use_requests_json_data"]:
@@ -223,9 +219,7 @@ def call_api(
 
         # and finally, make the request:
         response = request(
-            method=(
-                SCHEMA["method"][0] if not override_method else override_method.upper()
-            ),
+            method=(SCHEMA["method"][0] if not override_method else override_method.upper()),
             url=url,
             headers=headers,
             params=params,
@@ -253,10 +247,7 @@ def call_api(
             and (
                 response.status_code != 409
                 and "This API cannot be run again for another"
-                not in xml_parser(response.text)
-                .get("SIMPLE_RETURN")
-                .get("RESPONSE")
-                .get("TEXT")
+                not in xml_parser(response.text).get("SIMPLE_RETURN").get("RESPONSE").get("TEXT")
             )
         ):
             parsed = xml_parser(response.text) if module not in ["gav"] else None
@@ -275,9 +266,7 @@ def call_api(
                         f"Error: {parsed['{http://www.w3.org/1999/xhtml}html']['{http://www.w3.org/1999/xhtml}body']['{http://www.w3.org/1999/xhtml}h1']}"
                     )
             else:  # or JSON
-                raise QualysAPIError(
-                    response.text if response.text else response.reason
-                )
+                raise QualysAPIError(response.text if response.text else response.reason)
 
         # Check rate limit details from headers.
         if (
@@ -291,9 +280,7 @@ def call_api(
                 # Qualys sometimes only includes this header when the rate limit is reached and retried:
                 response = request(
                     method=(
-                        SCHEMA["method"][0]
-                        if not override_method
-                        else override_method.upper()
+                        SCHEMA["method"][0] if not override_method else override_method.upper()
                     ),
                     url=url,
                     headers=headers,
@@ -306,9 +293,7 @@ def call_api(
                 # Isolate the wait time from the header:
                 to_wait = response.headers.get("X-RateLimit-ToWait-Sec")
                 if to_wait:
-                    to_wait = (
-                        int(to_wait) + 3
-                    )  # Add 3 seconds to the wait time to be safe.
+                    to_wait = int(to_wait) + 3  # Add 3 seconds to the wait time to be safe.
                 else:
                     to_wait = 3601  # Default to 1h 1s if no header is present.
 

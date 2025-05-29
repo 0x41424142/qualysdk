@@ -297,11 +297,13 @@ def create_tag(auth: BasicAuth, name: str, **kwargs) -> Tag:
 
 
 @overload
-def delete_tag(auth: BasicAuth, tag_id: Union[int, str]) -> int: ...
+def delete_tag(auth: BasicAuth, tag_id: Union[int, str]) -> int:
+    ...
 
 
 @overload
-def delete_tag(auth: BasicAuth, tag_id: list[Union[int, str]]) -> int: ...
+def delete_tag(auth: BasicAuth, tag_id: list[Union[int, str]]) -> int:
+    ...
 
 
 def delete_tag(auth: BasicAuth, tag_id: Union[int, str, list[Union[int, str]]]) -> int:

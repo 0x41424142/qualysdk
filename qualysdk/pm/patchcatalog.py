@@ -22,7 +22,8 @@ def get_patch_catalog(
     patchId: Union[int, str],
     platform: Literal["windows", "linux"] = "windows",
     **kwargs,
-) -> BaseList[CatalogPatch]: ...
+) -> BaseList[CatalogPatch]:
+    ...
 
 
 @overload
@@ -31,7 +32,8 @@ def get_patch_catalog(
     patchId: Union[BaseList[str, int], list[str, int]],
     platform: Literal["windows", "linux"] = "windows",
     **kwargs,
-) -> BaseList[CatalogPatch]: ...
+) -> BaseList[CatalogPatch]:
+    ...
 
 
 def get_patch_catalog(
@@ -248,7 +250,8 @@ def validate_threads_and_patches(patchId, threads):
 @overload
 def get_packages_in_linux_patch(
     auth: TokenAuth, patchId: str, threads: int = 5, **kwargs
-) -> BaseList[PackageDetail]: ...
+) -> BaseList[PackageDetail]:
+    ...
 
 
 @overload
@@ -257,7 +260,8 @@ def get_packages_in_linux_patch(
     patchId: Union[BaseList[str], list[str]],
     threads: int = 5,
     **kwargs,
-) -> BaseList[PackageDetail]: ...
+) -> BaseList[PackageDetail]:
+    ...
 
 
 def get_packages_in_linux_patch(
@@ -321,7 +325,8 @@ def get_products_in_windows_patch(
     auth: TokenAuth,
     patchId: str,
     threads: int = 5,
-) -> BaseList[AssociatedProduct]: ...
+) -> BaseList[AssociatedProduct]:
+    ...
 
 
 @overload
@@ -329,7 +334,8 @@ def get_products_in_windows_patch(
     auth: TokenAuth,
     patchId: Union[BaseList[str], list[str]],
     threads: int = 5,
-) -> BaseList[AssociatedProduct]: ...
+) -> BaseList[AssociatedProduct]:
+    ...
 
 
 def get_products_in_windows_patch(
@@ -391,7 +397,8 @@ def count_product_vulns(
         List[Literal["Critical", "Important", "Moderate", "Low", "None"]],
     ] = None,
     tagUUIDs: str = None,
-) -> BaseList[ProductVulnCount]: ...
+) -> BaseList[ProductVulnCount]:
+    ...
 
 
 @overload
@@ -402,7 +409,8 @@ def count_product_vulns(
         List[Literal["Critical", "Important", "Moderate", "Low", "None"]],
     ] = None,
     tagUUIDs: List[str] = None,
-) -> BaseList[ProductVulnCount]: ...
+) -> BaseList[ProductVulnCount]:
+    ...
 
 
 def count_product_vulns(

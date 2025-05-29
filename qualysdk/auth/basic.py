@@ -101,9 +101,7 @@ class BasicAuth(BaseAuthentication):
         r = get(url, auth=(self.username, self.password))
 
         if r.status_code != 200:
-            raise AuthenticationError(
-                f"Failed to authenticate. Requests reporting: {r.text}"
-            )
+            raise AuthenticationError(f"Failed to authenticate. Requests reporting: {r.text}")
 
         rl = {
             # "X-RateLimit-Remaining": int(r.headers["X-RateLimit-Remaining"]),

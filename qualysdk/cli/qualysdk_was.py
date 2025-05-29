@@ -38,12 +38,8 @@ def main():
     parser = ArgumentParser(
         description="CLI script to quickly perform Web Application Scanning (WAS) operations using qualysdk"
     )
-    parser.add_argument(
-        "-u", "--username", required=True, help="Qualys username", type=str
-    )
-    parser.add_argument(
-        "-p", "--password", required=True, help="Qualys password", type=str
-    )
+    parser.add_argument("-u", "--username", required=True, help="Qualys username", type=str)
+    parser.add_argument("-p", "--password", required=True, help="Qualys password", type=str)
     parser.add_argument(
         "-P",
         "--platform",
@@ -56,9 +52,7 @@ def main():
     subparsers = parser.add_subparsers(dest="action", help="Action to perform")
 
     # get_findings action:
-    list_findings_parser = subparsers.add_parser(
-        "get_findings", help="Get a list of WAS findings."
-    )
+    list_findings_parser = subparsers.add_parser("get_findings", help="Get a list of WAS findings.")
     list_findings_parser.add_argument(
         "-o",
         "--output",
@@ -74,9 +68,7 @@ def main():
         metavar=("key", "value"),
     )
 
-    list_scans_parser = subparsers.add_parser(
-        "get_scans", help="Get a list of WAS scans."
-    )
+    list_scans_parser = subparsers.add_parser("get_scans", help="Get a list of WAS scans.")
     list_scans_parser.add_argument(
         "-o",
         "--output",

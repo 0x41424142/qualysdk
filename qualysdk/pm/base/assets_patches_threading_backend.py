@@ -138,9 +138,7 @@ def _threading_backend(
 
         if page_count != "all" and pulled >= page_count:
             with LOCK:
-                print(
-                    f"{platform} Thread has hit user-defined page limit of {page_count}."
-                )
+                print(f"{platform} Thread has hit user-defined page limit of {page_count}.")
             break
 
         if len(j) < params["pageSize"]:

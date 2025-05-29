@@ -112,9 +112,7 @@ def handle_qualys_list(data: dict, key: str) -> tuple[int, BaseList]:
     return len(base_list), base_list
 
 
-def handle_record_attrs(
-    dataclass, subkey: Literal["form", "server", "comments"]
-) -> None:
+def handle_record_attrs(dataclass, subkey: Literal["form", "server", "comments"]) -> None:
     """
     Sets the sslOnly and authVault attributes
     on a record. Backend function.
@@ -175,17 +173,13 @@ def handle_date_by_attrs(dataclass, subkey: Literal["createdBy", "updatedBy"]) -
 
     if getattr(dataclass, subkey):
         setattr(dataclass, f"{subkey}_id", int(getattr(dataclass, subkey).get("id")))
-        setattr(
-            dataclass, f"{subkey}_username", getattr(dataclass, subkey).get("username")
-        )
+        setattr(dataclass, f"{subkey}_username", getattr(dataclass, subkey).get("username"))
         setattr(
             dataclass,
             f"{subkey}_firstName",
             getattr(dataclass, subkey).get("firstName"),
         )
-        setattr(
-            dataclass, f"{subkey}_lastName", getattr(dataclass, subkey).get("lastName")
-        )
+        setattr(dataclass, f"{subkey}_lastName", getattr(dataclass, subkey).get("lastName"))
         setattr(dataclass, subkey, None)
 
 
@@ -282,9 +276,7 @@ class WebAppAuthRecord(BaseClass):
 
             for field in RECORD_FIELDS:
                 if getattr(self, field):
-                    handle_record_attrs(
-                        self, field if field != "comments" else "Comment"
-                    )
+                    handle_record_attrs(self, field if field != "comments" else "Comment")
 
             if self.oauth2Record:
                 build_oauth2_record(self)

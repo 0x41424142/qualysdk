@@ -14,9 +14,7 @@ from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import QualysAPIError
 
 
-def _thread_worker(
-    queue: Queue, responses: BaseList, auth: TokenAuth, LOCK: Lock
-) -> None:
+def _thread_worker(queue: Queue, responses: BaseList, auth: TokenAuth, LOCK: Lock) -> None:
     """
     Backend thread worker for lookup_cves.
 
@@ -52,9 +50,7 @@ def _thread_worker(
         if response.status_code not in range(200, 299):
             raise QualysAPIError(response.text)
         with LOCK:
-            responses.extend(
-                [PMVulnerability.from_dict(qid) for qid in response.json()]
-            )
+            responses.extend([PMVulnerability.from_dict(qid) for qid in response.json()])
 
 
 @overload

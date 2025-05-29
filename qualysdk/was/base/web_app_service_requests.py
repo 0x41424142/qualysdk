@@ -30,9 +30,7 @@ def is_valid_regex(s: str) -> bool:
 
         # If it contains common URL elements or non-regex patterns, return False
         # Examples: '://', '=', '&', 'www.', '.com', etc.
-        if any(
-            substring in s for substring in ["://", "=", "&", "www.", ".com", ".org"]
-        ):
+        if any(substring in s for substring in ["://", "=", "&", "www.", ".com", ".org"]):
             return False
 
         return True
@@ -56,9 +54,7 @@ def ensure_data_structure(request_dict: Dict[str, Any]) -> None:
         request_dict["ServiceRequest"]["data"]["WebApp"] = {}
 
 
-def validate_list(
-    input_data: Union[str, List[Any]], data_type: type, name: str
-) -> List[Any]:
+def validate_list(input_data: Union[str, List[Any]], data_type: type, name: str) -> List[Any]:
     """
     Validates that the input_data is a list of the specified data_type.
     Converts a comma-separated string into a list if needed.
@@ -158,11 +154,7 @@ def validate_response(response: Response) -> dict:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        errorMessage = (
-            parsed.get("ServiceResponse")
-            .get("responseErrorDetails")
-            .get("errorMessage")
-        )
+        errorMessage = parsed.get("ServiceResponse").get("responseErrorDetails").get("errorMessage")
         responseCode = parsed.get("ServiceResponse").get("responseCode")
         if "Scan is not in a running state. Scan status: CANCELED" != errorMessage:
             raise QualysAPIError(
@@ -212,9 +204,7 @@ def build_service_request(
     for tag in PREFERENCE_TAGS:
         if tag in kwargs:
             preferences[tag] = (
-                str(kwargs.pop(tag)).lower()
-                if isinstance(kwargs[tag], bool)
-                else kwargs.pop(tag)
+                str(kwargs.pop(tag)).lower() if isinstance(kwargs[tag], bool) else kwargs.pop(tag)
             )
 
     if preferences:
@@ -304,9 +294,7 @@ def build_service_request(
 def build_update_request(
     name: str = None,
     url: str = None,
-    attributes: Dict[
-        Literal["add"] : [{"key", "value"}], Literal["remove"] : [str]
-    ] = None,
+    attributes: Dict[Literal["add"] : [{"key", "value"}], Literal["remove"] : [str]] = None,
     defaultProfile_id: int = None,
     _urlExcludelist: List[str] = None,
     _urlAllowlist: List[str] = None,
@@ -479,20 +467,14 @@ def build_update_request(
         }
 
     if _useSitemap is not None:
-        request_dict["ServiceRequest"]["data"]["WebApp"]["useSitemap"] = str(
-            _useSitemap
-        ).lower()
+        request_dict["ServiceRequest"]["data"]["WebApp"]["useSitemap"] = str(_useSitemap).lower()
 
     if _headers:
         if not isinstance(_headers, list):
-            raise ValueError(
-                f"headers must be passed as a list of strings. Received: {_headers}"
-            )
+            raise ValueError(f"headers must be passed as a list of strings. Received: {_headers}")
         header_list = []
         for header in _headers:
-            header_list.append(
-                xmltodict.unparse({"WebAppHeader": header}, full_document=False)
-            )
+            header_list.append(xmltodict.unparse({"WebAppHeader": header}, full_document=False))
         request_dict["ServiceRequest"]["data"]["WebApp"]["headers"] = {
             "set": "\n".join(header_list)
         }

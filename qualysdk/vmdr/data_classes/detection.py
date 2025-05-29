@@ -18,10 +18,7 @@ from ...base import DONT_EXPAND
 
 def parse_datetime_fields(obj, DATETIME_FIELDS: list[str]) -> None:
     for dt_field in DATETIME_FIELDS:
-        if (
-            isinstance(getattr(obj, dt_field), str)
-            and getattr(obj, dt_field) is not None
-        ):
+        if isinstance(getattr(obj, dt_field), str) and getattr(obj, dt_field) is not None:
             setattr(obj, dt_field, datetime.fromisoformat(getattr(obj, dt_field)))
 
 
@@ -45,10 +42,7 @@ def parse_int_fields(obj, INT_FIELDS: List[str]) -> None:
 
 def parse_bool_fields(obj, BOOL_FIELDS: list[str]) -> None:
     for field in BOOL_FIELDS:
-        if (
-            not isinstance(getattr(obj, field), bool)
-            and getattr(obj, field) is not None
-        ):
+        if not isinstance(getattr(obj, field), bool) and getattr(obj, field) is not None:
             setattr(obj, field, bool(getattr(obj, field)))
 
 
@@ -59,9 +53,7 @@ class BaseDetection(BaseClass):
     for shared attributes.
     """
 
-    UNIQUE_VULN_ID: int = field(
-        metadata={"description": "The unique ID of the detection."}
-    )
+    UNIQUE_VULN_ID: int = field(metadata={"description": "The unique ID of the detection."})
     TYPE: Literal["Confirmed", "Potential"] = field(
         metadata={"description": "The type of the detection."},
         default=None,
@@ -174,12 +166,8 @@ class Detection(BaseDetection):
     Detection - represents a single QID detection on a host.
     """
 
-    QID: int = field(
-        metadata={"description": "The QID of the detection."}, default=None
-    )
-    SEVERITY: int = field(
-        metadata={"description": "The severity of the detection."}, default=None
-    )
+    QID: int = field(metadata={"description": "The QID of the detection."}, default=None)
+    SEVERITY: int = field(metadata={"description": "The severity of the detection."}, default=None)
     QDS: Optional[qds] = field(
         metadata={"description": "The Qualys Detection Score (QDS) of the detection."},
         default=None,
@@ -187,9 +175,7 @@ class Detection(BaseDetection):
     )
 
     QDS_FACTORS: Optional[List[QDSFactor]] = field(
-        metadata={
-            "description": "The Qualys Detection Score (QDS) factors of the detection."
-        },
+        metadata={"description": "The Qualys Detection Score (QDS) factors of the detection."},
         default=None,
         compare=False,
     )
@@ -201,9 +187,7 @@ class Detection(BaseDetection):
         # convert the QDS to a QDS object
         if not DONT_EXPAND.flag:
             if self.QDS:
-                self.QDS = qds(
-                    SEVERITY=self.QDS["@severity"], SCORE=int(self.QDS["#text"])
-                )
+                self.QDS = qds(SEVERITY=self.QDS["@severity"], SCORE=int(self.QDS["#text"]))
 
             # convert the QDS factors to QDSFactor objects
             if self.QDS_FACTORS:
@@ -215,9 +199,7 @@ class Detection(BaseDetection):
                     data = [data]
 
                 for factor in data:
-                    factors_bl.append(
-                        QDSFactor(NAME=factor["@name"], VALUE=factor["#text"])
-                    )
+                    factors_bl.append(QDSFactor(NAME=factor["@name"], VALUE=factor["#text"]))
 
                 self.QDS_FACTORS = factors_bl
 
@@ -308,9 +290,7 @@ class CVEDetection(BaseDetection):
         default=None,
     )
     QVS: int = field(
-        metadata={
-            "description": "The Qualys Vulnerability Score (QVS) of the detection."
-        },
+        metadata={"description": "The Qualys Vulnerability Score (QVS) of the detection."},
         default=None,
     )
 
@@ -325,10 +305,7 @@ class CVEDetection(BaseDetection):
         # but CVE detections are the only thing
         # that have float attributes.
         for field in FLOAT_FIELDS:
-            if (
-                not isinstance(getattr(self, field), float)
-                and getattr(self, field) is not None
-            ):
+            if not isinstance(getattr(self, field), float) and getattr(self, field) is not None:
                 setattr(self, field, float(getattr(self, field)))
 
         super().__post_init__()

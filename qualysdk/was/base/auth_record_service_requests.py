@@ -36,14 +36,10 @@ def remove_none_values(data: Dict[str, Any]) -> Dict[str, Any]:
                 new_dict[key] = cleaned_dict
         elif isinstance(value, list):
             # Recursively clean each item in the list
-            cleaned_list = [
-                remove_none_values(item) for item in value if item or item == 0
-            ]
+            cleaned_list = [remove_none_values(item) for item in value if item or item == 0]
             if cleaned_list:  # Only add non-empty lists
                 new_dict[key] = cleaned_list
-        elif (
-            value or value == 0 or value is False
-        ):  # Consider False and 0 as valid non-null values
+        elif value or value == 0 or value is False:  # Consider False and 0 as valid non-null values
             new_dict[key] = value
 
     return new_dict
@@ -88,9 +84,7 @@ def create_service_request(
             "filters": format_filters(filters) if filters else None,
             "preferences": format_preferences(preferences) if preferences else None,
             "data": {
-                "WebAppAuthRecord": (
-                    format_data(data).pop("WebAppAuthRecord") if data else None
-                )
+                "WebAppAuthRecord": (format_data(data).pop("WebAppAuthRecord") if data else None)
             },
         }
     }
@@ -143,8 +137,7 @@ def format_filters(
             raise ValueError("Value must be a string.")
     return {
         "Criteria": [
-            {"field": f["field"], "operator": f["operator"], "value": f["value"]}
-            for f in filters
+            {"field": f["field"], "operator": f["operator"], "value": f["value"]} for f in filters
         ]
     }
 
@@ -163,13 +156,9 @@ def format_preferences(
     """
     if "startFromId" in preferences and not isinstance(preferences["startFromId"], int):
         raise ValueError("startFromId must be an integer.")
-    if "startFromOffset" in preferences and not isinstance(
-        preferences["startFromOffset"], int
-    ):
+    if "startFromOffset" in preferences and not isinstance(preferences["startFromOffset"], int):
         raise ValueError("startFromOffset must be an integer.")
-    if "limitResults" in preferences and not isinstance(
-        preferences["limitResults"], int
-    ):
+    if "limitResults" in preferences and not isinstance(preferences["limitResults"], int):
         raise ValueError("limitResults must be an integer.")
     return preferences
 
@@ -207,13 +196,9 @@ def format_web_app_auth_record(record: Dict[str, Any]) -> Dict[str, Any]:
     if "formRecord" in record:
         record["formRecord"] = format_web_app_auth_form_record(record["formRecord"])
     if "serverRecord" in record:
-        record["serverRecord"] = format_web_app_auth_server_record(
-            record["serverRecord"]
-        )
+        record["serverRecord"] = format_web_app_auth_server_record(record["serverRecord"])
     if "oauth2Record" in record:
-        record["oauth2Record"] = format_web_app_auth_oauth2_record(
-            record["oauth2Record"]
-        )
+        record["oauth2Record"] = format_web_app_auth_oauth2_record(record["oauth2Record"])
     if "tags" in record:
         record["tags"] = format_tag_list(record["tags"])
     if "comments" in record:
@@ -326,9 +311,7 @@ def format_web_app_auth_server_record(record: Dict[str, Any]) -> Dict[str, Any]:
         or record["fields"].get("remove")
         or record["fields"].get("update")
     ):
-        record["fields"] = format_web_app_auth_server_record_field_list(
-            record["fields"]
-        )
+        record["fields"] = format_web_app_auth_server_record_field_list(record["fields"])
     return record
 
 
@@ -346,12 +329,10 @@ def format_web_app_auth_server_record_field_list(
     """
     return {
         "set": [
-            format_web_app_auth_server_record_field(field, "set")
-            for field in fields.get("set", [])
+            format_web_app_auth_server_record_field(field, "set") for field in fields.get("set", [])
         ],
         "add": [
-            format_web_app_auth_server_record_field(field, "add")
-            for field in fields.get("add", [])
+            format_web_app_auth_server_record_field(field, "add") for field in fields.get("add", [])
         ],
         "remove": [
             format_web_app_auth_server_record_field(field, "remove")
@@ -441,9 +422,7 @@ def format_web_app_auth_oauth2_record(record: Dict[str, Any]) -> Dict[str, Any]:
         try:
             record["seleniumScript"]["data"] = unparse(record["seleniumScript"]["data"])
         except Exception as e:
-            raise ValueError(
-                "SeleniumScript data must be a string or an XML-like dictionary."
-            )
+            raise ValueError("SeleniumScript data must be a string or an XML-like dictionary.")
     return record
 
 
@@ -467,12 +446,8 @@ def format_tag_list(tags: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
     # due to xmltodict's behavior.
     # CORRECTION:
     return {
-        "set": "".join(
-            [f'\n<Tag>\n<id>{tag["id"]}</id>\n</Tag>' for tag in tags.get("set", [])]
-        ),
-        "add": "".join(
-            [f'\n<Tag>\n<id>{tag["id"]}</id>\n</Tag>' for tag in tags.get("add", [])]
-        ),
+        "set": "".join([f'\n<Tag>\n<id>{tag["id"]}</id>\n</Tag>' for tag in tags.get("set", [])]),
+        "add": "".join([f'\n<Tag>\n<id>{tag["id"]}</id>\n</Tag>' for tag in tags.get("add", [])]),
         "remove": "".join(
             [f'\n<Tag>\n<id>{tag["id"]}</id>\n</Tag>' for tag in tags.get("remove", [])]
         ),

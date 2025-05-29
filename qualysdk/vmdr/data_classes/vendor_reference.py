@@ -27,9 +27,7 @@ class VendorReference(BaseClass):
     def __post_init__(self):
         # check that url is a string:
         if not isinstance(self.URL, str):
-            raise TypeError(
-                f"VendorReference URL must be a string, not {type(self.URL)}"
-            )
+            raise TypeError(f"VendorReference URL must be a string, not {type(self.URL)}")
 
     def __str__(self) -> str:
         return f"{self.ID} ({self.URL})"

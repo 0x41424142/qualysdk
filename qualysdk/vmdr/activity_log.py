@@ -24,9 +24,7 @@ def extract_sections(csv_data: str) -> tuple[Union[str, None], Union[str, None]]
         tuple[Union[str, None], Union[str, None]]: The body and footer sections, in that order. None if not found.
     """
 
-    body_pattern = compile(
-        r"----BEGIN_RESPONSE_BODY_CSV\n(.*?)\n----END_RESPONSE_BODY_CSV", DOTALL
-    )
+    body_pattern = compile(r"----BEGIN_RESPONSE_BODY_CSV\n(.*?)\n----END_RESPONSE_BODY_CSV", DOTALL)
     footer_patern = compile(
         r"----BEGIN_RESPONSE_FOOTER_CSV\n(.*?)\n----END_RESPONSE_FOOTER_CSV", DOTALL
     )
@@ -109,9 +107,7 @@ def get_activity_log(
             # Look for the id_max parameter and update the params:
             if "id_max" in url_params:
                 params["id_max"] = url_params["id_max"][0].strip().replace('"', "")
-                print(
-                    f"Pagination detected. Pulling next page with id_max: {params['id_max']}"
-                )
+                print(f"Pagination detected. Pulling next page with id_max: {params['id_max']}")
             else:
                 print("No more pages to pull.")
                 break

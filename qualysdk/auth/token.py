@@ -58,9 +58,7 @@ class TokenAuth(BasicAuth):
         r = post(url, headers=headers, data=payload)
 
         if r.status_code != 201:
-            raise AuthenticationError(
-                f"Failed to generate token. Requests reporting: {r.text}"
-            )
+            raise AuthenticationError(f"Failed to generate token. Requests reporting: {r.text}")
         print("Success.")
         self.generated_on = datetime.now()
         return r.text

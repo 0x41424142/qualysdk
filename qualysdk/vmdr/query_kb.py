@@ -85,9 +85,7 @@ def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
         if "VULN_LIST" not in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]:
             break
 
-        for e in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["VULN_LIST"][
-            "VULN"
-        ]:
+        for e in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["VULN_LIST"]["VULN"]:
             responses.append(KBEntry.from_dict(e))  # append entry
 
         pulled += 1
@@ -101,9 +99,7 @@ def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
                 # parse the url to get the query params
                 ps = parse_qs(
                     urlparse(
-                        xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["WARNING"][
-                            "URL"
-                        ]
+                        xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["WARNING"]["URL"]
                     ).query
                 )
                 # update the kwargs with the new params
@@ -127,9 +123,7 @@ def get_kb_qvs(auth: BasicAuth, cve: list[str] = [], **kwargs) -> BaseList[KBQVS
     ...
 
 
-def get_kb_qvs(
-    auth: BasicAuth, cve: Union[str, list[str]] = "", **kwargs
-) -> BaseList[KBQVS]:
+def get_kb_qvs(auth: BasicAuth, cve: Union[str, list[str]] = "", **kwargs) -> BaseList[KBQVS]:
     """
     Download Qualys KB QVS (Qualys Vulnerability Score) data for 1+ CVEs.
 

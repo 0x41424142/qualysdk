@@ -53,9 +53,7 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList | dict[str, BaseList[str]
             print("No IP addresses found. Returning empty BaseList.")
             return ip_list
 
-        data = data["RESPONSE"][
-            "IP_SET"
-        ]  # at this point, data has IP and IP_RANGE keys
+        data = data["RESPONSE"]["IP_SET"]  # at this point, data has IP and IP_RANGE keys
 
         # Convert the IP addresses into IP objects:
         if "IP" in data:

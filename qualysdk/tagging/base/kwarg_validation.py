@@ -62,9 +62,7 @@ def validate_kwargs(endpoint: str, **kwargs):
         **kwargs: The kwargs to validate
     """
     if endpoint not in ENDPOINT_MAPPINGS:
-        raise ValueError(
-            f"Invalid endpoint: {endpoint}. Must be one of {ENDPOINT_MAPPINGS.keys()}"
-        )
+        raise ValueError(f"Invalid endpoint: {endpoint}. Must be one of {ENDPOINT_MAPPINGS.keys()}")
 
     for key, value in kwargs.items():
         if key.endswith("_operator"):

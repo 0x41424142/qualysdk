@@ -33,28 +33,30 @@ def build_scan_service_request(
                         "scannerAppliance": {
                             "type": kwargs.get("scanner.appliance.type", "EXTERNAL"),
                         },
-                        "webApps": {
-                            "set": {
-                                "WebApp": format_xml_list(
-                                    kwargs.get("web.app.ids", []), "id"
-                                ),
-                            },
-                        }
-                        if kwargs.get("web.app.ids")
-                        else None,
-                        "profileOption": kwargs.get("profile.option", "DEFAULT"),
-                        "tags": {
-                            "included": {
-                                "option": kwargs.get("included.tags.option", "ALL"),
-                                "tagList": {
-                                    "set": format_xml_list(
-                                        kwargs.get("included.tag.ids", []), "Tag"
-                                    )
+                        "webApps": (
+                            {
+                                "set": {
+                                    "WebApp": format_xml_list(kwargs.get("web.app.ids", []), "id"),
                                 },
-                            },
-                        }
-                        if kwargs.get("included.tag.ids")
-                        else None,
+                            }
+                            if kwargs.get("web.app.ids")
+                            else None
+                        ),
+                        "profileOption": kwargs.get("profile.option", "DEFAULT"),
+                        "tags": (
+                            {
+                                "included": {
+                                    "option": kwargs.get("included.tags.option", "ALL"),
+                                    "tagList": {
+                                        "set": format_xml_list(
+                                            kwargs.get("included.tag.ids", []), "Tag"
+                                        )
+                                    },
+                                },
+                            }
+                            if kwargs.get("included.tag.ids")
+                            else None
+                        ),
                         "scannerOption": kwargs.get("scanner.option", "DEFAULT"),
                         "cancelOption": kwargs.get("cancel.option", "DEFAULT"),
                         "authRecordOption": kwargs.get("auth.record.option", "NONE"),

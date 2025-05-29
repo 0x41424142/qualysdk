@@ -45,9 +45,7 @@ class KBQVS(BaseClass):
     malwareName: Optional[Union[list[str], BaseList[str]]] = field(
         default=None, compare=False
     )  # List of one long string
-    malwareHash: Optional[Union[list[str], BaseList[str]]] = field(
-        default=None, compare=False
-    )
+    malwareHash: Optional[Union[list[str], BaseList[str]]] = field(default=None, compare=False)
     rti: Optional[Union[list[str], BaseList[str]]] = field(default=None, compare=False)
 
     def __post_init__(self):
@@ -57,9 +55,7 @@ class KBQVS(BaseClass):
         DT_FIELDS = ["qvsLastChangedDate", "nvdPublishedDate"]
         for dt_field in DT_FIELDS:
             if dt_field and not isinstance(getattr(self, dt_field), datetime):
-                setattr(
-                    self, dt_field, datetime.fromtimestamp(int(self.base.get(dt_field)))
-                )
+                setattr(self, dt_field, datetime.fromtimestamp(int(self.base.get(dt_field))))
 
         if not DONT_EXPAND.flag:
             if self.base.get("id"):
@@ -73,19 +69,13 @@ class KBQVS(BaseClass):
 
             if self.contributingFactors and isinstance(self.contributingFactors, dict):
                 if "epss" in self.contributingFactors.keys():
-                    setattr(
-                        self, "epss", float(self.contributingFactors.get("epss")[0])
-                    )
+                    setattr(self, "epss", float(self.contributingFactors.get("epss")[0]))
 
                 if "cvssVersion" in self.contributingFactors.keys():
-                    setattr(
-                        self, "cvssVersion", self.contributingFactors.get("cvssVersion")
-                    )
+                    setattr(self, "cvssVersion", self.contributingFactors.get("cvssVersion"))
 
                 if "cvssString" in self.contributingFactors.keys():
-                    setattr(
-                        self, "cvssString", self.contributingFactors.get("cvssString")
-                    )
+                    setattr(self, "cvssString", self.contributingFactors.get("cvssString"))
 
                 if "cvss" in self.contributingFactors.keys():
                     setattr(self, "cvss", float(self.contributingFactors.get("cvss")))
@@ -99,9 +89,7 @@ class KBQVS(BaseClass):
                 for str_field in ONE_LONG_STR_FIELDS:
                     if str_field in self.contributingFactors.keys():
                         bl = BaseList()
-                        for item in self.contributingFactors.get(str_field)[0].split(
-                            ","
-                        ):
+                        for item in self.contributingFactors.get(str_field)[0].split(","):
                             if str_field == "trending":
                                 item = int(item)
                             bl.append(item)
@@ -109,9 +97,9 @@ class KBQVS(BaseClass):
 
                 if "mitigationControls" in self.contributingFactors.keys():
                     bl = BaseList()
-                    for control in self.contributingFactors.get("mitigationControls")[
-                        0
-                    ][0].split(","):
+                    for control in self.contributingFactors.get("mitigationControls")[0][0].split(
+                        ","
+                    ):
                         bl.append(control)
                     setattr(self, "mitigationControls", bl)
 

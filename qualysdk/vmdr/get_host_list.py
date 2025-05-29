@@ -109,9 +109,7 @@ def get_host_list(
     )
 
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
-    print(
-        f"Starting get_host_list with {threads} {'threads.' if threads > 1 else 'thread.'}"
-    )
+    print(f"Starting get_host_list with {threads} {'threads.' if threads > 1 else 'thread.'}")
 
     threads_list = []
 

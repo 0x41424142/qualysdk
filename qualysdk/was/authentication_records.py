@@ -18,9 +18,7 @@ from ..exceptions.Exceptions import QualysAPIError
 from ..base.base_list import BaseList
 
 
-def call_auth_api(
-    auth: BasicAuth, endpoint: str, payload: dict
-) -> Union[int, WebAppAuthRecord]:
+def call_auth_api(auth: BasicAuth, endpoint: str, payload: dict) -> Union[int, WebAppAuthRecord]:
     """
     Call a Qualys WAS API auth record endpoint and return the parsed response. This is
     a backend function and should not be called directly.
@@ -53,9 +51,7 @@ def call_auth_api(
 
     response = call_api(
         auth=auth,
-        override_method=(
-            "GET" if endpoint == "get_authentication_record_details" else "POST"
-        ),
+        override_method=("GET" if endpoint == "get_authentication_record_details" else "POST"),
         module="was",
         endpoint="call_auth_api",
         params=params,
@@ -118,9 +114,7 @@ def count_authentication_records(auth: BasicAuth, **kwargs) -> int:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     return int(serviceResponse.get("count"))
 
@@ -248,18 +242,14 @@ def get_authentication_record_details(
         WebAppAuthRecord: The authentication record.
     """
     # Make the API call:
-    parsed = call_auth_api(
-        auth, "get_authentication_record_details", {"recordId": recordId}
-    )
+    parsed = call_auth_api(auth, "get_authentication_record_details", {"recordId": recordId})
 
     serviceResponse = parsed.get("ServiceResponse")
     if not serviceResponse:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
     if data.get("WebAppAuthRecord"):
@@ -347,18 +337,14 @@ def get_authentication_records_verbose(
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        print(
-                            f"({current_thread().name}) Queue is empty. Thread exiting."
-                        )
+                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 authrecord = q.get()
                 # Exit condition 2: authrecord is None (because Queue is empty)
                 if not authrecord:
                     with LOCK:
-                        print(
-                            f"({current_thread().name}) Queue is empty. Thread exiting."
-                        )
+                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -373,9 +359,7 @@ def get_authentication_records_verbose(
 
             except Exception as e:
                 with LOCK:
-                    print(
-                        f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}"
-                    )
+                    print(f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}")
                 q.task_done()
                 break
 
@@ -516,23 +500,17 @@ def create_authentication_record(
                 payload[recordType][field] = kwargs[field]
 
     # Create the service request
-    xml_payload = unparse_to_xml_str(
-        create_service_request(data={"WebAppAuthRecord": payload})
-    )
+    xml_payload = unparse_to_xml_str(create_service_request(data={"WebAppAuthRecord": payload}))
 
     # Make the API call:
-    parsed = call_auth_api(
-        auth, "create_authentication_record", {"_xml_data": xml_payload}
-    )
+    parsed = call_auth_api(auth, "create_authentication_record", {"_xml_data": xml_payload})
 
     serviceResponse = parsed.get("ServiceResponse")
     if not serviceResponse:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
     if data.get("WebAppAuthRecord"):
@@ -615,9 +593,7 @@ def delete_authentication_record(auth: BasicAuth, **kwargs) -> list[str]:
         raise QualysAPIError("No ServiceResponse tag returned in the API response")
 
     if serviceResponse.get("responseCode") != "SUCCESS":
-        raise QualysAPIError(
-            f"API response returned error: {serviceResponse.get('responseCode')}"
-        )
+        raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     if serviceResponse.get("count") == "0":
         print("No auth records found. Exiting.")

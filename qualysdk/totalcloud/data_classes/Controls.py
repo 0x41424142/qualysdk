@@ -123,9 +123,7 @@ class AccountLevelControl(BaseClass):
     passWithExceptionResources: int = None
 
     def __post_init__(self):
-        if getattr(self, "controlId") and not isinstance(
-            getattr(self, "controlId"), int
-        ):
+        if getattr(self, "controlId") and not isinstance(getattr(self, "controlId"), int):
             setattr(self, "controlId", int(getattr(self, "controlId")))
 
         if not DONT_EXPAND.flag:

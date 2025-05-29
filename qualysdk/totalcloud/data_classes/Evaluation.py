@@ -63,9 +63,7 @@ class AccountLevelEvaluation(BaseClass):
     evaluationDates: Evaluation = None
 
     def __post_init__(self):
-        if getattr(self, "evaluatedOn") and not isinstance(
-            getattr(self, "evaluatedOn"), datetime
-        ):
+        if getattr(self, "evaluatedOn") and not isinstance(getattr(self, "evaluatedOn"), datetime):
             setattr(
                 self,
                 "evaluatedOn",

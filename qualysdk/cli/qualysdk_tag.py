@@ -44,9 +44,7 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             if "add_children" in kwargs:
                 kwargs["add_children"] = BaseList(kwargs["add_children"].split(","))
             if "remove_children" in kwargs:
-                kwargs["remove_children"] = BaseList(
-                    kwargs["remove_children"].split(",")
-                )
+                kwargs["remove_children"] = BaseList(kwargs["remove_children"].split(","))
             result = update_tag(auth, args.tagId, **kwargs)
         case _:
             raise ValueError(f"Invalid endpoint: {endpoint}.")
@@ -56,9 +54,11 @@ def cli_findings(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             result = result.to_serializable_dict()
             write_json(result, args.output)
         else:
-            write_json(
-                result, args.output
-            ) if endpoint == "count_tags" else write_excel(result, args.output)
+            (
+                write_json(result, args.output)
+                if endpoint == "count_tags"
+                else write_excel(result, args.output)
+            )
     return result
 
 
@@ -66,12 +66,8 @@ def main():
     parser = ArgumentParser(
         description="CLI script to quickly perform tagging operations using qualysdk"
     )
-    parser.add_argument(
-        "-u", "--username", required=True, help="Qualys username", type=str
-    )
-    parser.add_argument(
-        "-p", "--password", required=True, help="Qualys password", type=str
-    )
+    parser.add_argument("-u", "--username", required=True, help="Qualys username", type=str)
+    parser.add_argument("-p", "--password", required=True, help="Qualys password", type=str)
     parser.add_argument(
         "-P",
         "--platform",

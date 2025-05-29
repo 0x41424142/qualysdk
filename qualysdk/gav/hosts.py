@@ -349,9 +349,7 @@ class Host(BaseClass):
                                 setattr(
                                     self,
                                     f"hardware_lifecycle_{field}",
-                                    datetime.fromisoformat(
-                                        self.hardware["lifecycle"][field]
-                                    ),
+                                    datetime.fromisoformat(self.hardware["lifecycle"][field]),
                                 )
                     for field in ["stage", "lifeCycleConfidence"]:
                         if self.hardware["lifecycle"].get(field):
@@ -392,9 +390,7 @@ class Host(BaseClass):
                             bl.append(f"{vol.get('name')}: 0.0% filled")
                             continue
 
-                        percent_filled = (
-                            (vol.get("size") - vol.get("free")) / vol.get("size") * 100
-                        )
+                        percent_filled = (vol.get("size") - vol.get("free")) / vol.get("size") * 100
                     except ZeroDivisionError:
                         percent_filled = 0.0
                     bl.append(f"{vol.get('name')}: {percent_filled:.2f}% filled")
@@ -402,9 +398,7 @@ class Host(BaseClass):
 
             if self.networkInterfaceListData:
                 # Check for a dict or a list of dicts:
-                data = handle_dict_or_list(
-                    self.networkInterfaceListData["networkInterface"]
-                )
+                data = handle_dict_or_list(self.networkInterfaceListData["networkInterface"])
                 bl = BaseList()
                 for iface in data:
                     bl.append(
@@ -497,9 +491,7 @@ class Host(BaseClass):
                                 self,
                                 "cloudProvider_launchDate",
                                 datetime.fromisoformat(
-                                    self.cloudProvider[cloudProvider][subkey][
-                                        "launchDate"
-                                    ]
+                                    self.cloudProvider[cloudProvider][subkey]["launchDate"]
                                 ),
                             )
 
@@ -512,15 +504,11 @@ class Host(BaseClass):
                             setattr(
                                 self,
                                 "cloudProvider_region",
-                                self.cloudProvider[cloudProvider][subkey]
-                                .get("region")
-                                .get("code"),
+                                self.cloudProvider[cloudProvider][subkey].get("region").get("code"),
                             )
 
                     elif subkey == "tags":
-                        data = handle_dict_or_list(
-                            self.cloudProvider[cloudProvider][subkey]
-                        )
+                        data = handle_dict_or_list(self.cloudProvider[cloudProvider][subkey])
                         bl = BaseList()
                         if data:
                             for tag in data:
@@ -549,9 +537,7 @@ class Host(BaseClass):
                     if self.agent.get(field):
                         setattr(self, f"agent_{field}", self.agent[field])
                 if self.agent.get("activations"):
-                    setattr(
-                        self, "agent_key", self.agent.get("activations")[0].get("key")
-                    )
+                    setattr(self, "agent_key", self.agent.get("activations")[0].get("key"))
                     setattr(
                         self,
                         "agent_status",
@@ -608,9 +594,7 @@ class Host(BaseClass):
                         setattr(self, f"container_{field}", self.container[field])
 
                 if self.container.get("hasSensor"):
-                    setattr(
-                        self, "container_hasSensor", bool(self.container["hasSensor"])
-                    )
+                    setattr(self, "container_hasSensor", bool(self.container["hasSensor"]))
                 else:
                     setattr(self, "container_hasSensor", False)
 
@@ -701,9 +685,7 @@ class Host(BaseClass):
                             setattr(
                                 self,
                                 f"operatingSystem_lifecycle_{field}",
-                                datetime.fromisoformat(
-                                    self.operatingSystem_lifecycle[field]
-                                ),
+                                datetime.fromisoformat(self.operatingSystem_lifecycle[field]),
                             )
                         else:
                             setattr(self, f"operatingSystem_lifecycle_{field}", None)

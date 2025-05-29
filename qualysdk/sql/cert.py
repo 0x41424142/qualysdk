@@ -64,35 +64,23 @@ def upload_cert_certs(
 
     COLS = {
         "id": types.Integer(),
-        "certhash": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "certhash": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "keySize": types.Integer(),
-        "serialNumber": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "serialNumber": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "validToDate": types.DateTime(),
         "validTo": types.DateTime(),
         "validFromDate": types.DateTime(),
         "validFrom": types.DateTime(),
-        "signatureAlgorithm": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "signatureAlgorithm": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "extendedValidation": types.Boolean(),
         "createdDate": types.DateTime(),
         "dn": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "subject_organization": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "subject_locality": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "subject_name": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "subject_country": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "subject_locality": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "subject_name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "subject_country": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "subject_organizationUnit": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -106,29 +94,15 @@ def upload_cert_certs(
         "issuer_organizationUnit": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "issuer_name": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "issuer_country": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "issuer_state": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "issuer_certhash": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "issuer_locality": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "issuerCategory": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "issuer_name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "issuer_country": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "issuer_state": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "issuer_certhash": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "issuer_locality": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "issuerCategory": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "instanceCount": types.Integer(),
         "assetCount": types.Integer(),
-        "sources": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "sources": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "assets": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "type": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "rootissuer_organization": types.String().with_variant(
@@ -137,15 +111,9 @@ def upload_cert_certs(
         "rootissuer_organizationUnit": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "rootissuer_name": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "rootissuer_country": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "rootissuer_state": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "rootissuer_name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "rootissuer_country": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "rootissuer_state": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "rootissuer_certhash": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
@@ -164,9 +132,7 @@ def upload_cert_certs(
         inplace=True,
     )
 
-    certs_uploaded = upload_data(
-        certs_df, certs_table_name, cnxn, COLS, override_import_dt
-    )
+    certs_uploaded = upload_data(certs_df, certs_table_name, cnxn, COLS, override_import_dt)
 
     print(f"Uploaded {certs_uploaded} to {certs_table_name}. Moving to assets...")
 
@@ -174,28 +140,16 @@ def upload_cert_certs(
         "id": types.Integer(),
         "certId": types.Integer(),
         "uuid": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "netbiosName": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "netbiosName": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "name": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "operatingSystem": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "hostInstances": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
-        "assetInterfaces": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "operatingSystem": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "hostInstances": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "assetInterfaces": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "tags": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
-        "primaryIp": types.String().with_variant(
-            TEXT(charset="utf8"), "mysql", "mariadb"
-        ),
+        "primaryIp": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
-    assets_uploaded = upload_data(
-        assets_df, assets_table_name, cnxn, COLS, override_import_dt
-    )
+    assets_uploaded = upload_data(assets_df, assets_table_name, cnxn, COLS, override_import_dt)
 
     print(f"Uploaded {assets_uploaded} to {assets_table_name}.")
 

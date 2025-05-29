@@ -344,12 +344,8 @@ class VMDRHost(BaseClass):
             self.IPV6 = IPv6Address(self.IPV6)
 
         for DATE_FIELD in DATETIME_FIELDS:
-            if getattr(self, DATE_FIELD) and not isinstance(
-                getattr(self, DATE_FIELD), datetime
-            ):
-                setattr(
-                    self, DATE_FIELD, datetime.fromisoformat(getattr(self, DATE_FIELD))
-                )
+            if getattr(self, DATE_FIELD) and not isinstance(getattr(self, DATE_FIELD), datetime):
+                setattr(self, DATE_FIELD, datetime.fromisoformat(getattr(self, DATE_FIELD)))
 
         if not DONT_EXPAND.flag:
             if self.TRURISK_SCORE_FACTORS:
@@ -363,9 +359,7 @@ class VMDRHost(BaseClass):
             if self.TAGS:
                 # if 'TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
                 if isinstance(self.TAGS["TAG"], list):
-                    self.TAGS = BaseList(
-                        [Tag.from_dict(tag) for tag in self.TAGS["TAG"]]
-                    )
+                    self.TAGS = BaseList([Tag.from_dict(tag) for tag in self.TAGS["TAG"]])
                 else:  # if it is a single tag dict:
                     self.TAGS = BaseList([Tag.from_dict(self.TAGS["TAG"])])
 
@@ -373,10 +367,7 @@ class VMDRHost(BaseClass):
                 # if 'CLOUD_TAG' key's value is a list, it is a list of tag dicts. if it is a single tag dict, it is just a single tag.
                 if isinstance(self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"], list):
                     self.CLOUD_PROVIDER_TAGS = BaseList(
-                        [
-                            CloudTag.from_dict(tag)
-                            for tag in self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"]
-                        ]
+                        [CloudTag.from_dict(tag) for tag in self.CLOUD_PROVIDER_TAGS["CLOUD_TAG"]]
                     )
                 else:  # if it is a single tag dict:
                     self.CLOUD_PROVIDER_TAGS = BaseList(
@@ -457,11 +448,7 @@ class VMDRHost(BaseClass):
                                 setattr(
                                     self,
                                     f"CLOUD_{key[0]}",
-                                    (
-                                        item["VALUE"]
-                                        if item["VALUE"] not in ["", {}, []]
-                                        else None
-                                    ),
+                                    (item["VALUE"] if item["VALUE"] not in ["", {}, []] else None),
                                 )  # if item['VALUE'] seems to leave behind empties, hence the list
                                 break
                     else:
@@ -476,18 +463,12 @@ class VMDRHost(BaseClass):
                             )
 
         for INT_FIELD in INT_FIELDS:
-            if getattr(self, INT_FIELD) and not isinstance(
-                getattr(self, INT_FIELD), int
-            ):
+            if getattr(self, INT_FIELD) and not isinstance(getattr(self, INT_FIELD), int):
                 setattr(self, INT_FIELD, int(getattr(self, INT_FIELD)))
 
-        if self.CLOUD_PUBLIC_IPV4 and not isinstance(
-            self.CLOUD_PUBLIC_IPV4, IPv4Address
-        ):
+        if self.CLOUD_PUBLIC_IPV4 and not isinstance(self.CLOUD_PUBLIC_IPV4, IPv4Address):
             # Bug Fix: for some reason Qualys will do things like /1.2.3.4?
-            self.CLOUD_PUBLIC_IPV4 = IPv4Address(
-                self.CLOUD_PUBLIC_IPV4.replace("/", "")
-            )
+            self.CLOUD_PUBLIC_IPV4 = IPv4Address(self.CLOUD_PUBLIC_IPV4.replace("/", ""))
 
         if self.CLOUD_IS_SPOT_INSTANCE:
             self.CLOUD_IS_SPOT_INSTANCE = bool(self.CLOUD_IS_SPOT_INSTANCE)
@@ -516,9 +497,7 @@ class VMDRHost(BaseClass):
                     else:
                         detection["CVSS_31"] = detection.pop("CVSS3.1")
                         detection["CVSS_31_BASE"] = detection.pop("CVSS3.1_BASE", None)
-                        detection["CVSS_31_TEMPORAL"] = detection.pop(
-                            "CVSS3.1_TEMPORAL", None
-                        )
+                        detection["CVSS_31_TEMPORAL"] = detection.pop("CVSS3.1_TEMPORAL", None)
                         detections_bl.append(CVEDetection.from_dict(detection))
 
                 self.DETECTION_LIST = detections_bl

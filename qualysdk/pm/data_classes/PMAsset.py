@@ -195,9 +195,7 @@ class Asset(BaseClass):
 
             if self.hardware:
                 setattr(self, "hardware_model", self.hardware.get("model"))
-                setattr(
-                    self, "hardware_manufacturer", self.hardware.get("manufacturer")
-                )
+                setattr(self, "hardware_manufacturer", self.hardware.get("manufacturer"))
                 setattr(self, "hardware", None)
 
         for timestamp_field in FROM_TIMESTAMP_FIELDS:

@@ -79,9 +79,7 @@ class Connector(BaseClass):
                     setattr(
                         self,
                         field,
-                        datetime.strptime(
-                            getattr(self, field), "%a %b %d %H:%M:%S %Z %Y"
-                        ),
+                        datetime.strptime(getattr(self, field), "%a %b %d %H:%M:%S %Z %Y"),
                     )
 
     def __int__(self):

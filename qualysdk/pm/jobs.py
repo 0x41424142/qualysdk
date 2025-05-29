@@ -98,18 +98,12 @@ def _list_jobs_backend(
     """
     if page_count != "all":
         if not isinstance(page_count, int) or page_count < 1:
-            raise ValueError(
-                "page_count must be an integer greater than or equal to 1, or 'all'"
-            )
+            raise ValueError("page_count must be an integer greater than or equal to 1, or 'all'")
 
     kwargs["platform"] = platform
     pages_pulled = 0
     # If called from a thread, we need to use a shared resource
-    responses = (
-        BaseList()
-        if "_response_bl" not in kwargs.keys()
-        else kwargs.pop("_response_bl")
-    )
+    responses = BaseList() if "_response_bl" not in kwargs.keys() else kwargs.pop("_response_bl")
 
     # Set up URL format
     kwargs["placeholder"] = "/summary"
@@ -265,16 +259,12 @@ def get_job_results(
         kwargs["placeholder"] = f"/{jobId}/deploymentjobresult/summary"
         kwargs_no_bl = kwargs.copy()
         kwargs_no_bl.pop("_response_bl", None)
-        result = manage_jobs(
-            auth=auth, method="POST", _use_singular_in_url=True, **kwargs_no_bl
-        )
+        result = manage_jobs(auth=auth, method="POST", _use_singular_in_url=True, **kwargs_no_bl)
         if not kwargs.get("_response_bl") and kwargs.get("_response_bl") != BaseList():
             return JobResultSummary.from_dict(result.json())
         else:
             with lock:
-                kwargs["_response_bl"].extend(
-                    [JobResultSummary.from_dict(result.json())]
-                )
+                kwargs["_response_bl"].extend([JobResultSummary.from_dict(result.json())])
             return
 
     elif isinstance(jobId, (list, BaseList)) and all(
@@ -319,9 +309,7 @@ def get_job_results(
         return kwargs["_response_bl"]
 
     else:
-        raise ValueError(
-            "jobId must be a string, or a list/BaseList of PMJob objects or strings."
-        )
+        raise ValueError("jobId must be a string, or a list/BaseList of PMJob objects or strings.")
 
 
 def get_job_runs(
@@ -469,17 +457,13 @@ def create_job(
         "matchAllTagIds": kwargs.get("matchAllTagIds"),
         "minimizeWindow": kwargs.get("minimizeWindow"),
         "monthlyRecurringType": (
-            str(kwargs.get("monthlyRecurringType"))
-            if kwargs.get("monthlyRecurringType")
-            else None
+            str(kwargs.get("monthlyRecurringType")) if kwargs.get("monthlyRecurringType") else None
         ),
         "name": name,
         "notification": {
             "notificationConfigs": {
                 "recipientEmails": kwargs.get("notificationConfigRecipientEmail"),
-                "completedPercentage": kwargs.get(
-                    "notificationConfigCompletedPercentage"
-                ),
+                "completedPercentage": kwargs.get("notificationConfigCompletedPercentage"),
             },
             "notificationTypes": {"email": kwargs.get("notificationType")},
             "notificationEvents": {
@@ -584,15 +568,11 @@ def delete_job(auth: TokenAuth, jobId: str) -> list[dict[str, str]]:
 
 
 @overload
-def delete_job(
-    auth: TokenAuth, jobId: Union[list[str], BaseList[str]]
-) -> list[dict[str, str]]:
+def delete_job(auth: TokenAuth, jobId: Union[list[str], BaseList[str]]) -> list[dict[str, str]]:
     ...
 
 
-def delete_job(
-    auth: TokenAuth, jobId: Union[str, Sequence[str]]
-) -> list[dict[str, str]]:
+def delete_job(auth: TokenAuth, jobId: Union[str, Sequence[str]]) -> list[dict[str, str]]:
     """
     Deletes a job or jobs in Patch Management.
 
@@ -614,22 +594,16 @@ def delete_job(
         result = manage_jobs(auth=auth, method="DELETE", _jsonbody=jsonbody, **payload)
         return result.json()
 
-    elif isinstance(jobId, (list, BaseList)) and all(
-        isinstance(job, str) for job in jobId
-    ):
+    elif isinstance(jobId, (list, BaseList)) and all(isinstance(job, str) for job in jobId):
         jsonbody.update({"ids": jobId})
-        return manage_jobs(
-            auth=auth, method="DELETE", _jsonbody=jsonbody, **payload
-        ).json()
+        return manage_jobs(auth=auth, method="DELETE", _jsonbody=jsonbody, **payload).json()
 
     else:
         raise ValueError("jobId must be a string or a list/BaseList of strings.")
 
 
 @overload
-def change_job_status(
-    auth: TokenAuth, action: Literal["Enabled", "Disabled"], jobId: str
-) -> dict:
+def change_job_status(auth: TokenAuth, action: Literal["Enabled", "Disabled"], jobId: str) -> dict:
     ...
 
 
@@ -668,9 +642,7 @@ def change_job_status(
         jsonbody["ids"].append(jobId)
         result = manage_jobs(auth=auth, method="POST", _jsonbody=jsonbody, **payload)
 
-    elif isinstance(jobId, (list, BaseList)) and all(
-        isinstance(job, str) for job in jobId
-    ):
+    elif isinstance(jobId, (list, BaseList)) and all(isinstance(job, str) for job in jobId):
         jsonbody.update({"ids": jobId})
         result = manage_jobs(auth=auth, method="POST", _jsonbody=jsonbody, **payload)
 

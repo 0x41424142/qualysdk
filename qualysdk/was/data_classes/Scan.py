@@ -108,9 +108,7 @@ class WASScan(BaseClass):
                 "canceledBy_id": int,
                 "profile_id": int,
                 "multi": bool,
-                "launchedDate": lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ")
-                if x
-                else None,
+                "launchedDate": lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ") if x else None,
                 "target_id": int,
                 "summary_crawlDuration": int,
                 "summary_testDuration": int,

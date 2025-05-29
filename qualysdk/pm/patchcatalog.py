@@ -199,9 +199,7 @@ def _thread_worker(
                     if response.text:
                         raise QualysAPIError(response.json())
                     elif response.status_code == 429:
-                        raise QualysAPIError(
-                            "Qualys has rate limited you. Please try again later."
-                        )
+                        raise QualysAPIError("Qualys has rate limited you. Please try again later.")
                     else:
                         raise QualysAPIError(
                             f"Qualys returned status code {response.status_code}. {response.text}"
@@ -441,9 +439,9 @@ def count_product_vulns(
     if severityList is None:
         severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
     # check if the string or list contains all of the valid values
-    elif isinstance(severityList, str) and set(
-        [i.title() for i in severityList.split(",")]
-    ) == set(["Critical", "Important", "Moderate", "Low", "None"]):
+    elif isinstance(severityList, str) and set([i.title() for i in severityList.split(",")]) == set(
+        ["Critical", "Important", "Moderate", "Low", "None"]
+    ):
         severity_values = ["Critical", "Important", "Moderate", "Low", "None"]
 
     elif isinstance(severityList, (list, BaseList)) and set(severityList) == set(
@@ -458,9 +456,7 @@ def count_product_vulns(
         severity_values = severityList
 
     else:
-        raise ValueError(
-            "Invalid severityList format. Must be a string or a list of strings."
-        )
+        raise ValueError("Invalid severityList format. Must be a string or a list of strings.")
 
     results = BaseList()
 

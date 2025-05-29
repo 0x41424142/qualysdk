@@ -18,9 +18,7 @@ class Tag(BaseClass):
     This class is used to represent a single tag in a TagList, aka a tag on an asset.
     """
 
-    TAG_ID: Union[str, int, UUID] = field(
-        metadata={"description": "The ID of the tag."}
-    )
+    TAG_ID: Union[str, int, UUID] = field(metadata={"description": "The ID of the tag."})
     NAME: str = field(metadata={"description": "The name of the tag."})
 
     def __post_init__(self):
@@ -62,9 +60,7 @@ class Tag(BaseClass):
         # make sure that the dictionary has the required keys and nothing else:
         required_keys = {"TAG_ID", "NAME"}
         if not required_keys.issubset(data.keys()):
-            raise ValueError(
-                f"Dictionary must contain the following keys: {required_keys}"
-            )
+            raise ValueError(f"Dictionary must contain the following keys: {required_keys}")
 
         # cast ID to an int if it is a string
         if isinstance(data["TAG_ID"], str):

@@ -288,6 +288,7 @@ def call_api(
                     data=payload if not use_json else None,
                     json=jsonbody if use_json else None,
                     auth=(auth_tuple if auth.auth_type == "basic" else None),
+                    proxies=auth.proxy_url,
                 )
 
                 # Isolate the wait time from the header:

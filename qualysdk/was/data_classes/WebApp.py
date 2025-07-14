@@ -110,7 +110,6 @@ class WebApp(BaseClass):
     malwareScheduling_occurrence: Union[dict, str] = None
     # end malwareScheduling
 
-
     def __post_init__(self):
         DT_FIELDS = ["createdDate", "updatedDate"]
         INT_FIELDS = [
@@ -411,12 +410,23 @@ class WebApp(BaseClass):
                     setattr(self, "malwareScheduling_startDate", datetime.fromisoformat(startDate))
                 else:
                     setattr(self, "malwareScheduling_startDate", None)
-                
-                setattr(self, "malwareScheduling_timeZone", self.malwareScheduling.get("timeZone", dict()).get("code", ""))
-                setattr(self, "malwareScheduling_occurrenceType", self.malwareScheduling.get("occurrenceType", ""))
-                setattr(self, "malwareScheduling_occurrence", str(self.malwareScheduling.get("occurrence", "")))
-                setattr(self, "malwareScheduling", None)
 
+                setattr(
+                    self,
+                    "malwareScheduling_timeZone",
+                    self.malwareScheduling.get("timeZone", dict()).get("code", ""),
+                )
+                setattr(
+                    self,
+                    "malwareScheduling_occurrenceType",
+                    self.malwareScheduling.get("occurrenceType", ""),
+                )
+                setattr(
+                    self,
+                    "malwareScheduling_occurrence",
+                    str(self.malwareScheduling.get("occurrence", "")),
+                )
+                setattr(self, "malwareScheduling", None)
 
     def risk_rating(self) -> str:
         """

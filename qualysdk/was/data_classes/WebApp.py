@@ -102,6 +102,14 @@ class WebApp(BaseClass):
     swaggerFile: SwaggerFile = None
     redundancyLinks: BaseList = None
     maxRedundancyLinks: Union[str, int] = None
+    malwareScheduling: dict = None
+    # malwareScheduling is parsed into below field:
+    malwareScheduling_startDate: Union[str, datetime] = None
+    malwareScheduling_timeZone: str = None
+    malwareScheduling_occurrenceType: str = None
+    malwareScheduling_occurrence: Union[dict, str] = None
+    # end malwareScheduling
+
 
     def __post_init__(self):
         DT_FIELDS = ["createdDate", "updatedDate"]
@@ -396,6 +404,19 @@ class WebApp(BaseClass):
             if self.swaggerFile:
                 data = self.swaggerFile
                 setattr(self, "swaggerFile", SwaggerFile.from_dict(data))
+
+            if self.malwareScheduling:
+                startDate = self.malwareScheduling.get("startDate")
+                if startDate:
+                    setattr(self, "malwareScheduling_startDate", datetime.fromisoformat(startDate))
+                else:
+                    setattr(self, "malwareScheduling_startDate", None)
+                
+                setattr(self, "malwareScheduling_timeZone", self.malwareScheduling.get("timeZone", dict()).get("code", ""))
+                setattr(self, "malwareScheduling_occurrenceType", self.malwareScheduling.get("occurrenceType", ""))
+                setattr(self, "malwareScheduling_occurrence", str(self.malwareScheduling.get("occurrence", "")))
+                setattr(self, "malwareScheduling", None)
+
 
     def risk_rating(self) -> str:
         """

@@ -108,11 +108,15 @@ def upload_was_webapps(
         "redundancyLinks": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "maxRedundancyLinks": types.Integer(),
         "malwareScheduling_startDate": types.DateTime(),
-        "malwareScheduling_timeZone": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "malwareScheduling_timeZone": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
         "malwareScheduling_occurrenceType": types.String().with_variant(
             TEXT(charset="utf8"), "mysql", "mariadb"
         ),
-        "malwareScheduling_occurrence": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "malwareScheduling_occurrence": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Prepare the dataclass for insertion:

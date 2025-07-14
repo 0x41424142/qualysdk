@@ -107,6 +107,16 @@ def upload_was_webapps(
         "swaggerFile": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "redundancyLinks": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "maxRedundancyLinks": types.Integer(),
+        "malwareScheduling_startDate": types.DateTime(),
+        "malwareScheduling_timeZone": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "malwareScheduling_occurrenceType": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
+        "malwareScheduling_occurrence": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),
     }
 
     # Prepare the dataclass for insertion:
@@ -122,6 +132,7 @@ def upload_was_webapps(
             "lastScan",
             "createdBy",
             "updatedBy",
+            "malwareScheduling",
         ],
         inplace=True,
     )

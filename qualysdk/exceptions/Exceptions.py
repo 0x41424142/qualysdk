@@ -12,6 +12,14 @@ class AuthenticationError(Exception):
         self.message = message
         super().__init__(message)
 
+class ProxyError(Exception):
+    """
+    Basic exception class for qualysdk when dealing with proxy setting.
+    """
+
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(message)
 
 class InvalidCredentialsError(AuthenticationError):
     """

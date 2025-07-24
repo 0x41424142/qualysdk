@@ -22,7 +22,7 @@ class BasicAuth(BaseAuthentication):
     ```
     platform: str - the platform for the basic authentication. Defaults to "qg3", but can be "qg[1-4]"
     ```
-    Other attributes are inherited from BaseAuthentication - AKA username, password, token, and auth_type
+    Other attributes are inherited from BaseAuthentication - AKA username, password, proxy_url, token, and auth_type
     """
 
     platform: Literal["qg1", "qg2", "qg3", "qg4"] = field(default="qg3", init=True)
@@ -33,7 +33,6 @@ class BasicAuth(BaseAuthentication):
         """
         if self.platform not in ["qg1", "qg2", "qg3", "qg4"]:
             raise ValueError("Platform must be one of 'qg1', 'qg2', 'qg3', or 'qg4'.")
-
         super().__post_init__()
         self.validate_type()
         # self.auth_type = "basic"
@@ -53,6 +52,7 @@ class BasicAuth(BaseAuthentication):
         return {
             "username": self.username,
             "password": self.password,
+            "proxy_url": self.proxy_url,
             "token": self.token,
             "auth_type": self.auth_type,
             "platform": self.platform,
@@ -98,7 +98,7 @@ class BasicAuth(BaseAuthentication):
             url = "https://qualysapi.qualys.com/msp/about.php"
 
         """Requires basic auth. JWT is not supported for this endpoint."""
-        r = get(url, auth=(self.username, self.password))
+        r = get(url, auth=(self.username, self.password),proxies=self.proxy_url)
 
         if r.status_code != 200:
             raise AuthenticationError(f"Failed to authenticate. Requests reporting: {r.text}")

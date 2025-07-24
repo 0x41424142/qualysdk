@@ -15,7 +15,7 @@ from ..exceptions import AuthenticationError
 class TokenAuth(BasicAuth):
     """
     TokenAuth - handles API endpoints that require JWT authentication.
-    This class will take the username, password, and platform attributes from BasicAuth and use them to generate a JWT token via the Qualys JWT-generatio API.
+    This class will take the username, password,  proxy_url and platform attributes from BasicAuth and use them to generate a JWT token via the Qualys JWT-generatio API.
 
     Attributes:
     ```
@@ -55,7 +55,7 @@ class TokenAuth(BasicAuth):
 
         print(f"Generating token for {self.username} on {self.platform} platform.")
 
-        r = post(url, headers=headers, data=payload)
+        r = post(url, headers=headers, data=payload,proxies=self.proxy_url)
 
         if r.status_code != 201:
             raise AuthenticationError(f"Failed to generate token. Requests reporting: {r.text}")

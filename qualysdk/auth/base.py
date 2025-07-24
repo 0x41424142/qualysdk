@@ -3,14 +3,16 @@ base.py - base authentication class for qualysdk
 """
 
 import json
+from urllib.parse import parse_qs, urlparse
 from dataclasses import dataclass, field
-from typing import Optional, Literal, Self
+from typing import Optional, Literal, Self ,Union, Dict
 
 
 from ..exceptions import (
     InvalidCredentialsError,
     InvalidTokenError,
     InvalidAuthTypeError,
+    ProxyError,
 )
 
 
@@ -24,6 +26,7 @@ class BaseAuthentication:
     password: str = field(
         repr=False
     )  # Hide password from repr. If the user wants to see it that badly, they can do so manually with the password attribute.
+    proxy_url: Optional[Union[str, Dict]] = None
     token: Optional[str] = field(default=None, repr=False)  # same goes for token ^^
     auth_type: Literal["basic", "token"] = field(init=False)
 
@@ -31,6 +34,22 @@ class BaseAuthentication:
         """
         Post-init method to determine auth_type based on if a token is passed or not.
         """
+        if self.proxy_url is not None:
+            proxy_error = ProxyError(
+                "Proxy url not valid, valid format should be a string with format scheme://hostname:port"
+            )
+            try:
+                result = urlparse(self.proxy_url)
+                # Check scheme and netloc
+                if not all([result.scheme in ('http', 'https', 'socks5', 'socks4', 'socks'), result.netloc]):
+                    raise proxy_error
+                self.proxy_url = {
+                    'http' : self.proxy_url,
+                    'https': self.proxy_url
+                }
+            except Exception:
+                raise proxy_error
+
         if self.token is None:
             self.auth_type = "basic"
         else:
@@ -64,6 +83,7 @@ class BaseAuthentication:
         return {
             "username": self.username,
             "password": self.password,
+            "proxy_url": self.proxy_url,
             "token": self.token,
             "auth_type": self.auth_type,
         }

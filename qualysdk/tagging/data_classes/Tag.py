@@ -35,6 +35,7 @@ class Tag(BaseClass):
     srcAssetGroupId: int = None
     srcBusinessUnitId: int = None
     provider: str = None
+    reEvalStatus: str = None
 
     def __post_init__(self):
         DT_FIELDS = ["modified", "created"]

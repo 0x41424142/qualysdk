@@ -47,6 +47,7 @@ def upload_tagging_tags(
         "srcAssetGroupId": types.INTEGER(),
         "srcBusinessUnitId": types.INTEGER(),
         "provider": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "reEvalStatus": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
     }
 
     # Prepare the dataclass for insertion:

@@ -2,7 +2,7 @@
   "name": "Python 3",
   "image": "mcr.microsoft.com/devcontainers/python:0-3.11-bullseye",
   "features": {
-    "ghcr.io/devcontainers-contrib/features/coverage-py:2": {}
+    "ghcr.io/devcontainers-extra/features/coverage-py:2": {}
   },
   
   "postCreateCommand": "sudo apt update && sudo apt install sqlite3 -y && pip3 install poetry"

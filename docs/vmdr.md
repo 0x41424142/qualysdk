@@ -1364,3 +1364,129 @@ str(kb_entry.CVEList)
 |```CVEID```| ID, URL |
 |```Compliance``` | _TYPE, SECTION, DESCRIPTION |
 | ```Bugtraq``` | ID, URL |
+
+
+## ```qualysdk-users``` CLI tool
+
+The ```qualysdk-users``` CLI tool is a command-line interface for the VMDR user management portion of the SDK. It allows you to quickly pull down a list of users, create, or edit users.
+
+### Usage
+
+```bash
+usage: qualysdk-users [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {get_users,create_user,edit_user} ...
+
+CLI script to quickly perform user management operations using qualysdk
+
+positional arguments:
+  {get_users,create_user,edit_user}
+                        Action to perform
+    get_users           Get the users that match the given criteria.
+    create_user         Create a new user.
+    edit_user           Edit an existing user.
+
+options:
+  -h, --help            show this help message and exit
+  -u, --username USERNAME
+                        Qualys username
+  -p, --password PASSWORD
+                        Qualys password
+  -P, --platform {qg1,qg2,qg3,qg4}
+                        Qualys platform
+```
+
+### Create User
+
+```bash
+usage: qualysdk-users create_user [-h] [-nW] [-aG ASSET_GROUPS] [-f FAX] [-a2 ADDRESS2] [-z ZIP_CODE] [-eID EXTERNAL_ID]
+                                  {manager,unit_manager,scanner,reader,contact,administrator} unit first_name last_name title phone email address1 city state country
+
+positional arguments:
+  {manager,unit_manager,scanner,reader,contact,administrator}
+                        The role of the user to create
+  unit                  The business unit of the user to create. Use 'Unassigned' if the user does not belong to a business unit.
+  first_name            The first name of the user to create
+  last_name             The last name of the user to create
+  title                 The title of the user to create
+  phone                 The phone number of the user to create
+  email                 The email of the user to create
+  address1              The address of the user to create
+  city                  The city of the user to create
+  state                 The state of the user to create. Must be the full name of the state, e.g. 'Maryland' or 'Pennsylvania'
+  country               The country of the user to create. Must be the full name of the country, e.g. 'United States of America' or 'Canada'
+
+options:
+  -h, --help            show this help message and exit
+  -nW, --no-welcome-email
+                        If set, do not send a welcome email to the user, instead return the user login credentials to stdout. Default is to send a welcome email.
+  -aG, --asset-groups ASSET_GROUPS
+                        Comma-separated string of asset group IDs to assign to the user
+  -f, --fax FAX         The fax number of the user. Because we're still in the 1980s, and Rick Astley is never gonna give you up...
+  -a2, --address2 ADDRESS2
+                        The second line of the address of the user if applicable
+  -z, --zip-code ZIP_CODE
+                        The zip code of the user
+  -eID, --external-id EXTERNAL_ID
+                        The external ID of the user. This is a unique identifier for the user in your system.
+```
+
+### Edit User
+
+```bash
+usage: qualysdk-users edit_user [-h] [--asset-groups ASSET_GROUPS]
+                                [--first-name FIRST_NAME]
+                                [--last-name LAST_NAME] [--title TITLE]
+                                [--phone PHONE] [--fax FAX] [--email EMAIL]
+                                [--address1 ADDRESS1] [--address2 ADDRESS2]
+                                [--city CITY] [--state STATE]
+                                [--country COUNTRY] [--zip-code ZIP_CODE]
+                                [--external-id EXTERNAL_ID]
+                                user_id
+
+positional arguments:
+  user_id               Username of the user to edit
+
+options:
+  -h, --help            show this help message and exit
+  --asset-groups ASSET_GROUPS
+                        Comma-separated string of asset group IDs to assign to
+                        the user
+  --first-name FIRST_NAME
+                        New first name of the user
+  --last-name LAST_NAME
+                        New last name of the user
+  --title TITLE         New title of the user
+  --phone PHONE         New phone number of the user
+  --fax FAX             New fax number of the user
+  --email EMAIL         New email of the user
+  --address1 ADDRESS1   New address of the user
+  --address2 ADDRESS2   New second line of the address of the user if
+                        applicable
+  --city CITY           New city of the user
+  --state STATE         New state of the user. Must be the full name of the
+                        state, e.g. 'Maryland' or 'Pennsylvania'
+  --country COUNTRY     New country of the user. Must be the full name of the
+                        country, e.g. 'United States of America' or 'Canada'
+  --zip-code ZIP_CODE   New zip code of the user
+  --external-id EXTERNAL_ID
+                        New external ID of the user. This is a unique
+                        identifier for the user in your system.
+
+```
+
+### Get Users
+
+```bash
+usage: qualysdk-users get_users [-h] [-o OUTPUT]
+                                [--external-id-contains EXTERNAL_ID_CONTAINS]
+                                [--external-id-assigned]
+
+options:
+  -h, --help            show this help message and exit
+  -o, --output OUTPUT   Output (json) file to write results to
+  --external-id-contains EXTERNAL_ID_CONTAINS
+                        Specify an external ID to filter users by
+  --external-id-assigned
+                        If set, only return users with an external ID assigned
+                        to their Qualys account
+
+```

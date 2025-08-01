@@ -23,12 +23,12 @@ python = "^3.11"
 requests = "2.32.4"
 frozendict = "^2.4.4"
 bs4 = "^0.0.2"
-lxml = "^5.2.2"
+lxml = ">=5.2.2,<7.0.0"
 pandas = "^2.2.2"
 mkdocs = "^1.6.0"
 sqlalchemy = "^2.0.37"
 numpy = "^2.2.1"
-pymssql = "2.3.1"
+pymssql = "2.3.7"
 pymysql = "^1.1.1"
 pymdown-extensions = "^10.14"
 mkdocs-material = "^9.5.48"
@@ -39,7 +39,7 @@ psycopg2-binary = [
 ]
 xmltodict = ">=0.13,<0.15"
 defusedxml = "^0.7.1"
-packaging = "^24.1"
+packaging = ">=24.1,<26.0"
 xlsxwriter = "^3.0.5"
 
 

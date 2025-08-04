@@ -12,3 +12,4 @@ from .vmdr_schema import VMDR_SCHEMA
 from .was_schema import WAS_SCHEMA
 from .certview_schema import CERTVIEW_SCHEMA
 from .tagging_schema import TAGGING_SCHEMA
+from .admin_schema import ADMIN_SCHEMA

@@ -1,0 +1,1 @@
+from .rbac import get_user_details

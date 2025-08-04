@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qualysdk"
-version = "0.3.8"
+version = "0.3.9"
 description = "SDK for interacting with Qualys APIs, across most modules the platform offers."
 authors = ["0x41424142 <jake@jakelindsay.uk>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
 maintainers = ["Jake Lindsay <jake@jakelindsay.uk>"]
@@ -25,7 +25,6 @@ frozendict = "^2.4.4"
 bs4 = "^0.0.2"
 lxml = "^5.2.2"
 pandas = "^2.2.2"
-mkdocs = "^1.6.0"
 sqlalchemy = "^2.0.37"
 numpy = "^2.2.1"
 pymssql = "2.3.1"
@@ -57,6 +56,9 @@ qualysdk-pm = 'qualysdk.cli.qualysdk_pm:main'
 qualysdk-cert = 'qualysdk.cli.qualysdk_cert:main'
 qualysdk-tag = 'qualysdk.cli.qualysdk_tag:main'
 qualysdk-users = 'qualysdk.cli.qualysdk_users:main'
+
+[tool.poetry.group.dev.dependencies]
+mkdocs = "^1.6.1"
 
 [build-system]
 requires = ["poetry-core"]

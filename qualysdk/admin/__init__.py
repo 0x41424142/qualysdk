@@ -1,1 +1,1 @@
-from .rbac import get_user_details
+from .rbac import get_user_details, search_users

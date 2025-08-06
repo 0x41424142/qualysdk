@@ -139,3 +139,50 @@ users = search_users(auth, role_name='Role1')
     )
 ]
 ```
+
+## Update User Roles and Tags
+
+`update_user` updates a user's roles and tags by their admin ID. This is useful for managing user permissions and organization within the Qualys platform.
+
+>Head's up! This API appears to be rather finicky with the user-provided values. You may notice that despite returning a `SUCCESS` response, the changes may not be applied as expected. If you encounter issues, try making changes across multiple API calls instead of all at once. For example, first add roles, then add tags, and finally remove roles or tags in separate calls.
+
+|Parameter| Possible Values |Description| Required|
+|--|--|--|--|
+|```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |
+| ```user_id``` | ```int``` | The ID of the user to update. | ✅ |
+| ```add_role_ids``` | ```list[int]``` | A list of role IDs to add to the user. | ❌ |
+| ```add_role_names``` | ```list[str]``` | A list of role names to add to the user. | ❌ |
+| ```remove_role_ids``` | ```list[int]``` | A list of role IDs to remove from the user. | ❌ |
+| ```remove_role_names``` | ```list[str]``` | A list of role names to remove from the user. | ❌ |
+| ```add_tag_ids``` | ```list[int]``` | A list of tag IDs to add to the user. | ❌ |
+| ```add_tag_names``` | ```list[str]``` | A list of tag names to add to the user. | ❌ |
+| ```remove_tag_ids``` | ```list[int]``` | A list of tag IDs to remove from the user. | ❌ |
+| ```remove_tag_names``` | ```list[str]``` | A list of tag names to remove from the user. | ❌ |
+
+<p style="color:red;font-size: 20px;"><b><u>Note that at least one of the add or remove parameters must be provided!</u></b></p>
+
+```py
+from qualysdk.auth import BasicAuth
+from qualysdk.admin import update_user, search_users
+
+auth = BasicAuth(<username>, <password>, platform='qg1')
+
+#First, lets search for the user we want to update:
+user = search_users(auth, username='jdoe')
+>>>User(
+    id=12345678,
+    username='jdoe',
+    ...
+)
+
+# Now we can update the user by their ID:
+update_user(
+    auth=auth,
+    user_id=user.id,
+    add_role_names=['New Role'],
+    add_tag_names=['New Tag'],
+    remove_role_names=['Old Role'],
+    remove_tag_names=['Old Tag']
+)
+>>>SUCCESS
+

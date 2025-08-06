@@ -6,6 +6,8 @@ These APIs allow for the management of user roles, tags and permissions within t
 
 from typing import Union, overload, Literal
 
+from xmltodict import unparse
+
 from .data_classes.User import User
 from ..auth import BasicAuth
 from ..base.base_list import BaseList
@@ -164,3 +166,128 @@ def search_users(
             })
             print(f"Found {len(users)} users on current page, continuing to next page...")
     return users_list
+
+def _validate_list(param, expected_type, param_name):
+    if param is not None and not all(isinstance(i, expected_type) for i in param):
+        raise TypeError(f"{param_name} must be a list of {expected_type.__name__}s")
+
+def update_user(
+        auth: BasicAuth,
+        user_id: Union[int, str],
+        add_tag_ids: list[int] = None,
+        add_tag_names: list[str] = None,
+        add_role_ids: list[int] = None,
+        add_role_names: list[str] = None,
+        remove_tag_ids: list[int] = None,
+        remove_tag_names: list[str] = None,
+        remove_role_ids: list[int] = None,
+        remove_role_names: list[str] = None
+) -> str:
+    """
+    Update a user by adding or removing tags and roles.
+
+    :param auth: Authentication object
+    :param user_id: The ID of the user to update
+    :param add_tag_ids: List of tag IDs to add to the user
+    :param add_tag_names: List of tag names to add to the user
+    :param add_role_ids: List of role IDs to add to the user
+    :param add_role_names: List of role names to add to the user
+    :param remove_tag_ids: List of tag IDs to remove from the user
+    :param remove_tag_names: List of tag names to remove from the user
+    :param remove_role_ids: List of role IDs to remove from the user
+    :param remove_role_names: List of role names to remove from the user
+    :return: Response message indicating success or failure
+    """
+    
+    # Check which parameters are provided
+    if not any([add_tag_ids, add_tag_names, add_role_ids, add_role_names,
+                remove_tag_ids, remove_tag_names, remove_role_ids, remove_role_names]):
+        raise ValueError("At least one parameter must be provided to update the user.")
+    
+    # check that provided parameters are lists with the correct types inside:
+    param_validations = [
+        (add_tag_ids, int, "add_tag_ids"),
+        (add_tag_names, str, "add_tag_names"),
+        (add_role_ids, int, "add_role_ids"),
+        (add_role_names, str, "add_role_names"),
+        (remove_tag_ids, int, "remove_tag_ids"),
+        (remove_tag_names, str, "remove_tag_names"),
+        (remove_role_ids, int, "remove_role_ids"),
+        (remove_role_names, str, "remove_role_names"),
+    ]
+
+    for param, expected_type, param_name in param_validations:
+        _validate_list(param, expected_type, param_name)
+
+    # Template the XML payload
+    xmlpayload = {
+        "ServiceRequest": {
+            "data": {
+                "User": {
+                    "scopeTags": {
+                        "add": [],
+                        "remove": []
+                    },
+                    "roleList": {
+                        "add": [],
+                        "remove": []
+                    },
+                }
+            }
+        }
+    }
+
+    # Add tags to the payload
+    if add_tag_ids:
+        xmlpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["add"].extend(
+            [{"TagData": {"id": tag_id}} for tag_id in add_tag_ids]
+        )
+    if add_tag_names:
+        xmlpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["add"].extend(
+            [{"TagData": {"name": tag_name}} for tag_name in add_tag_names]
+        )
+    if remove_tag_ids:
+        xmlpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["remove"].extend(
+            [{"TagData": {"id": tag_id}} for tag_id in remove_tag_ids]
+        )
+    if remove_tag_names:
+        xmlpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["remove"].extend(
+            [{"TagData": {"name": tag_name}} for tag_name in remove_tag_names]
+        )
+
+    # Add roles to the payload
+    if add_role_ids:
+        xmlpayload["ServiceRequest"]["data"]["User"]["roleList"]["add"].extend(
+            [{"RoleData": {"id": role_id}} for role_id in add_role_ids]
+        )
+    if add_role_names:
+        xmlpayload["ServiceRequest"]["data"]["User"]["roleList"]["add"].extend(
+            [{"RoleData": {"name": role_name}} for role_name in add_role_names]
+        )
+    if remove_role_ids:
+        xmlpayload["ServiceRequest"]["data"]["User"]["roleList"]["remove"].extend(
+            [{"RoleData": {"id": role_id}} for role_id in remove_role_ids]
+        )
+    if remove_role_names:
+        xmlpayload["ServiceRequest"]["data"]["User"]["roleList"]["remove"].extend(
+            [{"RoleData": {"name": role_name}} for role_name in remove_role_names]
+        )
+
+    # Make the API call
+    response = call_api(
+        auth=auth,
+        module="admin",
+        endpoint="update_user",
+        payload={"_xml_data": unparse(xmlpayload)},
+        headers={"Accept": "application/json", "Content-Type": "text/xml"},
+        params={"placeholder": user_id}
+    )
+
+    data = response.json()
+    if data.get("ServiceResponse", {}).get("responseErrorDetails"):
+        error_message = data["ServiceResponse"]["responseErrorDetails"]["errorMessage"]
+        raise Exception(f"Error updating user: {error_message}")
+    if not "count" in data.get("ServiceResponse", {}):
+        print("No count key in response. Assume failure.")
+        return "Failure: No count key in response)."
+    return data["ServiceResponse"]["responseCode"]

@@ -46,7 +46,7 @@ def get_user_details(auth: BasicAuth, user_id: Union[int, str, list[int], list[s
     else:
         raise TypeError("user_id must be an int, str, or list of ints/strs")
 
-    for uid in user_id:
+    for uid in users:
         print(f"Querying user ID: {uid}")
         response = call_api(
             auth=auth,

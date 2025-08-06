@@ -56,6 +56,7 @@ qualysdk-pm = 'qualysdk.cli.qualysdk_pm:main'
 qualysdk-cert = 'qualysdk.cli.qualysdk_cert:main'
 qualysdk-tag = 'qualysdk.cli.qualysdk_tag:main'
 qualysdk-users = 'qualysdk.cli.qualysdk_users:main'
+qualysdk-rbac = 'qualysdk.cli.qualysdk_rbac:main'
 
 [tool.poetry.group.dev.dependencies]
 mkdocs = "^1.6.1"

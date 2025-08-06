@@ -187,4 +187,95 @@ update_user(
     remove_tag_names=['Old Tag']
 )
 >>>SUCCESS
+```
 
+## ```qualysdk-rbac``` CLI tool
+
+The ```qualysdk-rbac``` CLI tool is a command-line interface for the RBAC (Role-Based Access Control) portion of the SDK. It allows you to quickly search users tags, scopes/roles, and update them as needed. You can optionally save the results to a file in JSON format.
+
+### Usage
+
+```bash
+usage: qualysdk-rbac [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {get_user_details,search_users,update_user} ...
+
+CLI script to quickly perform user permissions operations in the administration module using qualysdk.
+
+positional arguments:
+  {get_user_details,search_users,update_user}
+                        Action to perform
+    get_user_details    Get the details of a specific user from the Qualys administration module.
+    search_users        Search for users in the admin module.
+    update_user         Update an existing user's tags/scope.
+
+options:
+  -h, --help            show this help message and exit
+  -u, --username USERNAME
+                        Qualys username
+  -p, --password PASSWORD
+                        Qualys password
+  -P, --platform {qg1,qg2,qg3,qg4}
+                        Qualys platform
+```
+
+### Get User Details
+
+```bash
+usage: qualysdk-rbac get_user_details [-h] [-o OUTPUT] user_id
+
+positional arguments:
+  user_id              The administration ID of the user to retrieve details for
+
+options:
+  -h, --help           show this help message and exit
+  -o, --output OUTPUT  Output (json) file to write results to
+```
+
+### Search Users
+
+```bash
+usage: qualysdk-rbac search_users [-h] [-r ROLE] [-i USER_ID] [--id-operator {EQUALS,GREATER,LESSER}] [-qU QUALYS_USERNAME] [-a] [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -r, --role ROLE       The role of the user(s) to search for
+  -i, --user-id USER_ID
+                        The user ID to search for
+  --id-operator {EQUALS,GREATER,LESSER}
+                        The operator to use for the user ID search
+  -qU, --qualys-username QUALYS_USERNAME
+                        The username to search for
+  -a, --all             If set, will return all active users. Shorthand for `--user-id=1` & --id-operator='GREATER'.
+  -o, --output OUTPUT   Output (json) file to write results to
+```
+
+## Update User
+
+```bash
+usage: qualysdk-rbac update_user [-h] [--add-tag-ids ADD_TAG_IDS [ADD_TAG_IDS ...]] [--add-tag-names ADD_TAG_NAMES [ADD_TAG_NAMES ...]] [--add-role-ids ADD_ROLE_IDS [ADD_ROLE_IDS ...]]
+                                 [--add-role-names ADD_ROLE_NAMES [ADD_ROLE_NAMES ...]] [--remove-tag-ids REMOVE_TAG_IDS [REMOVE_TAG_IDS ...]]
+                                 [--remove-tag-names REMOVE_TAG_NAMES [REMOVE_TAG_NAMES ...]] [--remove-role-ids REMOVE_ROLE_IDS [REMOVE_ROLE_IDS ...]]
+                                 [--remove-role-names REMOVE_ROLE_NAMES [REMOVE_ROLE_NAMES ...]]
+                                 user_id
+
+positional arguments:
+  user_id               ID of the user to update
+
+options:
+  -h, --help            show this help message and exit
+  --add-tag-ids ADD_TAG_IDS [ADD_TAG_IDS ...]
+                        List of tag IDs to add to the user. Use like: --add-tag-ids 123 456 789
+  --add-tag-names ADD_TAG_NAMES [ADD_TAG_NAMES ...]
+                        List of tag names to add to the user. Use like: --add-tag-names tag1 tag2 tag3
+  --add-role-ids ADD_ROLE_IDS [ADD_ROLE_IDS ...]
+                        List of role IDs to add to the user. Use like: --add-role-ids 123 456 789
+  --add-role-names ADD_ROLE_NAMES [ADD_ROLE_NAMES ...]
+                        List of role names to add to the user. Use like: --add-role-names role1 role2 role3
+  --remove-tag-ids REMOVE_TAG_IDS [REMOVE_TAG_IDS ...]
+                        List of tag IDs to remove from the user. Use like: --remove-tag-ids 123 456 789
+  --remove-tag-names REMOVE_TAG_NAMES [REMOVE_TAG_NAMES ...]
+                        List of tag names to remove from the user. Use like: --remove-tag-names tag1 tag2 tag3
+  --remove-role-ids REMOVE_ROLE_IDS [REMOVE_ROLE_IDS ...]
+                        List of role IDs to remove from the user. Use like: --remove-role-ids 123 456 789
+  --remove-role-names REMOVE_ROLE_NAMES [REMOVE_ROLE_NAMES ...]
+                        List of role names to remove from the user. Use like: --remove-role-names role1 role2 role3
+```

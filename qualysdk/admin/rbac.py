@@ -13,19 +13,22 @@ from ..auth import BasicAuth
 from ..base.base_list import BaseList
 from ..base.call_api import call_api
 
-_UserIdOperator = [
-    "EQUALS",
-    "GREATER",
-    "LESSER"
-]
+_UserIdOperator = ["EQUALS", "GREATER", "LESSER"]
+
 
 @overload
-def get_user_details(auth: BasicAuth, user_id: Union[int, str]) -> User: ...
+def get_user_details(auth: BasicAuth, user_id: Union[int, str]) -> User:
+    ...
+
 
 @overload
-def get_user_details(auth: BasicAuth, user_id: Union[list[int], list[str]]) -> BaseList[User]: ...
+def get_user_details(auth: BasicAuth, user_id: Union[list[int], list[str]]) -> BaseList[User]:
+    ...
 
-def get_user_details(auth: BasicAuth, user_id: Union[int, str, list[int], list[str]]) -> Union[User, BaseList[User]]:
+
+def get_user_details(
+    auth: BasicAuth, user_id: Union[int, str, list[int], list[str]]
+) -> Union[User, BaseList[User]]:
     """
     Get the administration details of user(s) by their admin user ID.
 
@@ -33,14 +36,16 @@ def get_user_details(auth: BasicAuth, user_id: Union[int, str, list[int], list[s
     :param user_id: Admin user ID or list of Admin user IDs to query
     :return: User object or BaseList of User objects
     """
-    
+
     users = []
     responses = BaseList()
-    
+
     if isinstance(user_id, (int, str)):
         # single user ID
         users.append(user_id)
-    elif isinstance(user_id, (BaseList, list)) and all(isinstance(uid, (int, str)) for uid in user_id):
+    elif isinstance(user_id, (BaseList, list)) and all(
+        isinstance(uid, (int, str)) for uid in user_id
+    ):
         # list of user IDs
         users.extend(user_id)
     else:
@@ -70,18 +75,19 @@ def get_user_details(auth: BasicAuth, user_id: Union[int, str, list[int], list[s
     else:
         return responses
 
+
 def search_users(
-        auth: BasicAuth, 
-        user_id: Union[int, str] = None, 
-        user_id_operator: Literal["EQUALS", "GREATER", "LESSER"] = "EQUALS",
-        username: str = None, 
-        role_name: Union[str, list[str]] = None,
-        ) -> BaseList[User]:
+    auth: BasicAuth,
+    user_id: Union[int, str] = None,
+    user_id_operator: Literal["EQUALS", "GREATER", "LESSER"] = "EQUALS",
+    username: str = None,
+    role_name: Union[str, list[str]] = None,
+) -> BaseList[User]:
     """
     Search for users based on various criteria.
 
     NOTE: To get all users, set `user_id` to 1 and `user_id_operator` to 'GREATER'.
-    
+
     :param auth: Authentication object
     :param user_id: The ID of the user to search for.
     :param user_id_operator: The operator to use when searching by user ID. Defaults to 'EQUALS'. Must be one of 'EQUALS', 'GREATER', or 'LESSER'.
@@ -94,44 +100,37 @@ def search_users(
 
     # First, check search criteria
     if not any([user_id, username, role_name]):
-        raise ValueError("At least one search criterion must be provided: user_id, username, or role_name.")
-    
-    jsonpayload = {
-        "ServiceRequest": {
-            "filters": {
-                "Criteria": []
-            }
+        raise ValueError(
+            "At least one search criterion must be provided: user_id, username, or role_name."
+        )
 
-        }
-    }
+    jsonpayload = {"ServiceRequest": {"filters": {"Criteria": []}}}
 
     if user_id is not None:
-        #user_id can be only be a single int or str
+        # user_id can be only be a single int or str
         if not isinstance(user_id, (int, str)):
             raise TypeError("user_id must be an int or str")
         if user_id_operator not in _UserIdOperator:
             raise ValueError(f"user_id_operator must be one of {_UserIdOperator}")
-        jsonpayload["ServiceRequest"]["filters"]["Criteria"].append({
-            "field": "id",
-            "operator": user_id_operator,
-            "value": user_id
-        })
+        jsonpayload["ServiceRequest"]["filters"]["Criteria"].append(
+            {"field": "id", "operator": user_id_operator, "value": user_id}
+        )
 
     if username is not None:
-        jsonpayload["ServiceRequest"]["filters"]["Criteria"].append({
-            "field": "username",
-            "operator": "EQUALS",
-            "value": username,
-        })
+        jsonpayload["ServiceRequest"]["filters"]["Criteria"].append(
+            {
+                "field": "username",
+                "operator": "EQUALS",
+                "value": username,
+            }
+        )
 
     if role_name is not None:
-        jsonpayload["ServiceRequest"]["filters"]["Criteria"].append({
-            "field": "roleName",
-            "operator": "EQUALS",
-            "value": role_name
-        })
+        jsonpayload["ServiceRequest"]["filters"]["Criteria"].append(
+            {"field": "roleName", "operator": "EQUALS", "value": role_name}
+        )
 
-    #start pagination
+    # start pagination
     users_list = BaseList()
     while True:
         response = call_api(
@@ -150,7 +149,7 @@ def search_users(
         if data["ServiceResponse"].get("count", 0) == 0 and "data" not in data["ServiceResponse"]:
             print("No users found matching the search criteria.")
             break
-        
+
         users = data["ServiceResponse"]["data"]
 
         if data["ServiceResponse"].get("count", 0) == 1:
@@ -161,29 +160,29 @@ def search_users(
             if not data["ServiceResponse"].get("hasMoreRecords", False) in [True, "true"]:
                 print(f"Found {len(users)} users on final page, no more records to fetch.")
                 break
-            jsonpayload["ServiceRequest"]["filters"]["Criteria"].append({
-                "field": "id",
-                "operator": "GREATER",
-                "value": data["ServiceResponse"]["lastId"]
-            })
+            jsonpayload["ServiceRequest"]["filters"]["Criteria"].append(
+                {"field": "id", "operator": "GREATER", "value": data["ServiceResponse"]["lastId"]}
+            )
             print(f"Found {len(users)} users on current page, continuing to next page...")
     return users_list
+
 
 def _validate_list(param, expected_type, param_name):
     if param is not None and not all(isinstance(i, expected_type) for i in param):
         raise TypeError(f"{param_name} must be a list of {expected_type.__name__}s")
 
+
 def update_user(
-        auth: BasicAuth,
-        user_id: Union[int, str],
-        add_tag_ids: list[int] = None,
-        add_tag_names: list[str] = None,
-        add_role_ids: list[int] = None,
-        add_role_names: list[str] = None,
-        remove_tag_ids: list[int] = None,
-        remove_tag_names: list[str] = None,
-        remove_role_ids: list[int] = None,
-        remove_role_names: list[str] = None
+    auth: BasicAuth,
+    user_id: Union[int, str],
+    add_tag_ids: list[int] = None,
+    add_tag_names: list[str] = None,
+    add_role_ids: list[int] = None,
+    add_role_names: list[str] = None,
+    remove_tag_ids: list[int] = None,
+    remove_tag_names: list[str] = None,
+    remove_role_ids: list[int] = None,
+    remove_role_names: list[str] = None,
 ) -> str:
     """
     Update a user by adding or removing tags and roles.
@@ -200,12 +199,22 @@ def update_user(
     :param remove_role_names: List of role names to remove from the user
     :return: Response message indicating success or failure
     """
-    
+
     # Check which parameters are provided
-    if not any([add_tag_ids, add_tag_names, add_role_ids, add_role_names,
-                remove_tag_ids, remove_tag_names, remove_role_ids, remove_role_names]):
+    if not any(
+        [
+            add_tag_ids,
+            add_tag_names,
+            add_role_ids,
+            add_role_names,
+            remove_tag_ids,
+            remove_tag_names,
+            remove_role_ids,
+            remove_role_names,
+        ]
+    ):
         raise ValueError("At least one parameter must be provided to update the user.")
-    
+
     # check that provided parameters are lists with the correct types inside:
     param_validations = [
         (add_tag_ids, int, "add_tag_ids"),
@@ -226,14 +235,8 @@ def update_user(
         "ServiceRequest": {
             "data": {
                 "User": {
-                    "scopeTags": {
-                        "add": [],
-                        "remove": []
-                    },
-                    "roleList": {
-                        "add": [],
-                        "remove": []
-                    },
+                    "scopeTags": {"add": [], "remove": []},
+                    "roleList": {"add": [], "remove": []},
                 }
             }
         }
@@ -282,7 +285,7 @@ def update_user(
         endpoint="update_user",
         payload={"_xml_data": unparse(xmlpayload)},
         headers={"Accept": "application/json", "Content-Type": "text/xml"},
-        params={"placeholder": user_id}
+        params={"placeholder": user_id},
     )
 
     data = response.json()

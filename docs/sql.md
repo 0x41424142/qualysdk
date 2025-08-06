@@ -149,6 +149,7 @@ The final optional parameter is ```table_name```. If you want to specify a custo
 | ```upload_pm_product_vuln_counts``` | Patch Management | ```pm.count_product_vulns()``` | ```pm_product_vuln_counts``` |
 | ```upload_cert_certs``` | Certificate View | ```cert.list_certs()``` | ```cert_certs``` for certificates and ```cert_assets``` for assets (key = certs.id -> assets.certId) |
 | ```upload_tagging_tags``` | Tagging | ```tagging.get_tags()``` | ```tagging_tags``` |
+| ```upload_admin_userdata``` | Administration | ```admin.search_users()``` or ```admin.get_user_details()``` | ```admin_userdata``` |
 
 ```py
 from qualysdk.sql import *

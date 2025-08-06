@@ -240,6 +240,7 @@ def call_api(
                 "pm",
                 "cert",
                 "tagging",
+                "admin",
             ]
             and response.status_code in range(400, 599)
             and response.status_code not in [429, 414]

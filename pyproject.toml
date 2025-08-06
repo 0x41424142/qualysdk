@@ -23,13 +23,12 @@ python = "^3.11"
 requests = "2.32.4"
 frozendict = "^2.4.4"
 bs4 = "^0.0.2"
-lxml = "^5.2.2"
-pandas = "^2.2.2"
+lxml = "6.0.0"
+pandas = "2.3.1"
 sqlalchemy = "^2.0.37"
-numpy = "^2.2.1"
+numpy = "2.3.2"
 pymssql = "2.3.1"
 pymysql = "^1.1.1"
-pymdown-extensions = "^10.14"
 mkdocs-material = "^9.5.48"
 psycopg2 = {version = "^2.9.9", platform = "win32"}
 psycopg2-binary = [
@@ -38,8 +37,8 @@ psycopg2-binary = [
 ]
 xmltodict = ">=0.13,<0.15"
 defusedxml = "^0.7.1"
-packaging = "^24.1"
-xlsxwriter = "^3.0.5"
+packaging = "25.0"
+xlsxwriter = "3.2.5"
 
 
 [tool.poetry.urls]
@@ -60,6 +59,7 @@ qualysdk-rbac = 'qualysdk.cli.qualysdk_rbac:main'
 
 [tool.poetry.group.dev.dependencies]
 mkdocs = "^1.6.1"
+pymdown-extensions = "^10.16.1"
 
 [build-system]
 requires = ["poetry-core"]

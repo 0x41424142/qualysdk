@@ -17,11 +17,11 @@ def cli_users(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             if args.all:
                 # If --all is set, we search for all active users
                 args.user_id = 1
-                args.id_operator = 'GREATER'
+                args.id_operator = "GREATER"
             elif not args.user_id:
                 # If no user_id is provided, we default to searching for all users
                 args.user_id = None
-                args.id_operator = 'EQUALS'
+                args.id_operator = "EQUALS"
             result = search_users(
                 auth,
                 role_name=args.role,
@@ -31,7 +31,7 @@ def cli_users(auth: BasicAuth, args: Namespace, endpoint: str) -> None:
             )
         case "update_user":
             result = update_user(
-                auth, 
+                auth,
                 args.user_id,
                 add_tag_ids=args.add_tag_ids if args.add_tag_ids else None,
                 add_tag_names=args.add_tag_names if args.add_tag_names else None,
@@ -72,7 +72,8 @@ def main():
 
     # get_user_details action:
     get_user_details_parser = subparsers.add_parser(
-        "get_user_details", help="Get the details of a specific user from the Qualys administration module."
+        "get_user_details",
+        help="Get the details of a specific user from the Qualys administration module.",
     )
 
     get_user_details_parser.add_argument(
@@ -90,7 +91,9 @@ def main():
     )
 
     # search_users action:
-    search_users_parser = subparsers.add_parser("search_users", help="Search for users in the admin module.")
+    search_users_parser = subparsers.add_parser(
+        "search_users", help="Search for users in the admin module."
+    )
 
     search_users_parser.add_argument(
         "-r",
@@ -139,7 +142,9 @@ def main():
         default=None,
     )
 
-    update_user_parser = subparsers.add_parser("update_user", help="Update an existing user's tags/scope.")
+    update_user_parser = subparsers.add_parser(
+        "update_user", help="Update an existing user's tags/scope."
+    )
 
     update_user_parser.add_argument(
         "user_id",
@@ -221,17 +226,28 @@ def main():
         result = cli_users(auth=auth, args=args, endpoint="get_user_details")
     elif args.action == "search_users":
         if not any([args.role, args.user_id, args.qualys_username, args.all]):
-            parser.error("At least one of --role, --user-id, --qualys-username, or --all must be specified.")
+            parser.error(
+                "At least one of --role, --user-id, --qualys-username, or --all must be specified."
+            )
         result = cli_users(auth=auth, args=args, endpoint="search_users")
     elif args.action == "update_user":
-        if not any([
-            args.add_tag_ids, args.add_tag_names, args.add_role_ids,
-            args.add_role_names, args.remove_tag_ids, args.remove_tag_names,
-            args.remove_role_ids, args.remove_role_names
-        ]):
-            parser.error("At least one of --add-tag-ids, --add-tag-names, --add-role-ids, "
-                         "--add-role-names, --remove-tag-ids, --remove-tag-names, "
-                         "--remove-role-ids, or --remove-role-names must be specified.")
+        if not any(
+            [
+                args.add_tag_ids,
+                args.add_tag_names,
+                args.add_role_ids,
+                args.add_role_names,
+                args.remove_tag_ids,
+                args.remove_tag_names,
+                args.remove_role_ids,
+                args.remove_role_names,
+            ]
+        ):
+            parser.error(
+                "At least one of --add-tag-ids, --add-tag-names, --add-role-ids, "
+                "--add-role-names, --remove-tag-ids, --remove-tag-names, "
+                "--remove-role-ids, or --remove-role-names must be specified."
+            )
         result = cli_users(auth=auth, args=args, endpoint="update_user")
     else:
         parser.print_help()

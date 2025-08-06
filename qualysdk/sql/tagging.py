@@ -4,7 +4,7 @@ Contains the functions to upload supported tagging API pulls to SQL DBs.
 
 from datetime import datetime
 
-from pandas import DataFrame, concat
+from pandas import DataFrame
 from sqlalchemy import Connection, types
 from sqlalchemy.dialects.mysql import TEXT
 

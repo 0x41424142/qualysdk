@@ -79,6 +79,8 @@ def search_users(
         ) -> BaseList[User]:
     """
     Search for users based on various criteria.
+
+    NOTE: To get all users, set `user_id` to 1 and `user_id_operator` to 'GREATER'.
     
     :param auth: Authentication object
     :param user_id: The ID of the user to search for.

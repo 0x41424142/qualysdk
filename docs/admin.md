@@ -75,6 +75,8 @@ users = get_user_details(auth, user_id=[12345678, 87654321])
 
 `search_users` searches for users in the Qualys platform by their admin ID, username, or role name. This is useful for finding users based on specific criteria so their roles and scopes can be updated.
 
+> NOTE: To get all users, set `user_id` to `1` and `user_id_operator` to `'GREATER'`.
+
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |

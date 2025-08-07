@@ -230,13 +230,27 @@ def update_user(
     for param, expected_type, param_name in param_validations:
         _validate_list(param, expected_type, param_name)
 
-    # Template the XML payload
-    xmlpayload = {
+    # Template the JSON payload
+    jsonpayload = {
         "ServiceRequest": {
             "data": {
                 "User": {
-                    "scopeTags": {"add": [], "remove": []},
-                    "roleList": {"add": [], "remove": []},
+                    "scopeTags": {
+                        "add": {
+                            "TagData": []
+                        }, 
+                        "remove": {
+                            "TagData": []
+                        }
+                    },
+                    "roleList": {
+                        "add": {
+                            "RoleData": []
+                        },
+                        "remove": {
+                            "RoleData": []
+                        }
+                    },
                 }
             }
         }
@@ -244,38 +258,38 @@ def update_user(
 
     # Add tags to the payload
     if add_tag_ids:
-        xmlpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["add"].extend(
-            [{"TagData": {"id": tag_id}} for tag_id in add_tag_ids]
+        jsonpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["add"]["TagData"].extend(
+            [{"id": tag_id} for tag_id in add_tag_ids]
         )
     if add_tag_names:
-        xmlpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["add"].extend(
-            [{"TagData": {"name": tag_name}} for tag_name in add_tag_names]
+        jsonpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["add"]["TagData"].extend(
+            [{"name": tag_name} for tag_name in add_tag_names]
         )
     if remove_tag_ids:
-        xmlpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["remove"].extend(
-            [{"TagData": {"id": tag_id}} for tag_id in remove_tag_ids]
+        jsonpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["remove"]["TagData"].extend(
+            [{"id": tag_id} for tag_id in remove_tag_ids]
         )
     if remove_tag_names:
-        xmlpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["remove"].extend(
-            [{"TagData": {"name": tag_name}} for tag_name in remove_tag_names]
+        jsonpayload["ServiceRequest"]["data"]["User"]["scopeTags"]["remove"]["TagData"].extend(
+            [{"name": tag_name} for tag_name in remove_tag_names]
         )
 
     # Add roles to the payload
     if add_role_ids:
-        xmlpayload["ServiceRequest"]["data"]["User"]["roleList"]["add"].extend(
-            [{"RoleData": {"id": role_id}} for role_id in add_role_ids]
+        jsonpayload["ServiceRequest"]["data"]["User"]["roleList"]["add"]["RoleData"].extend(
+            [{"id": role_id} for role_id in add_role_ids]
         )
     if add_role_names:
-        xmlpayload["ServiceRequest"]["data"]["User"]["roleList"]["add"].extend(
-            [{"RoleData": {"name": role_name}} for role_name in add_role_names]
+        jsonpayload["ServiceRequest"]["data"]["User"]["roleList"]["add"]["RoleData"].extend(
+            [{"name": role_name} for role_name in add_role_names]
         )
     if remove_role_ids:
-        xmlpayload["ServiceRequest"]["data"]["User"]["roleList"]["remove"].extend(
-            [{"RoleData": {"id": role_id}} for role_id in remove_role_ids]
+        jsonpayload["ServiceRequest"]["data"]["User"]["roleList"]["remove"]["RoleData"].extend(
+            [{"id": role_id} for role_id in remove_role_ids]
         )
     if remove_role_names:
-        xmlpayload["ServiceRequest"]["data"]["User"]["roleList"]["remove"].extend(
-            [{"RoleData": {"name": role_name}} for role_name in remove_role_names]
+        jsonpayload["ServiceRequest"]["data"]["User"]["roleList"]["remove"]["RoleData"].extend(
+            [{"name": role_name} for role_name in remove_role_names]
         )
 
     # Make the API call
@@ -283,8 +297,8 @@ def update_user(
         auth=auth,
         module="admin",
         endpoint="update_user",
-        payload={"_xml_data": unparse(xmlpayload)},
-        headers={"Accept": "application/json", "Content-Type": "text/xml"},
+        jsonbody=jsonpayload,
+        headers={"Accept": "application/json", "Content-Type": "application/json"},
         params={"placeholder": user_id},
     )
 

@@ -35,7 +35,6 @@ ADMIN_SCHEMA = frozendict(
                 "method": ["POST"],
                 "valid_params": ["placeholder", "user_id"],
                 "valid_POST_data": [
-                    "_xml_data",
                     "add_tag_ids",
                     "add_tag_names",
                     "add_role_ids",
@@ -45,11 +44,11 @@ ADMIN_SCHEMA = frozendict(
                     "remove_role_ids",
                     "remove_role_names",
                 ],
-                "use_requests_json_data": False,
+                "use_requests_json_data": True,
                 "return_type": "json",
                 "pagination": False,
                 "auth_type": "basic",
-                "_xml_data": True,
+                "_xml_data": False,
             },
         },
     }

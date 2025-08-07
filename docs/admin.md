@@ -146,8 +146,6 @@ users = search_users(auth, role_name='Role1')
 
 `update_user` updates a user's roles and tags by their admin ID. This is useful for managing user permissions and organization within the Qualys platform.
 
->Head's up! This API appears to be rather finicky with the user-provided values. You may notice that despite returning a `SUCCESS` response, the changes may not be applied as expected. If you encounter issues, try making changes across multiple API calls instead of all at once. For example, first add roles, then add tags, and finally remove roles or tags in separate calls.
-
 |Parameter| Possible Values |Description| Required|
 |--|--|--|--|
 |```auth```|```qualysdk.auth.BasicAuth``` | Authentication object | ✅ |

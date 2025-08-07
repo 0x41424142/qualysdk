@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qualysdk"
-version = "0.3.9"
+version = "0.3.10"
 description = "SDK for interacting with Qualys APIs, across most modules the platform offers."
 authors = ["0x41424142 <jake@jakelindsay.uk>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
 maintainers = ["Jake Lindsay <jake@jakelindsay.uk>"]
@@ -29,7 +29,6 @@ sqlalchemy = "^2.0.37"
 numpy = "2.3.2"
 pymssql = "2.3.1"
 pymysql = "^1.1.1"
-mkdocs-material = "^9.5.48"
 psycopg2 = {version = "^2.9.9", platform = "win32"}
 psycopg2-binary = [
     {version = "^2.9.9", platform = "linux"},
@@ -60,6 +59,7 @@ qualysdk-rbac = 'qualysdk.cli.qualysdk_rbac:main'
 [tool.poetry.group.dev.dependencies]
 mkdocs = "^1.6.1"
 pymdown-extensions = "^10.16.1"
+mkdocs-material = "^9.6.16"
 
 [build-system]
 requires = ["poetry-core"]

@@ -235,22 +235,8 @@ def update_user(
         "ServiceRequest": {
             "data": {
                 "User": {
-                    "scopeTags": {
-                        "add": {
-                            "TagData": []
-                        }, 
-                        "remove": {
-                            "TagData": []
-                        }
-                    },
-                    "roleList": {
-                        "add": {
-                            "RoleData": []
-                        },
-                        "remove": {
-                            "RoleData": []
-                        }
-                    },
+                    "scopeTags": {"add": {"TagData": []}, "remove": {"TagData": []}},
+                    "roleList": {"add": {"RoleData": []}, "remove": {"RoleData": []}},
                 }
             }
         }

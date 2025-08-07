@@ -27,7 +27,7 @@ lxml = "6.0.0"
 pandas = "2.3.1"
 sqlalchemy = "^2.0.37"
 numpy = "2.3.2"
-pymssql = "2.3.1"
+pymssql = "2.3.7"
 pymysql = "^1.1.1"
 psycopg2 = {version = "^2.9.9", platform = "win32"}
 psycopg2-binary = [

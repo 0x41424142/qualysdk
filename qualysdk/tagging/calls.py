@@ -51,7 +51,7 @@ def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
         headers={"Content-Type": "application/json", "Accept": "application/json"},
     )
 
-    if response.text == '':
+    if response.text == "":
         return {}
     data = response.json()
 

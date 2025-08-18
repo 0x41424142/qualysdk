@@ -34,7 +34,7 @@ hosts = get_host_list(auth, details="All/AGs", show_tags=True, page_count=4)
 |Cloud Agent | ✅ See Cloud Agent [documentation page](https://qualysdk.jakelindsay.uk/cloud_agent/) for supported calls |
 |CS (Container Security) | ✅ See CS [documentation page](https://qualysdk.jakelindsay.uk/containersecurity/) for supported calls |
 |CERT (Certificate View) | ✅ See CERT [documentation page](https://qualysdk.jakelindsay.uk/cert/) for supported calls |
-|ADMIN (Administration) | Not Started |
+|ADMIN (Administration) | 🚧 In Progress. See [Administration documentation page](https://qualysdk.jakelindsay.uk/admin/) for supported calls. |
 |Asset Management & Tagging | ✅ See Tagging [documentation page](https://qualysdk.jakelindsay.uk/tagging/) for supported calls |
 | SQL Data Uploads | ✅ See SQL [documentation page](https://qualysdk.jakelindsay.uk/sql/) for supported uploads/DBs |
 

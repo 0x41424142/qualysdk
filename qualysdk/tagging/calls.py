@@ -51,6 +51,8 @@ def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
         headers={"Content-Type": "application/json", "Accept": "application/json"},
     )
 
+    if response.text == "":
+        return {}
     data = response.json()
 
     if data.get("ServiceResponse", {}).get("responseCode") != "SUCCESS":
@@ -331,7 +333,7 @@ def delete_tag(auth: BasicAuth, tag_id: Union[int, str, list[Union[int, str]]]) 
     return deleted
 
 
-def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
+def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> int:
     """
     Update an existing tag with the given ID and optional parameters.
 
@@ -356,7 +358,7 @@ def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
         provider (Literal["EC2", "AZURE", "GCP", "IBM", "OCI"]): The cloud provider for the tag.
 
     Returns:
-        Tag: The updated tag object.
+        int: The ID of updated tag.
     """
 
     # if no kwargs are provided, raise an error
@@ -412,4 +414,4 @@ def update_tag(auth: BasicAuth, tag_id: Union[int, str], **kwargs) -> Tag:
         raise ValueError(f"No data found for tag update")
     tag = data[0].get("Tag", {})
     if tag:
-        return Tag.from_dict(tag)
+        return tag.get("id")

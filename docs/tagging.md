@@ -297,6 +297,7 @@ update_tag(
     description='This is an updated tag',
     color='#FF00FF'
 )
+>>>123456789
 
 # Change a tag from static to dynamic,
 # looking for Windows Servers:
@@ -308,6 +309,7 @@ update_tag(
     color='#00FFFF',
     description='This is a dynamic tag for Windows servers'
 )
+>>>123456789
 
 # Update a tag to remove some 
 # pre-existing children tags
@@ -318,6 +320,7 @@ update_tag(
     remove_children=[987654321, 123456799],
     parentTagId=123459789
 )
+>>>123456789
 ```
 
 ## ```qualysdk-tag``` CLI tool

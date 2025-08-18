@@ -83,7 +83,6 @@ users = get_user_details(auth, user_id=[12345678, 87654321])
 | ```user_id``` | ```Union[int, str]``` | The ID of the user to search for. | ❌ |
 | ```user_id_operator``` | ```Literal['EQUALS', 'GREATER', 'LESSER']``` | The operator to use when searching by user ID. Defaults to 'EQUALS'. | ❌ |
 | ```username``` | ```str``` | The username of the user to search for. Search for multiple users by providing a comma-separated string or a list of strings. | ❌ |
-| ```username_operator``` | ```Literal['CONTAINS', 'IN', 'EQUALS', 'NOT EQUALS', 'GREATER', 'LESSER', 'NONE', 'IS EMPTY']``` | The operator to use when searching by username. Defaults to 'EQUALS'. | ❌ |
 | ```role_name``` | ```str``` | The name of the role to search for. Can be a single string, comma-separated string or a list of strings. | ❌ |
 
 ```py

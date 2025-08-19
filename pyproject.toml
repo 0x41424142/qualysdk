@@ -20,7 +20,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-requests = "2.32.4"
+requests = "2.32.5"
 frozendict = "^2.4.4"
 bs4 = "^0.0.2"
 lxml = "6.0.0"

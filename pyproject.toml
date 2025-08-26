@@ -20,11 +20,11 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-requests = "2.32.4"
+requests = "2.32.5"
 frozendict = "^2.4.4"
 bs4 = "^0.0.2"
-lxml = "6.0.0"
-pandas = "2.3.1"
+lxml = "6.0.1"
+pandas = "2.3.2"
 sqlalchemy = "^2.0.37"
 numpy = "2.3.2"
 pymssql = "2.3.1"

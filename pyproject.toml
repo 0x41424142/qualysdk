@@ -20,13 +20,13 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-requests = "2.32.4"
+requests = "2.32.5"
 frozendict = "^2.4.4"
 bs4 = "^0.0.2"
-lxml = "6.0.0"
-pandas = "2.3.1"
+lxml = "6.0.1"
+pandas = "2.3.2"
 sqlalchemy = "^2.0.37"
-numpy = "2.3.2"
+numpy = "2.3.3"
 pymssql = "2.3.1"
 pymysql = "^1.1.1"
 psycopg2 = {version = "^2.9.9", platform = "win32"}
@@ -34,10 +34,10 @@ psycopg2-binary = [
     {version = "^2.9.9", platform = "linux"},
     {version = "^2.9.9", platform = "darwin"},
 ]
-xmltodict = ">=0.13,<0.15"
+xmltodict = ">=0.13,<1.1"
 defusedxml = "^0.7.1"
 packaging = "25.0"
-xlsxwriter = "3.2.5"
+xlsxwriter = "3.2.9"
 
 
 [tool.poetry.urls]

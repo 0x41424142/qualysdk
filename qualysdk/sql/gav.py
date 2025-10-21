@@ -342,11 +342,16 @@ def upload_gav_hosts(
         ),  # BaseList[str]
         "processor": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
         "lparId": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),
+        "inventoryListData": types.String().with_variant(
+            TEXT(charset="utf8"), "mysql", "mariadb"
+        ),  # BaseList[str]
     }
 
-    # Prepare the softwareListData column:
+    # Prepare the ListData columns:
     for host in hosts:
         host.softwareListData = parse_software_list_data(host.softwareListData)
+        if host.inventoryListData:
+            host.inventoryListData = BaseList([i for i in host.inventoryListData if i != "Unknown"])
 
     # Prepare the dataclass for insertion:
     df = DataFrame([prepare_dataclass(host) for host in hosts])

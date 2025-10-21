@@ -234,6 +234,7 @@ class Host(BaseClass):
     customAttributes: Optional[dict] = None
     processor: Optional[Union[dict, str]] = None
     lparId: Optional[str] = None
+    inventoryListData: Optional[dict] = None
 
     def __post_init__(self):
         DT_FIELDS = [
@@ -361,6 +362,12 @@ class Host(BaseClass):
 
                 # Set the hardware field to None
                 setattr(self, "hardware", None)
+
+            if self.inventoryListData:
+                data = handle_dict_or_list(self.inventoryListData["inventory"])
+                bl = BaseList()
+                bl.extend([inv.get("source") for inv in data])
+                setattr(self, "inventoryListData", bl)
 
             if self.userAccountListData:
                 # Check for a dict or a list of dicts:

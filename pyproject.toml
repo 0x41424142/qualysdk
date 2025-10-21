@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qualysdk"
-version = "0.3.11"
+version = "0.3.12"
 description = "SDK for interacting with Qualys APIs, across most modules the platform offers."
 authors = ["0x41424142 <jake@jakelindsay.uk>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
 maintainers = ["Jake Lindsay <jake@jakelindsay.uk>"]
@@ -20,11 +20,11 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-requests = "2.32.4"
+requests = "^2.32.5"
 frozendict = "^2.4.4"
 bs4 = "^0.0.2"
-lxml = "6.0.0"
-pandas = "2.3.1"
+lxml = "^6.0.2"
+pandas = "^2.3.3"
 sqlalchemy = "^2.0.37"
 numpy = "2.3.2"
 pymssql = "2.3.1"
@@ -37,7 +37,8 @@ psycopg2-binary = [
 xmltodict = ">=0.13,<0.15"
 defusedxml = "^0.7.1"
 packaging = "25.0"
-xlsxwriter = "3.2.5"
+xlsxwriter = "^3.2.9"
+mkdocs-material = "^9.6.22"
 
 
 [tool.poetry.urls]

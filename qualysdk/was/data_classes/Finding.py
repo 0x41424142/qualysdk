@@ -53,6 +53,16 @@ class PayloadResponce(BaseClass):
         if not isinstance(self.length, int):
             self.length = int(self.length)
 
+@dataclass
+class PayloadResponse(BaseClass):
+    """
+    String wrapper for Finding.payload_list.response
+    """
+    response: str = None
+
+    def __str__(self) -> str:
+        return f"{self.response}"
+
 
 @dataclass
 class WASPayload(BaseClass):
@@ -127,9 +137,11 @@ class FindingItem(BaseClass):
                 self.payloads_list = BaseList()
                 if self.payloads_count > 0:
                     try:
-                        data = self.payloads.get("list").get("PayloadInstance").get("request")
-                        if data:
-                            self.payloads_list.append(PayloadRequest.from_dict(data))
+                        data = self.payloads.get("list").get("PayloadInstance")
+                        if data.get("request"):
+                            self.payloads_list.append(PayloadRequest.from_dict(data.get("request")))
+                        if data.get("response"):
+                            self.payloads_list.append(PayloadResponse.from_dict({"response": data.get("response")}))
                     except AttributeError:
                         data = self.payloads.get("list").get("PayloadInstance")
                         if not isinstance(data, list):

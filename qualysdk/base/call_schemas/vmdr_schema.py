@@ -173,7 +173,7 @@ VMDR_SCHEMA = frozendict(
                 "auth_type": "basic",
             },
             "get_hld": {
-                "endpoint": "/api/3.0/fo/asset/host/vm/detection/",
+                "endpoint": "/api/5.0/fo/asset/host/vm/detection/",
                 "method": ["POST", "GET"],
                 "valid_params": [
                     "action",

@@ -468,7 +468,9 @@ class VMDRHost(BaseClass):
 
         if self.CLOUD_PUBLIC_IPV4 and not isinstance(self.CLOUD_PUBLIC_IPV4, IPv4Address):
             # Bug Fix: for some reason Qualys will do things like /1.2.3.4?
-            self.CLOUD_PUBLIC_IPV4 = IPv4Address(self.CLOUD_PUBLIC_IPV4.replace("/", ""))
+            # It also will return some strange XML/HTML 404 text on occasion...? Hence check below.
+            if isinstance(self.CLOUD_PUBLIC_IPV4, str) and not self.CLOUD_PUBLIC_IPV4.startswith("<?xml"):
+                self.CLOUD_PUBLIC_IPV4 = IPv4Address(self.CLOUD_PUBLIC_IPV4.replace("/", ""))
 
         if self.CLOUD_IS_SPOT_INSTANCE:
             self.CLOUD_IS_SPOT_INSTANCE = bool(self.CLOUD_IS_SPOT_INSTANCE)

@@ -164,7 +164,7 @@ def get_kb_qvs(auth: BasicAuth, cve: Union[str, list[str]] = "", **kwargs) -> Ba
         auth=auth,
         module="vmdr",
         endpoint="get_kb_qvs",
-        payload=kwargs,
+        params=kwargs,
         headers={"X-Requested-With": "qualysdk SDK"},
     )
     # TODO: Format has changed... need to update this

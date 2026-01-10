@@ -5,6 +5,7 @@ vmscans.py - Contains the VMScan data class.
 from typing import Union, Literal
 from datetime import datetime, timedelta
 from dataclasses import dataclass, field
+from ipaddress import ip_address
 
 from .ip_converters import *
 from ...base.base_list import BaseList
@@ -78,7 +79,7 @@ class VMScan(BaseClass):
     OPTION_PROFILE: dict = field(
         metadata={"description": "Option profile of the scan."}, default=None
     )
-    ASSET_GROUP_TITLE_LIST: Union[str, BaseList[str]] = field(
+    ASSET_GROUP_TITLE_LIST: Union[BaseList[str], BaseList[dict], dict] = field(
         metadata={"description": "Asset group title list."}, default=None
     )
 
@@ -102,20 +103,20 @@ class VMScan(BaseClass):
         if not DONT_EXPAND.flag:
             if self.TARGET:
                 final_list = BaseList()
-                self.TARGET = self.TARGET.split(",")
-                for t in self.TARGET:
+                target = self.TARGET.split(",")
+                for t in target:
                     if "-" in t:
                         t = single_range(t)
                     else:
-                        t = single_ip(t)
-                    final_list.append(t)
+                        t = BaseList(single_ip(t))
+                    final_list.extend(t)
                 self.TARGET = final_list
 
             # create the baselist for the asset group titles
             # first, check if [ASSET_GROUP_TITLE_LIST] is a dict. If it is, convert it to a list
             if self.ASSET_GROUP_TITLE_LIST:
                 if isinstance(self.ASSET_GROUP_TITLE_LIST, dict):
-                    self.ASSET_GROUP_TITLE_LIST = [self.ASSET_GROUP_TITLE_LIST]
+                    self.ASSET_GROUP_TITLE_LIST = BaseList(self.ASSET_GROUP_TITLE_LIST)
                 # create the BaseList object
                 final_list = BaseList()
                 for ag in self.ASSET_GROUP_TITLE_LIST:

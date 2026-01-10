@@ -64,7 +64,14 @@ def main():
         "--platform",
         help="Qualys platform",
         default="qg3",
-        choices=["qg1", "qg2", "qg3", "qg4"],
+        choices=["qg1","qg2","qg3","qg4","eu1","eu2","eu3","in1","ca1","ae1","uk1","au1","ksa1"],
+    )
+    parser.add_argument(
+        "-oU",
+        "--override_urls",
+        help="Override platform URLs with a custom URL set formatted like ... --override_urls https://custom-api-url https://custom-gateway-url https://custom-qualysguard-url",
+        nargs=3,
+        metavar=("api_url", "gateway_url", "qualysguard_url"),
     )
 
     # subparser for action:
@@ -219,7 +226,11 @@ def main():
     args = parser.parse_args()
 
     # create BasicAuth object
-    auth = BasicAuth(args.username, args.password, platform=args.platform)
+    auth = BasicAuth(args.username, args.password, platform=args.platform, override_platform={
+        "api_url": args.override_urls[0],
+        "gateway_url": args.override_urls[1],
+        "qualysguard_url": args.override_urls[2],
+    } if args.override_urls else None)
 
     # perform action
     if args.action == "get_user_details":

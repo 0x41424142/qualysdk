@@ -309,7 +309,7 @@ The ```qualysdk-gav``` CLI tool is a command-line interface for the GAV portion 
 ### Usage
 
 ```bash
-usage: qualysdk-gav [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_assets,get_all_assets,get_asset,query_assets} ...
+usage: qualysdk-gav [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] [-oU api_url gateway_url qualysguard_url] {count_assets,get_all_assets,get_asset,query_assets} ...
 
 CLI script to quickly perform Global AssetView (GAV) operations using qualysdk
 
@@ -323,10 +323,12 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -u USERNAME, --username USERNAME
+  -u, --username USERNAME
                         Qualys username
-  -p PASSWORD, --password PASSWORD
+  -p, --password PASSWORD
                         Qualys password
-  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
+  -P, --platform {qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1}
                         Qualys platform
+  -oU, --override_urls api_url gateway_url qualysguard_url
+                        Override platform URLs with a custom URL set formatted like ... --override_urls https://custom-api-url https://custom-gateway-url https://custom-qualysguard-url
 ```

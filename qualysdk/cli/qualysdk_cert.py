@@ -46,8 +46,9 @@ def main():
         "--platform",
         help="Qualys platform",
         default="qg3",
-        choices=["qg1", "qg2", "qg3", "qg4"],
+        choices=["qg1", "qg2", "qg3", "qg4", "eu1", "eu2", "eu3", "in1", "ca1", "ae1", "uk1", "au1", "ksa1"],
     )
+    parser.add_argument("-oU", "--override_urls", help="Override platform URLs with a custom URL set formatted like ... --override_urls https://custom-api-url https://custom-gateway-url https://custom-qualysguard-url", nargs=3, metavar=("api_url", "gateway_url", "qualysguard_url"))
 
     # subparser for action:
     subparsers = parser.add_subparsers(dest="action", help="Action to perform")
@@ -73,7 +74,11 @@ def main():
     args = parser.parse_args()
 
     # create TokenAuth object
-    auth = TokenAuth(args.username, args.password, platform=args.platform)
+    auth = TokenAuth(args.username, args.password, platform=args.platform, override_platform={
+        "api_url": args.override_url[0],
+        "gateway_url": args.override_url[1],
+        "qualysguard_url": args.override_url[2],
+    } if args.override_url else None)
 
     match args.action:
         case "list_certs":

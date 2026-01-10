@@ -4,7 +4,7 @@
 
 >**Pro Tip**: Both ```BasicAuth``` and ```TokenAuth``` can be used as **context managers**!
 
->**Heads Up!**: By default, auth classes assume your Qualys subscription is on the ```qg3``` platform. If this is not the case, simply pass ```platform='qg<n>'``` where n is 1-4 when creating the object.
+>**Heads Up!**: By default, auth classes assume your Qualys subscription is on the ```qg3``` platform. If this is not the case, simply pass ```platform='<your_platform ID>'```. See [here](https://www.qualys.com/platform-identification) to identify your platform. Currently supported platform ids are: `qg1`, `qg2`, `qg3`, `qg4`, `eu1`, `eu2`, `eu3`, `in1`, `ca1`, `ae1`, `uk1`, `au1`, and `ksa1`. Alternatively, you can override the platform URLs entirely by passing an ```override_platform``` dictionary when creating a ```BasicAuth``` or ```TokenAuth``` object. See the "Other Notes on Auth Classes" section below for more details.
 
 When calling an API endpoint, just pass your ```TokenAuth``` or ```BasicAuth``` object and the tool will handle the rest (or yell at you if you pass the wrong type, shown below):
 
@@ -46,6 +46,25 @@ Qualys configures JWT tokens to expire 4 hours after they are created. When you 
 ```
 
 ## Other Notes on Auth Classes
+
+To allow for maximum flexibility, both ```BasicAuth``` and ```TokenAuth``` accept an optional ```override_platform``` parameter when creating the object. This parameter is a dictionary that allows you to override the default platform URLs used by the SDK. The dictionary should be formatted like this:
+
+```py
+from qualysdk.auth import TokenAuth
+
+override_platform = {
+    "api_url": str,          # e.g. "https://qualysapi.custom-domain.com"
+    "gateway_url": str,      # e.g. "https://gateway.custom-domain.com"
+    "qualysguard_url": str   # e.g. "https://qualysguard.custom-domain.com"
+}
+
+with TokenAuth(<username>, <password>, override_platform=override_platform) as auth:
+    ...
+    # Do stuff...
+    ...
+```
+
+When provided, the SDK will use these URLs instead of constructing them based on the ```platform``` parameter and `PlatformPicker` class (under qualysdk.auth.platform_picker). This is useful for subscriptions that use custom domains, hosted in different regions, or for future Qualys platforms not yet supported by the SDK.
  
 Both ```BasicAuth``` and ```TokenAuth``` also have ```from_dict``` class methods, which allows for the creation of these objects from dictionaries:
 

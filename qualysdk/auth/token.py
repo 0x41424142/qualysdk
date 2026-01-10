@@ -17,9 +17,9 @@ class TokenAuth(BasicAuth):
     """
     TokenAuth - handles API endpoints that require JWT authentication.
     This class will take the username, password, and platform attributes from BasicAuth and use them to generate a JWT token via the Qualys JWT-generatio API.
-    
+
     override_platform is a dictionary containing custom platform URLs. If provided, this will override the platform attribute. Formatted like:
-    
+
     {
         "api_url": str,
         "gateway_url": str,

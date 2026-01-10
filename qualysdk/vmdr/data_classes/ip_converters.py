@@ -75,5 +75,6 @@ def convert_ranges(ip_ranges: list[str]) -> BaseList[Union[IPv4Network, IPv6Netw
         BaseList[Union[IPv4Network, IPv6Network]]: BaseList of IPv4Network or IPv6Network objects.
     """
     result = BaseList()
-    [result.extend(single_range(ip_range)) for ip_range in ip_ranges]
+    for ip_range in ip_ranges:
+        result.extend(single_range(ip_range))
     return result

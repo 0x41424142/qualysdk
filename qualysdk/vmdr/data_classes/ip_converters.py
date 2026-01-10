@@ -15,6 +15,8 @@ from ipaddress import (
 )
 from typing import Union
 
+from qualysdk import BaseList
+
 
 def single_ip(ip: str) -> ip_address:
     """
@@ -29,7 +31,7 @@ def single_ip(ip: str) -> ip_address:
     return ip_address(ip)
 
 
-def single_range(ip_range: str) -> ip_network:
+def single_range(ip_range: str) -> BaseList[ip_network]:
     """
     Converts an IP range string into an ipaddress.IPv4Network or ipaddress.IPv6Network object.
 
@@ -37,14 +39,13 @@ def single_range(ip_range: str) -> ip_network:
         ip_range (str): IP range string.
 
     Returns:
-        Union[IPv4Network, IPv6Network]: IPv4Network or IPv6Network object.
+        BaseList[Union[IPv4Network, IPv6Network]]: BaseList of IPv4Network or IPv6Network objects.
     """
     start, end = ip_range.split("-")
 
     start, end = ip_address(start), ip_address(end)
 
-    # A little confusing, but summarize_address_range returns a generator, so we use list comprehension and then grab the first element.
-    return ip_network([i for i in summarize_address_range(start, end)][0])
+    return BaseList([ip_network(i) for i in summarize_address_range(start, end)])
 
 
 # Bulk IP and IP range conversion functions:
@@ -63,7 +64,7 @@ def convert_ips(ips: list[str]) -> list[Union[IPv4Address, IPv6Address]]:
     return [single_ip(ip) for ip in ips]
 
 
-def convert_ranges(ip_ranges: list[str]) -> list[Union[IPv4Network, IPv6Network]]:
+def convert_ranges(ip_ranges: list[str]) -> BaseList[Union[IPv4Network, IPv6Network]]:
     """
     Converts a list of IP range strings into a list of ipaddress.IPv4Network or ipaddress.IPv6Network objects.
 
@@ -71,6 +72,8 @@ def convert_ranges(ip_ranges: list[str]) -> list[Union[IPv4Network, IPv6Network]
         ip_ranges (list[str]): List of IP range strings.
 
     Returns:
-        list[Union[IPv4Network, IPv6Network]]: List of IPv4Network or IPv6Network objects.
+        BaseList[Union[IPv4Network, IPv6Network]]: BaseList of IPv4Network or IPv6Network objects.
     """
-    return [single_range(ip_range) for ip_range in ip_ranges]
+    result = BaseList()
+    [result.extend(single_range(ip_range)) for ip_range in ip_ranges]
+    return result

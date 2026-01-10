@@ -330,18 +330,20 @@ The ```qualysdk-tag``` CLI tool is a command-line interface for the tagging port
 ### Usage
 
 ```bash
-usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {count_tags,get_tags,get_tag_details,create_tag,delete_tag} ...
+usage: qualysdk-tag [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1}] [-oU api_url gateway_url qualysguard_url]
+                    {count_tags,get_tags,get_tag_details,create_tag,delete_tag,update_tag} ...
 
 CLI script to quickly perform tagging operations using qualysdk
 
 positional arguments:
-  {count_tags,get_tags,get_tag_details,create_tag,delete_tag}
+  {count_tags,get_tags,get_tag_details,create_tag,delete_tag,update_tag}
                         Action to perform
     count_tags          Count how many tags match the given criteria.
     get_tags            Get the tags that match the given criteria.
     get_tag_details     Get all details of a single tag.
     create_tag          Create a new tag. NOTE: For creating children tags, use --kwarg children with a comma-separated string, like: "child1,child2,etc"
     delete_tag          Delete a tag. NOTE: For deleting multiple tags, use --kwarg tagId with a comma-separated string, like: 'id1,id2,etc'
+    update_tag          Update a tag. NOTE: For adding/removing children tags, use --kwarg add_children/remove_children with a comma-separated string, like: 'id1,id2,etc'
 
 options:
   -h, --help            show this help message and exit
@@ -349,8 +351,10 @@ options:
                         Qualys username
   -p, --password PASSWORD
                         Qualys password
-  -P, --platform {qg1,qg2,qg3,qg4}
+  -P, --platform {qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1}
                         Qualys platform
+  -oU, --override_urls api_url gateway_url qualysguard_url
+                        Override platform URLs with a custom URL set formatted like ... --override_urls https://custom-api-url https://custom-gateway-url https://custom-qualysguard-url
 ```
 
 ### Count Tags

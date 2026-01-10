@@ -12,6 +12,7 @@ from time import sleep
 
 from ..auth.token import TokenAuth
 from ..auth.basic import BasicAuth
+from ..auth.platform_picker import PlatformPicker
 from ..exceptions.Exceptions import *
 from .call_schema import CALL_SCHEMA
 from .convert_bools_and_nones import convert_bools_and_nones
@@ -73,19 +74,20 @@ def call_api(
         # match the url_type to get the proper template:
         match CALL_SCHEMA[module]["url_type"]:
             case "gateway":
-                url = f"https://gateway.{auth.platform}.apps.qualys.com{SCHEMA['endpoint']}"
+                if auth.override_platform:
+                    url = auth.override_platform["gateway_url"] + SCHEMA["endpoint"]
+                else:
+                    url = PlatformPicker.get_gateway_url(auth.platform) + SCHEMA["endpoint"]
             case "api":
-                if (
-                    auth.platform == "qg1"
-                ):  # Special case for qg1 platform: no qg or apps in the URL
-                    url = f"https://qualysapi.qualys.com{SCHEMA['endpoint']}"
+                if auth.override_platform:
+                    url = auth.override_platform["api_url"] + SCHEMA["endpoint"]
                 else:
-                    url = f"https://qualysapi.{auth.platform}.apps.qualys.com{SCHEMA['endpoint']}"
+                    url = PlatformPicker.get_api_url(auth.platform) + SCHEMA["endpoint"]
             case "base":
-                if auth.platform == "qg1":
-                    url = f"https://qualysguard.qualys.com{SCHEMA['endpoint']}"
+                if auth.override_platform:
+                    url = auth.override_platform["qualysguard_url"] + SCHEMA["endpoint"]
                 else:
-                    url = f"https://qualysguard.{auth.platform}.apps.qualys.com{SCHEMA['endpoint']}"
+                    url = PlatformPicker.get_qualysguard_url(auth.platform) + SCHEMA["endpoint"]
             case _:
                 raise ValueError(f"Invalid url_type {SCHEMA['url_type']}.")
 

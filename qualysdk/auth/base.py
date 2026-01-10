@@ -4,9 +4,9 @@ base.py - base authentication class for qualysdk
 
 import json
 from dataclasses import dataclass, field
-from typing import Optional, Literal, Self
+from typing import Optional, Literal
 
-
+from .platform_picker import PlatformPicker
 from ..exceptions import (
     InvalidCredentialsError,
     InvalidTokenError,
@@ -18,6 +18,21 @@ from ..exceptions import (
 class BaseAuthentication:
     """
     Base class for authentication with qualysdk.
+
+    Attributes:
+    ```
+    username: str - the username for the API
+    password: str - the password for the API
+    token: Optional[str] - the token for the API (if using token authentication)
+    auth_type: Literal["basic", "token"] - the type of authentication being used
+    platform: Optional[str] - the platform for the authentication. Defaults to None, but can be any value in the PlatformPicker class.
+    override_platform: Optional[dict] - a dictionary containing custom platform URLs. If provided, this will override the platform attribute. Formatted like:
+    {
+        "api_url": str,
+        "gateway_url": str,
+        "qualysguard_url": str
+    }
+    ```
     """
 
     username: str
@@ -26,6 +41,8 @@ class BaseAuthentication:
     )  # Hide password from repr. If the user wants to see it that badly, they can do so manually with the password attribute.
     token: Optional[str] = field(default=None, repr=False)  # same goes for token ^^
     auth_type: Literal["basic", "token"] = field(init=False)
+    platform: Optional[str] = field(default=None, init=True)
+    override_platform: Optional[dict[str, str]] = field(default=None, init=True)
 
     def __post_init__(self) -> None:
         """
@@ -35,6 +52,34 @@ class BaseAuthentication:
             self.auth_type = "basic"
         else:
             self.auth_type = "token"
+        if self.override_platform and isinstance(self.override_platform, dict):
+            if not all(  # Ensure all required keys are present and their values are strings:
+                key in self.override_platform
+                for key in ["api_url", "gateway_url", "qualysguard_url"]
+            ) or not all(
+                isinstance(self.override_platform[key], str)
+                for key in ["api_url", "gateway_url", "qualysguard_url"]
+            ):
+                raise ValueError(
+                    f"override_platform must contain 'api_url', 'gateway_url', and 'qualysguard_url' keys. Provided keys: {list(self.override_platform.keys())}"
+                )
+            print(f"Using overridden platform URLs for {self.username}.")
+            self.platform = "CUSTOM"  # set platform to CUSTOM if override_platform is used
+            # ensure each url starts with https://
+            for key in self.override_platform:
+                # Some basic sanitation:
+                self.override_platform[key] = (
+                    self.override_platform[key].strip().replace("http://", "https://")
+                )
+                if not self.override_platform[key].startswith("https://"):
+                    self.override_platform[key] = "https://" + self.override_platform[key]
+                if self.override_platform[key].endswith("/"):
+                    self.override_platform[key] = self.override_platform[key][:-1]
+
+        elif self.platform not in PlatformPicker.urls["api_urls"]:
+            raise ValueError(
+                f"Platform must be one of {list(PlatformPicker.urls['api_urls'].keys())} OR overriden with override_platform attribute."
+            )
 
     def __str__(self) -> str:
         """

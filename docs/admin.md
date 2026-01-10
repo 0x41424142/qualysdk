@@ -193,7 +193,8 @@ The ```qualysdk-rbac``` CLI tool is a command-line interface for the RBAC (Role-
 ### Usage
 
 ```bash
-usage: qualysdk-rbac [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {get_user_details,search_users,update_user} ...
+usage: qualysdk-rbac [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1}] [-oU api_url gateway_url qualysguard_url]
+                     {get_user_details,search_users,update_user} ...
 
 CLI script to quickly perform user permissions operations in the administration module using qualysdk.
 
@@ -210,8 +211,10 @@ options:
                         Qualys username
   -p, --password PASSWORD
                         Qualys password
-  -P, --platform {qg1,qg2,qg3,qg4}
+  -P, --platform {qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1}
                         Qualys platform
+  -oU, --override_urls api_url gateway_url qualysguard_url
+                        Override platform URLs with a custom URL set formatted like ... --override_urls https://custom-api-url https://custom-gateway-url https://custom-qualysguard-url
 ```
 
 ### Get User Details

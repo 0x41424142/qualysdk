@@ -12,3 +12,4 @@ BasicAuth handles HTTP Basic Authentication, while TokenAuth handles JWT token a
 
 from .basic import BasicAuth
 from .token import TokenAuth
+from .platform_picker import PlatformPicker

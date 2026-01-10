@@ -828,7 +828,8 @@ Use ```--help``` on each command to see the available options.
 ### Usage
 
 ```bash
-usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets,get_patch_catalog} ...
+usage: qualysdk-pm [-h] -u USERNAME -p PASSWORD [-P {qg1,qg2,qg3,qg4}] [-oU api_url gateway_url qualysguard_url]
+                   {list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets,get_patch_catalog} ...
 
 CLI script to quickly perform Patch Management (PM) operations using qualysdk
 
@@ -846,10 +847,12 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -u USERNAME, --username USERNAME
+  -u, --username USERNAME
                         Qualys username
-  -p PASSWORD, --password PASSWORD
+  -p, --password PASSWORD
                         Qualys password
-  -P {qg1,qg2,qg3,qg4}, --platform {qg1,qg2,qg3,qg4}
+  -P, --platform {qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1}
                         Qualys platform
+  -oU, --override_urls api_url gateway_url qualysguard_url
+                        Override platform URLs with a custom URL set formatted like ... --override_urls https://custom-api-url https://custom-gateway-url https://custom-qualysguard-url
 ```

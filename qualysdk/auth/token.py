@@ -9,6 +9,7 @@ from requests import post
 
 from .basic import BasicAuth
 from ..exceptions import AuthenticationError
+from .platform_picker import PlatformPicker
 
 
 @dataclass
@@ -16,6 +17,14 @@ class TokenAuth(BasicAuth):
     """
     TokenAuth - handles API endpoints that require JWT authentication.
     This class will take the username, password, and platform attributes from BasicAuth and use them to generate a JWT token via the Qualys JWT-generatio API.
+
+    override_platform is a dictionary containing custom platform URLs. If provided, this will override the platform attribute. Formatted like:
+
+    {
+        "api_url": str,
+        "gateway_url": str,
+        "qualysguard_url": str
+    }
 
     Attributes:
     ```
@@ -28,6 +37,7 @@ class TokenAuth(BasicAuth):
     # JWT token
     token: str = field(init=False, repr=False)
     generated_on: datetime = field(init=False, default=datetime)
+    platform: str = field(default="qg3", init=True)
 
     def __post_init__(self):
         """
@@ -42,7 +52,11 @@ class TokenAuth(BasicAuth):
         """
         generates the JWT token from the Qualys API
         """
-        url = f"https://gateway.{self.platform}.apps.qualys.com/auth"
+        url = (
+            self.override_platform["gateway_url"]
+            if self.override_platform
+            else PlatformPicker.get_gateway_url(self.platform)
+        ) + "/auth"
 
         payload = {
             "username": self.username,

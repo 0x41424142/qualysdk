@@ -1,0 +1,1480 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the qualysdk Python SDK. Make working with Qualys API data easier.">
+      
+      
+        <meta name="author" content="Jake Lindsay <jake@jakelindsay.uk>">
+      
+      
+      
+        <link rel="prev" href="../tagging/">
+      
+      
+        <link rel="next" href="../sql/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Administration - qualysdk Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#administration-apis" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="qualysdk Documentation" class="md-header__button md-logo" aria-label="qualysdk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            qualysdk Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Administration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/0x41424142/qualysdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="qualysdk Documentation" class="md-nav__button md-logo" aria-label="qualysdk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    qualysdk Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/0x41424142/qualysdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gav/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Global AssetView
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vmdr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VMDR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../totalcloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TotalCloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud_agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../containersecurity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Certificate View
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../was/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web Application Scanning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../patch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patch Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tagging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tagging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#administration-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administration Endpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Administration Endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#administration-rbac-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administration RBAC Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#administration-logs-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administration Logs Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-administration-user-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Administration User Details
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#search-users-by-id-username-or-role-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search Users by ID, Username, or Role Name
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-user-roles-and-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update User Roles and Tags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qualysdk-rbac-cli-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        qualysdk-rbac CLI tool
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="qualysdk-rbac CLI tool">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-user-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get User Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update User
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Uploads
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../callschema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../json/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JSON support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#administration-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administration Endpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Administration Endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#administration-rbac-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administration RBAC Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#administration-logs-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administration Logs Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-administration-user-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Administration User Details
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#search-users-by-id-username-or-role-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search Users by ID, Username, or Role Name
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-user-roles-and-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update User Roles and Tags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qualysdk-rbac-cli-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        qualysdk-rbac CLI tool
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="qualysdk-rbac CLI tool">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-user-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get User Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search Users
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update User
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="administration-apis">Administration APIs</h1>
+<p>Administration APIs return data on user management and other administrative tasks within your environment.</p>
+<p>After running:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.admin</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+</code></pre></div>
+You can use any of the Administration endpoints currently supported:</p>
+<h2 id="administration-endpoints">Administration Endpoints</h2>
+<h3 id="administration-rbac-endpoints">Administration RBAC Endpoints</h3>
+<table>
+<thead>
+<tr>
+<th>API Call</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_user_details</code></td>
+<td>Query the administration details of a user or users by their admin user ID.</td>
+</tr>
+<tr>
+<td><code>search_users</code></td>
+<td>Search for users in the Qualys platform by ID, username, or role name.</td>
+</tr>
+<tr>
+<td><code>update_user</code></td>
+<td>Update a user's roles/scopes and tags by admin ID.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="administration-logs-endpoints">Administration Logs Endpoints</h3>
+<p>TODO</p>
+<h2 id="get-administration-user-details">Get Administration User Details</h2>
+<p><code>get_user_details</code> retrieves the details of a user or users by their admin user ID. These details include the users email, name, username, roles, scopes, and tags.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.BasicAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>user_id</code></td>
+<td><code>Union[int, str, list[int], list[str]]</code></td>
+<td>The ID(s) of the user(s) to retrieve details for. Can be a single ID, a list of IDs, or a list of IDs.</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicAuth</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.admin</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_user_details</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">BasicAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Get details for a single user by ID:</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">user</span> <span class="o">=</span> <span class="n">get_user_details</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="mi">12345678</span><span class="p">)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="o">&gt;&gt;&gt;</span><span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="nb">id</span><span class="o">=</span><span class="mi">12345678</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">firstName</span><span class="o">=</span><span class="s1">&#39;John&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">lastName</span><span class="o">=</span><span class="s1">&#39;Doe&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">emailAddress</span><span class="o">=</span><span class="s1">&#39;jdoe@example.com&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Software Engineer&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="n">scopeTags</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="n">AdminDataPoint</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Production&#39;</span><span class="p">),</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>        <span class="n">AdminDataPoint</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Development&#39;</span><span class="p">),</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="p">],</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="n">roleList</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>        <span class="n">AdminDataPoint</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Role1&#39;</span><span class="p">),</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>        <span class="n">AdminDataPoint</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Role2&#39;</span><span class="p">),</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>    <span class="p">]</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="p">)</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="c1"># Get details for multiple users by ID:</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="n">users</span> <span class="o">=</span> <span class="n">get_user_details</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="p">[</span><span class="mi">12345678</span><span class="p">,</span> <span class="mi">87654321</span><span class="p">])</span>
+<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>    <span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>        <span class="nb">id</span><span class="o">=</span><span class="mi">12345678</span><span class="p">,</span>
+<a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>        <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>        <span class="n">firstName</span><span class="o">=</span><span class="s1">&#39;John&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>        <span class="n">lastName</span><span class="o">=</span><span class="s1">&#39;Doe&#39;</span><span class="p">,</span>
+<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>        <span class="o">...</span>
+<a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a>    <span class="p">),</span>
+<a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>    <span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>        <span class="o">...</span>
+<a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>    <span class="p">)</span>
+<a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="search-users-by-id-username-or-role-name">Search Users by ID, Username, or Role Name</h2>
+<p><code>search_users</code> searches for users in the Qualys platform by their admin ID, username, or role name. This is useful for finding users based on specific criteria so their roles and scopes can be updated.</p>
+<blockquote>
+<p>NOTE: To get all users, set <code>user_id</code> to <code>1</code> and <code>user_id_operator</code> to <code>'GREATER'</code>.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.BasicAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>user_id</code></td>
+<td><code>Union[int, str]</code></td>
+<td>The ID of the user to search for.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>user_id_operator</code></td>
+<td><code>Literal['EQUALS', 'GREATER', 'LESSER']</code></td>
+<td>The operator to use when searching by user ID. Defaults to 'EQUALS'.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>username</code></td>
+<td><code>str</code></td>
+<td>The username of the user to search for. Search for multiple users by providing a comma-separated string or a list of strings.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>role_name</code></td>
+<td><code>str</code></td>
+<td>The name of the role to search for. Can be a single string, comma-separated string or a list of strings.</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicAuth</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.admin</span><span class="w"> </span><span class="kn">import</span> <span class="n">search_users</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">BasicAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Search for a user by ID:</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">user</span> <span class="o">=</span> <span class="n">search_users</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="mi">12345678</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="o">&gt;&gt;&gt;</span><span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="nb">id</span><span class="o">=</span><span class="mi">12345678</span><span class="p">,</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">firstName</span><span class="o">=</span><span class="s1">&#39;John&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="o">...</span><span class="p">,</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">)</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="c1"># Search for users by username:</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="n">users</span> <span class="o">=</span> <span class="n">search_users</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>        <span class="nb">id</span><span class="o">=</span><span class="mi">12345678</span><span class="p">,</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>        <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="n">firstName</span><span class="o">=</span><span class="s1">&#39;John&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="o">...</span><span class="p">,</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>    <span class="p">),</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>        <span class="nb">id</span><span class="o">=</span><span class="mi">87654321</span><span class="p">,</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>        <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe2&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>        <span class="n">firstName</span><span class="o">=</span><span class="s1">&#39;Jane&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>        <span class="o">...</span><span class="p">,</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>    <span class="p">)</span>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="p">]</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>
+<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="c1"># Search for users that have a specific role:</span>
+<a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="n">users</span> <span class="o">=</span> <span class="n">search_users</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">role_name</span><span class="o">=</span><span class="s1">&#39;Role1&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a>    <span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a>        <span class="nb">id</span><span class="o">=</span><span class="mi">87654321</span><span class="p">,</span>
+<a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a>        <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jane&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-38" name="__codelineno-2-38" href="#__codelineno-2-38"></a>        <span class="n">firstName</span><span class="o">=</span><span class="s1">&#39;Jane&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-39" name="__codelineno-2-39" href="#__codelineno-2-39"></a>        <span class="n">roleList</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-2-40" name="__codelineno-2-40" href="#__codelineno-2-40"></a>            <span class="n">AdminDataPoint</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Role1&#39;</span><span class="p">),</span>
+<a id="__codelineno-2-41" name="__codelineno-2-41" href="#__codelineno-2-41"></a>        <span class="p">],</span>
+<a id="__codelineno-2-42" name="__codelineno-2-42" href="#__codelineno-2-42"></a>        <span class="o">...</span>
+<a id="__codelineno-2-43" name="__codelineno-2-43" href="#__codelineno-2-43"></a>    <span class="p">),</span>
+<a id="__codelineno-2-44" name="__codelineno-2-44" href="#__codelineno-2-44"></a>    <span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-2-45" name="__codelineno-2-45" href="#__codelineno-2-45"></a>        <span class="nb">id</span><span class="o">=</span><span class="mi">12345678</span><span class="p">,</span>
+<a id="__codelineno-2-46" name="__codelineno-2-46" href="#__codelineno-2-46"></a>        <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-47" name="__codelineno-2-47" href="#__codelineno-2-47"></a>        <span class="n">firstName</span><span class="o">=</span><span class="s1">&#39;John&#39;</span><span class="p">,</span>
+<a id="__codelineno-2-48" name="__codelineno-2-48" href="#__codelineno-2-48"></a>        <span class="n">roleList</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-2-49" name="__codelineno-2-49" href="#__codelineno-2-49"></a>            <span class="n">AdminDataPoint</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Role1&#39;</span><span class="p">),</span>
+<a id="__codelineno-2-50" name="__codelineno-2-50" href="#__codelineno-2-50"></a>        <span class="p">],</span>
+<a id="__codelineno-2-51" name="__codelineno-2-51" href="#__codelineno-2-51"></a>        <span class="o">...</span>
+<a id="__codelineno-2-52" name="__codelineno-2-52" href="#__codelineno-2-52"></a>    <span class="p">)</span>
+<a id="__codelineno-2-53" name="__codelineno-2-53" href="#__codelineno-2-53"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="update-user-roles-and-tags">Update User Roles and Tags</h2>
+<p><code>update_user</code> updates a user's roles and tags by their admin ID. This is useful for managing user permissions and organization within the Qualys platform.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.BasicAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>user_id</code></td>
+<td><code>int</code></td>
+<td>The ID of the user to update.</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>add_role_ids</code></td>
+<td><code>list[int]</code></td>
+<td>A list of role IDs to add to the user.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>add_role_names</code></td>
+<td><code>list[str]</code></td>
+<td>A list of role names to add to the user.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>remove_role_ids</code></td>
+<td><code>list[int]</code></td>
+<td>A list of role IDs to remove from the user.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>remove_role_names</code></td>
+<td><code>list[str]</code></td>
+<td>A list of role names to remove from the user.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>add_tag_ids</code></td>
+<td><code>list[int]</code></td>
+<td>A list of tag IDs to add to the user.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>add_tag_names</code></td>
+<td><code>list[str]</code></td>
+<td>A list of tag names to add to the user.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>remove_tag_ids</code></td>
+<td><code>list[int]</code></td>
+<td>A list of tag IDs to remove from the user.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>remove_tag_names</code></td>
+<td><code>list[str]</code></td>
+<td>A list of tag names to remove from the user.</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<p style="color:red;font-size: 20px;"><b><u>Note that at least one of the add or remove parameters must be provided!</u></b></p>
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicAuth</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.admin</span><span class="w"> </span><span class="kn">import</span> <span class="n">update_user</span><span class="p">,</span> <span class="n">search_users</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">BasicAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1">#First, lets search for the user we want to update:</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">user</span> <span class="o">=</span> <span class="n">search_users</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="o">&gt;&gt;&gt;</span><span class="n">User</span><span class="p">(</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="nb">id</span><span class="o">=</span><span class="mi">12345678</span><span class="p">,</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;jdoe&#39;</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="o">...</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="p">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="c1"># Now we can update the user by their ID:</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="n">update_user</span><span class="p">(</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">,</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>    <span class="n">user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="n">add_role_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;New Role&#39;</span><span class="p">],</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    <span class="n">add_tag_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;New Tag&#39;</span><span class="p">],</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    <span class="n">remove_role_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Old Role&#39;</span><span class="p">],</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>    <span class="n">remove_tag_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Old Tag&#39;</span><span class="p">]</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="p">)</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="o">&gt;&gt;&gt;</span><span class="n">SUCCESS</span>
+</code></pre></div>
+<h2 id="qualysdk-rbac-cli-tool"><code>qualysdk-rbac</code> CLI tool</h2>
+<p>The <code>qualysdk-rbac</code> CLI tool is a command-line interface for the RBAC (Role-Based Access Control) portion of the SDK. It allows you to quickly search users tags, scopes/roles, and update them as needed. You can optionally save the results to a file in JSON format.</p>
+<h3 id="usage">Usage</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>usage:<span class="w"> </span>qualysdk-rbac<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span>-u<span class="w"> </span>USERNAME<span class="w"> </span>-p<span class="w"> </span>PASSWORD<span class="w"> </span><span class="o">[</span>-P<span class="w"> </span><span class="o">{</span>qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1<span class="o">}]</span><span class="w"> </span><span class="o">[</span>-oU<span class="w"> </span>api_url<span class="w"> </span>gateway_url<span class="w"> </span>qualysguard_url<span class="o">]</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">                     </span><span class="o">{</span>get_user_details,search_users,update_user<span class="o">}</span><span class="w"> </span>...
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>CLI<span class="w"> </span>script<span class="w"> </span>to<span class="w"> </span>quickly<span class="w"> </span>perform<span class="w"> </span>user<span class="w"> </span>permissions<span class="w"> </span>operations<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>administration<span class="w"> </span>module<span class="w"> </span>using<span class="w"> </span>qualysdk.
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>positional<span class="w"> </span>arguments:
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="o">{</span>get_user_details,search_users,update_user<span class="o">}</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">                        </span>Action<span class="w"> </span>to<span class="w"> </span>perform
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span>get_user_details<span class="w">    </span>Get<span class="w"> </span>the<span class="w"> </span>details<span class="w"> </span>of<span class="w"> </span>a<span class="w"> </span>specific<span class="w"> </span>user<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>Qualys<span class="w"> </span>administration<span class="w"> </span>module.
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span>search_users<span class="w">        </span>Search<span class="w"> </span><span class="k">for</span><span class="w"> </span>users<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>admin<span class="w"> </span>module.
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span>update_user<span class="w">         </span>Update<span class="w"> </span>an<span class="w"> </span>existing<span class="w"> </span>user<span class="err">&#39;</span>s<span class="w"> </span>tags/scope.
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>options:
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">  </span>-u,<span class="w"> </span>--username<span class="w"> </span>USERNAME
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">                        </span>Qualys<span class="w"> </span>username
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">  </span>-p,<span class="w"> </span>--password<span class="w"> </span>PASSWORD
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">                        </span>Qualys<span class="w"> </span>password
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">  </span>-P,<span class="w"> </span>--platform<span class="w"> </span><span class="o">{</span>qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1<span class="o">}</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">                        </span>Qualys<span class="w"> </span>platform
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">  </span>-oU,<span class="w"> </span>--override_urls<span class="w"> </span>api_url<span class="w"> </span>gateway_url<span class="w"> </span>qualysguard_url
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">                        </span>Override<span class="w"> </span>platform<span class="w"> </span>URLs<span class="w"> </span>with<span class="w"> </span>a<span class="w"> </span>custom<span class="w"> </span>URL<span class="w"> </span><span class="nb">set</span><span class="w"> </span>formatted<span class="w"> </span>like<span class="w"> </span>...<span class="w"> </span>--override_urls<span class="w"> </span>https://custom-api-url<span class="w"> </span>https://custom-gateway-url<span class="w"> </span>https://custom-qualysguard-url
+</code></pre></div>
+<h3 id="get-user-details">Get User Details</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>usage:<span class="w"> </span>qualysdk-rbac<span class="w"> </span>get_user_details<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-o<span class="w"> </span>OUTPUT<span class="o">]</span><span class="w"> </span>user_id
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>positional<span class="w"> </span>arguments:
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>user_id<span class="w">              </span>The<span class="w"> </span>administration<span class="w"> </span>ID<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>user<span class="w"> </span>to<span class="w"> </span>retrieve<span class="w"> </span>details<span class="w"> </span><span class="k">for</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>options:
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">           </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span>-o,<span class="w"> </span>--output<span class="w"> </span>OUTPUT<span class="w">  </span>Output<span class="w"> </span><span class="o">(</span>json<span class="o">)</span><span class="w"> </span>file<span class="w"> </span>to<span class="w"> </span>write<span class="w"> </span>results<span class="w"> </span>to
+</code></pre></div>
+<h3 id="search-users">Search Users</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>usage:<span class="w"> </span>qualysdk-rbac<span class="w"> </span>search_users<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-r<span class="w"> </span>ROLE<span class="o">]</span><span class="w"> </span><span class="o">[</span>-i<span class="w"> </span>USER_ID<span class="o">]</span><span class="w"> </span><span class="o">[</span>--id-operator<span class="w"> </span><span class="o">{</span>EQUALS,GREATER,LESSER<span class="o">}]</span><span class="w"> </span><span class="o">[</span>-qU<span class="w"> </span>QUALYS_USERNAME<span class="o">]</span><span class="w"> </span><span class="o">[</span>-a<span class="o">]</span><span class="w"> </span><span class="o">[</span>-o<span class="w"> </span>OUTPUT<span class="o">]</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>options:
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span>-r,<span class="w"> </span>--role<span class="w"> </span>ROLE<span class="w">       </span>The<span class="w"> </span>role<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>user<span class="o">(</span>s<span class="o">)</span><span class="w"> </span>to<span class="w"> </span>search<span class="w"> </span><span class="k">for</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span>-i,<span class="w"> </span>--user-id<span class="w"> </span>USER_ID
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">                        </span>The<span class="w"> </span>user<span class="w"> </span>ID<span class="w"> </span>to<span class="w"> </span>search<span class="w"> </span><span class="k">for</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span>--id-operator<span class="w"> </span><span class="o">{</span>EQUALS,GREATER,LESSER<span class="o">}</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">                        </span>The<span class="w"> </span>operator<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span><span class="k">for</span><span class="w"> </span>the<span class="w"> </span>user<span class="w"> </span>ID<span class="w"> </span>search
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span>-qU,<span class="w"> </span>--qualys-username<span class="w"> </span>QUALYS_USERNAME
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">                        </span>The<span class="w"> </span>username<span class="w"> </span>to<span class="w"> </span>search<span class="w"> </span><span class="k">for</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span>-a,<span class="w"> </span>--all<span class="w">             </span>If<span class="w"> </span>set,<span class="w"> </span>will<span class="w"> </span><span class="k">return</span><span class="w"> </span>all<span class="w"> </span>active<span class="w"> </span>users.<span class="w"> </span>Shorthand<span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="sb">`</span>--user-id<span class="o">=</span><span class="m">1</span><span class="sb">`</span><span class="w"> </span><span class="p">&amp;</span><span class="w"> </span>--id-operator<span class="o">=</span><span class="s1">&#39;GREATER&#39;</span>.
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span>-o,<span class="w"> </span>--output<span class="w"> </span>OUTPUT<span class="w">   </span>Output<span class="w"> </span><span class="o">(</span>json<span class="o">)</span><span class="w"> </span>file<span class="w"> </span>to<span class="w"> </span>write<span class="w"> </span>results<span class="w"> </span>to
+</code></pre></div>
+<h2 id="update-user">Update User</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>usage:<span class="w"> </span>qualysdk-rbac<span class="w"> </span>update_user<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>--add-tag-ids<span class="w"> </span>ADD_TAG_IDS<span class="w"> </span><span class="o">[</span>ADD_TAG_IDS<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>--add-tag-names<span class="w"> </span>ADD_TAG_NAMES<span class="w"> </span><span class="o">[</span>ADD_TAG_NAMES<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>--add-role-ids<span class="w"> </span>ADD_ROLE_IDS<span class="w"> </span><span class="o">[</span>ADD_ROLE_IDS<span class="w"> </span>...<span class="o">]]</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">                                 </span><span class="o">[</span>--add-role-names<span class="w"> </span>ADD_ROLE_NAMES<span class="w"> </span><span class="o">[</span>ADD_ROLE_NAMES<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>--remove-tag-ids<span class="w"> </span>REMOVE_TAG_IDS<span class="w"> </span><span class="o">[</span>REMOVE_TAG_IDS<span class="w"> </span>...<span class="o">]]</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">                                 </span><span class="o">[</span>--remove-tag-names<span class="w"> </span>REMOVE_TAG_NAMES<span class="w"> </span><span class="o">[</span>REMOVE_TAG_NAMES<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>--remove-role-ids<span class="w"> </span>REMOVE_ROLE_IDS<span class="w"> </span><span class="o">[</span>REMOVE_ROLE_IDS<span class="w"> </span>...<span class="o">]]</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">                                 </span><span class="o">[</span>--remove-role-names<span class="w"> </span>REMOVE_ROLE_NAMES<span class="w"> </span><span class="o">[</span>REMOVE_ROLE_NAMES<span class="w"> </span>...<span class="o">]]</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">                                 </span>user_id
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>positional<span class="w"> </span>arguments:
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span>user_id<span class="w">               </span>ID<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>user<span class="w"> </span>to<span class="w"> </span>update
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>options:
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span>--add-tag-ids<span class="w"> </span>ADD_TAG_IDS<span class="w"> </span><span class="o">[</span>ADD_TAG_IDS<span class="w"> </span>...<span class="o">]</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">                        </span>List<span class="w"> </span>of<span class="w"> </span>tag<span class="w"> </span>IDs<span class="w"> </span>to<span class="w"> </span>add<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>user.<span class="w"> </span>Use<span class="w"> </span>like:<span class="w"> </span>--add-tag-ids<span class="w"> </span><span class="m">123</span><span class="w"> </span><span class="m">456</span><span class="w"> </span><span class="m">789</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">  </span>--add-tag-names<span class="w"> </span>ADD_TAG_NAMES<span class="w"> </span><span class="o">[</span>ADD_TAG_NAMES<span class="w"> </span>...<span class="o">]</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">                        </span>List<span class="w"> </span>of<span class="w"> </span>tag<span class="w"> </span>names<span class="w"> </span>to<span class="w"> </span>add<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>user.<span class="w"> </span>Use<span class="w"> </span>like:<span class="w"> </span>--add-tag-names<span class="w"> </span>tag1<span class="w"> </span>tag2<span class="w"> </span>tag3
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">  </span>--add-role-ids<span class="w"> </span>ADD_ROLE_IDS<span class="w"> </span><span class="o">[</span>ADD_ROLE_IDS<span class="w"> </span>...<span class="o">]</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">                        </span>List<span class="w"> </span>of<span class="w"> </span>role<span class="w"> </span>IDs<span class="w"> </span>to<span class="w"> </span>add<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>user.<span class="w"> </span>Use<span class="w"> </span>like:<span class="w"> </span>--add-role-ids<span class="w"> </span><span class="m">123</span><span class="w"> </span><span class="m">456</span><span class="w"> </span><span class="m">789</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">  </span>--add-role-names<span class="w"> </span>ADD_ROLE_NAMES<span class="w"> </span><span class="o">[</span>ADD_ROLE_NAMES<span class="w"> </span>...<span class="o">]</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">                        </span>List<span class="w"> </span>of<span class="w"> </span>role<span class="w"> </span>names<span class="w"> </span>to<span class="w"> </span>add<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>user.<span class="w"> </span>Use<span class="w"> </span>like:<span class="w"> </span>--add-role-names<span class="w"> </span>role1<span class="w"> </span>role2<span class="w"> </span>role3
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">  </span>--remove-tag-ids<span class="w"> </span>REMOVE_TAG_IDS<span class="w"> </span><span class="o">[</span>REMOVE_TAG_IDS<span class="w"> </span>...<span class="o">]</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">                        </span>List<span class="w"> </span>of<span class="w"> </span>tag<span class="w"> </span>IDs<span class="w"> </span>to<span class="w"> </span>remove<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>user.<span class="w"> </span>Use<span class="w"> </span>like:<span class="w"> </span>--remove-tag-ids<span class="w"> </span><span class="m">123</span><span class="w"> </span><span class="m">456</span><span class="w"> </span><span class="m">789</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">  </span>--remove-tag-names<span class="w"> </span>REMOVE_TAG_NAMES<span class="w"> </span><span class="o">[</span>REMOVE_TAG_NAMES<span class="w"> </span>...<span class="o">]</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">                        </span>List<span class="w"> </span>of<span class="w"> </span>tag<span class="w"> </span>names<span class="w"> </span>to<span class="w"> </span>remove<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>user.<span class="w"> </span>Use<span class="w"> </span>like:<span class="w"> </span>--remove-tag-names<span class="w"> </span>tag1<span class="w"> </span>tag2<span class="w"> </span>tag3
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">  </span>--remove-role-ids<span class="w"> </span>REMOVE_ROLE_IDS<span class="w"> </span><span class="o">[</span>REMOVE_ROLE_IDS<span class="w"> </span>...<span class="o">]</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">                        </span>List<span class="w"> </span>of<span class="w"> </span>role<span class="w"> </span>IDs<span class="w"> </span>to<span class="w"> </span>remove<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>user.<span class="w"> </span>Use<span class="w"> </span>like:<span class="w"> </span>--remove-role-ids<span class="w"> </span><span class="m">123</span><span class="w"> </span><span class="m">456</span><span class="w"> </span><span class="m">789</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">  </span>--remove-role-names<span class="w"> </span>REMOVE_ROLE_NAMES<span class="w"> </span><span class="o">[</span>REMOVE_ROLE_NAMES<span class="w"> </span>...<span class="o">]</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w">                        </span>List<span class="w"> </span>of<span class="w"> </span>role<span class="w"> </span>names<span class="w"> </span>to<span class="w"> </span>remove<span class="w"> </span>from<span class="w"> </span>the<span class="w"> </span>user.<span class="w"> </span>Use<span class="w"> </span>like:<span class="w"> </span>--remove-role-names<span class="w"> </span>role1<span class="w"> </span>role2<span class="w"> </span>role3
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.instant.prefetch"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

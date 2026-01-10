@@ -1,0 +1,2915 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the qualysdk Python SDK. Make working with Qualys API data easier.">
+      
+      
+        <meta name="author" content="Jake Lindsay <jake@jakelindsay.uk>">
+      
+      
+      
+        <link rel="prev" href="../was/">
+      
+      
+        <link rel="next" href="../tagging/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Patch Management - qualysdk Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#patch-management-apis" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="qualysdk Documentation" class="md-header__button md-logo" aria-label="qualysdk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            qualysdk Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Patch Management
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/0x41424142/qualysdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="qualysdk Documentation" class="md-nav__button md-logo" aria-label="qualysdk Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    qualysdk Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/0x41424142/qualysdk" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gav/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Global AssetView
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vmdr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VMDR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../totalcloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TotalCloud
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloud_agent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud Agent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../containersecurity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Certificate View
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../was/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Web Application Scanning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patch Management
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patch Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pm-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PM Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-pm-version-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get PM Version API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-jobs-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Jobs API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-job-results-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Job Results API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-job-runs-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Job Runs API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-job-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Job API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Create Job API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-with-gav-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1 with GAV Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-with-tag-guids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2 with Tag GUIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#delete-job-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete Job API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#change-job-status-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change Job Status API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lookup-cves-for-qids-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lookup CVEs for QIDs API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-patches-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Patches API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-assets-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Assets API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-patch-count-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Patch Count API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lookup-host-uuids-from-asset-ids-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lookup Host UUIDs from Asset IDs API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lookup Host UUIDs from Asset IDs API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-with-gav-query_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1 with GAV Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-with-list-of-assetids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2 with List of assetIds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-with-comma-separated-string-of-assetids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3 with Comma-Separated String of assetIds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-patch-catalog-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Patch Catalog API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-packages-associated-with-linux-patches-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Packages Associated with Linux Patches API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-products-associated-with-windows-patches-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Products Associated with Windows Patches API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#count-product-vulnerabilities-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Count Product Vulnerabilities API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qualysdk-pm-cli-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        qualysdk-pm CLI tool
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="qualysdk-pm CLI tool">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tagging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tagging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Administration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Uploads
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../callschema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Call Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../json/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JSON support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pm-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PM Endpoints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-pm-version-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get PM Version API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-jobs-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List Jobs API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-job-results-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Job Results API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-job-runs-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Job Runs API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-job-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create Job API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Create Job API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-with-gav-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1 with GAV Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-with-tag-guids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2 with Tag GUIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#delete-job-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delete Job API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#change-job-status-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change Job Status API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lookup-cves-for-qids-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lookup CVEs for QIDs API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-patches-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Patches API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-assets-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Assets API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-patch-count-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Patch Count API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lookup-host-uuids-from-asset-ids-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lookup Host UUIDs from Asset IDs API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lookup Host UUIDs from Asset IDs API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-with-gav-query_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1 with GAV Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-with-list-of-assetids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2 with List of assetIds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-with-comma-separated-string-of-assetids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3 with Comma-Separated String of assetIds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-patch-catalog-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Patch Catalog API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-packages-associated-with-linux-patches-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Packages Associated with Linux Patches API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-products-associated-with-windows-patches-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Products Associated with Windows Patches API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#count-product-vulnerabilities-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Count Product Vulnerabilities API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qualysdk-pm-cli-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        qualysdk-pm CLI tool
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="qualysdk-pm CLI tool">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="patch-management-apis">Patch Management APIs</h1>
+<p>PM APIs return data on patches, asset patch status/compliance, and patch jobs.</p>
+<blockquote>
+<p><strong>Head's Up!:</strong> Qualys does not support MacOS for the patch management API.</p>
+</blockquote>
+<p>After running:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+</code></pre></div></p>
+<p>You can use any of the endpoints currently supported:</p>
+<h2 id="pm-endpoints">PM Endpoints</h2>
+<table>
+<thead>
+<tr>
+<th>API Call</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_version</code></td>
+<td>Returns the version of the PM API.</td>
+</tr>
+<tr>
+<td><code>list_jobs</code></td>
+<td>Returns jobs that match given kwargs.</td>
+</tr>
+<tr>
+<td><code>get_job_results</code></td>
+<td>Returns a summary of a job.</td>
+</tr>
+<tr>
+<td><code>get_job_runs</code></td>
+<td>Returns a list of runs of a job.</td>
+</tr>
+<tr>
+<td><code>create_job</code></td>
+<td>Creates a new job.</td>
+</tr>
+<tr>
+<td><code>delete_job</code></td>
+<td>Deletes a job or a list of jobs.</td>
+</tr>
+<tr>
+<td><code>change_job_status</code></td>
+<td>Enable/disable a job or a list of jobs.</td>
+</tr>
+<tr>
+<td><code>lookup_cves</code></td>
+<td>Returns a list of CVEs and other details associated with a QID.</td>
+</tr>
+<tr>
+<td><code>get_patches</code></td>
+<td>Returns a list of patches.</td>
+</tr>
+<tr>
+<td><code>get_assets</code></td>
+<td>Returns a list of assets.</td>
+</tr>
+<tr>
+<td><code>get_patch_count</code></td>
+<td>Returns the number of patches for a given platform that match <code>query</code> and <code>havingQuery</code>.</td>
+</tr>
+<tr>
+<td><code>get_asset_count</code></td>
+<td>Returns the number of assets for a given platform that match <code>query</code> and <code>havingQuery</code>.</td>
+</tr>
+<tr>
+<td><code>lookup_host_uuids</code></td>
+<td>Returns a list of tuples, containing host UUIDs for a given list of asset IDs.</td>
+</tr>
+<tr>
+<td><code>get_patch_catalog</code></td>
+<td>Returns the patch catalog for a given platform according to <code>patchId</code>.</td>
+</tr>
+<tr>
+<td><code>get_packages_in_linux_patch</code></td>
+<td>Returns the packages associated with a Linux patch.</td>
+</tr>
+<tr>
+<td><code>get_products_in_windows_patch</code></td>
+<td>Returns the products associated with a Windows patch.</td>
+</tr>
+<tr>
+<td><code>count_product_vulns</code></td>
+<td>Return the number of vulns (active and fixed) from products in your environment.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="get-pm-version-api">Get PM Version API</h2>
+<p><code>get_version</code> returns the version of the PM API.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_version</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">get_version</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="o">&gt;&gt;&gt;</span><span class="s2">&quot;3.1.0.0-29&quot;</span>
+</code></pre></div>
+<h2 id="list-jobs-api">List Jobs API</h2>
+<p><code>list_jobs</code> returns a <code>BaseList</code> of patch management jobs in the user's account that match the given kwargs. if <code>platform='all'</code>, it uses threading to speed up the process.</p>
+<blockquote>
+<p><strong>Head's Up!:</strong> For the <code>filter</code> kwarg, see the linked documentation for the possible values: <a href="https://docs.qualys.com/en/pm/3.1.0.0/search_tips/ui_jobs_list.htm">Windows Jobs</a>, <a href="https://docs.qualys.com/en/pm/3.1.0.0/search_tips/search_linux_jobs.htm">Linux Jobs</a></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>Literal['all', 'windows', 'linux']='all'</code></td>
+<td>The platform of the job</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>page_count</code></td>
+<td><code>Union[int, "all"] = "all"</code></td>
+<td>The number of pages to return</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td><code>str</code></td>
+<td>The QQL filter to search for jobs</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>attributes</code></td>
+<td><code>str</code></td>
+<td>The attributes to return in the response as a comma-separated string</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>coauthorJob</code></td>
+<td><code>bool=False</code></td>
+<td>Only include jobs where the user is a coauthor</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>ownedJob</code></td>
+<td><code>bool=False</code></td>
+<td>Only include jobs where the user is the sole owner</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>pageSize</code></td>
+<td><code>int=10</code></td>
+<td>The number of jobs to return per page</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_jobs</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Get all Windows jobs:</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">win_jobs</span> <span class="o">=</span> <span class="n">list_jobs</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="s1">&#39;windows&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">PMJob</span><span class="p">(</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;My Job&quot;</span><span class="p">,</span> 
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;&lt;job_guid&gt;&quot;</span><span class="p">,</span> 
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>        <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span> 
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="o">...</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="p">),</span> 
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="o">...</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="get-job-results-api">Get Job Results API</h2>
+<p><code>get_job_results</code> returns the results of a patch management job.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td><code>Union[str, BaseList[PMJob, str]]</code></td>
+<td>The ID(s) of the job to get results for. If a <code>BaseList</code> of <code>PMJob</code> objects is passed, the function will use threading.</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>jobInstanceId</code></td>
+<td><code>str</code></td>
+<td>The ID of the job instance to get results for. Should not be used with threading.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>pageSize</code></td>
+<td><code>int=10</code></td>
+<td>The number of results to return per page</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>sort</code></td>
+<td><code>str</code></td>
+<td>The field to sort the results by</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_job_results</span><span class="p">,</span> <span class="n">list_jobs</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Get some job:</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">job</span> <span class="o">=</span> <span class="n">list_jobs</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="s1">&#39;linux&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Get the results summary for the job:</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">results</span> <span class="o">=</span> <span class="n">get_job_results</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="o">&gt;&gt;&gt;</span><span class="n">JobResultSummary</span><span class="p">(</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;11111111-2222-3333-4444-555555555555&#39;</span><span class="p">,</span> 
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Job&#39;</span><span class="p">,</span> 
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="n">assetCount</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="n">patchCount</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="n">createdBy</span><span class="o">=&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> 
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>    <span class="n">createdOn</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">777000</span><span class="p">),</span> 
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="n">assets</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>        <span class="n">PMAssetJobView</span><span class="p">(</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>            <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee&#39;</span><span class="p">,</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Patch Asset&#39;</span><span class="p">,</span> 
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>            <span class="n">operatingSystem</span><span class="o">=</span><span class="s1">&#39;Red Hat Enterprise Linux 9.5&#39;</span><span class="p">,</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>            <span class="o">...</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a>        <span class="p">)</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a>    <span class="p">]</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="p">)</span>
+<a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a>
+<a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="c1"># Threading example:</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="n">jobs</span> <span class="o">=</span> <span class="n">list_jobs</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+<a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="n">results</span> <span class="o">=</span> <span class="n">get_job_results</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">jobs</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="get-job-runs-api">Get Job Runs API</h2>
+<p><code>get_job_runs</code> returns a list of runs of a patch management job.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td><code>str</code></td>
+<td>The ID(s) of the job to get runs for</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_job_runs</span><span class="p">,</span> <span class="n">list_jobs</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Get some job:</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">job</span> <span class="o">=</span> <span class="n">list_jobs</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="s1">&#39;linux&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># Get the runs for the job:</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">runs</span> <span class="o">=</span> <span class="n">get_job_runs</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">PMRun</span><span class="p">(</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>        <span class="n">jobInstanceId</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>        <span class="n">jobId</span><span class="o">=</span><span class="s1">&#39;11111111-2222-3333-4444-555555555555&#39;</span><span class="p">,</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>        <span class="n">scheduledDateTime</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> 
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>        <span class="n">timezoneType</span><span class="o">=</span><span class="s1">&#39;SPECIFIC_TZ&#39;</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    <span class="p">)</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="create-job-api">Create Job API</h2>
+<p><code>create_job</code> creates a new patch management job.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td>The name of the job</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>Literal["Windows", "Linux"]</code></td>
+<td>The platform of the job</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>jobType</code></td>
+<td><code>Literal["Install", "Rollback"]</code></td>
+<td>The type of job to create. <code>Rollback</code> is Windows-only.</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>scheduleType</code></td>
+<td><code>Literal["On-demand", "Once", "Daily", "Weekly", "Monthly"]</code></td>
+<td>The type of schedule to use</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>approvedPatches</code></td>
+<td><code>List[str]</code></td>
+<td>An explicit list of patche GUIDs to add to the job</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>assetIds</code></td>
+<td><code>List[str]</code></td>
+<td>The IDs of the assets to target</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>assetTagIds</code></td>
+<td><code>List[str]</code></td>
+<td>The IDs of the asset tags to target</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>filterType</code></td>
+<td><code>Literal["all", "any"] = "any"</code></td>
+<td>The type of filter to use</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>exclusionTagIds</code></td>
+<td><code>List[str]</code></td>
+<td>The IDs of the asset tags to exclude</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>exclusionAssetIds</code></td>
+<td><code>List[str]</code></td>
+<td>The IDs of the assets to exclude</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>str</code></td>
+<td>The description of the job</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>coAuthorUserIds</code></td>
+<td><code>List[str]</code></td>
+<td>The IDs of the co-authors to add to the job</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>exclusionFilterType</code></td>
+<td><code>Literal["all", "any"] = "any"</code></td>
+<td>The type of exclusion filter to use</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>startDateTime</code></td>
+<td><code>str</code></td>
+<td>The start date and time of the job</td>
+<td>❌ for <code>On-demand</code>, ✅ for others</td>
+</tr>
+<tr>
+<td><code>recurring</code></td>
+<td><code>bool=False</code></td>
+<td>Whether the job is recurring</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>dayOfMonth</code></td>
+<td><code>int, 0 &lt;= x &lt;= 31</code></td>
+<td>The day of the month to run the job</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>matchAllTagIds</code></td>
+<td><code>list[str]</code></td>
+<td>The IDs of the asset tags to match</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>recurringLastDayOfMonth</code></td>
+<td><code>bool=False</code></td>
+<td>Whether the job runs on the last day of the month</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>monthlyRecurringType</code></td>
+<td><code>Literal[0, 1, "0", "1"]</code></td>
+<td>If 1, run on Patch Tuesday</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>patchTuesdayPlusXDays</code></td>
+<td><code>int, -27 &lt;= x &lt;= 27</code></td>
+<td>The number of days before or after Patch Tuesday to run the job</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>recurringDayOfMonth</code></td>
+<td><code>int, 1 &lt;= x &lt;= 5</code></td>
+<td>Run the job on a specific weekday of the month</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>recurringWeekDayOfMonth</code></td>
+<td><code>int, 0 &lt;= x &lt;= 6</code></td>
+<td>The day of the week to run the job</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>recurringWeekDays</code></td>
+<td><code>str</code> like <code>"0,0,0,0,0,0,0"</code></td>
+<td>Similar to cron. Replace a 0 with a 1 to run on that day. str[0] = Sunday</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>dynamicQQLType</code></td>
+<td><code>Literal[0,1,2]</code></td>
+<td>0 = Do not use QQL, 1 = use patch QQL, 2 = use vulnerability QQL</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>isDynamicPatchesQQL</code></td>
+<td><code>bool=False</code></td>
+<td>Whether to use dynamic patches QQL</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>dynamicPatchesQQL</code></td>
+<td><code>str</code></td>
+<td>The QQL to use for dynamic patches</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>continueOnPatchFailure</code></td>
+<td><code>bool=True</code></td>
+<td>(Linux only) Whether to continue the job if a patch fails</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>preDeployment</code></td>
+<td><code>str</code></td>
+<td>Specify a message to display before deployment starts</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>duringDeployment</code></td>
+<td><code>str</code></td>
+<td>Specify a message to display during deployment</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>postDeployment</code></td>
+<td><code>str</code></td>
+<td>Specify a message to display after deployment</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>onComplete</code></td>
+<td><code>str</code></td>
+<td>Specify a message to display when the job completes</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>rebootCountdown</code></td>
+<td><code>str</code></td>
+<td>Specify a message to display before a reboot</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>rebootOption</code></td>
+<td><code>str</code></td>
+<td>Specify a message for after a reboot</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>suppressReboots</code></td>
+<td><code>bool=False</code></td>
+<td>Allow users to suppress reboots</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>minimizeWindow</code></td>
+<td><code>bool=False</code></td>
+<td>Allow users to minimize the deployment window</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>Literal["Disabled", "Enabled"] = "Disabled"</code></td>
+<td>The status of the job</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>int 1 &lt;= x &lt;= 168</code> for hours, <code>int 1 &lt;= x &lt;= 10080</code> for minutes</td>
+<td>The timeout for the job in hours or minutes (specified by timeoutUnit)</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>timeoutUnit</code></td>
+<td>Literal["HOURS", "MINUTES"]</td>
+<td>The unit of the timeout</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>timezoneType</code></td>
+<td><code>Literal["AGENT_TZ", "SPECIFIC_TZ"]</code></td>
+<td>The timezone type to use</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>timezone</code></td>
+<td><code>str</code></td>
+<td>The (timezone)[https://docs.qualys.com/en/pm/api/deployment_job_resource/time_zones.htm] to use. For example: <code>"America/New_York"</code></td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>opportunisticDownloads</code></td>
+<td><code>bool=False</code></td>
+<td>Whether to use opportunistic downloads. Only available for Windows</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>linkedJobId</code></td>
+<td><code>str</code></td>
+<td>The ID of the job to link to</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>notificationType</code></td>
+<td><code>bool</code></td>
+<td>If true, email notifications are sent</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>notificationConfigRecipientEmail</code></td>
+<td><code>str</code></td>
+<td>The email to send notifications to</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>notificationConfigCompletedPercentage</code></td>
+<td><code>int 1 &lt;= x &lt;= 100</code></td>
+<td>The percentage of completion to send notifications at</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>notificationEvents</code></td>
+<td><code>bool</code></td>
+<td>If true, send notifications when <code>onJobStart</code> or <code>onJobComplete</code> are triggered</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>downloadRandomizeTime</code></td>
+<td><code>str</code></td>
+<td>Provide the job randomize time in hours or minutes. Max is 2 hours or 120 minutes and must be less than the timeout/timeoutUnit</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>downloadRandomizeTimeUnit</code></td>
+<td><code>Literal["HOURS", "MINUTES"]</code></td>
+<td>The unit of the randomize time</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>additionalDynamicQQLType</code></td>
+<td><code>Literal[1,2]</code></td>
+<td>1 = Use patch QQL, 2 = Use vulnerability QQL</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<p>There are a few ways to pass in certain assets. If you have very particular assets in mind, you can make a GAV API call to get the agentIds of the assets you want to target:</p>
+<h3 id="example-1-with-gav-query">Example 1 with GAV Query</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_job</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.gav</span><span class="w"> </span><span class="kn">import</span> <span class="n">query_assets</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">windows_assets</span> <span class="o">=</span> <span class="n">query_assets</span><span class="p">(</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>  <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;operatingSystem.category: `Windows / Server`&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>  <span class="n">includeFields</span><span class="o">=</span><span class="s2">&quot;agentId&quot;</span><span class="p">,</span>  
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">)</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># PM uses GUIDs for almost everything, so we need </span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># to extract the GUIDs from the assets:</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="n">windows_assets_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">asset</span><span class="o">.</span><span class="n">agentId</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">windows_assets</span><span class="p">]</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="c1"># Create a new job for Windows servers. Let&#39;s</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="c1"># focus on critical patches only:</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="n">job</span> <span class="o">=</span> <span class="n">create_job</span><span class="p">(</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>    <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;Windows&#39;</span><span class="p">,</span> 
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>    <span class="n">jobType</span><span class="o">=</span><span class="s1">&#39;Install&#39;</span><span class="p">,</span> 
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>    <span class="n">scheduleType</span><span class="o">=</span><span class="s1">&#39;On-demand&#39;</span><span class="p">,</span> 
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>    <span class="n">assetIds</span><span class="o">=</span><span class="n">windows_assets_ids</span><span class="p">,</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Job&#39;</span><span class="p">,</span>
+<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>    <span class="n">dynamicPatchesQQL</span><span class="o">=</span><span class="s2">&quot;vendorSeverity:`Critical`&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>    <span class="n">dynamicQQLType</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a>    <span class="n">isDynamicPatchesQQL</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a>    <span class="n">status</span><span class="o">=</span><span class="s2">&quot;Enabled&quot;</span><span class="p">,</span> <span class="c1"># Immediately enable the job. By default, the job is disabled!</span>
+<a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="p">)</span>
+<a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="o">&gt;&gt;&gt;</span><span class="s2">&quot;11111111-2222-3333-4444-555555555555&quot;</span>
+</code></pre></div>
+<p>Or you can use asset tags to dynamically target assets. </p>
+<p>Using PM tag GUIDs is a bit more cumbersome since Qualys does not provide an easy way to look up tag GUIDs, but this method is much more flexible since new assets are picked up automatically by the job:</p>
+<h3 id="example-2-with-tag-guids">Example 2 with Tag GUIDs</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_job</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># Create a new job for Windows servers. Let&#39;s</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># assume we have a tag for all Windows servers</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1"># with GUID 22222222-3333-4444-5555-666666666666:</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">job</span> <span class="o">=</span> <span class="n">create_job</span><span class="p">(</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;Windows&#39;</span><span class="p">,</span> 
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="n">jobType</span><span class="o">=</span><span class="s1">&#39;Install&#39;</span><span class="p">,</span> 
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="n">scheduleType</span><span class="o">=</span><span class="s1">&#39;On-demand&#39;</span><span class="p">,</span> 
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="n">assetTagIds</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;22222222-3333-4444-5555-666666666666&#39;</span><span class="p">],</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Job&#39;</span><span class="p">,</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="n">dynamicPatchesQQL</span><span class="o">=</span><span class="s2">&quot;vendorSeverity:`Critical`&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    <span class="n">dynamicQQLType</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>    <span class="n">isDynamicPatchesQQL</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>    <span class="n">status</span><span class="o">=</span><span class="s2">&quot;Enabled&quot;</span><span class="p">,</span> <span class="c1"># Immediately enable the job. By default, the job is disabled!</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="p">)</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="o">&gt;&gt;&gt;</span><span class="s2">&quot;11111111-2222-3333-4444-555555555555&quot;</span>
+</code></pre></div>
+<h2 id="delete-job-api">Delete Job API</h2>
+<p><code>delete_job</code> deletes a patch management job or a list of jobs.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td><code>Union[str, BaseList[str]]</code></td>
+<td>The ID(s) of the job to delete</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">delete_job</span><span class="p">,</span> <span class="n">list_jobs</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># Delete a single job:</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">job</span> <span class="o">=</span> <span class="n">list_jobs</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="s1">&#39;linux&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">delete_job</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  <span class="p">{</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;11111111-2222-3333-4444-555555555555&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;My job&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    <span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="s2">&quot;success&quot;</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>  <span class="p">}</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="p">]</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="c1"># Delete multiple jobs:</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="n">jobs</span> <span class="o">=</span> <span class="n">list_jobs</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="n">delete_job</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">])</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>  <span class="p">{</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>    <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;11111111-2222-3333-4444-555555555555&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;My job&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a>    <span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="s2">&quot;success&quot;</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>  <span class="p">},</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>  <span class="p">{</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>    <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;22222222-3333-4444-5555-666666666666&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;My other job&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>    <span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="s2">&quot;success&quot;</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>  <span class="p">},</span>
+<a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>  <span class="o">...</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="change-job-status-api">Change Job Status API</h2>
+<p><code>change_job_status</code> enables or disables a patch management job or a list of jobs.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td><code>Literal["enable", "disable"]</code></td>
+<td>The action to perform</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>jobId</code></td>
+<td><code>Union[str, BaseList[str]]</code></td>
+<td>The ID(s) of the job to change the status of</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">change_job_status</span><span class="p">,</span> <span class="n">list_jobs</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># Disable a single job:</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">job</span> <span class="o">=</span> <span class="n">list_jobs</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="s1">&#39;linux&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">change_job_status</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="s1">&#39;disable&#39;</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  <span class="p">{</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;11111111-2222-3333-4444-555555555555&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;My job&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>    <span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="s2">&quot;success&quot;</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>  <span class="p">}</span>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="p">]</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="c1"># Disable multiple jobs:</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="n">jobs</span> <span class="o">=</span> <span class="n">list_jobs</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="n">change_job_status</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="s1">&#39;disable&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">])</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>  <span class="p">{</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>    <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;11111111-2222-3333-4444-555555555555&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;My job&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>    <span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="s2">&quot;success&quot;</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>  <span class="p">},</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>  <span class="p">{</span>
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>    <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;22222222-3333-4444-5555-666666666666&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>    <span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;My other job&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>    <span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="s2">&quot;success&quot;</span>
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a>  <span class="p">},</span>
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a>  <span class="o">...</span>
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="lookup-cves-for-qids-api">Lookup CVEs for QIDs API</h2>
+<p><code>lookup_cves</code> returns a list of CVEs and other details associated with specified QIDs as a <code>BaseList</code> of <code>PMVulnerability</code> objects.</p>
+<p>This function accepts either a single QID as a string or integer, a list/BaseList of strings/integers, or a comma-separated string of QIDs.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>qids</code></td>
+<td><code>Union[str, int, BaseList/list[str, int]]</code></td>
+<td>The QID(s) to look up. Can be a list of strings/ints, a single int/string, or a comma-separated string</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>threads</code></td>
+<td><code>int=5</code></td>
+<td>The number of threads to use for the lookup. ⚠️ Thread mode is only used if 1K+ <code>qids</code> are passed</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span><span class="p">,</span> <span class="n">BasicAuth</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.vmdr</span><span class="w"> </span><span class="kn">import</span> <span class="n">query_kb</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">lookup_cves</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">token</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">basic</span> <span class="o">=</span> <span class="n">BasicAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="c1"># Get some QIDs:</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="n">qids</span> <span class="o">=</span> <span class="n">query_kb</span><span class="p">(</span><span class="n">basic</span><span class="p">,</span> <span class="n">page_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="s1">&#39;10000-11000&#39;</span><span class="p">)</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># Get the PM details/CVEs:</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="n">cves</span> <span class="o">=</span> <span class="n">lookup_cves</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="p">[</span><span class="n">qid</span><span class="o">.</span><span class="n">QID</span> <span class="k">for</span> <span class="n">qid</span> <span class="ow">in</span> <span class="n">qids</span><span class="p">])</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>  <span class="n">PMVulnerability</span><span class="p">(</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>    <span class="nb">id</span><span class="o">=</span><span class="mi">10230</span><span class="p">,</span> 
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Viralator CGI Input Validation Remote Shell Command Vulnerability&#39;</span><span class="p">,</span> 
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="n">cves</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CVE-2001-0849&#39;</span><span class="p">],</span> 
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>    <span class="n">detectedDate</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2001</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">57</span><span class="p">),</span> 
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>    <span class="n">severity</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> 
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>    <span class="n">vulnType</span><span class="o">=</span><span class="s1">&#39;VULNERABILITY&#39;</span>
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>  <span class="p">),</span> 
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>  <span class="n">PMVulnerability</span><span class="p">(</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>    <span class="nb">id</span><span class="o">=</span><span class="mi">10310</span><span class="p">,</span> 
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Suspicious file register.idc&#39;</span><span class="p">,</span> 
+<a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>    <span class="n">cves</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># Sometimes there are no CVEs!</span>
+<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>    <span class="n">detectedDate</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2001</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> 
+<a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>    <span class="n">severity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+<a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>    <span class="n">vulnType</span><span class="o">=</span><span class="s1">&#39;POTENTIAL&#39;</span>
+<a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>  <span class="p">),</span>
+<a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>  <span class="o">...</span>
+<a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a><span class="p">]</span>
+<a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>
+<a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a><span class="c1"># Or you can pass in a single QID:</span>
+<a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a><span class="n">cve</span> <span class="o">=</span> <span class="n">lookup_cves</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="mi">10230</span><span class="p">)</span>
+<a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a><span class="o">&gt;&gt;&gt;</span><span class="n">PMVulnerability</span><span class="p">(</span>
+<a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a>  <span class="nb">id</span><span class="o">=</span><span class="mi">10230</span><span class="p">,</span> 
+<a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a>  <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Viralator CGI Input Validation Remote Shell Command Vulnerability&#39;</span><span class="p">,</span> 
+<a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a>  <span class="n">cves</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CVE-2001-0849&#39;</span><span class="p">],</span> 
+<a id="__codelineno-9-39" name="__codelineno-9-39" href="#__codelineno-9-39"></a>  <span class="n">detectedDate</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2001</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">57</span><span class="p">),</span> 
+<a id="__codelineno-9-40" name="__codelineno-9-40" href="#__codelineno-9-40"></a>  <span class="n">severity</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> 
+<a id="__codelineno-9-41" name="__codelineno-9-41" href="#__codelineno-9-41"></a>  <span class="n">vulnType</span><span class="o">=</span><span class="s1">&#39;VULNERABILITY&#39;</span>
+<a id="__codelineno-9-42" name="__codelineno-9-42" href="#__codelineno-9-42"></a><span class="p">)</span>
+</code></pre></div>
+<h2 id="get-patches-api">Get Patches API</h2>
+<p><code>get_patches</code> returns a <code>BaseList</code> of <code>Patch</code> objects that match the given kwargs.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>page_count</code></td>
+<td><code>Union[int, "all"] = "all"</code></td>
+<td>The number of pages to return</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>pageSize</code></td>
+<td><code>int=1000</code></td>
+<td>The number of patches to return per page</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>Literal["all", "windows", "linux"] = "all"</code></td>
+<td>The platform of the patches to return</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td><code>str="patchStatus:[Missing,Installed] and isSuperseded:false</code> FOR WINDOWS</td>
+<td>A patch QQL query to filter with. By default returns all of the latest patches if <code>platform=windows</code></td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>havingQuery</code></td>
+<td><code>str</code></td>
+<td>A PM host QQL query to filter with</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>attributes</code></td>
+<td><code>str</code></td>
+<td>The attributes to return in the response as a comma-separated string</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_patches</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># Get all patches that are severity 5</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># and only return their titles &amp; IDs:</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">patches</span> <span class="o">=</span> <span class="n">get_patches</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s2">&quot;vendorSeverity:5&quot;</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="s2">&quot;id,title&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>  <span class="n">Patch</span><span class="p">(</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;11111111-2222-3333-4444-555555555555&#39;</span><span class="p">,</span> 
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;My Patch&#39;</span><span class="p">,</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="o">...</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>  <span class="p">),</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>  <span class="n">Patch</span><span class="p">(</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>    <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;22222222-3333-4444-5555-666666666666&#39;</span><span class="p">,</span> 
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;My Other Patch&#39;</span><span class="p">,</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>    <span class="o">...</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>  <span class="p">),</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>  <span class="o">...</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="p">]</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="c1"># Just get windows patches:</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="n">windows_patches</span> <span class="o">=</span> <span class="n">get_patches</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;windows&#39;</span><span class="p">)</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>  <span class="n">Patch</span><span class="p">(</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>    <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;11111111-2222-3333-4444-555555555555&#39;</span><span class="p">,</span> 
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;My Patch&#39;</span><span class="p">,</span>
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>    <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;Windows&#39;</span><span class="p">,</span>
+<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a>    <span class="o">...</span>
+<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>  <span class="p">),</span>
+<a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a>  <span class="n">Patch</span><span class="p">(</span>
+<a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a>    <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;22222222-3333-4444-5555-666666666666&#39;</span><span class="p">,</span> 
+<a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;My Other Patch&#39;</span><span class="p">,</span>
+<a id="__codelineno-10-35" name="__codelineno-10-35" href="#__codelineno-10-35"></a>    <span class="o">...</span>
+<a id="__codelineno-10-36" name="__codelineno-10-36" href="#__codelineno-10-36"></a>  <span class="p">),</span>
+<a id="__codelineno-10-37" name="__codelineno-10-37" href="#__codelineno-10-37"></a>  <span class="o">...</span>
+<a id="__codelineno-10-38" name="__codelineno-10-38" href="#__codelineno-10-38"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="get-assets-api">Get Assets API</h2>
+<p><code>get_assets</code> returns a <code>BaseList</code> of <code>Asset</code> objects that match the given kwargs.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>page_count</code></td>
+<td><code>Union[int, "all"] = "all"</code></td>
+<td>The number of pages to return</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>pageSize</code></td>
+<td><code>int=400</code></td>
+<td>The number of assets to return per page</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>Literal["all", "windows", "linux"] = "all"</code></td>
+<td>The platform of the assets to return</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td><code>str</code></td>
+<td>A patch QQL query to filter with</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>havingQuery</code></td>
+<td><code>str</code></td>
+<td>A PM host QQL query to filter with</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>attributes</code></td>
+<td><code>str</code></td>
+<td>The attributes to return in the response as a comma-separated string</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_assets</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="c1"># Get all assets that are missing patches:</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">assets</span> <span class="o">=</span> <span class="n">get_assets</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s2">&quot;patchStatus:Missing&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>  <span class="n">Asset</span><span class="p">(</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;11111111-2222-3333-4444-555555555555&#39;</span><span class="p">,</span> 
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Asset&#39;</span><span class="p">,</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="o">...</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>  <span class="p">),</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>  <span class="n">Asset</span><span class="p">(</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>    <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;22222222-3333-4444-5555-666666666666&#39;</span><span class="p">,</span> 
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Other Asset&#39;</span><span class="p">,</span>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>    <span class="o">...</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>  <span class="p">),</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>  <span class="o">...</span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="get-patch-count-api">Get Patch Count API</h2>
+<p><code>get_patch_count</code> returns the number of patches for a given platform that match the given query and havingQuery.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>Literal["windows", "linux"] = "windows"</code></td>
+<td>The platform of the patches to return</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td><code>str</code></td>
+<td>A patch QQL query to filter with</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>havingQuery</code></td>
+<td><code>str</code></td>
+<td>A PM host QQL query to filter with</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_patch_count</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="c1"># Get the number of patches for Windows</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="c1"># that are critical severity:</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="n">count</span> <span class="o">=</span> <span class="n">get_patch_count</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;windows&#39;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s2">&quot;vendorSeverity:Critical&quot;</span><span class="p">)</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="o">&gt;&gt;&gt;</span><span class="mi">100</span>
+</code></pre></div>
+<h2 id="lookup-host-uuids-from-asset-ids-api">Lookup Host UUIDs from Asset IDs API</h2>
+<p><code>lookup_host_uuids</code> returns a list of host UUIDs for a given list of asset IDs.</p>
+<p><code>assetIds</code> can be a list/BaseList of strings/integers, a single int/string, or a comma-separated string.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>assetIds</code></td>
+<td><code>Union[list[str, int], BaseList[str, int], str, int]</code></td>
+<td>The IDs of the assets to look up</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-1-with-gav-query_1">Example 1 with GAV Query</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">lookup_host_uuids</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.gav</span><span class="w"> </span><span class="kn">import</span> <span class="n">query_assets</span> <span class="c1"># Could also use get_all_assets!</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="c1"># Get some assets. All we need is assetId.</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="c1"># We can also filter for assets activated for PM:</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="n">assets</span> <span class="o">=</span> <span class="n">query_assets</span><span class="p">(</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>  <span class="n">includeFields</span><span class="o">=</span><span class="s1">&#39;assetId&#39;</span><span class="p">,</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>  <span class="nb">filter</span><span class="o">=</span><span class="s1">&#39;sensors.activatedForModules:`PM`</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="p">)</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="c1"># Get the host UUIDs for the assets:</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="n">uuids</span> <span class="o">=</span> <span class="n">lookup_host_uuids</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="p">[</span><span class="n">asset</span><span class="o">.</span><span class="n">assetId</span> <span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">])</span>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>  <span class="p">(</span>
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>    <span class="mi">123456789</span><span class="p">,</span>
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a>    <span class="s1">&#39;11111111-2222-3333-4444-555555555555&#39;</span>
+<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>  <span class="p">),</span>
+<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a>  <span class="p">(</span>
+<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>    <span class="mi">987654321</span><span class="p">,</span>
+<a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a>    <span class="s1">&#39;22222222-3333-4444-5555-666666666666&#39;</span>
+<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a>  <span class="p">),</span>
+<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a>  <span class="o">...</span>
+<a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="p">]</span>
+</code></pre></div>
+<h3 id="example-2-with-list-of-assetids">Example 2 with List of <code>assetIds</code></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">lookup_host_uuids</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">123456789</span><span class="p">,</span> <span class="mi">987654321</span><span class="p">]</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="n">uuids</span> <span class="o">=</span> <span class="n">lookup_host_uuids</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>  <span class="p">(</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>    <span class="mi">123456789</span><span class="p">,</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>    <span class="s1">&#39;11111111-2222-3333-4444-555555555555&#39;</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>  <span class="p">),</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>  <span class="p">(</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>    <span class="mi">987654321</span><span class="p">,</span>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>    <span class="s1">&#39;22222222-3333-4444-5555-666666666666&#39;</span>
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>  <span class="p">)</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="p">]</span>
+</code></pre></div>
+<h3 id="example-3-with-comma-separated-string-of-assetids">Example 3 with Comma-Separated String of <code>assetIds</code></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">lookup_host_uuids</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="n">ids</span> <span class="o">=</span> <span class="s1">&#39;123456789,987654321&#39;</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="n">uuids</span> <span class="o">=</span> <span class="n">lookup_host_uuids</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>  <span class="p">(</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>    <span class="mi">123456789</span><span class="p">,</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>    <span class="s1">&#39;11111111-2222-3333-4444-555555555555&#39;</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>  <span class="p">),</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>  <span class="p">(</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>    <span class="mi">987654321</span><span class="p">,</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>    <span class="s1">&#39;22222222-3333-4444-5555-666666666666&#39;</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>  <span class="p">)</span>
+<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="get-patch-catalog-api">Get Patch Catalog API</h2>
+<p><code>get_patch_catalog</code> returns the patch catalog for a given platform according to <code>patchId</code>.</p>
+<p><code>patchId</code> can be a list/BaseList of strings/integers, a single int/string, or a comma-separated string.</p>
+<blockquote>
+<p><strong>Head's Up!:</strong> You should only pass in one platform at a time. If you pass in a mix of both Windows and Linux patches, the function will only return the patches that match the <code>platform</code> parameter (default is Windows).</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>patchId</code></td>
+<td><code>Union[list[str, int], BaseList[str, int], str, int]</code></td>
+<td>The IDs of the patches to look up</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>Literal["windows", "linux"] = "windows"</code></td>
+<td>The platform of the patches to return. Defaults to windows</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>attributes</code></td>
+<td><code>str</code></td>
+<td>The attributes to return in the response as a comma-separated string</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_patch_catalog</span><span class="p">,</span> <span class="n">get_patches</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="c1"># Get some Linux patches:</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="n">patches</span> <span class="o">=</span> <span class="n">get_patches</span><span class="p">(</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>  <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span> 
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>  <span class="n">attributes</span><span class="o">=</span><span class="s2">&quot;id&quot;</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="p">)</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="c1"># Get the catalog entries:</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="n">catalog</span> <span class="o">=</span> <span class="n">get_patch_catalog</span><span class="p">(</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>  <span class="p">[</span><span class="n">patch</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">patch</span> <span class="ow">in</span> <span class="n">patches</span><span class="p">],</span> 
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>  <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="p">)</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>  <span class="n">CatalogPatch</span><span class="p">(</span>
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>    <span class="s2">&quot;patchId&quot;</span><span class="p">:</span> <span class="s2">&quot;11111111-2222-3333-4444-555555555555&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;My Patch&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a>    <span class="s2">&quot;vendor&quot;</span><span class="p">:</span> <span class="s2">&quot;My Vendor&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a>    <span class="o">...</span>
+<a id="__codelineno-16-25" name="__codelineno-16-25" href="#__codelineno-16-25"></a>  <span class="p">),</span>
+<a id="__codelineno-16-26" name="__codelineno-16-26" href="#__codelineno-16-26"></a>  <span class="n">CatalogPatch</span><span class="p">(</span>
+<a id="__codelineno-16-27" name="__codelineno-16-27" href="#__codelineno-16-27"></a>    <span class="s2">&quot;patchId&quot;</span><span class="p">:</span> <span class="s2">&quot;22222222-3333-4444-5555-666666666666&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-28" name="__codelineno-16-28" href="#__codelineno-16-28"></a>    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;My Other Patch&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-29" name="__codelineno-16-29" href="#__codelineno-16-29"></a>    <span class="o">...</span>
+<a id="__codelineno-16-30" name="__codelineno-16-30" href="#__codelineno-16-30"></a>  <span class="p">),</span>
+<a id="__codelineno-16-31" name="__codelineno-16-31" href="#__codelineno-16-31"></a>  <span class="o">...</span>
+<a id="__codelineno-16-32" name="__codelineno-16-32" href="#__codelineno-16-32"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="get-packages-associated-with-linux-patches-api">Get Packages Associated with Linux Patches API</h2>
+<p><code>get_packages_in_linux_patch</code> returns the packages associated with a Linux patch.</p>
+<p>If a <code>BaseList</code> or a <code>list</code> of patch IDs is passed, the function will use threading to speed up the process.</p>
+<blockquote>
+<p><span style="color: red; font-weight: bold;">Warning:</span> You should filter down the patches as much as possible before passing them into this function. If you bulk-pass in a lot of patches, you will almost certainly hit a rate limit. <strong>PM APIs do not return the headers necessary for the SDK to auto-recover from rate limits.</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>patchId</code></td>
+<td><code>Union[str, BaseList[str]]</code></td>
+<td>The ID(s) of the patch to get packages for</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>threads</code></td>
+<td><code>int=5</code></td>
+<td>The number of threads to use for the lookup.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td><code>str</code></td>
+<td>The QQL filter to search for packages</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>pageNumber</code></td>
+<td><code>int</code></td>
+<td>The page number to return. The SDK will handle pagination for you. Users can use this if <code>page_count</code> is 1 to pull a specific page.</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>pageSize</code></td>
+<td><code>int=10</code></td>
+<td>The number of packages to return per page</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_packages_in_linux_patch</span><span class="p">,</span> <span class="n">get_patches</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="c1"># Get some Linux patches:</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="n">patches</span> <span class="o">=</span> <span class="n">get_patches</span><span class="p">(</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>  <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;linux&#39;</span><span class="p">,</span> 
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>  <span class="n">attributes</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>  <span class="n">query</span><span class="o">=</span><span class="s2">&quot;vendorSeverity:Critical&quot;</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="p">)</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="c1"># Get the packages for the patches:</span>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="n">packages</span> <span class="o">=</span> <span class="n">get_packages_in_linux_patch</span><span class="p">(</span>
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>  <span class="p">[</span><span class="n">patch</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">patch</span> <span class="ow">in</span> <span class="n">patches</span><span class="p">]</span>
+<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a><span class="p">)</span>
+<a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a><span class="o">&gt;&gt;&gt;</span><span class="n">PackageDetail</span><span class="p">(</span>
+<a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>  <span class="n">packageName</span><span class="o">=</span><span class="s1">&#39;minidlna_1.3.0+dfsg-2+deb11u2&#39;</span><span class="p">,</span> 
+<a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>  <span class="n">architecture</span><span class="o">=</span><span class="s1">&#39;noarch&#39;</span><span class="p">,</span> 
+<a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>  <span class="n">patchId</span><span class="o">=</span><span class="s1">&#39;48e7d965-5f86-3118-a35f-b8fd1463e6b0&#39;</span>
+<a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a><span class="p">)</span>
+</code></pre></div>
+<h2 id="get-products-associated-with-windows-patches-api">Get Products Associated with Windows Patches API</h2>
+<p><code>get_products_in_windows_patch</code> returns the products associated with a Windows patch.</p>
+<p>If a <code>BaseList</code> or a <code>list</code> of patch IDs is passed, the function will use threading to speed up the process.</p>
+<blockquote>
+<p><span style="color: red; font-weight: bold;">Warning:</span> You should filter down the patches as much as possible before passing them into this function. If you bulk-pass in a lot of patches, you will almost certainly hit a rate limit. <strong>PM APIs do not return the headers necessary for the SDK to auto-recover from rate limits.</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>patchId</code></td>
+<td><code>Union[str, BaseList[str]]</code></td>
+<td>The ID(s) of the patch to get products for</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>threads</code></td>
+<td><code>int=5</code></td>
+<td>The number of threads to use for the lookup.</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_products_in_windows_patch</span><span class="p">,</span> <span class="n">get_patches</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="c1"># Get some Windows patches:</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="n">patches</span> <span class="o">=</span> <span class="n">get_patches</span><span class="p">(</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>  <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;windows&#39;</span><span class="p">,</span> 
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>  <span class="n">attributes</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>  <span class="n">query</span><span class="o">=</span><span class="s2">&quot;vendorSeverity:Critical&quot;</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="p">)</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="c1"># Get the products for the patches:</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="n">products</span> <span class="o">=</span> <span class="n">get_products_in_windows_patch</span><span class="p">(</span>
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>  <span class="p">[</span><span class="n">patch</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">patch</span> <span class="ow">in</span> <span class="n">patches</span><span class="p">]</span>
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a><span class="p">)</span>
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="o">&gt;&gt;&gt;</span><span class="n">AssociatedProduct</span><span class="p">(</span>
+<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a>  <span class="n">product</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Adobe Audition 2024 24 x64&#39;</span><span class="p">],</span> 
+<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>  <span class="n">patchId</span><span class="o">=</span><span class="s1">&#39;2c1649c0-a18a-3f77-8c52-a6ea297ab295&#39;</span>
+<a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a><span class="p">)</span>
+</code></pre></div>
+<h2 id="count-product-vulnerabilities-api">Count Product Vulnerabilities API</h2>
+<p><code>count_product_vulns</code> returns the number of active and fixed vulnerabilities stemming from products.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Possible Values</th>
+<th>Description</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth</code></td>
+<td><code>qualysdk.auth.TokenAuth</code></td>
+<td>Authentication object</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>severityList</code></td>
+<td><code>Union[str, list[Literal["Critical", "Important", "Moderate", "Low", "None"]]]</code></td>
+<td>The severity levels to count vulnerabilities for. Can be a list or strings or a comma-separated string</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>tagUUIDs</code></td>
+<td><code>Union[str, list[str]]</code></td>
+<td>The UUIDs of the tags to filter with</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenAuth</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">qualysdk.pm</span><span class="w"> </span><span class="kn">import</span> <span class="n">count_product_vulns</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="n">auth</span> <span class="o">=</span> <span class="n">TokenAuth</span><span class="p">(</span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">password</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="s1">&#39;qg1&#39;</span><span class="p">)</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="c1"># Get the number of Critical and Important</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># vulnerabilities for all products:</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="n">count</span> <span class="o">=</span> <span class="n">count_product_vulns</span><span class="p">(</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>  <span class="n">auth</span><span class="p">,</span> 
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>  <span class="n">severityList</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Critical&quot;</span><span class="p">,</span> <span class="s2">&quot;Important&quot;</span><span class="p">]</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="p">)</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="o">&gt;&gt;&gt;</span><span class="p">[</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>  <span class="n">ProductVulnCount</span><span class="p">(</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>      <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Windows&#39;</span><span class="p">,</span> 
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>      <span class="n">totalQIDCount</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> 
+<a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>      <span class="n">patchableQIDCount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+<a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>      <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;APP_FAMILY&#39;</span><span class="p">,</span> 
+<a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>      <span class="n">patchableQIDs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+<a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>      <span class="n">totalQIDs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+<a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>      <span class="n">severity</span><span class="o">=</span><span class="s1">&#39;Critical&#39;</span>
+<a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a>    <span class="p">),</span> 
+<a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a>  <span class="n">ProductVulnCount</span><span class="p">(</span>
+<a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Office&#39;</span><span class="p">,</span> 
+<a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a>    <span class="n">totalQIDCount</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> 
+<a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a>    <span class="n">patchableQIDCount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+<a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a>    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;APP_FAMILY&#39;</span><span class="p">,</span> 
+<a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a>    <span class="n">patchableQIDs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+<a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a>    <span class="n">totalQIDs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+<a id="__codelineno-19-29" name="__codelineno-19-29" href="#__codelineno-19-29"></a>    <span class="n">severity</span><span class="o">=</span><span class="s1">&#39;Critical&#39;</span>
+<a id="__codelineno-19-30" name="__codelineno-19-30" href="#__codelineno-19-30"></a>  <span class="p">),</span>
+<a id="__codelineno-19-31" name="__codelineno-19-31" href="#__codelineno-19-31"></a>  <span class="o">...</span>
+<a id="__codelineno-19-32" name="__codelineno-19-32" href="#__codelineno-19-32"></a><span class="p">]</span>
+</code></pre></div>
+<h2 id="qualysdk-pm-cli-tool"><code>qualysdk-pm</code> CLI tool</h2>
+<p>The <code>qualysdk-pm</code> CLI tool is a command-line interface for the PM portion of the SDK. It allows you to quickly pull down results from PM APIs and save them to an XLSX/TXT file.</p>
+<p>Use <code>--help</code> on each command to see the available options.</p>
+<h3 id="usage">Usage</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>usage:<span class="w"> </span>qualysdk-pm<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span>-u<span class="w"> </span>USERNAME<span class="w"> </span>-p<span class="w"> </span>PASSWORD<span class="w"> </span><span class="o">[</span>-P<span class="w"> </span><span class="o">{</span>qg1,qg2,qg3,qg4<span class="o">}]</span><span class="w"> </span><span class="o">[</span>-oU<span class="w"> </span>api_url<span class="w"> </span>gateway_url<span class="w"> </span>qualysguard_url<span class="o">]</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">                   </span><span class="o">{</span>list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets,get_patch_catalog<span class="o">}</span><span class="w"> </span>...
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>CLI<span class="w"> </span>script<span class="w"> </span>to<span class="w"> </span>quickly<span class="w"> </span>perform<span class="w"> </span>Patch<span class="w"> </span>Management<span class="w"> </span><span class="o">(</span>PM<span class="o">)</span><span class="w"> </span>operations<span class="w"> </span>using<span class="w"> </span>qualysdk
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>positional<span class="w"> </span>arguments:
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">  </span><span class="o">{</span>list_jobs,get_job_results,get_job_runs,lookup_cves,get_patches,get_patch_count,get_assets,get_patch_catalog<span class="o">}</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">                        </span>Action<span class="w"> </span>to<span class="w"> </span>perform
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">    </span>list_jobs<span class="w">           </span>Get<span class="w"> </span>a<span class="w"> </span>list<span class="w"> </span>of<span class="w"> </span>PM<span class="w"> </span>jobs.
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">    </span>get_job_results<span class="w">     </span>Get<span class="w"> </span>results<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>PM<span class="w"> </span>job.
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">    </span>get_job_runs<span class="w">        </span>Get<span class="w"> </span>runs<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>PM<span class="w"> </span>job.
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="w">    </span>lookup_cves<span class="w">         </span>Look<span class="w"> </span>up<span class="w"> </span>CVEs<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>given<span class="w"> </span>QID<span class="o">(</span>s<span class="o">)</span>.
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="w">    </span>get_patches<span class="w">         </span>Get<span class="w"> </span>patches<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>given<span class="w"> </span>platform.
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="w">    </span>get_patch_count<span class="w">     </span>Get<span class="w"> </span>the<span class="w"> </span>number<span class="w"> </span>of<span class="w"> </span>patches<span class="w"> </span>available<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>platform<span class="w"> </span>according<span class="w"> </span>to<span class="w"> </span>query<span class="w"> </span>and<span class="w"> </span>havingQuery.
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="w">    </span>get_assets<span class="w">          </span>Get<span class="w"> </span>assets<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>given<span class="w"> </span>platform.
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="w">    </span>get_patch_catalog<span class="w">   </span>Get<span class="w"> </span>patch<span class="w"> </span>catalog<span class="w"> </span>entries<span class="w"> </span><span class="k">for</span><span class="w"> </span>a<span class="w"> </span>given<span class="w"> </span>platform.
+<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a>
+<a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>options:
+<a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a><span class="w">  </span>-u,<span class="w"> </span>--username<span class="w"> </span>USERNAME
+<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a><span class="w">                        </span>Qualys<span class="w"> </span>username
+<a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a><span class="w">  </span>-p,<span class="w"> </span>--password<span class="w"> </span>PASSWORD
+<a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a><span class="w">                        </span>Qualys<span class="w"> </span>password
+<a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a><span class="w">  </span>-P,<span class="w"> </span>--platform<span class="w"> </span><span class="o">{</span>qg1,qg2,qg3,qg4,eu1,eu2,eu3,in1,ca1,ae1,uk1,au1,ksa1<span class="o">}</span>
+<a id="__codelineno-20-25" name="__codelineno-20-25" href="#__codelineno-20-25"></a><span class="w">                        </span>Qualys<span class="w"> </span>platform
+<a id="__codelineno-20-26" name="__codelineno-20-26" href="#__codelineno-20-26"></a><span class="w">  </span>-oU,<span class="w"> </span>--override_urls<span class="w"> </span>api_url<span class="w"> </span>gateway_url<span class="w"> </span>qualysguard_url
+<a id="__codelineno-20-27" name="__codelineno-20-27" href="#__codelineno-20-27"></a><span class="w">                        </span>Override<span class="w"> </span>platform<span class="w"> </span>URLs<span class="w"> </span>with<span class="w"> </span>a<span class="w"> </span>custom<span class="w"> </span>URL<span class="w"> </span><span class="nb">set</span><span class="w"> </span>formatted<span class="w"> </span>like<span class="w"> </span>...<span class="w"> </span>--override_urls<span class="w"> </span>https://custom-api-url<span class="w"> </span>https://custom-gateway-url<span class="w"> </span>https://custom-qualysguard-url
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.instant.prefetch"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

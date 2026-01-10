@@ -18,7 +18,7 @@ class BasicAuth(BaseAuthentication):
     BasicAuth - handles API endpoints that require basic authentication
 
     override_platform is a dictionary containing custom platform URLs. If provided, this will override the platform attribute. Formatted like:
-    
+
     {
         "api_url": str,
         "gateway_url": str,
@@ -31,7 +31,9 @@ class BasicAuth(BaseAuthentication):
     Other attributes are inherited from BaseAuthentication - AKA username, password, token, platform_override and auth_type
     """
 
-    platform: Literal["qg1", "qg2", "qg3", "qg4", "eu1", "eu2", "eu3", "in1", "ca1", "ae1", "uk1", "au1", "ksa1"] = field(default="qg3", init=True)
+    platform: Literal[
+        "qg1", "qg2", "qg3", "qg4", "eu1", "eu2", "eu3", "in1", "ca1", "ae1", "uk1", "au1", "ksa1"
+    ] = field(default="qg3", init=True)
 
     def __post_init__(self) -> None:
         """
@@ -93,7 +95,9 @@ class BasicAuth(BaseAuthentication):
         if not self.override_platform:
             print(f"Using platform: {self.platform}") if not return_ratelimit else None
         else:
-            print(f"Using overridden platform URL {self.override_platform['api_url']}") if not return_ratelimit else None
+            print(
+                f"Using overridden platform URL {self.override_platform['api_url']}"
+            ) if not return_ratelimit else None
 
         url = (
             self.override_platform["api_url"]

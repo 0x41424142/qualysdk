@@ -18,7 +18,7 @@ from ..exceptions import (
 class BaseAuthentication:
     """
     Base class for authentication with qualysdk.
-    
+
     Attributes:
     ```
     username: str - the username for the API
@@ -43,7 +43,7 @@ class BaseAuthentication:
     auth_type: Literal["basic", "token"] = field(init=False)
     platform: Optional[str] = field(default=None, init=True)
     override_platform: Optional[dict[str, str]] = field(default=None, init=True)
-    
+
     def __post_init__(self) -> None:
         """
         Post-init method to determine auth_type based on if a token is passed or not.
@@ -53,7 +53,7 @@ class BaseAuthentication:
         else:
             self.auth_type = "token"
         if self.override_platform and isinstance(self.override_platform, dict):
-            if not all( # Ensure all required keys are present and their values are strings:
+            if not all(  # Ensure all required keys are present and their values are strings:
                 key in self.override_platform
                 for key in ["api_url", "gateway_url", "qualysguard_url"]
             ) or not all(
@@ -64,16 +64,18 @@ class BaseAuthentication:
                     f"override_platform must contain 'api_url', 'gateway_url', and 'qualysguard_url' keys. Provided keys: {list(self.override_platform.keys())}"
                 )
             print(f"Using overridden platform URLs for {self.username}.")
-            self.platform = "CUSTOM" # set platform to CUSTOM if override_platform is used
+            self.platform = "CUSTOM"  # set platform to CUSTOM if override_platform is used
             # ensure each url starts with https://
             for key in self.override_platform:
                 # Some basic sanitation:
-                self.override_platform[key] = self.override_platform[key].strip().replace("http://", "https://")
+                self.override_platform[key] = (
+                    self.override_platform[key].strip().replace("http://", "https://")
+                )
                 if not self.override_platform[key].startswith("https://"):
                     self.override_platform[key] = "https://" + self.override_platform[key]
                 if self.override_platform[key].endswith("/"):
                     self.override_platform[key] = self.override_platform[key][:-1]
-            
+
         elif self.platform not in PlatformPicker.urls["api_urls"]:
             raise ValueError(
                 f"Platform must be one of {list(PlatformPicker.urls['api_urls'].keys())} OR overriden with override_platform attribute."

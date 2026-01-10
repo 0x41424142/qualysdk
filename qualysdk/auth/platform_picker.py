@@ -4,11 +4,12 @@ Helper code for platform picking logic.
 For help with platform URLs, see: https://www.qualys.com/platform-identification
 """
 
+
 class PlatformPicker:
     """
     PlatformPicker - handles platform selection logic.
     """
-    
+
     urls = {
         "api_urls": {
             "qg1": "https://qualysapi.qualys.com",
@@ -65,8 +66,10 @@ class PlatformPicker:
         if platform.lower() in PlatformPicker.urls["gateway_urls"]:
             return PlatformPicker.urls["gateway_urls"][platform.lower()]
         else:
-            raise ValueError(f"Invalid platform: {platform}. Use one of {list(PlatformPicker.urls['gateway_urls'].keys())} or provide an override_platform.")
-        
+            raise ValueError(
+                f"Invalid platform: {platform}. Use one of {list(PlatformPicker.urls['gateway_urls'].keys())} or provide an override_platform."
+            )
+
     @staticmethod
     def get_api_url(platform: str) -> str:
         """
@@ -75,8 +78,10 @@ class PlatformPicker:
         if platform.lower() in PlatformPicker.urls["api_urls"]:
             return PlatformPicker.urls["api_urls"][platform.lower()]
         else:
-            raise ValueError(f"Invalid platform: {platform}. Use one of {list(PlatformPicker.urls['api_urls'].keys())} or provide an override_platform.")
-        
+            raise ValueError(
+                f"Invalid platform: {platform}. Use one of {list(PlatformPicker.urls['api_urls'].keys())} or provide an override_platform."
+            )
+
     @staticmethod
     def get_qualysguard_url(platform: str) -> str:
         """
@@ -85,5 +90,6 @@ class PlatformPicker:
         if platform.lower() in PlatformPicker.urls["qualysguard_urls"]:
             return PlatformPicker.urls["qualysguard_urls"][platform.lower()]
         else:
-            raise ValueError(f"Invalid platform: {platform}. Use one of {list(PlatformPicker.urls['qualysguard_urls'].keys())} or provide an override_platform.")
-        
+            raise ValueError(
+                f"Invalid platform: {platform}. Use one of {list(PlatformPicker.urls['qualysguard_urls'].keys())} or provide an override_platform."
+            )

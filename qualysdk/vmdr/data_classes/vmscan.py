@@ -116,7 +116,7 @@ class VMScan(BaseClass):
             # first, check if [ASSET_GROUP_TITLE_LIST] is a dict. If it is, convert it to a list
             if self.ASSET_GROUP_TITLE_LIST:
                 if isinstance(self.ASSET_GROUP_TITLE_LIST, dict):
-                    self.ASSET_GROUP_TITLE_LIST = BaseList(self.ASSET_GROUP_TITLE_LIST)
+                    self.ASSET_GROUP_TITLE_LIST = [self.ASSET_GROUP_TITLE_LIST]
                 # create the BaseList object
                 final_list = BaseList()
                 for ag in self.ASSET_GROUP_TITLE_LIST:

@@ -33,7 +33,7 @@ def single_ip(ip: str) -> ip_address:
 
 def single_range(ip_range: str) -> BaseList[ip_network]:
     """
-    Converts an IP range string into an ipaddress.IPv4Network or ipaddress.IPv6Network object.
+    Converts an IP range string into a list of ipaddress.IPv4Network or ipaddress.IPv6Network objects.
 
     Params:
         ip_range (str): IP range string.

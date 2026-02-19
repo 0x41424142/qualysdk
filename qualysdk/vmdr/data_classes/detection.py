@@ -43,7 +43,10 @@ def parse_int_fields(obj, INT_FIELDS: List[str]) -> None:
 def parse_bool_fields(obj, BOOL_FIELDS: list[str]) -> None:
     for field in BOOL_FIELDS:
         if not isinstance(getattr(obj, field), bool) and getattr(obj, field) is not None:
-            setattr(obj, field, bool(getattr(obj, field)))
+            if getattr(obj, field) in ["0", "1", None]:
+                setattr(obj, field, getattr(obj, field) == "1")
+            else:
+                setattr(obj, field, bool(getattr(obj, field)))
 
 
 @dataclass

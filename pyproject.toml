@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qualysdk"
-version = "0.3.18"
+version = "0.3.19"
 description = "SDK for interacting with Qualys APIs, across most modules the platform offers."
 authors = ["0x41424142 <jake@jakelindsay.uk>", "0x4A616B65 <jake.lindsay@thermofisher.com>"]
 maintainers = ["Jake Lindsay <jake@jakelindsay.uk>"]
@@ -27,7 +27,7 @@ lxml = "^6.0.2"
 pandas = "^2.3.3"
 sqlalchemy = "^2.0.45"
 numpy = "^2.4.1"
-pymssql = "^2.1.5"
+pymssql = ">2.3.11"
 pymysql = "^1.1.2"
 psycopg2 = {version = "^2.9.11", platform = "win32"}
 psycopg2-binary = [

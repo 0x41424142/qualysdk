@@ -160,7 +160,7 @@ class AssetGroup(BaseClass):
                 if self.IP_SET.get("IP_RANGE"):
                     if isinstance(self.IP_SET.get("IP_RANGE"), str):
                         # We can use single_range here because it's a single IP range.
-                        final_ip_set.extend([single_range(self.IP_SET.get("IP_RANGE"))])
+                        final_ip_set.extend(single_range(self.IP_SET.get("IP_RANGE")))
                     else:
                         # We can use convert_ranges here because it's a list of IP ranges.
                         final_ip_set.extend(convert_ranges(self.IP_SET.get("IP_RANGE")))

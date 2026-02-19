@@ -190,7 +190,7 @@ class KBEntry(BaseClass):
 
         for bool_field in BOOL_FIELDS:
             if getattr(self, bool_field) and not isinstance(getattr(self, bool_field), bool):
-                setattr(self, bool_field, bool(getattr(self, bool_field)))
+                setattr(self, bool_field, getattr(self, bool_field) == "1")
 
         with catch_warnings():
             simplefilter("ignore")  # ignore the warning about the html.parser

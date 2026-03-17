@@ -16,6 +16,9 @@ from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import QualysAPIError
 from ..base.base_list import BaseList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def call_scan_api(
@@ -220,7 +223,7 @@ def get_scans(
             )
 
         if serviceResponse.get("count") == "0":
-            print(f"No scans found on page {pageNo}. Exiting.")
+            logger.info(f"No scans found on page {pageNo}. Exiting.")
             break
 
         data = serviceResponse.get("data")
@@ -235,14 +238,14 @@ def get_scans(
             # Create the objects:
             scanList.append(WASScan.from_dict(scan))
 
-        print(
+        logger.info(
             f"Retrieved {serviceResponse.get('count')} WAS scans on page {pageNo}. Running total: {len(scanList)}"
         )
 
         pageNo += 1
 
         if page_count != "all" and pageNo >= page_count:
-            print(f"Reached page_count limit. Returning {pageNo} page(s).")
+            logger.info(f"Reached page_count limit. Returning {pageNo} page(s).")
             break
 
         # Check for pagination:
@@ -355,10 +358,10 @@ def get_scans_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseL
     threads = []
 
     # Get the scans:
-    print(f"({current_thread().name}) Getting base scan list...")
+    logger.info(f"({current_thread().name}) Getting base scan list...")
     scans = get_scans(auth, **kwargs)
 
-    print(
+    logger.info(
         f"({current_thread().name}) Pulled {len(scans)} scans. Starting {thread_count} thread(s) for details pull.."
     )
 
@@ -372,14 +375,14 @@ def get_scans_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseL
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.info(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 scan = q.get()
                 # Exit condition 2: scan is None (because Queue is empty)
                 if not scan:
                     with LOCK:
-                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.info(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -388,13 +391,13 @@ def get_scans_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseL
                 q.task_done()
                 with LOCK:
                     if len(scanList) % 10 == 0:
-                        print(
+                        logger.info(
                             f"({current_thread().name}) Pulled {len(scanList)} scan details so far..."
                         )
 
             except Exception as e:
                 with LOCK:
-                    print(f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}")
+                    logger.exception(f"({current_thread().name}) Thread exiting after error: {e}")
                 q.task_done()
                 break
 
@@ -408,7 +411,7 @@ def get_scans_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseL
     for t in threads:
         t.join()
 
-    print(f"Pulled {len(scanList)} scan details.")
+    logger.info(f"Pulled {len(scanList)} scan details.")
     return scanList
 
 
@@ -628,7 +631,7 @@ def delete_scan(auth: BasicAuth, **kwargs) -> list[int]:
     if isinstance(scans, dict):
         scans = [scans]
     if len(scans) == 0:
-        print("No scans found to delete...")
+        logger.info("No scans found to delete...")
     for scan in scans:
         deleted.append(int(scan.get("id")))
 
@@ -665,6 +668,6 @@ def get_scan_results(auth: BasicAuth, scanId: Union[str, int], writeToFile: str 
 
         with open(writeToFile, "w") as f:
             f.write(unparse(parsed, pretty=True))
-            print(f"Results written to {writeToFile}")
+            logger.info(f"Results written to {writeToFile}")
 
     return parsed.get("WasScan")

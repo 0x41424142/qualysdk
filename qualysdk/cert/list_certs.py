@@ -10,6 +10,9 @@ from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import QualysAPIError
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def list_certs(auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs) -> dict:
@@ -113,7 +116,7 @@ def list_certs(auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs)
         pages_pulled += 1
 
         if page_count != "all" and pages_pulled >= page_count:
-            print(f"Hit user-defined limit of {page_count} pages.")
+            logger.info(f"Hit user-defined limit of {page_count} pages.")
             break
 
         if not response_json:

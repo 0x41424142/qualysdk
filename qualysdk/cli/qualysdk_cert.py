@@ -5,7 +5,7 @@ CLI script to quickly perform Certificate View
 
 from argparse import ArgumentParser, Namespace
 
-from qualysdk import TokenAuth, write_excel, BaseList
+from qualysdk import TokenAuth, write_excel, BaseList, configure_logging
 from qualysdk.cert import *
 
 
@@ -92,6 +92,7 @@ def main():
     )
 
     args = parser.parse_args()
+    configure_logging()
 
     # create TokenAuth object
     auth = TokenAuth(

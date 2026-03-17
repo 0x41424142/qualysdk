@@ -11,6 +11,9 @@ from ..base.call_api import call_api
 from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import *
 from .hosts import Host
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def query_assets(
@@ -44,7 +47,7 @@ def query_assets(
         response = call_api(auth=auth, module="gav", endpoint="query_assets", params=kwargs)
         # if there is no response, break the loop
         if not response.text:
-            print("No Results returned.")
+            logger.info("No Results returned.")
             break
 
         j = response.json()
@@ -55,22 +58,22 @@ def query_assets(
         for record in j["assetListData"]["asset"]:
             responses.append(Host(**record))
         (
-            print(f"Page {pulled+1} of {page_count} complete.")
+            logger.info(f"Page {pulled+1} of {page_count} complete.")
             if page_count != "all"
-            else print(f"Page {pulled+1} complete.")
+            else logger.info(f"Page {pulled+1} complete.")
         )
         pulled += 1
 
         if not j["hasMore"]:
-            print("No more records.")
+            logger.info("No more records.")
             break
 
         if page_count != "all" and pulled >= page_count:
-            print("Page count reached.")
+            logger.info("Page count reached.")
             break
 
         else:
             kwargs["lastSeenAssetId"] = j["lastSeenAssetId"]
 
-    print("All pages complete.")
+    logger.info("All pages complete.")
     return responses

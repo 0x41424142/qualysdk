@@ -15,6 +15,9 @@ from ..base.call_api import call_api
 from ..base.base_list import BaseList
 from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import *
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def manage_jobs(
@@ -132,7 +135,7 @@ def _list_jobs_backend(
             pages_pulled += 1
             kwargs["pageNumber"] = pages_pulled
             if pages_pulled >= page_count:
-                print(
+                logger.info(
                     f"{current_thread().name} - Hit user-defined limit of {page_count} pages for platform={platform}."
                 )
                 break
@@ -192,7 +195,7 @@ def list_jobs(
                 ),
             ]
 
-            print("Spawned threads for both Windows and Linux jobs...")
+            logger.info("Spawned threads for both Windows and Linux jobs...")
 
             for thread in threads:
                 thread.start()
@@ -273,7 +276,7 @@ def get_job_results(
         # Shared resource for threads to return results
         kwargs["_response_bl"] = BaseList()
         threads = []
-        print(f"Spawning threads for {len(jobId)} jobs...")
+        logger.info(f"Spawning threads for {len(jobId)} jobs...")
         q = Queue()
         for job in jobId:
             if isinstance(job, PMJob):
@@ -301,7 +304,7 @@ def get_job_results(
 
             with lock:
                 if q.qsize() % 25 == 0:
-                    print(f"Requests left in queue: {q.qsize()}")
+                    logger.info(f"Requests left in queue: {q.qsize()}")
 
         for thread in threads:
             thread.join()

@@ -9,6 +9,9 @@ from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.Controls import Control
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs):
@@ -102,7 +105,7 @@ def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all",
         j = response.json()
 
         if len(j["control"]) == 0:
-            print("No controls found.")
+            logger.info("No controls found.")
             break
 
         # Iterate through the records in the response and create Connector objects
@@ -110,7 +113,7 @@ def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all",
             responses.append(Control.from_dict(record))
 
         # Print a message indicating the current page was retrieved successfully
-        print(f"Page {currentPage+1} of controls retrieved successfully.")
+        logger.info(f"Page {currentPage+1} of controls retrieved successfully.")
         currentPage += 1
 
         # Break the loop if all pages are retrieved or the requested number of pages are retrieved
@@ -118,6 +121,6 @@ def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all",
             break
 
     # Print a message indicating all pages have been retrieved
-    print(f"All pages complete. {str(len(responses))} control records retrieved.")
+    logger.info(f"All pages complete. {str(len(responses))} control records retrieved.")
 
     return responses

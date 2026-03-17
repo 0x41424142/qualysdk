@@ -11,6 +11,9 @@ from .base.helpers import create_id_queue, thread_worker, prepare_args
 from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_hld(
@@ -127,7 +130,7 @@ def get_hld(
     )
 
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
-    print(f"Starting get_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
+    logger.info(f"Starting get_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
 
     threads_list = []
 
@@ -152,7 +155,7 @@ def get_hld(
     for thread in threads_list:
         thread.join()
 
-    print("All threads have completed. Returning responses.")
+    logger.info("All threads have completed. Returning responses.")
     return responses
 
 
@@ -234,7 +237,7 @@ def get_cve_hld(
     )
 
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
-    print(f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
+    logger.info(f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
 
     threads_list = []
 
@@ -259,5 +262,5 @@ def get_cve_hld(
     for thread in threads_list:
         thread.join()
 
-    print("All threads have completed. Returning responses.")
+    logger.info("All threads have completed. Returning responses.")
     return responses

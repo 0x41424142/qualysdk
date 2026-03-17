@@ -12,6 +12,9 @@ from ...auth.token import TokenAuth
 from ...base.call_api import call_api
 from ...base.base_list import BaseList
 from ...exceptions.Exceptions import QualysAPIError
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def _threading_backend(
@@ -134,16 +137,16 @@ def _threading_backend(
 
         if pulled % 5 == 0:
             with LOCK:
-                print(f"{platform} Thread has pulled {pulled} pages so far.")
+                logger.info(f"{platform} Thread has pulled {pulled} pages so far.")
 
         if page_count != "all" and pulled >= page_count:
             with LOCK:
-                print(f"{platform} Thread has hit user-defined page limit of {page_count}.")
+                logger.info(f"{platform} Thread has hit user-defined page limit of {page_count}.")
             break
 
         if len(j) < params["pageSize"]:
             with LOCK:
-                print(f"{platform} Thread has reached the end of the list.")
+                logger.info(f"{platform} Thread has reached the end of the list.")
             break
 
     return

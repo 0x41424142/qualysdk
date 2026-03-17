@@ -12,6 +12,9 @@ from .data_classes.User import User
 from ..auth import BasicAuth
 from ..base.base_list import BaseList
 from ..base.call_api import call_api
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 _UserIdOperator = ["EQUALS", "GREATER", "LESSER"]
 
@@ -52,7 +55,7 @@ def get_user_details(
         raise TypeError("user_id must be an int, str, or list of ints/strs")
 
     for uid in users:
-        print(f"Querying user ID: {uid}")
+        logger.info(f"Querying user ID: {uid}")
         response = call_api(
             auth=auth,
             module="admin",
@@ -64,7 +67,7 @@ def get_user_details(
         response.raise_for_status()
         data = response.json()
         if "responseErrorDetails" in data.get("ServiceResponse", {}):
-            print(f"{data['ServiceResponse']['responseErrorDetails']['errorMessage']}")
+            logger.warning(f"{data['ServiceResponse']['responseErrorDetails']['errorMessage']}")
             continue
 
         else:
@@ -143,11 +146,11 @@ def search_users(
 
         data = response.json()
         if data.get("ServiceResponse", {}).get("responseErrorDetails"):
-            print(f"{data['ServiceResponse']['responseErrorDetails']['errorMessage']}")
+            logger.warning(f"{data['ServiceResponse']['responseErrorDetails']['errorMessage']}")
             break
 
         if data["ServiceResponse"].get("count", 0) == 0 and "data" not in data["ServiceResponse"]:
-            print("No users found matching the search criteria.")
+            logger.info("No users found matching the search criteria.")
             break
 
         users = data["ServiceResponse"]["data"]
@@ -158,12 +161,12 @@ def search_users(
         else:
             users_list.extend([User(**user["User"]) for user in users])
             if not data["ServiceResponse"].get("hasMoreRecords", False) in [True, "true"]:
-                print(f"Found {len(users)} users on final page, no more records to fetch.")
+                logger.info(f"Found {len(users)} users on final page, no more records to fetch.")
                 break
             jsonpayload["ServiceRequest"]["filters"]["Criteria"].append(
                 {"field": "id", "operator": "GREATER", "value": data["ServiceResponse"]["lastId"]}
             )
-            print(f"Found {len(users)} users on current page, continuing to next page...")
+            logger.info(f"Found {len(users)} users on current page, continuing to next page...")
     return users_list
 
 
@@ -293,6 +296,6 @@ def update_user(
         error_message = data["ServiceResponse"]["responseErrorDetails"]["errorMessage"]
         raise Exception(f"Error updating user: {error_message}")
     if not "count" in data.get("ServiceResponse", {}):
-        print("No count key in response. Assume failure.")
+        logger.warning("No count key in response. Assume failure.")
         return "Failure: No count key in response)."
     return data["ServiceResponse"]["responseCode"]

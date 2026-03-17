@@ -10,6 +10,7 @@ from sys import executable
 
 from requests import Response, get
 from packaging import version
+from qualysdk.base.logging import configure_logging, get_logger
 
 # define constants for CLI colors:
 RED = "\033[91m"
@@ -18,6 +19,7 @@ YELLOW = "\033[93m"
 BLUE = "\033[94m"
 RESET = "\033[0m"
 
+logger = get_logger(__name__)
 
 def get_pypi_versions() -> Response:
     """
@@ -78,16 +80,16 @@ def show_update_info(pypi_data: dict) -> None:
     if not digests:
         digests = {"blake2_256": "N/A", "sha256": "N/A", "md5_digest": "N/A"}
 
-    print(f"🟧 {YELLOW}An update is available!{RESET}")
-    print(f"📅 Latest Version: {YELLOW}v{vsn}{RESET}")
-    print(f"📅 Release Date: {YELLOW}{release_data.get('upload_time')}{RESET}")
-    print(f"✅ MD5: {RED}{digests.get('md5')}{RESET}")
-    print(f"✅ BLAKE2b_256: {RED}{digests.get('blake2b_256')}{RESET}")
-    print(f"✅ SHA256: {RED}{digests.get('sha256')}{RESET}")
-    print(
+    logger.info(f"🟧 {YELLOW}An update is available!{RESET}")
+    logger.info(f"📅 Latest Version: {YELLOW}v{vsn}{RESET}")
+    logger.info(f"📅 Release Date: {YELLOW}{release_data.get('upload_time')}{RESET}")
+    logger.info(f"✅ MD5: {RED}{digests.get('md5')}{RESET}")
+    logger.info(f"✅ BLAKE2b_256: {RED}{digests.get('blake2b_256')}{RESET}")
+    logger.info(f"✅ SHA256: {RED}{digests.get('sha256')}{RESET}")
+    logger.info(
         f"🐈 {GREEN}GitHub Release Notes:{RESET}{BLUE} https://github.com/0x41424142/qualysdk/releases/tag/v{vsn} {RESET}"
     )
-    print(f"🐍 {GREEN}PyPI Page:{RESET}{BLUE} https://pypi.org/project/qualysdk/{vsn}/ {RESET}")
+    logger.info(f"🐍 {GREEN}PyPI Page:{RESET}{BLUE} https://pypi.org/project/qualysdk/{vsn}/ {RESET}")
 
 
 def check_installed_version() -> version.Version:
@@ -164,6 +166,7 @@ def main() -> int:
     )
 
     args = parser.parse_args()
+    configure_logging()
 
     # If every arg is False or only -y was specified,
     #  print the help message and exit.
@@ -172,7 +175,7 @@ def main() -> int:
         exit(0)
 
     if args.version:
-        print(f"{YELLOW}Qualysdk version currently installed: v{check_installed_version()}{RESET}")
+        logger.info(f"{YELLOW}Qualysdk version currently installed: v{check_installed_version()}{RESET}")
         exit(0)
 
     if args.check or args.install:
@@ -186,7 +189,7 @@ def main() -> int:
             show_update_info(pypi_data)
             if args.install:
                 if args.yes or prompt_for_install():
-                    print(f"🟧 {YELLOW}Installing v{latest_version}...{RESET}")
+                    logger.info(f"🟧 {YELLOW}Installing v{latest_version}...{RESET}")
                     try:
                         check_call(
                             [
@@ -199,17 +202,17 @@ def main() -> int:
                             ],
                             stdout=DEVNULL,
                         )
-                        print(f"✅ {GREEN}Qualysdk has been updated to v{latest_version}{RESET}")
+                        logger.info(f"✅ {GREEN}Qualysdk has been updated to v{latest_version}{RESET}")
                     except Exception as e:
-                        print(f"{RED}Qualysdk update failed: {type(e).__name__}{RESET}")
+                        logger.error(f"{RED}Qualysdk update failed: {type(e).__name__}{RESET}")
                         exit(1)
                     exit(0)
                 else:
-                    print(f"{RED}Upgrade cancelled.{RESET}")
+                    logger.info(f"{RED}Upgrade cancelled.{RESET}")
                     exit(0)
             exit(0)
         else:
-            print(f"✅ {GREEN}Qualysdk is up to date (v{current_version}).{RESET}")
+            logger.info(f"✅ {GREEN}Qualysdk is up to date (v{current_version}).{RESET}")
             exit(0)
 
 

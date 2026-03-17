@@ -9,6 +9,9 @@ from ipaddress import IPv4Address, IPv6Address
 from ..auth import BasicAuth
 from .data_classes import AssetGroup
 from ..base import *
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_ag_list(
@@ -67,7 +70,7 @@ def get_ag_list(
             data = xml_parser(response.text)["ASSET_GROUP_LIST_OUTPUT"]
 
             if "ASSET_GROUP" not in data["RESPONSE"]["ASSET_GROUP_LIST"]:
-                print("No asset groups found. Returning empty BaseList.")
+                logger.info("No asset groups found. Returning empty BaseList.")
                 break
 
             # Check if type(data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]) is dict.
@@ -83,7 +86,7 @@ def get_ag_list(
             pulled += 1
             # Check page count:
             if page_count != "all" and pulled >= page_count:
-                print(f"Page count reached. Returning {pulled} pages.")
+                logger.info(f"Page count reached. Returning {pulled} pages.")
                 break
 
             # Check for pagination:
@@ -93,7 +96,7 @@ def get_ag_list(
                 parsed_url = urlparse(url)
                 id_min = parse_qs(parsed_url.query)["id_min"][0]
                 kwargs["id_min"] = id_min
-                print(f"Pagination detected. new id_min param: {id_min}")
+                logger.info(f"Pagination detected. new id_min param: {id_min}")
             else:
                 break
 

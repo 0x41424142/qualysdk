@@ -14,6 +14,9 @@ from ..base.call_api import call_api
 from ..auth.token import BasicAuth
 from ..base.xml_parser import xml_parser
 from ..exceptions.Exceptions import QualysAPIError
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
@@ -89,11 +92,11 @@ def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
             responses.append(KBEntry.from_dict(e))  # append entry
 
         pulled += 1
-        print(f"Page {pulled} complete.")
+        logger.info(f"Page {pulled} complete.")
         # KB API normally does not paginate, but if it does
         if "WARNING" in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]:
             if "URL" in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["WARNING"]:
-                print(
+                logger.info(
                     f"Pagination detected. Pulling next page from url: {xml['KNOWLEDGE_BASE_VULN_LIST_OUTPUT']['RESPONSE']['WARNING']['URL']}"
                 )
                 # parse the url to get the query params

@@ -9,6 +9,9 @@ from ..auth.token import BasicAuth
 from .base.helpers import create_id_queue, thread_worker, prepare_args
 from ..exceptions.Exceptions import *
 from ..base.base_list import BaseList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_host_list(
@@ -109,7 +112,7 @@ def get_host_list(
     )
 
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
-    print(f"Starting get_host_list with {threads} {'threads.' if threads > 1 else 'thread.'}")
+    logger.info(f"Starting get_host_list with {threads} {'threads.' if threads > 1 else 'thread.'}")
 
     threads_list = []
 
@@ -134,5 +137,5 @@ def get_host_list(
     for thread in threads_list:
         thread.join()
 
-    print("All threads have completed. Returning responses.")
+    logger.info("All threads have completed. Returning responses.")
     return responses

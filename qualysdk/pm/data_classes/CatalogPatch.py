@@ -5,6 +5,9 @@ from typing import Union
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
 from ...base import DONT_EXPAND
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 DT_FIELDS = [
     "syncDateTime",
@@ -102,7 +105,7 @@ class CatalogPatch(BaseClass):
                     setattr(self, field, BaseList(getattr(self, field)))
 
             if self.notification:
-                print(
+                logger.info(
                     "CatalogPatch's notification attribute is currently not parsed and is set to a string. Please submit a PR adding the functionality to parse this attribute."
                 )
                 setattr(self, "notification", str(self.notification))

@@ -12,6 +12,9 @@ from ...auth.token import TokenAuth
 from ...base.call_api import call_api
 from ...base.base_list import BaseList
 from ...exceptions.Exceptions import *
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def list_containers(
@@ -71,7 +74,7 @@ def list_containers(
 
         # Check if we need to pull more pages:
         if page_count != "all" and pages_pulled >= page_count:
-            print(f"Page count reached. Returning {pages_pulled} pages of containers.")
+            logger.info(f"Page count reached. Returning {pages_pulled} pages of containers.")
             break
 
         # Check the response headers for the next page:

@@ -10,6 +10,9 @@ from ..base.call_api import call_api
 from ..base.xml_parser import xml_parser
 from ..auth.basic import BasicAuth
 from ..base.base_list import BaseList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 TRANSLATION = {
     "inv": "Inventory_Scan",
@@ -109,10 +112,10 @@ def list_agents(
             results.append(CloudAgent(**agent))
 
         pulled += 1
-        print(f"Pulled page {pulled}...")
+        logger.info(f"Pulled page {pulled}...")
 
         if page_count != "all" and pulled >= page_count:
-            print("Page count reached. Returning...")
+            logger.info("Page count reached. Returning...")
             break
 
         if parsed.get("ServiceResponse").get("hasMoreRecords") != "true":

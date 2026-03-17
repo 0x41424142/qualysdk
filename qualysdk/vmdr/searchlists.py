@@ -9,6 +9,9 @@ from ..auth import BasicAuth
 from ..base import call_api, xml_parser
 from ..base.base_list import BaseList
 from .data_classes import StaticSearchList, DynamicSearchList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_static_searchlists(auth: BasicAuth, ids: str = None) -> BaseList[StaticSearchList]:
@@ -40,7 +43,7 @@ def get_static_searchlists(auth: BasicAuth, ids: str = None) -> BaseList[StaticS
     searchlists = xml_parser(resp.text)
 
     if "STATIC_LISTS" not in searchlists["STATIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]:
-        print("No Static Searchlists found.")
+        logger.info("No Static Searchlists found.")
         return responses
 
     # If there is only one searchlist, it will not be in a list.
@@ -101,7 +104,7 @@ def get_dynamic_searchlists(
     searchlists = xml_parser(resp.text)
 
     if "DYNAMIC_LISTS" not in searchlists["DYNAMIC_SEARCH_LIST_OUTPUT"]["RESPONSE"]:
-        print("No Dynamic Searchlists found.")
+        logger.info("No Dynamic Searchlists found.")
         return responses
 
     if isinstance(

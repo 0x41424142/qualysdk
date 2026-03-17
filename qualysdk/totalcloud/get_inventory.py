@@ -13,6 +13,9 @@ from ..exceptions.Exceptions import *
 from .data_classes.AWSResources import *
 from .data_classes.AzureResources import *
 from .data_classes.resource_mappings import *
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 termination_flag = False
@@ -92,7 +95,7 @@ def fetch_page(
             results.append(i)
 
         if (pageNo + 1) % 20 == 0:
-            print(
+            logger.info(
                 f"({current_thread().name}) Page {pageNo+1} of {provider}-{resourceType} retrieved successfully."
             )
 

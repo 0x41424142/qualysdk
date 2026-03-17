@@ -9,6 +9,9 @@ from ..base import xml_parser, call_api
 from ..base.base_list import BaseList
 from .data_classes.user import User
 from ..exceptions import *
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_user_list(auth: BasicAuth, **kwargs) -> BaseList[User]:
@@ -46,7 +49,7 @@ def get_user_list(auth: BasicAuth, **kwargs) -> BaseList[User]:
         raise QualysAPIError(user_list["USER_LIST_OUTPUT"]["ERROR"]["#text"])
 
     if "USER" not in user_list["USER_LIST_OUTPUT"]["USER_LIST"].keys():
-        print("No users found.")
+        logger.info("No users found.")
         return bl
 
     # Check for single user

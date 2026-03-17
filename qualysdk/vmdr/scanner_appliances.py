@@ -7,6 +7,9 @@ from ..base import call_api, xml_parser
 from .data_classes import ScannerAppliance
 from ..base.base_list import BaseList
 from ..auth import BasicAuth
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_scanner_list(auth: BasicAuth, **kwargs) -> BaseList[ScannerAppliance]:
@@ -54,7 +57,7 @@ def get_scanner_list(auth: BasicAuth, **kwargs) -> BaseList[ScannerAppliance]:
     data = xml_parser(resp.text)["APPLIANCE_LIST_OUTPUT"]["RESPONSE"]
 
     if "APPLIANCE_LIST" not in data.keys():
-        print("No data in response")
+        logger.info("No data in response")
         return result
 
     # If there is just one dict, convert it to a list of one dict

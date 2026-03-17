@@ -11,6 +11,9 @@ from pandas import DataFrame
 
 from ..sql.base import prepare_dataclass
 from .base_list import BaseList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def write_csv(data: BaseList, file_path: str, **kwargs) -> None:
@@ -42,7 +45,7 @@ def write_csv(data: BaseList, file_path: str, **kwargs) -> None:
         encoding="utf-8-sig",
         **kwargs,
     )
-    print(f"Data written to {file_path}.")
+    logger.info(f"Data written to {file_path}.")
 
 
 def write_excel(data: BaseList, file_path: str, **kwargs) -> None:
@@ -66,7 +69,7 @@ def write_excel(data: BaseList, file_path: str, **kwargs) -> None:
 
     # Write to Excel:
     data.to_excel(file_path, index=False, **kwargs)
-    print(f"Data written to {file_path}.")
+    logger.info(f"Data written to {file_path}.")
 
 
 def backend_write(

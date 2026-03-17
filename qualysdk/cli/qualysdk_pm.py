@@ -5,9 +5,11 @@ CLI script to quickly perform Patch Management
 
 from argparse import ArgumentParser, Namespace
 
-from qualysdk import TokenAuth, write_excel, BaseList
+from qualysdk import TokenAuth, write_excel, BaseList, configure_logging
 from qualysdk.pm import *
+from qualysdk.base.logging import get_logger
 
+logger = get_logger(__name__)
 
 def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
     kwargs = dict(args.kwarg) if args.kwarg else {}
@@ -46,7 +48,7 @@ def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
             args.output += ".txt"
         with open(args.output, "w") as f:
             f.write(str(result))
-        print(f"Results written to {args.output}")
+        logger.info(f"Results written to {args.output}")
         return
 
     # If the result object does NOT have the len() method available,
@@ -317,6 +319,7 @@ def main():
     )
 
     args = parser.parse_args()
+    configure_logging()
 
     # create TokenAuth object
     auth = TokenAuth(

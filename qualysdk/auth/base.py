@@ -12,6 +12,9 @@ from ..exceptions import (
     InvalidTokenError,
     InvalidAuthTypeError,
 )
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -63,7 +66,7 @@ class BaseAuthentication:
                 raise ValueError(
                     f"override_platform must contain 'api_url', 'gateway_url', and 'qualysguard_url' keys. Provided keys: {list(self.override_platform.keys())}"
                 )
-            print(f"Using overridden platform URLs for {self.username}.")
+            logger.info(f"Using overridden platform URLs for {self.username}.")
             self.platform = "CUSTOM"  # set platform to CUSTOM if override_platform is used
             # ensure each url starts with https://
             for key in self.override_platform:

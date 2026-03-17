@@ -10,6 +10,9 @@ from requests import post
 from .basic import BasicAuth
 from ..exceptions import AuthenticationError
 from .platform_picker import PlatformPicker
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -67,13 +70,13 @@ class TokenAuth(BasicAuth):
 
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
-        print(f"Generating token for {self.username} on {self.platform} platform.")
+        logger.info(f"Generating token for {self.username} on {self.platform} platform.")
 
         r = post(url, headers=headers, data=payload)
 
         if r.status_code != 201:
             raise AuthenticationError(f"Failed to generate token. Requests reporting: {r.text}")
-        print("Success.")
+        logger.info("Success.")
         self.generated_on = datetime.now()
         return r.text
 

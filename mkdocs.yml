@@ -5,6 +5,7 @@ nav:
   - Home: index.md
   - Getting Started: quickstart.md
   - Authentication: authentication.md
+  - Logging: logging.md
   - Global AssetView: gav.md
   - VMDR: vmdr.md
   - TotalCloud: totalcloud.md

@@ -29,7 +29,7 @@ def schema_query(module: str, endpoint: str = None, pretty: bool = False) -> Uni
     # if the endpoint is not provided, return the entire module schema:
     if endpoint is None:
         if pretty:
-            return print(dumps(CALL_SCHEMA[module], indent=4))
+            return dumps(CALL_SCHEMA[module], indent=4)
         else:
             return CALL_SCHEMA[module]
 
@@ -38,6 +38,6 @@ def schema_query(module: str, endpoint: str = None, pretty: bool = False) -> Uni
         raise ValueError(f"Invalid endpoint {endpoint} for module {module}.")
 
     if pretty:
-        return print(dumps(CALL_SCHEMA[module][endpoint], indent=4))
+        return dumps(CALL_SCHEMA[module][endpoint], indent=4)
     else:
         return CALL_SCHEMA[module][endpoint]

@@ -14,6 +14,9 @@ from ..base.base_list import BaseList
 from .data_classes.vmscan import VMScan
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
@@ -79,13 +82,13 @@ def get_scan_list(auth: BasicAuth, **kwargs) -> BaseList[VMScan]:
 
     # Check for empty results:
     if not result:
-        print("No scans found.")
+        logger.info("No scans found.")
         return None
 
     data = result["SCAN_LIST_OUTPUT"]["RESPONSE"]
 
     if "SCAN_LIST" not in data or "SCAN" not in data["SCAN_LIST"]:
-        print("No scans found.")
+        logger.info("No scans found.")
         return None
 
     # If data["SCAN_LIST"]["SCAN"] is a dict, convert it to a list of dicts:
@@ -181,7 +184,7 @@ def launch_scan(auth: BasicAuth, **kwargs) -> VMScan:
 
     # Check for empty results:
     if not result:
-        print("No scan launched.")
+        logger.info("No scan launched.")
         return None
 
     # Check for scan details in simple_return:
@@ -202,7 +205,7 @@ def launch_scan(auth: BasicAuth, **kwargs) -> VMScan:
         if item["KEY"] == "REFERENCE":
             scan_ref = item["VALUE"]
 
-    print(f'{data["TEXT"]} with REF: {scan_ref}')
+    logger.info(f'{data["TEXT"]} with REF: {scan_ref}')
 
     # Return a VMScan object with the scan details:
     return get_scan_list(auth, scan_ref=scan_ref)[0]
@@ -276,7 +279,7 @@ def manage_scan(
 
         # Check for empty results:
         if not result:
-            print("No scan paused.")
+            logger.info("No scan paused.")
             return None
 
         data = result["SIMPLE_RETURN"]["RESPONSE"]
@@ -299,7 +302,7 @@ def manage_scan(
         result = read_json(StringIO(response.text))
 
         if result.empty:
-            print("No scan found.")
+            logger.info("No scan found.")
             return None
 
         return result

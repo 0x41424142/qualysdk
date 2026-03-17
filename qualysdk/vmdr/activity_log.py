@@ -11,6 +11,9 @@ from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..base.base_list import BaseList
 from ..vmdr.data_classes.activity_log import ActivityLog
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def extract_sections(csv_data: str) -> tuple[Union[str, None], Union[str, None]]:
@@ -79,14 +82,14 @@ def get_activity_log(
             headers={"X-Requested-With": "qualysdk SDK"},
         )
         if response.status_code != 200:
-            print("No data returned.")
+            logger.info("No data returned.")
             return responses
 
         # Rip the data out of the header/footer/warning comments:
         data, pagination_data = extract_sections(response.text)
 
         if not data:
-            print("No data returned.")
+            logger.info("No data returned.")
             return responses
 
         data = DictReader(data.splitlines())
@@ -107,15 +110,15 @@ def get_activity_log(
             # Look for the id_max parameter and update the params:
             if "id_max" in url_params:
                 params["id_max"] = url_params["id_max"][0].strip().replace('"', "")
-                print(f"Pagination detected. Pulling next page with id_max: {params['id_max']}")
+                logger.info(f"Pagination detected. Pulling next page with id_max: {params['id_max']}")
             else:
-                print("No more pages to pull.")
+                logger.info("No more pages to pull.")
                 break
 
         pulled += 1
 
         if page_count != "all" and pulled >= page_count:
-            print("Page count reached.")
+            logger.info("Page count reached.")
             break
 
     return responses

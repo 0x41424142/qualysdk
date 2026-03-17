@@ -208,7 +208,7 @@ def get_authentication_records(
             # Create the objects:
             appList.append(WebAppAuthRecord.from_dict(record))
 
-        logger.info(
+        logger.debug(
             f"Retrieved {serviceResponse.get('count')} auth records on page {pageNo}. Running total: {len(appList)}"
         )
 
@@ -340,14 +340,14 @@ def get_authentication_records_verbose(
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        logger.info(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 authrecord = q.get()
                 # Exit condition 2: authrecord is None (because Queue is empty)
                 if not authrecord:
                     with LOCK:
-                        logger.info(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -356,7 +356,7 @@ def get_authentication_records_verbose(
                 q.task_done()
                 with LOCK:
                     if len(authList) % 10 == 0:
-                        logger.info(
+                        logger.debug(
                             f"({current_thread().name}) Pulled {len(authList)} auth record details so far..."
                         )
 

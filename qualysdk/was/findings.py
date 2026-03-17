@@ -261,7 +261,7 @@ def get_findings(
             # Create the objects:
             findingList.append(WASFinding.from_dict(finding))
 
-        logger.info(
+        logger.debug(
             f"Retrieved {serviceResponse.get('count')} WAS findings on page {pageNo}. Running total: {len(findingList)}"
         )
 
@@ -426,14 +426,14 @@ def get_findings_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> Ba
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        logger.info(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 finding = q.get()
                 # Exit condition 2: authrecord is None (because Queue is empty)
                 if not finding:
                     with LOCK:
-                        logger.info(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -442,7 +442,7 @@ def get_findings_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> Ba
                 q.task_done()
                 with LOCK:
                     if len(findingList) % 10 == 0:
-                        logger.info(
+                        logger.debug(
                             f"({current_thread().name}) Pulled {len(findingList)} finding details so far..."
                         )
 

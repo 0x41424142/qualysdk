@@ -110,9 +110,11 @@ def get_activity_log(
             # Look for the id_max parameter and update the params:
             if "id_max" in url_params:
                 params["id_max"] = url_params["id_max"][0].strip().replace('"', "")
-                logger.info(f"Pagination detected. Pulling next page with id_max: {params['id_max']}")
+                logger.debug(
+                    f"Pagination detected. Pulling next page with id_max: {params['id_max']}"
+                )
             else:
-                logger.info("No more pages to pull.")
+                logger.debug("No more pages to pull.")
                 break
 
         pulled += 1

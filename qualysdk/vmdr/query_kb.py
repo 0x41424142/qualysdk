@@ -92,11 +92,11 @@ def query_kb(auth: BasicAuth, **kwargs) -> BaseList[KBEntry]:
             responses.append(KBEntry.from_dict(e))  # append entry
 
         pulled += 1
-        logger.info(f"Page {pulled} complete.")
+        logger.debug(f"Page {pulled} complete.")
         # KB API normally does not paginate, but if it does
         if "WARNING" in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]:
             if "URL" in xml["KNOWLEDGE_BASE_VULN_LIST_OUTPUT"]["RESPONSE"]["WARNING"]:
-                logger.info(
+                logger.debug(
                     f"Pagination detected. Pulling next page from url: {xml['KNOWLEDGE_BASE_VULN_LIST_OUTPUT']['RESPONSE']['WARNING']['URL']}"
                 )
                 # parse the url to get the query params

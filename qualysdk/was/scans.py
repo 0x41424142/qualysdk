@@ -238,7 +238,7 @@ def get_scans(
             # Create the objects:
             scanList.append(WASScan.from_dict(scan))
 
-        logger.info(
+        logger.debug(
             f"Retrieved {serviceResponse.get('count')} WAS scans on page {pageNo}. Running total: {len(scanList)}"
         )
 
@@ -375,14 +375,14 @@ def get_scans_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseL
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        logger.info(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 scan = q.get()
                 # Exit condition 2: scan is None (because Queue is empty)
                 if not scan:
                     with LOCK:
-                        logger.info(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -391,7 +391,7 @@ def get_scans_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseL
                 q.task_done()
                 with LOCK:
                     if len(scanList) % 10 == 0:
-                        logger.info(
+                        logger.debug(
                             f"({current_thread().name}) Pulled {len(scanList)} scan details so far..."
                         )
 

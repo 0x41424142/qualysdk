@@ -113,7 +113,7 @@ def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all",
             responses.append(Control.from_dict(record))
 
         # Print a message indicating the current page was retrieved successfully
-        logger.info(f"Page {currentPage+1} of controls retrieved successfully.")
+        logger.debug(f"Page {currentPage+1} of controls retrieved successfully.")
         currentPage += 1
 
         # Break the loop if all pages are retrieved or the requested number of pages are retrieved

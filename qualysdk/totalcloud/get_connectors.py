@@ -93,7 +93,7 @@ def get_connectors(
                     responses.append(AzureConnector(**record))
 
         # Print a message indicating the current page was retrieved successfully
-        logger.info(f"Page {currentPage+1} of {provider} connectors retrieved successfully.")
+        logger.debug(f"Page {currentPage+1} of {provider} connectors retrieved successfully.")
         currentPage += 1
 
         # Break the loop if all pages are retrieved or the requested number of pages are retrieved

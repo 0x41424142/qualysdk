@@ -291,7 +291,7 @@ def hld_backend(
 
     while True:
         with LOCK:
-            logger.info(
+            logger.debug(
                 f"{current_thread().name} - Pulling page {pulled+1} for ids {kwargs.get('ids')}. KWARGS: {kwargs}"
             )
 
@@ -306,12 +306,12 @@ def hld_backend(
 
         if response.status_code != 200:
             with LOCK:
-                logger.info(f"{current_thread().name} - No data returned on page {pulled}")
+                logger.warning(f"{current_thread().name} - No data returned on page {pulled}")
             pulled += 1
             if pulled != "all":
                 if pulled == page_count:
                     with LOCK:
-                        logger.info(f"{current_thread().name} - Pulled all pages.")
+                        logger.debug(f"{current_thread().name} - Pulled all pages.")
                     break
                 else:
                     continue
@@ -322,7 +322,7 @@ def hld_backend(
         # check if there is no host list
         if "HOST_LIST" not in xml["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]:
             with LOCK:
-                logger.info(f"{current_thread().name} - No host list returned.")
+                logger.warning(f"{current_thread().name} - No host list returned.")
         else:
             # check if ["HOST_LIST_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
             # or just a dictionary. if it is just one, put it inside a list
@@ -352,7 +352,7 @@ def hld_backend(
                     ).query
                 )
                 with LOCK:
-                    logger.info(
+                    logger.debug(
                         f"{current_thread().name} (get_hld) - Pagination detected. Pulling next page with id_min: {payload['id_min'][0]}"
                     )
                 kwargs["id_min"] = payload["id_min"][0]
@@ -382,7 +382,7 @@ def get_cve_hld_backend(
 
     while True:
         with LOCK:
-            logger.info(
+            logger.debug(
                 f"{current_thread().name} - Pulling page {pulled+1} for ids {kwargs.get('ids')}. KWARGS: {kwargs}"
             )
 
@@ -397,12 +397,12 @@ def get_cve_hld_backend(
 
         if response.status_code != 200:
             with LOCK:
-                logger.info(f"{current_thread().name} - No data returned on page {pulled}")
+                logger.warning(f"{current_thread().name} - No data returned on page {pulled}")
             pulled += 1
             if pulled != "all":
                 if pulled == page_count:
                     with LOCK:
-                        logger.info(f"{current_thread().name} - Pulled all pages.")
+                        logger.debug(f"{current_thread().name} - Pulled all pages.")
                     break
                 else:
                     continue
@@ -413,7 +413,7 @@ def get_cve_hld_backend(
         # check if there is no host list
         if "HOST_LIST" not in xml["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]:
             with LOCK:
-                logger.info(f"{current_thread().name} - No host list returned.")
+                logger.warning(f"{current_thread().name} - No host list returned.")
         else:
             # check if ["HOST_LIST_CVE_VM_DETECTION_OUTPUT"]["RESPONSE"]["HOST_LIST"]["HOST"] is a list of dictionaries
             # or just a dictionary. if it is just one, put it inside a list
@@ -445,7 +445,7 @@ def get_cve_hld_backend(
                     ).query
                 )
                 with LOCK:
-                    logger.info(
+                    logger.debug(
                         f"{current_thread().name} (get_hld) - Pagination detected. Pulling next page with id_min: {params['id_min'][0]}"
                     )
                 kwargs["id_min"] = params["id_min"][0]
@@ -495,7 +495,7 @@ def thread_worker(
                 )  # nowait allows us to check if the queue is empty without blocking
             except Empty:
                 with LOCK:
-                    logger.info(f"{current_thread().name} - Queue is empty. Terminating thread.")
+                    logger.debug(f"{current_thread().name} - Queue is empty. Terminating thread.")
                 id_queue.task_done()
                 break
 
@@ -522,25 +522,25 @@ def thread_worker(
                 raise ValueError("endpoint_called must be either 'get_hld' or 'get_host_list'.")
             id_queue.task_done()
             with LOCK:
-                logger.info(f"{current_thread().name} ({endpoint_called}) - Chunk complete.")
+                logger.debug(f"{current_thread().name} ({endpoint_called}) - Chunk complete.")
             pages_pulled += 1
             chunks_pulled += 1
             # check if the queue is empty, or if the threads are done (via pulled var)
             if id_queue.empty():
                 with LOCK:
-                    logger.info(
+                    logger.debug(
                         f"{current_thread().name} ({endpoint_called}) - Queue is empty. Terminating thread."
                     )
                 break
             if pages_pulled == page_count:
                 with LOCK:
-                    logger.info(
+                    logger.debug(
                         f"{current_thread().name} - Thread has pulled all pages. Terminating thread."
                     )
                 break
             if chunks_pulled == chunk_count:
                 with LOCK:
-                    logger.info(
+                    logger.debug(
                         f"{current_thread().name} - Thread has pulled all chunks. Terminating thread."
                     )
                 break
@@ -552,7 +552,7 @@ def thread_worker(
                     f"{current_thread().name} - Error: {e}. Attempting to requeue {len(ids)} IDs ({min(ids)}-{max(ids)})."
                 )
                 id_queue.put_nowait(ids)
-                logger.info(
+                logger.warning(
                     f"{current_thread().name} - IDs ({min(ids)}-{max(ids)}) requeued. Attempting again."
                 )
             attempts += 1
@@ -668,7 +668,7 @@ def get_host_list_backend(auth: BasicAuth, page_count: Union[int, "all"] = "all"
         )
         if response.status_code != 200:
             with LOCK:
-                logger.info("No data returned.")
+                logger.warning("No data returned.")
             return responses
 
         xml = xml_parser(response.content)
@@ -678,7 +678,7 @@ def get_host_list_backend(auth: BasicAuth, page_count: Union[int, "all"] = "all"
             and "ID_SET" not in xml["HOST_LIST_OUTPUT"]["RESPONSE"]
         ):
             with LOCK:
-                logger.info("No host list returned.")
+                logger.warning("No host list returned.")
             return
 
         # If details is none, ID_SET will be returned instead of HOST_LIST
@@ -715,13 +715,13 @@ def get_host_list_backend(auth: BasicAuth, page_count: Union[int, "all"] = "all"
 
         if page_count != "all" and pulled >= page_count:
             with LOCK:
-                logger.info(f"{current_thread().name} Page count reached.")
+                logger.debug(f"{current_thread().name} Page count reached.")
             break
 
         if "WARNING" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]:
             if "URL" in xml["HOST_LIST_OUTPUT"]["RESPONSE"]["WARNING"]:
                 with LOCK:
-                    logger.info(
+                    logger.debug(
                         f"{current_thread().name} (get_host_list) Pagination detected. Pulling next page from url: {xml['HOST_LIST_OUTPUT']['RESPONSE']['WARNING']['URL']}"
                     )
                 # get the id_min parameter from the URL to pass into kwargs:

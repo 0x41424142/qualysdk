@@ -137,7 +137,7 @@ def _threading_backend(
 
         if pulled % 5 == 0:
             with LOCK:
-                logger.info(f"{platform} Thread has pulled {pulled} pages so far.")
+                logger.debug(f"{platform} Thread has pulled {pulled} pages so far.")
 
         if page_count != "all" and pulled >= page_count:
             with LOCK:

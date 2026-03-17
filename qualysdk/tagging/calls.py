@@ -182,7 +182,7 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
         response = call_tags_api(auth, "get_tags", jsonpayload)
         data = response.get("ServiceResponse", {}).get("data", {})
         if not data:
-            logger.info("No data found in response. Exiting...")
+            logger.warning("No data found in response. Exiting...")
             return results
         if isinstance(data, dict):
             data = [data]
@@ -198,7 +198,7 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
                     "value": response.get("ServiceResponse", {}).get("lastId"),
                 }
             )
-            logger.info("Pagination detected, fetching more results...")
+            logger.debug("Pagination detected, fetching more results...")
         else:
             has_more = False
 

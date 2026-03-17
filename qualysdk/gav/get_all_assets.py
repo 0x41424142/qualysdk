@@ -49,9 +49,9 @@ def get_all_assets(
         for record in j["assetListData"]["asset"]:
             responses.append(Host(**record))
         (
-            logger.info(f"Page {pulled+1} of {page_count} complete.")
+            logger.debug(f"Page {pulled+1} of {page_count} complete.")
             if page_count != "all"
-            else logger.info(f"Page {pulled+1} complete.")
+            else logger.debug(f"Page {pulled+1} complete.")
         )
         pulled += 1
 

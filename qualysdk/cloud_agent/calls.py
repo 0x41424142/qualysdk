@@ -112,7 +112,7 @@ def list_agents(
             results.append(CloudAgent(**agent))
 
         pulled += 1
-        logger.info(f"Pulled page {pulled}...")
+        logger.debug(f"Pulled page {pulled}...")
 
         if page_count != "all" and pulled >= page_count:
             logger.info("Page count reached. Returning...")

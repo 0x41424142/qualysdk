@@ -304,7 +304,7 @@ def get_job_results(
 
             with lock:
                 if q.qsize() % 25 == 0:
-                    logger.info(f"Requests left in queue: {q.qsize()}")
+                    logger.debug(f"Requests left in queue: {q.qsize()}")
 
         for thread in threads:
             thread.join()

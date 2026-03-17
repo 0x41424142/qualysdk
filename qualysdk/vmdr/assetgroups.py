@@ -96,7 +96,7 @@ def get_ag_list(
                 parsed_url = urlparse(url)
                 id_min = parse_qs(parsed_url.query)["id_min"][0]
                 kwargs["id_min"] = id_min
-                logger.info(f"Pagination detected. new id_min param: {id_min}")
+                logger.debug(f"Pagination detected. New id_min param: {id_min}")
             else:
                 break
 

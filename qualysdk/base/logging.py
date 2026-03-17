@@ -14,10 +14,7 @@ from threading import Lock, Thread
 from time import monotonic, sleep
 from typing import IO, Callable, Iterable
 
-LOG_FORMAT = (
-    "%(asctime)s - %(levelname)s - %(name)s - "
-    "%(funcName)s - L%(lineno)d - %(message)s"
-)
+LOG_FORMAT = "%(asctime)s - %(levelname)s - %(name)s - " "%(funcName)s - L%(lineno)d - %(message)s"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 _QUALYSDK_HANDLER_NAME = "qualysdk_stream_handler"
 

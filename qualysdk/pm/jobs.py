@@ -129,7 +129,9 @@ def _list_jobs_backend(
         response = manage_jobs(auth=auth, **kwargs)
 
         if not response:
-            completion_reason = "no response returned" if pages_pulled == 0 else "request ended early"
+            completion_reason = (
+                "no response returned" if pages_pulled == 0 else "request ended early"
+            )
             break
 
         try:

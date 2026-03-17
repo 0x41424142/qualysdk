@@ -11,6 +11,7 @@ from qualysdk.base.logging import get_logger
 
 logger = get_logger(__name__)
 
+
 def cli_fn(auth: TokenAuth, args: Namespace, endpoint: str) -> None:
     kwargs = dict(args.kwarg) if args.kwarg else {}
     if "page_count" in kwargs:

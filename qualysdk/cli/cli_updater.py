@@ -21,6 +21,7 @@ RESET = "\033[0m"
 
 logger = get_logger(__name__)
 
+
 def get_pypi_versions() -> Response:
     """
     Get the versions of qualysdk available on PyPI.
@@ -89,7 +90,9 @@ def show_update_info(pypi_data: dict) -> None:
     logger.info(
         f"🐈 {GREEN}GitHub Release Notes:{RESET}{BLUE} https://github.com/0x41424142/qualysdk/releases/tag/v{vsn} {RESET}"
     )
-    logger.info(f"🐍 {GREEN}PyPI Page:{RESET}{BLUE} https://pypi.org/project/qualysdk/{vsn}/ {RESET}")
+    logger.info(
+        f"🐍 {GREEN}PyPI Page:{RESET}{BLUE} https://pypi.org/project/qualysdk/{vsn}/ {RESET}"
+    )
 
 
 def check_installed_version() -> version.Version:
@@ -175,7 +178,9 @@ def main() -> int:
         exit(0)
 
     if args.version:
-        logger.info(f"{YELLOW}Qualysdk version currently installed: v{check_installed_version()}{RESET}")
+        logger.info(
+            f"{YELLOW}Qualysdk version currently installed: v{check_installed_version()}{RESET}"
+        )
         exit(0)
 
     if args.check or args.install:
@@ -202,7 +207,9 @@ def main() -> int:
                             ],
                             stdout=DEVNULL,
                         )
-                        logger.info(f"✅ {GREEN}Qualysdk has been updated to v{latest_version}{RESET}")
+                        logger.info(
+                            f"✅ {GREEN}Qualysdk has been updated to v{latest_version}{RESET}"
+                        )
                     except Exception as e:
                         logger.error(f"{RED}Qualysdk update failed: {type(e).__name__}{RESET}")
                         exit(1)

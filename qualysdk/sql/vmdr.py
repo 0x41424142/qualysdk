@@ -362,7 +362,7 @@ def upload_vmdr_hld(
     # Convert the BaseList to a DataFrame:
     df = DataFrame([prepare_dataclass(detection) for detection in detections])
 
-    # Set QDS to an integer. We will be dealing with integers, floats, and NaN values, 
+    # Set QDS to an integer. We will be dealing with integers, floats, and NaN values,
     # so we have to convert the floats to ints and the NaNs to None:
     df["QDS"] = df["QDS"].apply(lambda x: int(x) if notnull(x) else None)
 

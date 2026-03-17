@@ -10,6 +10,9 @@ from sqlalchemy.dialects.mysql import TEXT
 
 from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def upload_pm_jobs(
@@ -180,7 +183,7 @@ def upload_pm_job_results(
         job_results_df, jobs_table_name, cnxn, COLS, override_import_dt
     )
 
-    print(f"Uploaded {job_summaries_uploaded} to {jobs_table_name}. Moving to assets...")
+    logger.info(f"Uploaded {job_summaries_uploaded} to {jobs_table_name}. Moving to assets...")
 
     COLS = {
         "id": types.String().with_variant(TEXT(charset="utf8"), "mysql", "mariadb"),

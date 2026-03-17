@@ -12,6 +12,9 @@ from pandas import DataFrame
 from sqlalchemy import create_engine, Connection, types
 
 from ..base.base_list import BaseList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 IP_TYPES = (IPv4Address, IPv6Address, IPv4Network, IPv6Network)
 DT_TYPES = (datetime, timedelta)
@@ -102,7 +105,7 @@ def upload_data(
         df[col] = df[col].dt.tz_localize(None)
 
     # Upload the data:
-    print(f"Uploading {len(df)} rows to {table}...")
+    logger.info(f"Uploading {len(df)} rows to {table}...")
     df.to_sql(table, cnxn, if_exists="append", index=False, dtype=dtype, chunksize=4000)
 
     return len(df)
@@ -267,7 +270,7 @@ def upload_json(
         df[col] = df[col].apply(lambda x: dumps(x) if isinstance(x, (dict, list, BaseList)) else x)
 
     # Upload the data:
-    print(f"Uploading {len(df)} rows to {table_name}...")
+    logger.info(f"Uploading {len(df)} rows to {table_name}...")
     with cnxn.begin():
         df.to_sql(table_name, cnxn, if_exists="append", index=False, chunksize=4000)
 

@@ -11,6 +11,9 @@ from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.Evaluation import Evaluation, AccountLevelEvaluation
 from .data_classes.Controls import AccountLevelControl
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_evaluation(
@@ -102,7 +105,7 @@ def get_account_evaluation(
         raise QualysAPIError("No data found for the requested account ID.")
 
     if j.get("empty"):
-        print(f"No data found for account {accountId}")
+        logger.info(f"No data found for account {accountId}")
         return responses
 
     # Normalize to list
@@ -168,7 +171,7 @@ def get_resources_evaluated_by_control(
         raise QualysAPIError("No data found for the requested account ID.")
 
     if j.get("empty"):
-        print(f"No data found for account {accountId}")
+        logger.info(f"No data found for account {accountId}")
         return responses
 
     # Normalize to list

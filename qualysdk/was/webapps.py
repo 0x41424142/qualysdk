@@ -12,6 +12,9 @@ from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import QualysAPIError
 from ..base.base_list import BaseList
+from qualysdk.base.logging import ProgressTracker, get_logger
+
+logger = get_logger(__name__)
 
 
 def call_webapp_api(auth: BasicAuth, endpoint: str, payload: dict) -> Union[int, WebApp]:
@@ -175,6 +178,14 @@ def get_webapps(
         payload = build_service_request(**kwargs)
 
     appList = BaseList()
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_webapps",
+        item_label="web applications collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
 
     while True:
         # Make the API call:
@@ -191,7 +202,8 @@ def get_webapps(
             )
 
         if serviceResponse.get("count") == "0":
-            print(f"No web applications found on page {pageNo}. Exiting.")
+            completion_reason = "no web applications found"
+            logger.info(f"No web applications found on page {pageNo}. Exiting.")
             break
 
         data = serviceResponse.get("data")
@@ -206,14 +218,12 @@ def get_webapps(
             # Create the objects:
             appList.append(WebApp.from_dict(webapp))
 
-        print(
-            f"Retrieved {serviceResponse.get('count')} web applications on page {pageNo}. Running total: {len(appList)}"
-        )
+        progress.record(items=len(data), pages=1)
 
         pageNo += 1
 
         if page_count != "all" and pageNo >= page_count:
-            print(f"Reached page_count limit. Returning {pageNo} page(s).")
+            completion_reason = "page count reached"
             break
 
         # Check for pagination:
@@ -224,8 +234,10 @@ def get_webapps(
             kwargs["id"] = serviceResponse.get("lastId")
             payload = build_service_request(**kwargs)
         else:
+            completion_reason = "no more records"
             break
 
+    progress.complete(extra=completion_reason)
     return appList
 
 
@@ -256,7 +268,7 @@ def get_webapp_details(auth: BasicAuth, webappId: Union[int, str]) -> Union[WebA
         data = data.get("WebApp")
         return WebApp.from_dict(data)
     else:
-        print(f"No data found for web application ID {webappId}. Exiting.")
+        logger.info(f"No data found for web application ID {webappId}. Exiting.")
 
 
 def get_webapps_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> BaseList[WebApp]:
@@ -318,10 +330,10 @@ def get_webapps_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> Bas
     threads = []
 
     # Get the webapps:
-    print(f"({current_thread().name}) Getting base Webapp list...")
+    logger.info(f"({current_thread().name}) Getting base Webapp list...")
     webapps = get_webapps(auth, **kwargs)
 
-    print(
+    logger.info(
         f"({current_thread().name}) Pulled {len(webapps)} webapps. Starting {thread_count} thread(s) for details pull.."
     )
 
@@ -335,14 +347,14 @@ def get_webapps_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> Bas
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 webapp = q.get()
                 # Exit condition 2: webapp is None (because Queue is empty)
                 if not webapp:
                     with LOCK:
-                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -351,13 +363,13 @@ def get_webapps_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> Bas
                 q.task_done()
                 with LOCK:
                     if len(appList) % 10 == 0:
-                        print(
+                        logger.debug(
                             f"({current_thread().name}) Pulled {len(appList)} webapp details so far..."
                         )
 
             except Exception as e:
                 with LOCK:
-                    print(f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}")
+                    logger.exception(f"({current_thread().name}) Thread exiting after error: {e}")
                 q.task_done()
                 break
 
@@ -371,7 +383,7 @@ def get_webapps_verbose(auth: BasicAuth, thread_count: int = 5, **kwargs) -> Bas
     for t in threads:
         t.join()
 
-    print(f"Pulled {len(appList)} webapp details.")
+    logger.info(f"Pulled {len(appList)} webapp details.")
     return appList
 
 
@@ -428,7 +440,7 @@ def create_webapp(auth: BasicAuth, name: str, url: str, **kwargs) -> WebApp:
         data = data.get("WebApp")
         return WebApp.from_dict(data)
     else:
-        print("No data found. Exiting.")
+        logger.info("No data found. Exiting.")
 
 
 def update_webapp(auth: BasicAuth, webappId: Union[int, str], **kwargs) -> str:
@@ -490,7 +502,7 @@ def update_webapp(auth: BasicAuth, webappId: Union[int, str], **kwargs) -> str:
         data = data.get("WebApp")
         return f"WebaApp {data} updated successfully."
     else:
-        print("No data found. Exiting.")
+        logger.info("No data found. Exiting.")
 
 
 def delete_webapp(auth: BasicAuth, removeFromSubscription: bool = True, **kwargs) -> list[str]:
@@ -571,7 +583,7 @@ def delete_webapp(auth: BasicAuth, removeFromSubscription: bool = True, **kwargs
         raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     if serviceResponse.get("count") == "0":
-        print("No applicable web apps found. Exiting.")
+        logger.info("No applicable web apps found. Exiting.")
         return []
 
     deleted = []
@@ -662,7 +674,7 @@ def purge_webapp(auth: BasicAuth, **kwargs) -> list[str]:
         raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     if serviceResponse.get("count") == "0":
-        print("No applicable web apps found. Exiting.")
+        logger.info("No applicable web apps found. Exiting.")
         return []
 
     deleted = []
@@ -716,7 +728,7 @@ def get_selenium_script(
         raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     data = serviceResponse.get("data")
-    print(
+    logger.info(
         "[WARNING] Code to parse data from this endpoint is not yet implemented. Please submit a PR. Returning raw data..."
     )
     return data

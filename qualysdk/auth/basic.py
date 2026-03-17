@@ -10,6 +10,9 @@ from requests import get
 from .base import BaseAuthentication
 from ..exceptions import AuthenticationError
 from .platform_picker import PlatformPicker
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -93,9 +96,9 @@ class BasicAuth(BaseAuthentication):
         }
         """
         if not self.override_platform:
-            print(f"Using platform: {self.platform}") if not return_ratelimit else None
+            logger.info(f"Using platform: {self.platform}") if not return_ratelimit else None
         else:
-            print(
+            logger.info(
                 f"Using overridden platform URL {self.override_platform['api_url']}"
             ) if not return_ratelimit else None
 
@@ -115,7 +118,7 @@ class BasicAuth(BaseAuthentication):
             "X-RateLimit-Limit": int(r.headers["X-RateLimit-Limit"]),
             "X-Concurrency-Limit-Limit": int(r.headers["X-Concurrency-Limit-Limit"]),
         }
-        print(f"Success. Rate limit details: {rl}") if not return_ratelimit else None
+        logger.info(f"Success. Rate limit details: {rl}") if not return_ratelimit else None
         return rl if return_ratelimit else None
 
     def get_ratelimit(self) -> dict:

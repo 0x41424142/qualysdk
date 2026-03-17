@@ -11,6 +11,9 @@ from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..base.base_list import BaseList
 from ..vmdr.data_classes.activity_log import ActivityLog
+from qualysdk.base.logging import ProgressTracker, get_logger
+
+logger = get_logger(__name__)
 
 
 def extract_sections(csv_data: str) -> tuple[Union[str, None], Union[str, None]]:
@@ -65,9 +68,21 @@ def get_activity_log(
     responses = BaseList()
     pulled = 0
     params = {"action": "list", "output_format": "csv"}
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_activity_log",
+        item_label="activity log entries collected",
+        page_interval=10,
+        time_interval=20.0,
+        total_pages=page_count if isinstance(page_count, int) else None,
+        remaining_label="page(s) remaining",
+    )
 
     if kwargs:
         params.update(kwargs)
+
+    logger.info("Starting get_activity_log.")
 
     while True:
         # make the request:
@@ -79,23 +94,24 @@ def get_activity_log(
             headers={"X-Requested-With": "qualysdk SDK"},
         )
         if response.status_code != 200:
-            print("No data returned.")
-            return responses
+            completion_reason = "no data returned"
+            break
 
         # Rip the data out of the header/footer/warning comments:
         data, pagination_data = extract_sections(response.text)
 
         if not data:
-            print("No data returned.")
-            return responses
+            completion_reason = "no data returned"
+            break
 
-        data = DictReader(data.splitlines())
+        page_rows = [
+            ActivityLog.from_dict({k.replace(" ", "_"): v for k, v in row.items()})
+            for row in DictReader(data.splitlines())
+        ]
+        responses.extend(page_rows)
 
-        for row in data:
-            # Keys with a space in the name need to be renamed to
-            # have underscores instead of spaces.
-            row = {k.replace(" ", "_"): v for k, v in row.items()}
-            responses.append(ActivityLog.from_dict(row))
+        pulled += 1
+        progress.record(items=len(page_rows), pages=1)
 
         # Check for pagination:
         if pagination_data:
@@ -107,15 +123,20 @@ def get_activity_log(
             # Look for the id_max parameter and update the params:
             if "id_max" in url_params:
                 params["id_max"] = url_params["id_max"][0].strip().replace('"', "")
-                print(f"Pagination detected. Pulling next page with id_max: {params['id_max']}")
+                logger.debug(
+                    f"Pagination detected. Pulling next page with id_max: {params['id_max']}"
+                )
             else:
-                print("No more pages to pull.")
+                completion_reason = "no more records"
+                logger.debug("No more pages to pull.")
                 break
-
-        pulled += 1
-
-        if page_count != "all" and pulled >= page_count:
-            print("Page count reached.")
+        else:
+            completion_reason = "no more records"
             break
 
+        if page_count != "all" and pulled >= page_count:
+            completion_reason = "page count reached"
+            break
+
+    progress.complete(extra=completion_reason)
     return responses

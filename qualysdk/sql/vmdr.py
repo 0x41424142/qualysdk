@@ -4,13 +4,16 @@ vmdr.py - Contains the functions to upload supported VMDR API pulls to SQL DBs.
 
 from datetime import datetime
 
-from pandas import DataFrame
+from pandas import DataFrame, notnull
 from sqlalchemy import Connection, types
 from sqlalchemy.dialects.mysql import TEXT
 from sqlalchemy.dialects.mssql import DATETIME2
 
 from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def upload_vmdr_ags(
@@ -327,7 +330,7 @@ def upload_vmdr_hld(
     hosts_uploaded = upload_vmdr_hosts(
         hld, cnxn, hosts_table_name, override_import_dt=override_import_dt
     )
-    print(f"Uploaded {hosts_uploaded} hosts to {hosts_table_name}. Moving to detections...")
+    logger.info(f"Uploaded {hosts_uploaded} hosts to {hosts_table_name}. Moving to detections...")
 
     COLS = {
         "UNIQUE_VULN_ID": types.BigInteger(),
@@ -359,8 +362,9 @@ def upload_vmdr_hld(
     # Convert the BaseList to a DataFrame:
     df = DataFrame([prepare_dataclass(detection) for detection in detections])
 
-    # Set QDS to an integer:
-    df["QDS"] = df["QDS"].apply(lambda x: int(x) if x else None)
+    # Set QDS to an integer. We will be dealing with integers, floats, and NaN values,
+    # so we have to convert the floats to ints and the NaNs to None:
+    df["QDS"] = df["QDS"].apply(lambda x: int(x) if notnull(x) else None)
 
     # Upload the data:
     return upload_data(
@@ -1027,7 +1031,7 @@ def upload_vmdr_cve_hld(
     hosts_uploaded = upload_vmdr_hosts(
         hld, cnxn, hosts_table_name, override_import_dt=override_import_dt
     )
-    print(f"Uploaded {hosts_uploaded} hosts to {hosts_table_name}. Moving to detections...")
+    logger.info(f"Uploaded {hosts_uploaded} hosts to {hosts_table_name}. Moving to detections...")
 
     COLS = {
         "UNIQUE_VULN_ID": types.BigInteger(),

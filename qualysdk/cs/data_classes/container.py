@@ -12,6 +12,9 @@ from .vulnerability import csVuln
 from ...base.base_class import BaseClass
 from ...base.base_list import BaseList
 from ...base import DONT_EXPAND
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -224,7 +227,7 @@ class Container(BaseClass):
         ]
         for attribute in attributes_to_check:
             if getattr(self, attribute, None):
-                print(
+                logger.warning(
                     f"The {attribute} attribute does not have a defined structure. "
                     "Please submit a bug report if you see this message, or a PR with the attribute parsed out."
                 )

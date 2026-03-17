@@ -16,6 +16,9 @@ from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import QualysAPIError
 from ..base.base_list import BaseList
+from qualysdk.base.logging import ProgressTracker, get_logger
+
+logger = get_logger(__name__)
 
 
 def call_auth_api(auth: BasicAuth, endpoint: str, payload: dict) -> Union[int, WebAppAuthRecord]:
@@ -174,6 +177,14 @@ def get_authentication_records(
         payload = build_service_request(**kwargs)
 
     appList = BaseList()
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_authentication_records",
+        item_label="auth records collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
 
     while True:
         # Make the API call:
@@ -190,7 +201,8 @@ def get_authentication_records(
             )
 
         if serviceResponse.get("count") == "0":
-            print(f"No web applications found on page {pageNo}. Exiting.")
+            completion_reason = "no auth records found"
+            logger.info(f"No auth records found on page {pageNo}. Exiting.")
             break
 
         data = serviceResponse.get("data")
@@ -205,14 +217,12 @@ def get_authentication_records(
             # Create the objects:
             appList.append(WebAppAuthRecord.from_dict(record))
 
-        print(
-            f"Retrieved {serviceResponse.get('count')} auth records on page {pageNo}. Running total: {len(appList)}"
-        )
+        progress.record(items=len(data), pages=1)
 
         pageNo += 1
 
         if page_count != "all" and pageNo >= page_count:
-            print(f"Reached page_count limit. Returning {pageNo} page(s).")
+            completion_reason = "page count reached"
             break
 
         # Check for pagination:
@@ -223,8 +233,10 @@ def get_authentication_records(
             kwargs["id"] = serviceResponse.get("lastId")
             payload = build_service_request(**kwargs)
         else:
+            completion_reason = "no more records"
             break
 
+    progress.complete(extra=completion_reason)
     return appList
 
 
@@ -256,7 +268,7 @@ def get_authentication_record_details(
         data = data.get("WebAppAuthRecord")
         return WebAppAuthRecord.from_dict(data)
     else:
-        print(f"No data found for web application ID {recordId}. Exiting.")
+        logger.info(f"No data found for web application ID {recordId}. Exiting.")
 
 
 def get_authentication_records_verbose(
@@ -320,10 +332,10 @@ def get_authentication_records_verbose(
     threads = []
 
     # Get the auth records:
-    print(f"({current_thread().name}) Getting base auth record list...")
+    logger.info(f"({current_thread().name}) Getting base auth record list...")
     authrecords = get_authentication_records(auth, **kwargs)
 
-    print(
+    logger.info(
         f"({current_thread().name}) Pulled {len(authrecords)} auth records. Starting {thread_count} thread(s) for details pull.."
     )
 
@@ -337,14 +349,14 @@ def get_authentication_records_verbose(
                 # Exit condition 1: Queue is empty
                 if q.empty():
                     with LOCK:
-                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         break
 
                 authrecord = q.get()
                 # Exit condition 2: authrecord is None (because Queue is empty)
                 if not authrecord:
                     with LOCK:
-                        print(f"({current_thread().name}) Queue is empty. Thread exiting.")
+                        logger.debug(f"({current_thread().name}) Queue is empty. Thread exiting.")
                         q.task_done()
                     break
 
@@ -353,13 +365,13 @@ def get_authentication_records_verbose(
                 q.task_done()
                 with LOCK:
                     if len(authList) % 10 == 0:
-                        print(
+                        logger.debug(
                             f"({current_thread().name}) Pulled {len(authList)} auth record details so far..."
                         )
 
             except Exception as e:
                 with LOCK:
-                    print(f"[ERROR - THREAD EXITING] ({current_thread().name}) Error: {e}")
+                    logger.exception(f"({current_thread().name}) Thread exiting after error: {e}")
                 q.task_done()
                 break
 
@@ -373,7 +385,7 @@ def get_authentication_records_verbose(
     for t in threads:
         t.join()
 
-    print(f"Pulled {len(authList)} auth record details.")
+    logger.info(f"Pulled {len(authList)} auth record details.")
     return authList
 
 
@@ -517,7 +529,7 @@ def create_authentication_record(
         data = data.get("WebAppAuthRecord")
         return WebAppAuthRecord.from_dict(data)
     else:
-        print("No data found. Exiting.")
+        logger.info("No data found. Exiting.")
 
 
 def delete_authentication_record(auth: BasicAuth, **kwargs) -> list[str]:
@@ -596,7 +608,7 @@ def delete_authentication_record(auth: BasicAuth, **kwargs) -> list[str]:
         raise QualysAPIError(f"API response returned error: {serviceResponse.get('responseCode')}")
 
     if serviceResponse.get("count") == "0":
-        print("No auth records found. Exiting.")
+        logger.info("No auth records found. Exiting.")
         return []
 
     deleted = []

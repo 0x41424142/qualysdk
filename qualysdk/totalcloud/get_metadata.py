@@ -9,6 +9,9 @@ from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.Controls import Control
+from qualysdk.base.logging import ProgressTracker, get_logger
+
+logger = get_logger(__name__)
 
 
 def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all", **kwargs):
@@ -47,6 +50,14 @@ def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all",
 
     responses = BaseList()
     currentPage = 0
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_control_metadata",
+        item_label="controls collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
 
     if kwargs.get("filter"):
         # Make sure the query key is valid
@@ -102,22 +113,24 @@ def get_control_metadata(auth: BasicAuth, page_count: Union[int, "all"] = "all",
         j = response.json()
 
         if len(j["control"]) == 0:
-            print("No controls found.")
+            completion_reason = "no controls found"
+            logger.info("No controls found.")
             break
 
         # Iterate through the records in the response and create Connector objects
         for record in j["control"]:
             responses.append(Control.from_dict(record))
 
-        # Print a message indicating the current page was retrieved successfully
-        print(f"Page {currentPage+1} of controls retrieved successfully.")
         currentPage += 1
+        progress.record(items=len(j["control"]), pages=1)
 
         # Break the loop if all pages are retrieved or the requested number of pages are retrieved
         if (page_count != "all" and (currentPage + 1 > page_count)) or "warning" not in j.keys():
+            if page_count != "all" and (currentPage + 1 > page_count):
+                completion_reason = "page count reached"
+            else:
+                completion_reason = "no more records"
             break
 
-    # Print a message indicating all pages have been retrieved
-    print(f"All pages complete. {str(len(responses))} control records retrieved.")
-
+    progress.complete(extra=completion_reason)
     return responses

@@ -9,6 +9,7 @@ from .auth import BasicAuth, TokenAuth
 from .base.base_list import BaseList
 from .base.csv_export import write_csv, write_excel
 from .base.json_export import write_json
+from .base.logging import configure_logging, get_logger
 
 from .gav.uber import GAVUber
 from . import gav

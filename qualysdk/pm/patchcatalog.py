@@ -109,7 +109,7 @@ def get_patch_catalog(
 
         pulled += 1
         if pulled % 5 == 0:
-            print(f"Pulled {pulled} chunks of 1K patch catalog entries")
+            logger.info(f"Pulled {pulled} chunks of 1K patch catalog entries")
 
     return results
 
@@ -190,7 +190,7 @@ def _thread_worker(
         while not patchQueue.empty():
             # We dont need to differentiate the kwarg here, backend will handle it
             if error_flag:
-                print("Error flag is set. Returning what was collected so far...")
+                logger.warning("Error flag is set. Returning what was collected so far...")
                 return
             kwargs["patchId"] = patchQueue.get_nowait()
             while True:
@@ -224,12 +224,12 @@ def _thread_worker(
             with LOCK:
                 # Use lastReportedTime for printing how far we are every ~15 seconds
                 if (datetime.now() - tracker).seconds >= 15:
-                    print(f"{len(responses)} {endpoint} processed...")
+                    logger.info(f"{len(responses)} {endpoint} processed...")
                     tracker = datetime.now()
     except Exception as e:
         with LOCK:
             error_flag = True
-            print(f"Error in thread: {e} Returning what was collected so far...")
+            logger.exception(f"Error in thread: {e} Returning what was collected so far...")
 
 
 def validate_threads_and_patches(patchId, threads):
@@ -387,6 +387,9 @@ def get_products_in_windows_patch(
 
 
 from typing import Union, List, Literal, overload
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @overload

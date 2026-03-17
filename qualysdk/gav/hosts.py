@@ -11,6 +11,9 @@ from frozendict import frozendict
 from ..base.base_class import BaseClass
 from ..base.base_list import BaseList
 from ..base import DONT_EXPAND
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 SOFTWARE_SCHEMA = frozendict(
     {
@@ -528,7 +531,7 @@ class Host(BaseClass):
                             setattr(self, "cloudProvider_tags", bl)
 
                     else:
-                        print(f"Unknown subkey: {subkey}")
+                        logger.warning(f"Unknown subkey: {subkey}")
 
                     # Set the cloudProvider field to the valid provider
                 setattr(self, "cloudProvider", cloudProvider)
@@ -676,7 +679,7 @@ class Host(BaseClass):
                 setattr(self, "easmTags", bl)
 
             if self.customAttributes:
-                print(self.customAttributes)
+                logger.debug("Unparsed customAttributes: %s", self.customAttributes)
 
             if self.processor and not isinstance(self.processor, str):
                 setattr(self, "processor", self.processor.get("description"))

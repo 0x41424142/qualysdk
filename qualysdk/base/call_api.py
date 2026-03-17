@@ -17,6 +17,9 @@ from ..exceptions.Exceptions import *
 from .call_schema import CALL_SCHEMA
 from .convert_bools_and_nones import convert_bools_and_nones
 from .xml_parser import xml_parser
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def call_api(
@@ -95,7 +98,7 @@ def call_api(
         if isinstance(auth, TokenAuth):
             # check that the time delta between now and the token generation time is less than ~4 hours:
             if (datetime.now() - auth.generated_on).seconds > 14395:
-                print("Token is 4+ hours old. Refreshing token...")
+                logger.info("Token is 4+ hours old. Refreshing token...")
                 auth.token = auth.get_token()
 
         # check params:
@@ -300,8 +303,11 @@ def call_api(
                 else:
                     to_wait = 3601  # Default to 1h 1s if no header is present.
 
-                print(
-                    f"WARNING: You have reached the rate limit for this endpoint. qualysdk will automatically sleep for {to_wait} seconds and try again at approximately {datetime.now() + timedelta(seconds=to_wait)}."
+                logger.warning(
+                    "Rate limit reached for this endpoint. qualysdk will sleep for %s seconds "
+                    "and retry at approximately %s.",
+                    to_wait,
+                    datetime.now() + timedelta(seconds=to_wait),
                 )
                 sleep(to_wait)
                 # Go to next iteration of the loop to try again:
@@ -311,8 +317,10 @@ def call_api(
                 return response
             else:
                 # Almost at rate limit:
-                print(
-                    f"Warning: This endpoint will accept {response.headers['X-RateLimit-Remaining']} more calls before rate limiting you. qualysdk will automatically sleep once remaining calls hits 0."
+                logger.warning(
+                    "This endpoint will accept %s more calls before rate limiting. "
+                    "qualysdk will sleep automatically once remaining calls hits 0.",
+                    response.headers["X-RateLimit-Remaining"],
                 )
 
         return response

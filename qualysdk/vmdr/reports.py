@@ -16,6 +16,9 @@ from ..base import call_api
 from ..base import xml_parser
 from ..base.base_list import BaseList
 from ..exceptions.Exceptions import *
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def manage_scheduled_reports(
@@ -317,7 +320,7 @@ def fetch_report(
     # Match the file format and load into the appropriate object
     match file_format:
         case "csv":
-            print("Detected CSV format. Returning DataFrame.")
+            logger.info("Detected CSV format. Returning DataFrame.")
             # Check for a summarization header. If it exists, skip it.
             # We can delete everything before "\r\n\r\n\r\n"
             content = response.text
@@ -339,12 +342,12 @@ def fetch_report(
             return_data = True
 
         case "xml":
-            print("Detected XML format. Returning DataFrame.")
+            logger.info("Detected XML format. Returning DataFrame.")
             data = DataFrame.from_dict(xml_parser(response.text))
             return_data = True
 
         case _:
-            print(
+            logger.info(
                 f"Detected {file_format} format. Writing to {join(curr_dir, 'output', f'{id}.{file_format}')}"
             )
             write_out = True
@@ -352,11 +355,11 @@ def fetch_report(
     if write_out:
         if not exists(join(curr_dir, "output")):
             mkdir(join(curr_dir, "output"))
-            print(f"Created output directory at {join(curr_dir, 'output')}")
+            logger.info(f"Created output directory at {join(curr_dir, 'output')}")
 
         with open(join(curr_dir, "output", f"{id}.{file_format}"), "wb") as f:
             f.write(response.content)
-            print(f"Wrote report to {join(curr_dir, 'output', f'{id}.{file_format}')}")
+            logger.info(f"Wrote report to {join(curr_dir, 'output', f'{id}.{file_format}')}")
 
     if return_data:
         return data
@@ -412,7 +415,7 @@ def get_scheduled_report_list(auth: BasicAuth, **kwargs) -> BaseList[VMDRReport]
         for report in reports:
             bl.append(VMDRScheduledReport.from_dict(report))
     except KeyError:
-        print("No reports found.")
+        logger.info("No reports found.")
 
     return bl
 

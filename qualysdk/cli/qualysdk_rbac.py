@@ -5,7 +5,7 @@ operations using qualysdk.
 
 from argparse import ArgumentParser, Namespace
 
-from qualysdk import BasicAuth, write_json
+from qualysdk import BasicAuth, write_json, configure_logging
 from qualysdk.admin.rbac import get_user_details, search_users, update_user
 
 
@@ -238,6 +238,7 @@ def main():
     )
 
     args = parser.parse_args()
+    configure_logging()
 
     # create BasicAuth object
     auth = BasicAuth(

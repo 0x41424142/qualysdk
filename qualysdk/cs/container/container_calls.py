@@ -12,6 +12,9 @@ from ...auth.token import TokenAuth
 from ...base.call_api import call_api
 from ...base.base_list import BaseList
 from ...exceptions.Exceptions import *
+from qualysdk.base.logging import ProgressTracker, get_logger
+
+logger = get_logger(__name__)
 
 
 def list_containers(
@@ -41,6 +44,18 @@ def list_containers(
 
     results = BaseList()
     pages_pulled = 0
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="list_containers",
+        item_label="containers collected",
+        page_interval=10,
+        time_interval=20.0,
+        total_pages=page_count if isinstance(page_count, int) else None,
+        remaining_label="page(s) remaining",
+    )
+
+    logger.info("Starting list_containers.")
 
     while True:
         # Pull the data:
@@ -57,6 +72,7 @@ def list_containers(
 
         # Check if the data is empty:
         if not data.get("data"):
+            completion_reason = "no containers found" if pages_pulled == 0 else "no more records"
             break
 
         if isinstance(data.get("data"), dict):
@@ -64,19 +80,21 @@ def list_containers(
             data["data"] = [data["data"]]
 
         # Add the data to the results:
-        for container in data["data"]:
-            results.append(Container(**container))
+        containers = [Container(**container) for container in data["data"]]
+        results.extend(containers)
 
         pages_pulled += 1
+        progress.record(items=len(containers), pages=1)
 
         # Check if we need to pull more pages:
         if page_count != "all" and pages_pulled >= page_count:
-            print(f"Page count reached. Returning {pages_pulled} pages of containers.")
+            completion_reason = "page count reached"
             break
 
         # Check the response headers for the next page:
         headers = dict(response.headers)
         if not headers.get("Link"):
+            completion_reason = "no more records"
             break
         else:
             # Use parse_qs to get the pagination query:
@@ -85,6 +103,7 @@ def list_containers(
             ][0]
             kwargs["paginationQuery"] = pagination_query
 
+    progress.complete(extra=completion_reason)
     return results
 
 

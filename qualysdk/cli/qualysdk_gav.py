@@ -5,7 +5,7 @@ CLI script to quickly perform Global AssetView
 
 from argparse import ArgumentParser, Namespace
 
-from qualysdk import TokenAuth, write_excel, BaseList
+from qualysdk import TokenAuth, write_excel, BaseList, configure_logging
 from qualysdk.gav import *
 from qualysdk.base.json_export import write_json
 
@@ -180,6 +180,7 @@ def main():
     )
 
     args = parser.parse_args()
+    configure_logging()
 
     # create TokenAuth object
     auth = TokenAuth(

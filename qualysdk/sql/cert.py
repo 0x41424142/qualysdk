@@ -10,6 +10,9 @@ from sqlalchemy.dialects.mysql import TEXT
 
 from .base import upload_data, prepare_dataclass
 from ..base.base_list import BaseList
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def upload_cert_certs(
@@ -134,7 +137,7 @@ def upload_cert_certs(
 
     certs_uploaded = upload_data(certs_df, certs_table_name, cnxn, COLS, override_import_dt)
 
-    print(f"Uploaded {certs_uploaded} to {certs_table_name}. Moving to assets...")
+    logger.info(f"Uploaded {certs_uploaded} to {certs_table_name}. Moving to assets...")
 
     COLS = {
         "id": types.Integer(),
@@ -151,6 +154,6 @@ def upload_cert_certs(
 
     assets_uploaded = upload_data(assets_df, assets_table_name, cnxn, COLS, override_import_dt)
 
-    print(f"Uploaded {assets_uploaded} to {assets_table_name}.")
+    logger.info(f"Uploaded {assets_uploaded} to {assets_table_name}.")
 
     return certs_uploaded

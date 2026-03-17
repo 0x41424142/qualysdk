@@ -9,6 +9,9 @@ from .data_classes.Tag import Tag
 from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..base.base_list import BaseList
+from qualysdk.base.logging import ProgressTracker, get_logger
+
+logger = get_logger(__name__)
 
 
 def call_tags_api(auth: BasicAuth, endpoint: str, payload: dict):
@@ -153,6 +156,13 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
 
     has_more = True
     results = BaseList()
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_tags",
+        item_label="tags collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
     # Build the service request:
     jsonpayload = {
         "ServiceRequest": {
@@ -179,12 +189,13 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
         response = call_tags_api(auth, "get_tags", jsonpayload)
         data = response.get("ServiceResponse", {}).get("data", {})
         if not data:
-            print("No data found in response. Exiting...")
+            logger.warning("No data found in response. Exiting...")
             return results
         if isinstance(data, dict):
             data = [data]
         for tag in data:
             results.append(Tag.from_dict(tag["Tag"]))
+        progress.record(items=len(data), pages=1)
 
         has_more = response.get("ServiceResponse", {}).get("hasMoreRecords", False)
         if has_more not in [False, "false"]:
@@ -195,11 +206,11 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
                     "value": response.get("ServiceResponse", {}).get("lastId"),
                 }
             )
-            print("Pagination detected, fetching more results...")
+            logger.debug("Pagination detected, fetching more results...")
         else:
             has_more = False
 
-    print("No more results to fetch. Exiting...")
+    progress.complete(extra="no more results to fetch")
     return results
 
 

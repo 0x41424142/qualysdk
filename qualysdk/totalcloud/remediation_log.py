@@ -9,6 +9,9 @@ from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.RemediationActivity import RemediationActivity
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_remediation_activities(
@@ -72,7 +75,7 @@ def get_remediation_activities(
             raise QualysAPIError(f"{j['errorCode']}, {j['message']}")
 
         if "content" not in j.keys() or not j["pageable"].get("empty"):
-            print("No content in response")
+            logger.info("No content in response")
             break
 
         data = j["content"]
@@ -85,7 +88,7 @@ def get_remediation_activities(
         if page_count != "all":
             pulled_pages += 1
             if pulled_pages >= page_count:
-                print("Reached page limit of", page_count)
+                logger.info(f"Reached page limit of {page_count}")
                 break
 
     return bl

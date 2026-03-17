@@ -11,6 +11,9 @@ from .data_classes.ip_converters import convert_ips, convert_ranges
 from ..base.base_list import BaseList
 from ..base import xml_parser
 from ..base import DONT_EXPAND
+from qualysdk.base.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList | dict[str, BaseList[str]]:
@@ -50,7 +53,7 @@ def get_ip_list(auth: BasicAuth, **kwargs) -> BaseList | dict[str, BaseList[str]
         data = xml_parser(response.text)["IP_LIST_OUTPUT"]
 
         if "IP_SET" not in data["RESPONSE"]:
-            print("No IP addresses found. Returning empty BaseList.")
+            logger.info("No IP addresses found. Returning empty BaseList.")
             return ip_list
 
         data = data["RESPONSE"]["IP_SET"]  # at this point, data has IP and IP_RANGE keys
@@ -157,7 +160,7 @@ def add_ips(
 
     result = xml_parser(response.text)["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
 
-    print(result)
+    logger.info(result)
 
 
 def update_ips(auth: BasicAuth, ips: Union[str, BaseList], **kwargs) -> None:
@@ -206,4 +209,4 @@ def update_ips(auth: BasicAuth, ips: Union[str, BaseList], **kwargs) -> None:
 
     result = xml_parser(response.text)["SIMPLE_RETURN"]["RESPONSE"]["TEXT"]
 
-    print(result)
+    logger.info(result)

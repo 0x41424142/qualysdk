@@ -5,7 +5,7 @@ CLI script to quickly perform Web Application Scanning
 
 from argparse import ArgumentParser, Namespace
 
-from qualysdk import BasicAuth, write_excel, BaseList
+from qualysdk import BasicAuth, write_excel, BaseList, configure_logging
 from qualysdk.was import *
 
 
@@ -106,6 +106,7 @@ def main():
     )
 
     args = parser.parse_args()
+    configure_logging()
 
     # create BasicAuth object
     auth = BasicAuth(

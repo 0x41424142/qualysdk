@@ -51,4 +51,3 @@ This SDK tool is an independent project and is not an official product of Qualys
 Users of this SDK are advised to use it at their own risk and discretion.
 
 For official tools and support, please refer to the official Qualys resources and documentation.
-

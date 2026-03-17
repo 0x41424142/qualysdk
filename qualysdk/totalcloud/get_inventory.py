@@ -2,7 +2,7 @@
 Pull resources from a cloud provider account.
 """
 
-from threading import Lock, Thread, current_thread
+from threading import Lock, Thread
 from queue import Queue
 from typing import Literal, Union
 
@@ -13,7 +13,7 @@ from ..exceptions.Exceptions import *
 from .data_classes.AWSResources import *
 from .data_classes.AzureResources import *
 from .data_classes.resource_mappings import *
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -27,7 +27,9 @@ def fetch_page(
     resourceType: str,
     pageNo: int,
     results: BaseList,
+    page_queue: Queue,
     lock: Lock,
+    progress: ProgressTracker,
     page_count: Union[int, "all"],
     **kwargs,
 ):
@@ -82,6 +84,7 @@ def fetch_page(
         return
 
     with lock:
+        page_items = []
         for i in j["content"]:
             resource_class = resource_map.get(resourceType, None)
             if resource_class:
@@ -92,17 +95,18 @@ def fetch_page(
                 raise ValueError(
                     f"Invalid resource type {resourceType} for provider {provider}. Valid resource types are:\n{VALID_RESOURCETYPES[provider]}"
                 )
-            results.append(i)
-
-        if (pageNo + 1) % 20 == 0:
-            logger.info(
-                f"({current_thread().name}) Page {pageNo+1} of {provider}-{resourceType} retrieved successfully."
-            )
+            page_items.append(i)
+        results.extend(page_items)
 
         if "INTERNAL_SERVER_ERROR" in response.text and response.status_code == 502:
             # We have reached the end of the pages
-            with lock:
-                termination_flag = True
+            termination_flag = True
+
+    progress.record(
+        items=len(page_items),
+        pages=1,
+        queue_remaining=page_queue.qsize(),
+    )
 
 
 def worker(
@@ -112,6 +116,7 @@ def worker(
     results,
     queue,
     lock,
+    progress,
     page_count,
     **kwargs,
 ):
@@ -131,7 +136,9 @@ def worker(
             resourceType,
             pageNo,
             results,
+            queue,
             lock,
+            progress,
             page_count,
             **kwargs,
         )
@@ -210,17 +217,30 @@ def get_inventory(
     results = BaseList()
     page_queue = Queue()
     lock = Lock()
+    progress = ProgressTracker(
+        logger=logger,
+        operation=f"get_inventory[{provider}:{resourceType}]",
+        item_label="resources collected",
+        page_interval=20,
+        time_interval=20.0,
+        total_pages=page_count if isinstance(page_count, int) else None,
+        remaining_label="page(s) remaining",
+    )
 
     # Pre-fill the queue with page numbers
     for i in range(200) if page_count == "all" else range(page_count):
         page_queue.put(i)
+
+    logger.info(
+        f"Starting get_inventory for provider={provider}, resourceType={resourceType} with {thread_count} threads."
+    )
 
     # Start worker threads
     threads = []
     for _ in range(thread_count):
         t = Thread(
             target=worker,
-            args=(auth, provider, resourceType, results, page_queue, lock, page_count),
+            args=(auth, provider, resourceType, results, page_queue, lock, progress, page_count),
             kwargs=kwargs,
         )
         threads.append(t)
@@ -232,11 +252,16 @@ def get_inventory(
     while not check_termination_or_empty(page_queue):
         pass
 
+    remaining_pages = page_queue.qsize()
+
     # Stop the worker threads
     for _ in range(thread_count):
         page_queue.put(None)
     for t in threads:
         t.join()
 
-    # print(f"{str(len(results))} {provider} {resourceType} records retrieved.")
+    progress.complete(
+        queue_remaining=remaining_pages,
+        extra="pagination terminated" if remaining_pages else "all queued pages processed",
+    )
     return results

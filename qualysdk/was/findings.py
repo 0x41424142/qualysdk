@@ -12,7 +12,7 @@ from ..base.call_api import call_api
 from .base.web_app_service_requests import validate_response
 from ..exceptions.Exceptions import QualysAPIError
 from ..base.base_list import BaseList
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -230,6 +230,14 @@ def get_findings(
         payload = build_service_request(**kwargs)
 
     findingList = BaseList()
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_findings",
+        item_label="findings collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
 
     while True:
         # Make the API call:
@@ -246,6 +254,7 @@ def get_findings(
             )
 
         if serviceResponse.get("count") == "0":
+            completion_reason = "no findings found"
             logger.info(f"No findings found on page {pageNo}. Exiting.")
             break
 
@@ -261,14 +270,12 @@ def get_findings(
             # Create the objects:
             findingList.append(WASFinding.from_dict(finding))
 
-        logger.debug(
-            f"Retrieved {serviceResponse.get('count')} WAS findings on page {pageNo}. Running total: {len(findingList)}"
-        )
+        progress.record(items=len(data), pages=1)
 
         pageNo += 1
 
         if page_count != "all" and pageNo >= page_count:
-            logger.info(f"Reached page_count limit. Returning {pageNo} page(s).")
+            completion_reason = "page count reached"
             break
 
         # Check for pagination:
@@ -279,8 +286,10 @@ def get_findings(
             kwargs["id"] = serviceResponse.get("lastId")
             payload = build_service_request(**kwargs)
         else:
+            completion_reason = "no more records"
             break
 
+    progress.complete(extra=completion_reason)
     return findingList
 
 

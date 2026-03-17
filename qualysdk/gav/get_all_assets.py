@@ -9,7 +9,7 @@ from ..base.call_api import call_api
 from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import *
 from .hosts import Host
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -37,6 +37,14 @@ def get_all_assets(
 
     responses = BaseList()
     pulled = 0
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_all_assets",
+        item_label="assets collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
 
     while True:
         # make the request:
@@ -46,25 +54,22 @@ def get_all_assets(
         if "responseCode" not in j.keys() or j["responseCode"] == "FAILED":
             raise QualysAPIError(j["responseMessage"])
 
-        for record in j["assetListData"]["asset"]:
+        records = j["assetListData"]["asset"]
+        for record in records:
             responses.append(Host(**record))
-        (
-            logger.debug(f"Page {pulled+1} of {page_count} complete.")
-            if page_count != "all"
-            else logger.debug(f"Page {pulled+1} complete.")
-        )
         pulled += 1
+        progress.record(items=len(records), pages=1)
 
         if not j["hasMore"]:
-            logger.info("No more records.")
+            completion_reason = "no more records"
             break
 
         if page_count != "all" and pulled >= page_count:
-            logger.info("Page count reached.")
+            completion_reason = "page count reached"
             break
 
         else:
             kwargs["lastSeenAssetId"] = j["lastSeenAssetId"]
 
-    logger.info("All pages complete.")
+    progress.complete(extra=completion_reason)
     return responses

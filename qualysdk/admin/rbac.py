@@ -12,7 +12,7 @@ from .data_classes.User import User
 from ..auth import BasicAuth
 from ..base.base_list import BaseList
 from ..base.call_api import call_api
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -135,6 +135,18 @@ def search_users(
 
     # start pagination
     users_list = BaseList()
+    progress = ProgressTracker(
+        logger=logger,
+        operation="search_users",
+        item_label="users collected",
+        page_interval=10,
+        time_interval=20.0,
+        remaining_label="page(s) remaining",
+    )
+    completion_reason = "all pages complete"
+
+    logger.info("Starting search_users.")
+
     while True:
         response = call_api(
             auth=auth,
@@ -147,26 +159,36 @@ def search_users(
         data = response.json()
         if data.get("ServiceResponse", {}).get("responseErrorDetails"):
             logger.warning(f"{data['ServiceResponse']['responseErrorDetails']['errorMessage']}")
+            completion_reason = "error response returned"
             break
 
         if data["ServiceResponse"].get("count", 0) == 0 and "data" not in data["ServiceResponse"]:
-            logger.info("No users found matching the search criteria.")
+            completion_reason = "no users found"
             break
 
         users = data["ServiceResponse"]["data"]
 
         if data["ServiceResponse"].get("count", 0) == 1:
-            users_list.append(User(**users[0]["User"]))
+            page_users = [User(**users[0]["User"])]
+            users_list.extend(page_users)
+            progress.record(items=len(page_users), pages=1)
+            completion_reason = "no more records"
             break
         else:
-            users_list.extend([User(**user["User"]) for user in users])
+            page_users = [User(**user["User"]) for user in users]
+            users_list.extend(page_users)
+            progress.record(items=len(page_users), pages=1)
             if not data["ServiceResponse"].get("hasMoreRecords", False) in [True, "true"]:
-                logger.info(f"Found {len(users)} users on final page, no more records to fetch.")
+                completion_reason = "no more records"
                 break
             jsonpayload["ServiceRequest"]["filters"]["Criteria"].append(
                 {"field": "id", "operator": "GREATER", "value": data["ServiceResponse"]["lastId"]}
             )
-            logger.info(f"Found {len(users)} users on current page, continuing to next page...")
+            logger.debug(
+                "Pagination detected. Continuing search_users with lastId=%s.",
+                data["ServiceResponse"]["lastId"],
+            )
+    progress.complete(extra=completion_reason)
     return users_list
 
 

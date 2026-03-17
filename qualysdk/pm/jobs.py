@@ -6,7 +6,7 @@ Management jobs in Qualys.
 from __future__ import annotations
 from typing import Union, Literal, overload, Sequence
 from json import JSONDecodeError
-from threading import Thread, Lock, current_thread
+from threading import Thread, Lock
 from queue import Queue
 
 from .data_classes import *
@@ -15,7 +15,7 @@ from ..base.call_api import call_api
 from ..base.base_list import BaseList
 from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import *
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -107,16 +107,29 @@ def _list_jobs_backend(
     pages_pulled = 0
     # If called from a thread, we need to use a shared resource
     responses = BaseList() if "_response_bl" not in kwargs.keys() else kwargs.pop("_response_bl")
+    progress = ProgressTracker(
+        logger=logger,
+        operation=f"list_jobs[{platform}]",
+        item_label="jobs collected",
+        page_interval=10,
+        time_interval=20.0,
+        total_pages=page_count if isinstance(page_count, int) else None,
+        remaining_label="page(s) remaining",
+    )
+    completion_reason = "all pages complete"
 
     # Set up URL format
     kwargs["placeholder"] = "/summary"
     kwargs["pageNumber"] = pages_pulled
     lock = Lock()
 
+    logger.info(f"Starting list_jobs for platform={platform}.")
+
     while True:
         response = manage_jobs(auth=auth, **kwargs)
 
         if not response:
+            completion_reason = "no response returned" if pages_pulled == 0 else "request ended early"
             break
 
         try:
@@ -125,27 +138,29 @@ def _list_jobs_backend(
             raise QualysAPIError(response.status_code, response.text)
 
         if len(parsed) < 1:
+            completion_reason = "no jobs found" if pages_pulled == 0 else "no more records"
             break
 
         # Protect BaseList if threads are used:
+        page_jobs = [PMJob.from_dict(job) for job in parsed]
         with lock:
-            responses.extend([PMJob.from_dict(job) for job in parsed])
+            responses.extend(page_jobs)
+        pages_pulled += 1
+        progress.record(items=len(page_jobs), pages=1)
 
         if page_count != "all":
-            pages_pulled += 1
             kwargs["pageNumber"] = pages_pulled
             if pages_pulled >= page_count:
-                logger.info(
-                    f"{current_thread().name} - Hit user-defined limit of {page_count} pages for platform={platform}."
-                )
+                completion_reason = "page count reached"
                 break
         else:
-            pages_pulled += 1
             kwargs["pageNumber"] = pages_pulled
 
         if len(parsed) == 0:
+            completion_reason = "no more records"
             break
 
+    progress.complete(extra=completion_reason)
     return responses
 
 

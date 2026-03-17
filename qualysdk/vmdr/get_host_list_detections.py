@@ -7,11 +7,11 @@ This endpoint is used to get a list of hosts and their QID detections. The funct
 from typing import Union
 from threading import Thread
 
-from .base.helpers import create_id_queue, thread_worker, prepare_args
+from .base.helpers import create_id_queue, thread_worker, prepare_args, describe_threaded_limits
 from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger, wait_for_threads_with_heartbeat
 
 logger = get_logger(__name__)
 
@@ -130,7 +130,31 @@ def get_hld(
     )
 
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
-    logger.info(f"Starting get_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
+    total_chunks = id_queue.qsize()
+    target_chunks = describe_threaded_limits(
+        logger=logger,
+        operation="get_hld",
+        total_chunks=total_chunks,
+        threads=threads,
+        page_count=page_count,
+        chunk_count=chunk_count,
+    )
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_hld",
+        item_label="hosts collected",
+        chunk_interval=max(1, target_chunks // 10),
+        time_interval=20.0,
+        total_chunks=target_chunks,
+    )
+    if target_chunks < total_chunks:
+        logger.info(
+            f"Starting get_hld with {threads} {'threads.' if threads > 1 else 'thread.'} across up to {target_chunks}/{total_chunks} chunks."
+        )
+    else:
+        logger.info(
+            f"Starting get_hld with {threads} {'threads.' if threads > 1 else 'thread.'} across {total_chunks} chunks."
+        )
 
     threads_list = []
 
@@ -147,15 +171,21 @@ def get_hld(
                 chunk_count,
                 "get_hld",
                 kwargs,
+                progress,
             ),
         )
         threads_list.append(thread)
         thread.start()
 
-    for thread in threads_list:
-        thread.join()
+    wait_for_threads_with_heartbeat(
+        threads_list,
+        progress=progress,
+        heartbeat_interval=120.0,
+        heartbeat_extra="still running",
+        queue_remaining_getter=id_queue.qsize,
+    )
 
-    logger.info("All threads have completed. Returning responses.")
+    progress.complete(queue_remaining=id_queue.qsize(), extra="all threads complete")
     return responses
 
 
@@ -237,7 +267,31 @@ def get_cve_hld(
     )
 
     id_queue = create_id_queue(auth, chunk_size=chunk_size, ids=kwargs.get("ids", None))
-    logger.info(f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'}")
+    total_chunks = id_queue.qsize()
+    target_chunks = describe_threaded_limits(
+        logger=logger,
+        operation="get_cve_hld",
+        total_chunks=total_chunks,
+        threads=threads,
+        page_count=page_count,
+        chunk_count=chunk_count,
+    )
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_cve_hld",
+        item_label="hosts collected",
+        chunk_interval=max(1, target_chunks // 10),
+        time_interval=20.0,
+        total_chunks=target_chunks,
+    )
+    if target_chunks < total_chunks:
+        logger.info(
+            f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'} across up to {target_chunks}/{total_chunks} chunks."
+        )
+    else:
+        logger.info(
+            f"Starting get_cve_hld with {threads} {'threads.' if threads > 1 else 'thread.'} across {total_chunks} chunks."
+        )
 
     threads_list = []
 
@@ -254,13 +308,19 @@ def get_cve_hld(
                 chunk_count,
                 "get_cve_hld",
                 kwargs,
+                progress,
             ),
         )
         threads_list.append(thread)
         thread.start()
 
-    for thread in threads_list:
-        thread.join()
+    wait_for_threads_with_heartbeat(
+        threads_list,
+        progress=progress,
+        heartbeat_interval=120.0,
+        heartbeat_extra="still running",
+        queue_remaining_getter=id_queue.qsize,
+    )
 
-    logger.info("All threads have completed. Returning responses.")
+    progress.complete(queue_remaining=id_queue.qsize(), extra="all threads complete")
     return responses

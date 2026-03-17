@@ -9,7 +9,7 @@ from .data_classes.Tag import Tag
 from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..base.base_list import BaseList
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -156,6 +156,13 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
 
     has_more = True
     results = BaseList()
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_tags",
+        item_label="tags collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
     # Build the service request:
     jsonpayload = {
         "ServiceRequest": {
@@ -188,6 +195,7 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
             data = [data]
         for tag in data:
             results.append(Tag.from_dict(tag["Tag"]))
+        progress.record(items=len(data), pages=1)
 
         has_more = response.get("ServiceResponse", {}).get("hasMoreRecords", False)
         if has_more not in [False, "false"]:
@@ -202,7 +210,7 @@ def get_tags(auth: BasicAuth, **kwargs) -> BaseList:
         else:
             has_more = False
 
-    logger.info("No more results to fetch. Exiting...")
+    progress.complete(extra="no more results to fetch")
     return results
 
 

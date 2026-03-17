@@ -12,7 +12,7 @@ from ...auth.token import TokenAuth
 from ...base.call_api import call_api
 from ...base.base_list import BaseList
 from ...exceptions.Exceptions import QualysAPIError
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -58,8 +58,6 @@ def _threading_backend(
             raise ValueError("Invalid data_type. Must be 'PATCH' or 'ASSET'.")
 
     platform = platform.title()
-    LOCK = Lock()
-
     if kwargs.get("pageSize"):
         check_page_size_limit(kwargs["pageSize"])
 
@@ -109,6 +107,18 @@ def _threading_backend(
     page_count = kwargs.get("page_count", "all")
     if not isinstance(page_count, int) and page_count != "all":
         raise ValueError("page_count must be an integer or 'all'.")
+    progress = ProgressTracker(
+        logger=logger,
+        operation=f"get_{data_type.lower()}[{platform}]",
+        item_label=f"{data_type.lower()} records collected",
+        page_interval=5,
+        time_interval=20.0,
+        total_pages=page_count if isinstance(page_count, int) else None,
+        remaining_label="page(s) remaining",
+    )
+    completion_reason = "all pages complete"
+
+    logger.info(f"Starting get_{data_type.lower()} for platform={platform}.")
 
     while True:
         response = call_api(
@@ -134,21 +144,17 @@ def _threading_backend(
             headers["searchAfter"] = response.headers["searchAfter"]
 
         pulled += 1
-
-        if pulled % 5 == 0:
-            with LOCK:
-                logger.debug(f"{platform} Thread has pulled {pulled} pages so far.")
+        progress.record(items=len(j), pages=1)
 
         if page_count != "all" and pulled >= page_count:
-            with LOCK:
-                logger.info(f"{platform} Thread has hit user-defined page limit of {page_count}.")
+            completion_reason = "page count reached"
             break
 
         if len(j) < params["pageSize"]:
-            with LOCK:
-                logger.info(f"{platform} Thread has reached the end of the list.")
+            completion_reason = "no more records"
             break
 
+    progress.complete(extra=completion_reason)
     return
 
 

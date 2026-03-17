@@ -9,7 +9,7 @@ from ipaddress import IPv4Address, IPv6Address
 from ..auth import BasicAuth
 from .data_classes import AssetGroup
 from ..base import *
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -48,6 +48,18 @@ def get_ag_list(
 
     results = BaseList()
     pulled = 0
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_ag_list",
+        item_label="asset groups collected",
+        page_interval=10,
+        time_interval=20.0,
+        total_pages=page_count if isinstance(page_count, int) else None,
+        remaining_label="page(s) remaining",
+    )
+
+    logger.info("Starting get_ag_list.")
 
     while True:
         kwargs["action"] = "list"
@@ -70,7 +82,7 @@ def get_ag_list(
             data = xml_parser(response.text)["ASSET_GROUP_LIST_OUTPUT"]
 
             if "ASSET_GROUP" not in data["RESPONSE"]["ASSET_GROUP_LIST"]:
-                logger.info("No asset groups found. Returning empty BaseList.")
+                completion_reason = "no asset groups found"
                 break
 
             # Check if type(data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]) is dict.
@@ -80,13 +92,16 @@ def get_ag_list(
                     data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]
                 ]
 
-            for ag in data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]:
-                results.append(AssetGroup(**ag))
+            asset_groups = [
+                AssetGroup(**ag) for ag in data["RESPONSE"]["ASSET_GROUP_LIST"]["ASSET_GROUP"]
+            ]
+            results.extend(asset_groups)
 
             pulled += 1
+            progress.record(items=len(asset_groups), pages=1)
             # Check page count:
             if page_count != "all" and pulled >= page_count:
-                logger.info(f"Page count reached. Returning {pulled} pages.")
+                completion_reason = "page count reached"
                 break
 
             # Check for pagination:
@@ -98,8 +113,10 @@ def get_ag_list(
                 kwargs["id_min"] = id_min
                 logger.debug(f"Pagination detected. New id_min param: {id_min}")
             else:
+                completion_reason = "no more records"
                 break
 
+    progress.complete(extra=completion_reason)
     return results
 
 

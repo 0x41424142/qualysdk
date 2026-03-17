@@ -9,7 +9,7 @@ from ..base.base_list import BaseList
 from ..auth.token import BasicAuth
 from ..exceptions.Exceptions import *
 from .data_classes.Connectors import AWSConnector, AzureConnector
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -46,6 +46,14 @@ def get_connectors(
 
     responses = BaseList()
     currentPage = 0
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation=f"get_connectors[{provider}]",
+        item_label="connectors collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
 
     if kwargs.get("filter"):
         # Make sure the query key is valid
@@ -81,6 +89,7 @@ def get_connectors(
         j = response.json()
 
         if len(j["content"]) == 0:
+            completion_reason = "no connectors found"
             logger.info("No connectors found.")
             break
 
@@ -92,16 +101,18 @@ def get_connectors(
                 case "azure":
                     responses.append(AzureConnector(**record))
 
-        # Print a message indicating the current page was retrieved successfully
-        logger.debug(f"Page {currentPage+1} of {provider} connectors retrieved successfully.")
         currentPage += 1
+        progress.record(items=len(j["content"]), pages=1)
 
         # Break the loop if all pages are retrieved or the requested number of pages are retrieved
         if (page_count != "all" and currentPage + 1 > page_count) or j["last"]:
+            if page_count != "all" and currentPage + 1 > page_count:
+                completion_reason = "page count reached"
+            else:
+                completion_reason = "no more records"
             break
 
-    # Print a message indicating all pages have been retrieved
-    logger.info(f"All pages complete. {str(len(responses))} {provider} connector records retrieved.")
+    progress.complete(extra=completion_reason)
 
     return responses
 

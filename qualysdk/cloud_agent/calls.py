@@ -10,7 +10,7 @@ from ..base.call_api import call_api
 from ..base.xml_parser import xml_parser
 from ..auth.basic import BasicAuth
 from ..base.base_list import BaseList
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -85,6 +85,14 @@ def list_agents(
 
     results = BaseList()
     pulled = 0
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="list_agents",
+        item_label="agents collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
 
     while True:
         response = call_api(
@@ -101,6 +109,7 @@ def list_agents(
             raise ValueError(combined_error)
 
         if parsed.get("ServiceResponse").get("count") == "0":
+            completion_reason = "no agents found"
             break
 
         data = parsed.get("ServiceResponse").get("data").get("HostAsset")
@@ -112,13 +121,14 @@ def list_agents(
             results.append(CloudAgent(**agent))
 
         pulled += 1
-        logger.debug(f"Pulled page {pulled}...")
+        progress.record(items=len(data), pages=1)
 
         if page_count != "all" and pulled >= page_count:
-            logger.info("Page count reached. Returning...")
+            completion_reason = "page count reached"
             break
 
         if parsed.get("ServiceResponse").get("hasMoreRecords") != "true":
+            completion_reason = "no more records"
             break
 
         else:
@@ -126,6 +136,7 @@ def list_agents(
             last_id = parsed["ServiceResponse"]["lastId"]
             payload["_xml_data"] = prepare_criteria(pagination_id=int(last_id) - 1, **kwargs)
 
+    progress.complete(extra=completion_reason)
     return results
 
 

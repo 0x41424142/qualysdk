@@ -4,7 +4,7 @@ vmdr.py - Contains the functions to upload supported VMDR API pulls to SQL DBs.
 
 from datetime import datetime
 
-from pandas import DataFrame
+from pandas import DataFrame, notnull
 from sqlalchemy import Connection, types
 from sqlalchemy.dialects.mysql import TEXT
 from sqlalchemy.dialects.mssql import DATETIME2
@@ -362,8 +362,9 @@ def upload_vmdr_hld(
     # Convert the BaseList to a DataFrame:
     df = DataFrame([prepare_dataclass(detection) for detection in detections])
 
-    # Set QDS to an integer:
-    df["QDS"] = df["QDS"].apply(lambda x: int(x) if x and x.isnumeric() else None)
+    # Set QDS to an integer. We will be dealing with integers, floats, and NaN values, 
+    # so we have to convert the floats to ints and the NaNs to None:
+    df["QDS"] = df["QDS"].apply(lambda x: int(x) if notnull(x) else None)
 
     # Upload the data:
     return upload_data(

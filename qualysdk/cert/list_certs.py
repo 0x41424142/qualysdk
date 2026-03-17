@@ -10,7 +10,7 @@ from ..base.base_list import BaseList
 from ..base.call_api import call_api
 from ..auth.token import TokenAuth
 from ..exceptions.Exceptions import QualysAPIError
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -47,6 +47,16 @@ def list_certs(auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs)
 
     pages_pulled = 0
     responses = BaseList()
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="list_certs",
+        item_label="certificates collected",
+        page_interval=10,
+        time_interval=20.0,
+        total_pages=page_count if isinstance(page_count, int) else None,
+        remaining_label="page(s) remaining",
+    )
 
     payload = {
         "filter": {
@@ -104,6 +114,8 @@ def list_certs(auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs)
                 {"field": key, "value": value, "operator": operator}
             )
 
+    logger.info("Starting list_certs.")
+
     while True:
         response = call_api(auth=auth, module="cert", endpoint="list_certs", jsonbody=payload)
 
@@ -111,17 +123,20 @@ def list_certs(auth: TokenAuth, page_count: Union[int, "all"] = "all", **kwargs)
         if response.status_code != 200:
             raise QualysAPIError(response.text)
 
-        for cert in response_json:
-            responses.append(Certificate(**cert))
-        pages_pulled += 1
-
-        if page_count != "all" and pages_pulled >= page_count:
-            logger.info(f"Hit user-defined limit of {page_count} pages.")
+        if not response_json:
+            completion_reason = "no certificates found" if pages_pulled == 0 else "no more records"
             break
 
-        if not response_json:
+        certificates = [Certificate(**cert) for cert in response_json]
+        responses.extend(certificates)
+        pages_pulled += 1
+        progress.record(items=len(certificates), pages=1)
+
+        if page_count != "all" and pages_pulled >= page_count:
+            completion_reason = "page count reached"
             break
 
         payload["pageNumber"] += 1
 
+    progress.complete(extra=completion_reason)
     return responses

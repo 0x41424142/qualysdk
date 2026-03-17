@@ -14,7 +14,7 @@ from ...base.call_api import call_api
 from ...base.xml_parser import xml_parser
 from ...auth.basic import BasicAuth
 from ...base.base_list import BaseList
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -180,6 +180,46 @@ def create_id_queue(auth: BasicAuth, chunk_size: int = 100, ids: str = None) -> 
         logger.info(f"Queue created with {id_queue.qsize()} chunks")
 
     return id_queue
+
+
+def describe_threaded_limits(
+    logger,
+    operation: str,
+    total_chunks: int,
+    threads: int,
+    page_count: Union[int, "all"],
+    chunk_count: Union[int, "all"],
+) -> int:
+    """
+    Log user-requested page/chunk limits for threaded VMDR pulls.
+
+    Returns:
+        int: The maximum number of chunks the current worker pool can process.
+    """
+
+    target_chunks = (
+        total_chunks if chunk_count == "all" else min(total_chunks, chunk_count * threads)
+    )
+
+    if page_count != "all":
+        logger.info(
+            "%s will pull at most %s page(s) per chunk because page_count=%s.",
+            operation,
+            page_count,
+            page_count,
+        )
+
+    if chunk_count != "all" and target_chunks < total_chunks:
+        logger.info(
+            "%s will process up to %s/%s chunk(s) because chunk_count=%s is applied per thread across %s thread(s).",
+            operation,
+            target_chunks,
+            total_chunks,
+            chunk_count,
+            threads,
+        )
+
+    return target_chunks
 
 
 def hld_backend(
@@ -466,6 +506,7 @@ def thread_worker(
     chunk_count: Union[int, "all"],
     endpoint_called: Literal["get_hld", "get_host_list", "get_cve_hld"],
     kwargs,
+    progress_tracker: ProgressTracker | None = None,
 ):
     """
     thread_worker - the worker function for get_hld/hld_backend functions.
@@ -486,6 +527,7 @@ def thread_worker(
     attempts = 0
     while True:
         ids = None
+        chunk_results = BaseList()
         pages_pulled = 0
         chunks_pulled = 0
         try:
@@ -511,16 +553,24 @@ def thread_worker(
                 kwargs["ids"] = ids[0]
 
             if endpoint_called == "get_hld":
-                responses.extend(hld_backend(auth, page_count=page_count, **kwargs))
+                chunk_results = hld_backend(auth, page_count=page_count, **kwargs)
             elif endpoint_called == "get_host_list":
-                responses.extend(get_host_list_backend(auth, page_count=page_count, **kwargs))
+                chunk_results = get_host_list_backend(auth, page_count=page_count, **kwargs)
             elif endpoint_called == "get_cve_hld":
-                responses.extend(get_cve_hld_backend(auth, page_count=page_count, **kwargs))
+                chunk_results = get_cve_hld_backend(auth, page_count=page_count, **kwargs)
             else:
                 id_queue.put_nowait(ids)
                 id_queue.task_done()
                 raise ValueError("endpoint_called must be either 'get_hld' or 'get_host_list'.")
+
+            responses.extend(chunk_results)
             id_queue.task_done()
+            if progress_tracker is not None:
+                progress_tracker.record(
+                    items=len(chunk_results),
+                    chunks=1,
+                    queue_remaining=id_queue.qsize(),
+                )
             with LOCK:
                 logger.debug(f"{current_thread().name} ({endpoint_called}) - Chunk complete.")
             pages_pulled += 1

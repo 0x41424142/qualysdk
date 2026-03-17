@@ -16,7 +16,7 @@ from ..base.call_api import call_api
 from ..auth.basic import BasicAuth
 from ..exceptions.Exceptions import QualysAPIError
 from ..base.base_list import BaseList
-from qualysdk.base.logging import get_logger
+from qualysdk.base.logging import ProgressTracker, get_logger
 
 logger = get_logger(__name__)
 
@@ -207,6 +207,14 @@ def get_scans(
         payload = build_service_request(**kwargs)
 
     scanList = BaseList()
+    completion_reason = "all pages complete"
+    progress = ProgressTracker(
+        logger=logger,
+        operation="get_scans",
+        item_label="scans collected",
+        page_interval=10,
+        time_interval=20.0,
+    )
 
     while True:
         # Make the API call:
@@ -223,6 +231,7 @@ def get_scans(
             )
 
         if serviceResponse.get("count") == "0":
+            completion_reason = "no scans found"
             logger.info(f"No scans found on page {pageNo}. Exiting.")
             break
 
@@ -238,14 +247,12 @@ def get_scans(
             # Create the objects:
             scanList.append(WASScan.from_dict(scan))
 
-        logger.debug(
-            f"Retrieved {serviceResponse.get('count')} WAS scans on page {pageNo}. Running total: {len(scanList)}"
-        )
+        progress.record(items=len(data), pages=1)
 
         pageNo += 1
 
         if page_count != "all" and pageNo >= page_count:
-            logger.info(f"Reached page_count limit. Returning {pageNo} page(s).")
+            completion_reason = "page count reached"
             break
 
         # Check for pagination:
@@ -256,8 +263,10 @@ def get_scans(
             kwargs["id"] = serviceResponse.get("lastId")
             payload = build_service_request(**kwargs)
         else:
+            completion_reason = "no more records"
             break
 
+    progress.complete(extra=completion_reason)
     return scanList
 
 

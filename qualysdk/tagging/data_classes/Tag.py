@@ -11,6 +11,8 @@ from ...base import DONT_EXPAND
 class TagSimple(BaseClass):
     id: int = None
     name: str = None
+    tagUuid: str = None
+    parentTagUuid: str = None
 
     def __int__(self):
         return self.id
@@ -23,6 +25,8 @@ class TagSimple(BaseClass):
 class Tag(BaseClass):
     id: int = None
     name: str = None
+    tagUuid: str = None
+    parentTagUuid: str = None
     modified: Union[str, datetime] = None
     ruleType: str = None
     parentTagId: int = None
@@ -34,8 +38,12 @@ class Tag(BaseClass):
     description: str = None
     srcAssetGroupId: int = None
     srcBusinessUnitId: int = None
+    srcOperatingSystemName: str = None
     provider: str = None
+    reEvalStatusProgress: float = None
     reEvalStatus: str = None
+    scopeLimiterId: int = None
+    isSubUserScopedTag: bool = None
 
     def __post_init__(self):
         DT_FIELDS = ["modified", "created"]
